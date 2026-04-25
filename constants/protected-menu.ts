@@ -65,62 +65,53 @@ const createMenuItem = (
   subMenuItems: subItems,
   allowedRoles: roles,
 });
-
-// =============== USER MENU ===============
+  
 export const publicUserMenuItems: MenuItemProps[] = [
-  createMenuItem("Dashboard", ["user", "citizen"], `${BASE_URLS.user}/home`, MdDashboard, COLORS.blue),
+  createMenuItem("Dashboard", ["user"], `${BASE_URLS.user}/home`, MdDashboard, COLORS.blue),
 
-  createMenuItem("Certificates", ["user", "citizen"], undefined, MdDescription, COLORS.red, [
-    createMenuItem("Inheritance Certificate", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.yellow, [
-      createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/warish/apply`, FaChevronCircleRight, COLORS.yellow),
-      createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/warish/status`, FaChevronCircleRight, COLORS.blue),
+  createMenuItem("Certificates", ["user"], undefined, MdDescription, COLORS.red, [
+    createMenuItem("Inheritance Certificate", ["user"], undefined, FaRegFileAlt, COLORS.yellow, [
+      createMenuItem("Apply for Certificate", ["user"], `${BASE_URLS.user}/warish/apply`, FaChevronCircleRight, COLORS.yellow),
+      createMenuItem("Check Status", ["user"], `${BASE_URLS.user}/warish/status`, FaChevronCircleRight, COLORS.blue),
     ]),
-    createMenuItem("Land Conversion NOC", ["user", "citizen"], `${BASE_URLS.user}/land-conversion/application`, FaRegFileAlt, COLORS.green),
-    createMenuItem("Linkage Certificate", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.blue, [
-      createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/linkage/apply`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/linkage/status`, FaChevronCircleRight, COLORS.teal),
-    ]),
-    createMenuItem("Bulk Processing", ["user", "citizen"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
-    createMenuItem("Issuance Reports", ["user", "citizen"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
+    createMenuItem("Land Conversion NOC", ["user"], `${BASE_URLS.user}/land-conversion/application`, FaRegFileAlt, COLORS.green),
+    createMenuItem("Linkage Certificate", ["user"], `${BASE_URLS.user}/linkage/application`, FaRegFileAlt, COLORS.blue),
+    createMenuItem("Bulk Processing", ["user"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
+    createMenuItem("Issuance Reports", ["user"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
   ]),
 
-  createMenuItem("Samabyathi Scheme", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.green, [
-    createMenuItem("Apply for Scheme", ["user", "citizen"], `${BASE_URLS.user}/samabyathi/apply`, FaChevronCircleRight, COLORS.green),
-    createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/samabyathi/status`, FaChevronCircleRight, COLORS.blue),
+  createMenuItem("Profile & Account", ["user"], undefined, MdAccountCircle, COLORS.purple, [
+    createMenuItem("Personal Information", ["user"], undefined, MdPersonAdd, COLORS.indigo, [
+      createMenuItem("View Profile", ["user"], `${BASE_URLS.user}/profile/view`, FaChevronCircleRight, COLORS.indigo),
+      createMenuItem("Edit Profile", ["user"], `${BASE_URLS.user}/profile/edit`, FaChevronCircleRight, COLORS.pink),
+    ]),
+    createMenuItem("Security Settings", ["user"], undefined, MdSecurity, COLORS.red, [
+      createMenuItem("Change Password", ["user"], `${BASE_URLS.user}/profile/change-password`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Two-Factor Auth", ["user"], `${BASE_URLS.user}/profile/2fa`, FaChevronCircleRight, COLORS.orange),
+    ]),
+    createMenuItem("Notifications", ["user"], `${BASE_URLS.user}/notifications`, MdNotifications, COLORS.pink),
   ]),
 
-  createMenuItem("Profile & Account", ["user", "citizen"], undefined, MdAccountCircle, COLORS.purple, [
-    createMenuItem("Personal Information", ["user", "citizen"], undefined, MdPersonAdd, COLORS.indigo, [
-      createMenuItem("View Profile", ["user", "citizen"], `${BASE_URLS.user}/profile/view`, FaChevronCircleRight, COLORS.indigo),
-      createMenuItem("Edit Profile", ["user", "citizen"], `${BASE_URLS.user}/profile/edit`, FaChevronCircleRight, COLORS.pink),
+  createMenuItem("Financial Services", ["user"], undefined, MdAttachMoney, COLORS.lime, [
+    createMenuItem("Payments", ["user"], undefined, MdPayment, COLORS.lime, [
+      createMenuItem("Payment History", ["user"], `${BASE_URLS.user}/payments/history`, FaChevronCircleRight, COLORS.lime),
+      createMenuItem("Payment Methods", ["user"], `${BASE_URLS.user}/payments/methods`, FaChevronCircleRight, COLORS.blue),
     ]),
-    createMenuItem("Security Settings", ["user", "citizen"], undefined, MdSecurity, COLORS.red, [
-      createMenuItem("Change Password", ["user", "citizen"], `${BASE_URLS.user}/profile/change-password`, FaChevronCircleRight, COLORS.red),
-      createMenuItem("Two-Factor Auth", ["user", "citizen"], `${BASE_URLS.user}/profile/2fa`, FaChevronCircleRight, COLORS.orange),
-    ]),
-    createMenuItem("Notifications", ["user", "citizen"], `${BASE_URLS.user}/notifications`, MdNotifications, COLORS.pink),
+    createMenuItem("Receipts", ["user"], `${BASE_URLS.user}/payments/receipts`, MdReceipt, COLORS.green),
   ]),
 
-  createMenuItem("Financial Services", ["user", "citizen"], undefined, MdAttachMoney, COLORS.lime, [
-    createMenuItem("Payments", ["user", "citizen"], undefined, MdPayment, COLORS.lime, [
-      createMenuItem("Payment History", ["user", "citizen"], `${BASE_URLS.user}/payments/history`, FaChevronCircleRight, COLORS.lime),
-      createMenuItem("Payment Methods", ["user", "citizen"], `${BASE_URLS.user}/payments/methods`, FaChevronCircleRight, COLORS.blue),
+  createMenuItem("Support & Resources", ["user"], undefined, MdHelp, COLORS.orange, [
+    createMenuItem("Help Desk", ["user"], undefined, MdFeedback, COLORS.orange, [
+      createMenuItem("Submit Feedback", ["user"], `${BASE_URLS.user}/feedback`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("File Complaint", ["user"], `${BASE_URLS.user}/record-complaint`, FaChevronCircleRight, COLORS.red),
     ]),
-    createMenuItem("Receipts", ["user", "citizen"], `${BASE_URLS.user}/payments/receipts`, MdReceipt, COLORS.green),
-  ]),
-
-  createMenuItem("Support & Resources", ["user", "citizen"], undefined, MdHelp, COLORS.orange, [
-    createMenuItem("Help Desk", ["user", "citizen"], undefined, MdFeedback, COLORS.orange, [
-      createMenuItem("Submit Feedback", ["user", "citizen"], `${BASE_URLS.user}/feedback`, FaChevronCircleRight, COLORS.orange),
-      createMenuItem("File Complaint", ["user", "citizen"], `${BASE_URLS.user}/record-complaint`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Knowledge Base", ["user"], undefined, MdLocalLibrary, COLORS.teal, [
+      createMenuItem("FAQs", ["user"], `${BASE_URLS.user}/resources/faqs`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("User Guides", ["user"], `${BASE_URLS.user}/resources/user-guide`, FaChevronCircleRight, COLORS.blue),
     ]),
-    createMenuItem("Knowledge Base", ["user", "citizen"], undefined, MdLocalLibrary, COLORS.teal, [
-      createMenuItem("FAQs", ["user", "citizen"], `${BASE_URLS.user}/resources/faqs`, FaChevronCircleRight, COLORS.cyan),
-      createMenuItem("User Guides", ["user", "citizen"], `${BASE_URLS.user}/resources/user-guide`, FaChevronCircleRight, COLORS.blue),
-    ]),
-    createMenuItem("Documents", ["user", "citizen"], `${BASE_URLS.user}/resources/documents`, MdFolder, COLORS.teal),
-    createMenuItem("Announcements", ["user", "citizen"], `${BASE_URLS.user}/announcements`, MdAnnouncement, COLORS.red),
-    createMenuItem("Calendar", ["user", "citizen"], `${BASE_URLS.user}/calendar`, MdCalendarToday, COLORS.red),
+    createMenuItem("Documents", ["user"], `${BASE_URLS.user}/resources/documents`, MdFolder, COLORS.teal),
+    createMenuItem("Announcements", ["user"], `${BASE_URLS.user}/announcements`, MdAnnouncement, COLORS.red),
+    createMenuItem("Calendar", ["user"], `${BASE_URLS.user}/calendar`, MdCalendarToday, COLORS.red),
   ]),
 ];
 
@@ -150,47 +141,23 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
       createMenuItem("Correction Requests", ["admin"], `${baseUrl}/manage-warish/correction-requests`, FaChevronCircleRight, COLORS.red),
     ]),
   ]),
-  //samabathy application
-  createMenuItem("Samabyathi Application", ["admin"], undefined, FaRegFileAlt, COLORS.green, [
-    createMenuItem("Verify Applications", ["admin"], `${baseUrl}/manage-samabyathi/verify`, FaChevronCircleRight, COLORS.blue),
-    createMenuItem("All Applications", ["admin"], `${baseUrl}/manage-samabyathi/applications`, FaChevronCircleRight, COLORS.green),
-    createMenuItem("Allotment", ["admin"], `${baseUrl}/manage-samabyathi/allotment`, FaChevronCircleRight, COLORS.green),
-    createMenuItem("Muster Roll", ["admin"], `${baseUrl}/manage-samabyathi/muster-roll`, FaChevronCircleRight, COLORS.green),
-  ]),
-
   createMenuItem("Land Conversion NOC", ["admin"], undefined, FaRegFileAlt, COLORS.green, [
-    createMenuItem("Application Lifecycle", ["admin"], undefined, FaChevronDown, COLORS.teal, [
-      createMenuItem("New Application", ["admin"], `${baseUrl}/manage-land-conversion/application`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Document Verification", ["admin"], `${baseUrl}/manage-land-conversion/verify`, FaChevronCircleRight, COLORS.teal),
-    ]),
-    createMenuItem("Workflow & Inspection", ["admin"], undefined, FaChevronDown, COLORS.blue, [
-      createMenuItem("Site Inspection", ["admin"], `${baseUrl}/manage-land-conversion/inspection`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Approval Workflow", ["admin"], `${baseUrl}/manage-land-conversion/approve`, FaChevronCircleRight, COLORS.purple),
-    ]),
-    createMenuItem("Output & Issuance", ["admin"], undefined, FaChevronDown, COLORS.green, [
-      createMenuItem("NOC Issuance", ["admin"], `${baseUrl}/manage-land-conversion/issue`, FaChevronCircleRight, COLORS.orange),
-      createMenuItem("Print Certificate", ["admin"], `${baseUrl}/manage-land-conversion/print`, FaChevronCircleRight, COLORS.cyan),
-    ]),
-    createMenuItem("Compliance", ["admin"], undefined, FaChevronDown, COLORS.red, [
-      createMenuItem("Compliance Check", ["admin"], `${baseUrl}/manage-land-conversion/compliance`, FaChevronCircleRight, COLORS.red),
-    ]),
+    createMenuItem("New Application", ["admin"], `${baseUrl}/manage-land-conversion/application`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Document Verification", ["admin"], `${baseUrl}/manage-land-conversion/verify`, FaChevronCircleRight, COLORS.teal),
+    createMenuItem("Site Inspection", ["admin"], `${baseUrl}/manage-land-conversion/inspection`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Approval Workflow", ["admin"], `${baseUrl}/manage-land-conversion/approve`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("NOC Issuance", ["admin"], `${baseUrl}/manage-land-conversion/issue`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Print Certificate", ["admin"], `${baseUrl}/manage-land-conversion/print`, FaChevronCircleRight, COLORS.cyan),
+    createMenuItem("Compliance Check", ["admin"], `${baseUrl}/manage-land-conversion/compliance`, FaChevronCircleRight, COLORS.red),
   ]),
   createMenuItem("Linkage Certificate", ["admin"], undefined, FaRegFileAlt, COLORS.blue, [
-    createMenuItem("Application Lifecycle", ["admin"], undefined, FaChevronDown, COLORS.teal, [
-      createMenuItem("New Application", ["admin"], `${baseUrl}/manage-linkage/application`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Document Validation", ["admin"], `${baseUrl}/manage-linkage/validate`, FaChevronCircleRight, COLORS.teal),
-    ]),
-    createMenuItem("Workflow", ["admin"], undefined, FaChevronDown, COLORS.blue, [
-      createMenuItem("Ownership Verification", ["admin"], `${baseUrl}/manage-linkage/ownership`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Certificate Issuance", ["admin"], `${baseUrl}/manage-linkage/issue`, FaChevronCircleRight, COLORS.purple),
-    ]),
-    createMenuItem("Output", ["admin"], undefined, FaChevronDown, COLORS.green, [
-      createMenuItem("Certificate Printing", ["admin"], `${baseUrl}/manage-linkage/print`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Renewal Process", ["admin"], `${baseUrl}/manage-linkage/renew`, FaChevronCircleRight, COLORS.orange),
-    ]),
-    createMenuItem("Monitoring", ["admin"], undefined, FaChevronDown, COLORS.red, [
-      createMenuItem("Dispute Resolution", ["admin"], `${baseUrl}/manage-linkage/disputes`, FaChevronCircleRight, COLORS.red),
-    ]),
+    createMenuItem("Application Portal", ["admin"], `${baseUrl}/manage-linkage/application`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Document Validation", ["admin"], `${baseUrl}/manage-linkage/validate`, FaChevronCircleRight, COLORS.teal),
+    createMenuItem("Ownership Verification", ["admin"], `${baseUrl}/manage-linkage/ownership`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Certificate Issuance", ["admin"], `${baseUrl}/manage-linkage/issue`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("Print Certificate", ["admin"], `${baseUrl}/manage-linkage/print`, FaChevronCircleRight, COLORS.cyan),
+    createMenuItem("Renewal Process", ["admin"], `${baseUrl}/manage-linkage/renew`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Dispute Resolution", ["admin"], `${baseUrl}/manage-linkage/disputes`, FaChevronCircleRight, COLORS.red),
   ]),
   createMenuItem("Certificate Operations", ["admin"], undefined, HiDocumentDuplicate, COLORS.purple, [
     createMenuItem("Bulk Processing", ["admin"], `${baseUrl}/certificates/bulk`, FaChevronCircleRight, COLORS.cyan),
@@ -226,14 +193,47 @@ const apaReportItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("APA-TE-5", ["admin"], `${baseUrl}/apa-report/APA-TE-5`, FaChevronCircleRight, COLORS.purple),
     createMenuItem("APA-TE-6", ["admin"], `${baseUrl}/apa-report/APA-TE-6`, FaChevronCircleRight, COLORS.purple),
     createMenuItem("APA-TE-7", ["admin"], `${baseUrl}/apa-report/APA-TE-7`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-8", ["admin"], `${baseUrl}/apa-report/APA-TE-8`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-9", ["admin"], `${baseUrl}/apa-report/APA-TE-9`, FaChevronCircleRight, COLORS.purple)
   ]),
+  createMenuItem("Theme - 3", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
+    createMenuItem("APA-TE-10", ["admin"], `${baseUrl}/apa-report/APA-TE-10`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-11", ["admin"], `${baseUrl}/apa-report/APA-TE-11`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-13", ["admin"], `${baseUrl}/apa-report/APA-TE-13`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-14", ["admin"], `${baseUrl}/apa-report/APA-TE-14`, FaChevronCircleRight, COLORS.purple)
+  ]),
+  createMenuItem("Theme - 4", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
+    createMenuItem("APA-TE-16", ["admin"], `${baseUrl}/apa-report/APA-TE-16`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-17", ["admin"], `${baseUrl}/apa-report/APA-TE-17`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-19", ["admin"], `${baseUrl}/apa-report/APA-TE-19`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("APA-TE-20", ["admin"], `${baseUrl}/apa-report/APA-TE-20`, FaChevronCircleRight, COLORS.purple)
+  ])
 ];
 
-// Reusable Document Generation Structure
+// Extract document generation items
 const documentGenerationItems = (baseUrl: string): MenuItemProps[] => [
-  createMenuItem("Income Certificate", ["admin"], `${baseUrl}/generate-income`, FaRegFileAlt, COLORS.blue),
-  createMenuItem("Residential Certificate", ["admin"], `${baseUrl}/generate-residential`, FaRegFileAlt, COLORS.green),
-  createMenuItem("Caste Certificate", ["admin"], `${baseUrl}/generate-caste`, FaRegFileAlt, COLORS.orange),
+  createMenuItem("Scrutiny Sheets", ["admin"], undefined, FaRegFileAlt, COLORS.indigo, [
+    createMenuItem("Single Sheet", ["admin"], `${baseUrl}/generate/printscrutisheet`, FaChevronCircleRight, COLORS.indigo),
+    createMenuItem("Bulk Sheets", ["admin"], `${baseUrl}/generate/bulk-scrutee-sheet`, FaChevronCircleRight, COLORS.red),
+  ]),
+  createMenuItem("Agreements & Contracts", ["admin"], undefined, FaFileContract, COLORS.red, [
+    createMenuItem("Agreements", ["admin"], `${baseUrl}/generate/agrement`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Contractor Prayer", ["admin"], `${baseUrl}/contractor/print-prayer`, FaChevronCircleRight, COLORS.blue),
+  ]),
+  createMenuItem("Comparative Statements", ["admin"], `${baseUrl}/generate/comparative-statement`, FaRegFileAlt, COLORS.red),
+  createMenuItem("Orders", ["admin"], undefined, MdAssignment, COLORS.red, [
+    createMenuItem("Work Orders", ["admin"], `${baseUrl}/generate/work-order`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Bulk Work Orders", ["admin"], `${baseUrl}/generate/bulk-work-order`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Supply Orders", ["admin"], `${baseUrl}/generate/supply-order`, FaChevronCircleRight, COLORS.red),
+  ]),
+  createMenuItem("Certificates", ["admin"], undefined, MdDescription, COLORS.red, [
+    createMenuItem("Payment Certificates", ["admin"], `${baseUrl}/generate/payment-certificate`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Completion Certificates", ["admin"], `${baseUrl}/generate/completation-certificate`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("FY Completion Reports", ["admin"], `${baseUrl}/generate/completation-certificate2`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Award of Contract", ["admin"], `${baseUrl}/generate/generateAOC`, FaChevronCircleRight, COLORS.orange),
+  ]),
+  createMenuItem("Document Covers", ["admin"], `${baseUrl}/generate/cover-page`, FaRegFileAlt, COLORS.red),
+  createMenuItem("Puja/Festival NOC", ["admin"], `${baseUrl}/generate/puja-noc`, FaRegFileAlt, COLORS.green),
 ];
 
 export const adminMenuItems: MenuItemProps[] = [
@@ -251,36 +251,153 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Work Status Tracking", ["admin"], `${BASE_URLS.admin}/manage-tender/work-status-change`, FaChevronCircleRight, COLORS.indigo),
       createMenuItem("Fund Status", ["admin"], `${BASE_URLS.admin}/fundstatus`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Work Details", ["admin"], `${BASE_URLS.admin}/work-manage/scheme-wise`, FaChevronCircleRight, COLORS.red),
-      createMenuItem("Upload Work Photo", ["admin"], `${BASE_URLS.admin}/work-manage/upload-photo`, FaChevronCircleRight, COLORS.red),
     ]),
+    createMenuItem("Work Estimate & Billing", ["admin"], undefined, MdReceipt, COLORS.teal, [
+      createMenuItem("Estimate Preparation", ["admin"], `${BASE_URLS.admin}/work-manage/estimate-preparation`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("MB Create", ["admin"], `${BASE_URLS.admin}/work-manage/mb-create`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Bill Abstract", ["admin"], `${BASE_URLS.admin}/work-manage/bill-abstract`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Bill Deduction", ["admin"], `${BASE_URLS.admin}/work-manage/bill-deduction`, FaChevronCircleRight, COLORS.orange),
+    ]),
+    createMenuItem("Development Works", ["admin"], undefined, MdAssignmentTurnedIn, COLORS.orange, [
+      createMenuItem("Work Estimate & DPR", ["admin"], `${BASE_URLS.admin}/development-works/work-estimate-dpr`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Work Progress Monitoring", ["admin"], `${BASE_URLS.admin}/development-works/progress-monitoring`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Measurement Book (MB) & Bill Abstract", ["admin"], `${BASE_URLS.admin}/development-works/measurement-book`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Manage Estimate Types", ["admin"], `${BASE_URLS.admin}/development-works/manage-estimate-types`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Estimate Library", ["admin"], undefined, MdLocalLibrary, COLORS.teal, [
+        createMenuItem("Library Items", ["admin"], `${BASE_URLS.admin}/development-works/estimate-library`, FaChevronCircleRight, COLORS.blue),
+        createMenuItem("Add Item", ["admin"], `${BASE_URLS.admin}/development-works/estimate-library/add`, FaChevronCircleRight, COLORS.green),
+        createMenuItem("Bulk Upload", ["admin"], `${BASE_URLS.admin}/development-works/estimate-library/bulk-upload`, FaChevronCircleRight, COLORS.orange),
+        createMenuItem("Estimate Templates", ["admin"], `${BASE_URLS.admin}/work-manage/estimate-preparation/templates`, FaChevronCircleRight, COLORS.purple),
+      ]),
+    ]),
+    createMenuItem("Approved Action Plans", ["admin"], `${BASE_URLS.admin}/approvedactionplan`, MdListAlt, COLORS.green),
   ]),
 
-  // Certificate & Document Management (expanded)
-  createMenuItem("Certificates & Documents", ["admin"], undefined, MdDescription, COLORS.red, [
+  // Certificates & Documents
+  createMenuItem("Certificates & Documents", ["admin", "superadmin"], undefined, MdDescription, COLORS.red, [
     ...certificateManagementItems(BASE_URLS.admin),
     ...documentGenerationItems(BASE_URLS.admin),
+    createMenuItem("APA Reports", ["admin"], undefined, FaChartBar, COLORS.cyan, apaReportItems(BASE_URLS.admin)),
   ]),
 
-  // Financial Management (expanded)
-  createMenuItem("Financial Management", ["admin"], undefined, MdAttachMoney, COLORS.green, [
-    createMenuItem("Tax Collection", ["admin"], undefined, MdPayment, COLORS.blue, [
-      createMenuItem("Collection Dashboard", ["admin"], `${BASE_URLS.admin}/tax-collection`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Arrear Management", ["admin"], `${BASE_URLS.admin}/tax-collection/arrears`, FaChevronCircleRight, COLORS.red),
+  // Procurement & Vendors
+  createMenuItem("Procurement", ["admin"], undefined, MdBusinessCenter, COLORS.purple, [
+    createMenuItem("Vendor Management", ["admin"], undefined, MdPeople, COLORS.red, [
+      createMenuItem("Vendor Registration", ["admin"], `${BASE_URLS.admin}/manage-vendor/registration`, MdPersonAdd, COLORS.blue),
+      createMenuItem("Vendor Directory", ["admin"], `${BASE_URLS.admin}/manage-vendor/view`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Bulk Vendor Upload", ["admin"], `${BASE_URLS.admin}/manage-vendor/bulk-upload`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Vendor Analytics", ["admin"], undefined, FaChartBar, COLORS.teal, [
+        createMenuItem("Bid Participation Summary", ["admin"], `${BASE_URLS.admin}/reports/vendor-participation`, FaChevronCircleRight, COLORS.blue),
+        createMenuItem("Earnest Money Status", ["admin"], `${BASE_URLS.admin}/reports/earnest-money`, FaChevronCircleRight, COLORS.green),
+        createMenuItem("Technical Compliance", ["admin"], `${BASE_URLS.admin}/reports/technical-compliance`, FaChevronCircleRight, COLORS.purple),
+      ]),
     ]),
-    createMenuItem("Expenditure Tracking", ["admin"], undefined, MdMoney, COLORS.green, [
-      createMenuItem("Scheme Expenditure", ["admin"], `${BASE_URLS.admin}/expenditure/schemes`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Office Expenses", ["admin"], `${BASE_URLS.admin}/expenditure/office`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Tender Management", ["admin"], undefined, FaChevronCircleRight, COLORS.green, [
+      createMenuItem("Tender Creation", ["admin"], undefined, FaChevronDown, COLORS.teal, [
+        createMenuItem("Create New Tender", ["admin"], `${BASE_URLS.admin}/manage-tender/add`, FaChevronCircleRight, COLORS.green),
+        createMenuItem("Tender Templates", ["admin"], `${BASE_URLS.admin}/manage-tender/templates`, FaChevronCircleRight, COLORS.blue),
+      ]),
+      createMenuItem("Active Tenders", ["admin"], `${BASE_URLS.admin}/manage-tender/view`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Upload Tenders", ["admin"], `${BASE_URLS.admin}/manage-tender/upload`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Tender Status Report", ["admin"], `${BASE_URLS.admin}/manage-tender/tender-status-report`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Terms Management", ["admin"], undefined, FaChevronDown, COLORS.orange, [
+        createMenuItem("Manage Terms", ["admin"], `${BASE_URLS.admin}/manage-tender/manage-terms`, FaChevronCircleRight, COLORS.orange),
+        createMenuItem("Add New Term", ["admin"], `${BASE_URLS.admin}/manage-tender/add-terms`, FaChevronCircleRight, COLORS.blue),
+      ]),
+    ]),
+    createMenuItem("Bid Processing", ["admin"], undefined, FaChevronCircleRight, COLORS.yellow, [
+      createMenuItem("Bid Evaluation", ["admin"], undefined, FaChevronDown, COLORS.orange, [
+        createMenuItem("Technical Evaluation", ["admin"], `${BASE_URLS.admin}/manage-tender/addtechnicaldetails`, FaChevronCircleRight, COLORS.teal),
+        createMenuItem("Financial Evaluation", ["admin"], `${BASE_URLS.admin}/manage-tender/addfinanicaldetails`, FaChevronCircleRight, COLORS.red),
+        createMenuItem("Financial Bid Modification", ["admin"], `${BASE_URLS.admin}/manage-tender/addfinanicaldetails/modify`, FaChevronCircleRight, COLORS.red),
+      ]),
+      createMenuItem("Bidder Management", ["admin"], `${BASE_URLS.admin}/manage-tender/addbidderdetails`, FaChevronCircleRight, COLORS.yellow),
+    ]),
+    createMenuItem("Contract Management", ["admin"], undefined, FaChevronCircleRight, COLORS.indigo, [
+      createMenuItem("Award Process", ["admin"], undefined, FaChevronDown, COLORS.red, [
+        createMenuItem("Work Orders", ["admin"], `${BASE_URLS.admin}/manage-tender/workorderdetails`, FaChevronCircleRight, COLORS.red),
+        createMenuItem("Contract Awards", ["admin"], `${BASE_URLS.admin}/manage-tender/awardofcontract`, FaChevronCircleRight, COLORS.indigo),
+        createMenuItem("Awards Status", ["admin"], `${BASE_URLS.admin}/manage-tender/workorder-status`, FaChevronCircleRight, COLORS.indigo),
+      ]),
+      createMenuItem("Modifications", ["admin"], undefined, FaChevronDown, COLORS.pink, [
+        createMenuItem("Tender Edits", ["admin"], `${BASE_URLS.admin}/manage-tender/edit`, FaChevronCircleRight, COLORS.orange),
+        createMenuItem("Tender Cancellations", ["admin"], `${BASE_URLS.admin}/manage-tender/cancel-tender`, FaChevronCircleRight, COLORS.red),
+        createMenuItem("Tender Corrigendum", ["admin"], `${BASE_URLS.admin}/manage-tender/corrigendum`, FaChevronCircleRight, COLORS.cyan),
+        createMenuItem("Work Order Modification", ["admin"], `${BASE_URLS.admin}/manage-tender/workorder-modification`, FaChevronCircleRight, COLORS.indigo),
+      ]),
+    ]),
+    createMenuItem("Quotation Management", ["admin"], undefined, FaChevronCircleRight, COLORS.green, [
+      createMenuItem("Create Quotation", ["admin"], `${BASE_URLS.admin}/manage-qatation/create`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("View Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/view`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Publish Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/publish`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Comparative Statements", ["admin"], `${BASE_URLS.admin}/manage-qatation/comparative-statement`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Bidder Management", ["admin"], `${BASE_URLS.admin}/manage-qatation/bidders`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Published Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/published`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Order Management", ["admin"], `${BASE_URLS.admin}/manage-qatation/orders`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Quotation Reports", ["admin"], `${BASE_URLS.admin}/manage-qatation/reports`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("Payment Processing", ["admin"], `${BASE_URLS.admin}/manage-qatation/payment`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Vendor Relations", ["admin"], `${BASE_URLS.admin}/manage-qatation/vendor`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Quotation Status", ["admin"], `${BASE_URLS.admin}/manage-qatation/status`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Quotation Analytics", ["admin"], `${BASE_URLS.admin}/manage-qatation/analytics`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Print Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/orders/print-menu`, FaChevronCircleRight, COLORS.green),
     ]),
   ]),
 
-  // APA Reports
-  createMenuItem("APA Reports", ["admin"], undefined, MdAssessment, COLORS.purple, [
-    ...apaReportItems(BASE_URLS.admin),
+  // Finance & Accounting
+  createMenuItem("Finance", ["admin"], undefined, MdMoney, COLORS.indigo, [
+    createMenuItem("Transactions", ["admin"], undefined, FaChevronCircleRight, COLORS.indigo, [
+      createMenuItem("Payment Records", ["admin"], `${BASE_URLS.admin}/addpaymentdetails`, FaChevronCircleRight, COLORS.indigo),
+      createMenuItem("Edit Payment Details", ["admin"], `${BASE_URLS.admin}/editpaymentdetails`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Verify Payment Details", ["admin"], `${BASE_URLS.admin}/verifypaymentdetails`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Verify Deduction", ["admin"], `${BASE_URLS.admin}/verify-deduction`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("Receipt Management", ["admin"], `${BASE_URLS.admin}/payments/receipts`, FaChevronCircleRight, COLORS.green),
+    ]),
+    createMenuItem("Compliance", ["admin"], undefined, FaChevronCircleRight, COLORS.red, [
+      createMenuItem("Tax Compliance", ["admin"], undefined, FaChevronDown, COLORS.yellow, [
+        createMenuItem("GST Register", ["admin"], `${BASE_URLS.admin}/register/gst-register`, FaChevronCircleRight, COLORS.red),
+        createMenuItem("Income Tax", ["admin"], `${BASE_URLS.admin}/register/income-tax`, FaChevronCircleRight, COLORS.red),
+      ]),
+      createMenuItem("Deposits", ["admin"], undefined, FaChevronDown, COLORS.teal, [
+        createMenuItem("Security Deposits", ["admin"], `${BASE_URLS.admin}/register/security`, FaChevronCircleRight, COLORS.yellow),
+        createMenuItem("Earnest Money", ["admin"], `${BASE_URLS.admin}/register/earnest-money`, FaChevronCircleRight, COLORS.red),
+      ]),
+      createMenuItem("Ponds Inventory", ["admin"], `${BASE_URLS.admin}/register/ponds`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Pond Lease Register", ["admin"], `${BASE_URLS.admin}/register/pond-lease`, FaChevronCircleRight, COLORS.green),
+    ]),
+    createMenuItem("Reports & Analytics", ["admin"], undefined, MdAnalytics, COLORS.blue, [
+      createMenuItem("Financial Reports", ["admin"], undefined, FaChartBar, COLORS.green, [
+        createMenuItem("Budget Analysis", ["admin"], `${BASE_URLS.admin}/reports/budget`, FaChevronCircleRight, COLORS.blue),
+        createMenuItem("Expenditure Summary", ["admin"], `${BASE_URLS.admin}/reports/expenditure`, FaChevronCircleRight, COLORS.green),
+      ]),
+      createMenuItem("Performance Metrics", ["admin"], `${BASE_URLS.admin}/reports/performance`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Other Reports", ["admin"], `${BASE_URLS.admin}/reports`, FaChevronCircleRight, COLORS.indigo),
+    ]),
   ]),
 
-  // Public Services
-  createMenuItem("Public Services", ["admin"], undefined, MdPeople, COLORS.orange, [
-    createMenuItem("Water Tanker Service", ["admin"], undefined, FaTruck, COLORS.blue, [
+  // Tubewell Management
+  createMenuItem("Tubewell Management", ["admin"], undefined, MdBuild, COLORS.teal, [
+    createMenuItem("Material Stock", ["admin"], `${BASE_URLS.admin}/tubewell/materials`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Mistri Management", ["admin"], `${BASE_URLS.admin}/tubewell/mistri`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Labor Rates", ["admin"], `${BASE_URLS.admin}/tubewell/labor-rate`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("Repair Requests", ["admin"], `${BASE_URLS.admin}/tubewell/requests`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Work Orders", ["admin"], `${BASE_URLS.admin}/tubewell/work-orders`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("Bills (Mustor)", ["admin"], `${BASE_URLS.admin}/tubewell/bills`, FaChevronCircleRight, COLORS.green),
+  ]),
+
+  // Community Services
+  createMenuItem("Community Services", ["admin"], undefined, MdHolidayVillage, COLORS.cyan, [
+    createMenuItem("Village Management", ["admin"], undefined, MdHolidayVillage, COLORS.cyan, [
+      createMenuItem("Add Villages", ["admin"], `${BASE_URLS.admin}/manage-villages/add-village`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("View Villages", ["admin"], `${BASE_URLS.admin}/manage-villages/view`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Village Population", ["admin"], `${BASE_URLS.admin}/manage-villages/population`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Village Education", ["admin"], `${BASE_URLS.admin}/manage-villages/education`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Village Infrastructure", ["admin"], `${BASE_URLS.admin}/manage-villages/infrastructure`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Village Health", ["admin"], `${BASE_URLS.admin}/manage-villages/health`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Village Agriculture", ["admin"], `${BASE_URLS.admin}/manage-villages/agriculture`, FaChevronCircleRight, COLORS.cyan),
+    ]),
+    createMenuItem("Water Tanker Management", ["admin"], undefined, FaTruck, COLORS.blue, [
+      createMenuItem("Service Fee Management", ["admin"], `${BASE_URLS.admin}/water-tanker/fees`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Tanker Scheduling", ["admin"], `${BASE_URLS.admin}/water-tanker/schedule`, FaChevronCircleRight, COLORS.yellow),
       createMenuItem("Tanker Requests", ["admin"], `${BASE_URLS.admin}/water-tanker/requests`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Tanker Maintenance", ["admin"], `${BASE_URLS.admin}/water-tanker/availability`, FaChevronCircleRight, COLORS.purple),
     ]),
@@ -298,8 +415,6 @@ export const adminMenuItems: MenuItemProps[] = [
         createMenuItem("Staff Directory", ["admin", "superadmin"], `${BASE_URLS.admin}/staff`, FaChevronCircleRight, COLORS.red),
       ]),
       createMenuItem("Personnel Directory", ["admin", "superadmin"], `${BASE_URLS.admin}/viewmenberdetails`, FaChevronCircleRight, COLORS.purple),
-      createMenuItem("Staff Attendance Control", ["admin"], `${BASE_URLS.admin}/staff-attendance`, MdDateRange, COLORS.teal),
-      createMenuItem("Leave Management", ["admin"], `${BASE_URLS.admin}/leave`, MdCalendarToday, COLORS.pink),
     ]),
     createMenuItem("System Configuration", ["admin", "superadmin"], undefined, FaChevronCircleRight, COLORS.red, [
       createMenuItem("Services", ["admin", "superadmin"], undefined, FaChevronDown, COLORS.purple, [
@@ -326,45 +441,99 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("View Notices", ["admin"], `${BASE_URLS.admin}/notice/view`, FaChevronCircleRight, COLORS.cyan),
     ]),
   ]),
-
-  createMenuItem("Profile & Account", ["admin"], undefined, MdAccountCircle, COLORS.purple, [
-    createMenuItem("Security Settings", ["admin"], undefined, MdSecurity, COLORS.red, [
-      createMenuItem("Change Password", ["admin"], `${BASE_URLS.admin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
-    ]),
-  ]),
 ];
 
 // =============== STAFF MENU ===============
+// =============== STAFF MENU (ENHANCED) ===============
 export const employeeMenuItems: MenuItemProps[] = [
   createMenuItem("Staff Dashboard", ["staff"], `${BASE_URLS.staff}/home`, MdDashboard, COLORS.blue),
 
   // Certificate Processing (expanded)
   createMenuItem("Certificate Processing", ["staff"], undefined, MdAssignment, COLORS.red, [
     createMenuItem("Inheritance Certificate", ["staff"], undefined, FaRegFileAlt, COLORS.yellow, [
-      createMenuItem("New Application", ["staff"], `${BASE_URLS.staff}/manage-warish/application`, FaChevronCircleRight, COLORS.teal),
-      createMenuItem("Document Upload", ["staff"], `${BASE_URLS.staff}/manage-warish/pending-uploaddoc`, FaChevronCircleRight, COLORS.teal),
-      createMenuItem("Verification", ["staff"], `${BASE_URLS.staff}/manage-warish/verify-document`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("Process Applications", ["staff"], `${BASE_URLS.staff}/warish/process`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Verify Assigned", ["staff"], `${BASE_URLS.staff}/warish/view-assigned`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("Issue Certificate", ["staff"], `${BASE_URLS.staff}/warish/issue`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Apply Corrections", ["staff"], `${BASE_URLS.staff}/warish/apply-correction`, FaChevronCircleRight, COLORS.red),
     ]),
     createMenuItem("Land Conversion NOC", ["staff"], undefined, FaRegFileAlt, COLORS.green, [
-      createMenuItem("New Application", ["staff"], `${BASE_URLS.staff}/manage-land-conversion/application`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Verification", ["staff"], `${BASE_URLS.staff}/manage-land-conversion/verify`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("New Applications", ["staff"], `${BASE_URLS.staff}/land-conversion/new`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Document Verification", ["staff"], `${BASE_URLS.staff}/land-conversion/verify`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("Inspection Reports", ["staff"], `${BASE_URLS.staff}/land-conversion/inspection`, FaChevronCircleRight, COLORS.blue),
     ]),
     createMenuItem("Linkage Certificate", ["staff"], undefined, FaRegFileAlt, COLORS.blue, [
-      createMenuItem("New Application", ["staff"], `${BASE_URLS.staff}/manage-linkage/application`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Validation", ["staff"], `${BASE_URLS.staff}/manage-linkage/validate`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("Application Processing", ["staff"], `${BASE_URLS.staff}/linkage/process`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Ownership Verification", ["staff"], `${BASE_URLS.staff}/linkage/verify`, FaChevronCircleRight, COLORS.green),
     ]),
+    createMenuItem("Bulk Processing", ["staff"], `${BASE_URLS.staff}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
+    createMenuItem("Certificate Status", ["staff"], `${BASE_URLS.staff}/certificates/status`, MdAssessment, COLORS.purple),
+    createMenuItem("Print Certificates", ["staff"], `${BASE_URLS.staff}/certificates/print`, MdPrint, COLORS.orange),
   ]),
 
-  // Profile & Account
-  createMenuItem("Profile & Account", ["staff"], undefined, MdAccountCircle, COLORS.purple, [
-    createMenuItem("View Profile", ["staff"], `${BASE_URLS.staff}/profile`, FaChevronCircleRight, COLORS.purple),
+  // Work & Tasks (expanded)
+  createMenuItem("Work & Tasks", ["staff"], undefined, MdAssignmentTurnedIn, COLORS.cyan, [
+    createMenuItem("My Tasks", ["staff"], `${BASE_URLS.staff}/tasks`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Team Tasks", ["staff"], `${BASE_URLS.staff}/tasks/team`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Task Calendar", ["staff"], `${BASE_URLS.staff}/tasks/calendar`, MdCalendarToday, COLORS.orange),
+    createMenuItem("Work Orders", ["staff"], `${BASE_URLS.staff}/work-orders`, MdWork, COLORS.red),
+    createMenuItem("Site Inspection Reports", ["staff"], `${BASE_URLS.staff}/inspections`, MdAssignment, COLORS.teal),
+    createMenuItem("Task Reports", ["staff"], `${BASE_URLS.staff}/tasks/reports`, FaChartBar, COLORS.purple),
+  ]),
+
+  // Procurement & Tenders (new)
+  createMenuItem("Procurement & Tenders", ["staff"], undefined, MdBusinessCenter, COLORS.purple, [
+    createMenuItem("View Tenders", ["staff"], `${BASE_URLS.staff}/tenders/view`, MdSearch, COLORS.blue),
+    createMenuItem("Bid Preparation", ["staff"], `${BASE_URLS.staff}/tenders/bid-prep`, MdAssignment, COLORS.green),
+    createMenuItem("Vendor Communication", ["staff"], `${BASE_URLS.staff}/vendors/communication`, MdPeople, COLORS.orange),
+    createMenuItem("Quotations", ["staff"], `${BASE_URLS.staff}/quotations`, MdReceipt, COLORS.cyan),
+    createMenuItem("Contract Details", ["staff"], `${BASE_URLS.staff}/contracts`, FaFileContract, COLORS.red),
+  ]),
+
+  // Financial Tasks (new)
+  createMenuItem("Financial Tasks", ["staff"], undefined, MdAttachMoney, COLORS.lime, [
+    createMenuItem("Payment Processing", ["staff"], `${BASE_URLS.staff}/finance/payments`, MdPayment, COLORS.green),
+    createMenuItem("Receipt Generation", ["staff"], `${BASE_URLS.staff}/finance/receipts`, MdReceipt, COLORS.blue),
+    createMenuItem("Expense Reporting", ["staff"], `${BASE_URLS.staff}/finance/expenses`, MdAnalytics, COLORS.orange),
+    createMenuItem("Budget Tracking", ["staff"], `${BASE_URLS.staff}/finance/budget`, MdInsertChart, COLORS.purple),
+  ]),
+
+  // Community Services (expanded)
+  createMenuItem("Community Services", ["staff"], undefined, FaTruck, COLORS.blue, [
+    createMenuItem("Village Management", ["staff"], undefined, MdHolidayVillage, COLORS.cyan, [
+      createMenuItem("Mouza Details", ["staff"], `${BASE_URLS.staff}/village/mouza`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Sansad Details", ["staff"], `${BASE_URLS.staff}/village/sansad`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Member Details", ["staff"], `${BASE_URLS.staff}/village/member`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Population Entry", ["staff"], `${BASE_URLS.staff}/village/population`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Population Summary", ["staff"], `${BASE_URLS.staff}/village/population-summary`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Voter Details", ["staff"], `${BASE_URLS.staff}/village/voter`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Toilet Details", ["staff"], `${BASE_URLS.staff}/village/toilet`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Water Details", ["staff"], `${BASE_URLS.staff}/village/water`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Education Details", ["staff"], `${BASE_URLS.staff}/village/education`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Village Report", ["staff"], `${BASE_URLS.staff}/village/report`, FaChevronCircleRight, COLORS.cyan),
+    ]),
+    createMenuItem("Water Tanker Booking", ["staff"], `${BASE_URLS.staff}/water-tanker/booking`, FaChevronCircleRight, COLORS.yellow),
+    createMenuItem("Service History", ["staff"], `${BASE_URLS.staff}/water-tanker/history`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Grievance Redressal", ["staff"], `${BASE_URLS.staff}/grievances`, MdFeedback, COLORS.orange),
+    createMenuItem("Public Feedback", ["staff"], `${BASE_URLS.staff}/feedback`, MdAnnouncement, COLORS.green),
+  ]),
+
+  // Personal & Development (expanded)
+  createMenuItem("Personal & Development", ["staff"], undefined, MdPersonAdd, COLORS.purple, [
+    createMenuItem("Leave Management", ["staff"], undefined, FaChevronCircleRight, COLORS.pink, [
+      createMenuItem("Apply Leave", ["staff"], `${BASE_URLS.staff}/leave/apply`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Leave Balance", ["staff"], `${BASE_URLS.staff}/leave/balance`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Leave History", ["staff"], `${BASE_URLS.staff}/leave/history`, FaChevronCircleRight, COLORS.orange),
+    ]),
+    createMenuItem("Attendance", ["staff"], `${BASE_URLS.staff}/attendance`, MdDateRange, COLORS.teal),
+    createMenuItem("Training", ["staff"], undefined, FaChevronCircleRight, COLORS.purple, [
+      createMenuItem("Available Courses", ["staff"], `${BASE_URLS.staff}/training/courses`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("My Certifications", ["staff"], `${BASE_URLS.staff}/training/certifications`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Training Calendar", ["staff"], `${BASE_URLS.staff}/training/calendar`, FaChevronCircleRight, COLORS.orange),
+    ]),
     createMenuItem("Performance Review", ["staff"], `${BASE_URLS.staff}/performance`, MdAnalytics, COLORS.red),
-    createMenuItem("Security Settings", ["staff"], undefined, MdSecurity, COLORS.red, [
-      createMenuItem("Change Password", ["staff"], `${BASE_URLS.staff}/profile/change-password`, FaChevronCircleRight, COLORS.red),
-    ]),
   ]),
 
-  // Reports & Analytics
+  // Reports & Analytics (new)
   createMenuItem("Reports & Analytics", ["staff"], undefined, MdAnalytics, COLORS.teal, [
     createMenuItem("Daily Reports", ["staff"], `${BASE_URLS.staff}/reports/daily`, FaChartBar, COLORS.blue),
     createMenuItem("Monthly Summaries", ["staff"], `${BASE_URLS.staff}/reports/monthly`, FaChartBar, COLORS.green),
@@ -373,7 +542,7 @@ export const employeeMenuItems: MenuItemProps[] = [
     createMenuItem("Financial Reports", ["staff"], `${BASE_URLS.staff}/reports/finance`, MdMoney, COLORS.lime),
   ]),
 
-  // Communication
+  // Communication (new)
   createMenuItem("Communication", ["staff"], undefined, MdAnnouncement, COLORS.orange, [
     createMenuItem("Notifications", ["staff"], `${BASE_URLS.staff}/notifications`, MdNotifications, COLORS.red),
     createMenuItem("Announcements", ["staff"], `${BASE_URLS.staff}/announcements`, MdAnnouncement, COLORS.blue),
@@ -381,7 +550,7 @@ export const employeeMenuItems: MenuItemProps[] = [
     createMenuItem("Messages", ["staff"], `${BASE_URLS.staff}/messages`, MdFeedback, COLORS.purple),
   ]),
 
-  // Document Management
+  // Document Management (new)
   createMenuItem("Document Management", ["staff"], undefined, MdFolder, COLORS.indigo, [
     createMenuItem("Document Upload", ["staff"], `${BASE_URLS.staff}/documents/upload`, MdCloudUpload, COLORS.blue),
     createMenuItem("Document Search", ["staff"], `${BASE_URLS.staff}/documents/search`, MdSearch, COLORS.green),
@@ -395,26 +564,43 @@ export const agencyMenuItems: MenuItemProps[] = [
   createMenuItem("Dashboard", ["agency"], `${BASE_URLS.agency}/home`, MdDashboard, COLORS.blue),
 
   createMenuItem("Work Management", ["agency"], undefined, MdWork, COLORS.green, [
+    createMenuItem("Assigned Works", ["agency"], `${BASE_URLS.agency}/works`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Work Progress Update", ["agency"], `${BASE_URLS.agency}/works/progress`, FaChevronCircleRight, COLORS.teal),
     createMenuItem("Upload Work Photos", ["agency"], `${BASE_URLS.agency}/works/photos`, MdImage, COLORS.orange),
+    createMenuItem("Site Inspection Reports", ["agency"], `${BASE_URLS.agency}/works/inspection`, MdAssignment, COLORS.blue),
   ]),
 
-  createMenuItem("Certificates & Documents", ["admin"], undefined, MdDescription, COLORS.red, [
-    ...documentGenerationItems(BASE_URLS.agency),
+  createMenuItem("Measurement & Billing", ["agency"], undefined, MdReceipt, COLORS.purple, [
+    createMenuItem("Measurement Book", ["agency"], `${BASE_URLS.agency}/mb`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Bill Submission", ["agency"], `${BASE_URLS.agency}/bill/submit`, MdPayment, COLORS.green),
+    createMenuItem("Bill Status", ["agency"], `${BASE_URLS.agency}/bill/status`, MdAnalytics, COLORS.orange),
+    createMenuItem("Deduction Details", ["agency"], `${BASE_URLS.agency}/bill/deduction`, MdMoney, COLORS.red),
   ]),
 
-  createMenuItem("Security Deposit", ["agency"], `${BASE_URLS.agency}/security`, MdLock, COLORS.teal),
+  createMenuItem("Contract & AOC", ["agency"], undefined, MdDescription, COLORS.orange, [
+    createMenuItem("AOC Details", ["agency"], `${BASE_URLS.agency}/aoc`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Agreement Documents", ["agency"], `${BASE_URLS.agency}/agreement`, FaFileContract, COLORS.red),
+    createMenuItem("Security Deposit", ["agency"], `${BASE_URLS.agency}/security`, MdLock, COLORS.teal),
+  ]),
 
   createMenuItem("Payments", ["agency"], undefined, MdPayment, COLORS.teal, [
     createMenuItem("Payment History", ["agency"], `${BASE_URLS.agency}/payments`, MdPayment, COLORS.green),
     createMenuItem("Pending Payments", ["agency"], `${BASE_URLS.agency}/payments/pending`, MdMoney, COLORS.red),
+    createMenuItem("Receipts", ["agency"], `${BASE_URLS.agency}/payments/receipts`, MdReceipt, COLORS.blue),
   ]),
 
-  createMenuItem("Profile & Account", ["agency"], undefined, MdAccountCircle, COLORS.purple, [
-    createMenuItem("View Profile", ["agency"], `${BASE_URLS.agency}/profile`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("Security Settings", ["agency"], undefined, MdSecurity, COLORS.red, [
-      createMenuItem("Change Password", ["agency"], `${BASE_URLS.agency}/profile/change-password`, FaChevronCircleRight, COLORS.red),
-    ]),
+  createMenuItem("Documents", ["agency"], undefined, MdFolder, COLORS.indigo, [
+    createMenuItem("Upload Documents", ["agency"], `${BASE_URLS.agency}/documents/upload`, MdCloudUpload, COLORS.blue),
+    createMenuItem("My Documents", ["agency"], `${BASE_URLS.agency}/documents`, MdFolder, COLORS.green),
   ]),
+
+  createMenuItem("Communication", ["agency"], undefined, MdAnnouncement, COLORS.cyan, [
+    createMenuItem("Notices", ["agency"], `${BASE_URLS.agency}/notices`, MdAnnouncement, COLORS.orange),
+    createMenuItem("Messages", ["agency"], `${BASE_URLS.agency}/messages`, MdFeedback, COLORS.blue),
+    createMenuItem("Meeting Schedule", ["agency"], `${BASE_URLS.agency}/meetings`, MdCalendarToday, COLORS.green),
+  ]),
+
+  createMenuItem("Profile", ["agency"], `${BASE_URLS.agency}/profile`, MdAccountCircle, COLORS.purple),
 ];
 
 // =============== SUPER ADMIN MENU ===============
@@ -448,12 +634,6 @@ export const superAdminMenuItems: MenuItemProps[] = [
       createMenuItem("Public User Menu", ["superadmin"], `${BASE_URLS.superadmin}/menu-acces-control/publicuser`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("Employee Menu", ["superadmin"], `${BASE_URLS.superadmin}/menu-acces-control/employeeuser`, FaChevronCircleRight, COLORS.purple),
       createMenuItem("Admin Menu", ["superadmin"], `${BASE_URLS.superadmin}/menu-acces-control/adminuser`, FaChevronCircleRight, COLORS.purple),
-    ]),
-  ]),
-
-  createMenuItem("Profile & Account", ["superadmin"], undefined, MdAccountCircle, COLORS.purple, [
-    createMenuItem("Security Settings", ["superadmin"], undefined, MdSecurity, COLORS.red, [
-      createMenuItem("Change Password", ["superadmin"], `${BASE_URLS.superadmin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
     ]),
   ]),
 ];
