@@ -1,0 +1,111 @@
+{
+  "cover": {
+    "registerNo": "MB Register No : 07 / 2025–26",
+    "office": "Office : Dhalpara Gram Panchayat, Jalpaiguri",
+    "year": "Financial Year : 2025–2026"
+  },
+
+  "schemeDetails": [
+    ["1) Name of Work", "Construction of CC Road from Litan Fakir House to Mijanur Fakir House at Dhalpara Sansad"],
+    ["2) AAP with Work Id", "112782965"],
+    ["3) Location", "Dhalpara, Jalpaiguri"],
+    ["4) Fund", "15th Finance Commission (CFC)"],
+    ["5) Executing Agency", "Prodhan No.-3, Dhalpara Gram Panchayat"],
+    ["6) Concerned Upasamity", "Artho-O-Parikalpana Upasamity"],
+    ["7) Date of Upasamity Meeting", "12/01/2026"],
+    ["8) Date of General Body Meeting", "13/01/2026"],
+    ["9) Date of Estimate Preparation", "14/01/2026"],
+    ["10) Date of Scheme Approval", "15/01/2026"],
+    ["11) Estimated Amount", "Rs. 1,50,000.00"],
+    ["12) Tendered Amount", "Rs. 1,47,200.00"],
+    ["13) NIT No.", "11/DGP/2026"],
+    ["14) NIT Memo No. & Date", "11/DGP/2026 dt. 14/01/2026"],
+    ["15) Comparative Statement Approval Date", "18/01/2026"],
+    ["16) Lowest Offered Rate", "-1.85 %"],
+    ["17) Name of Agency", "M/s ABC Construction"],
+    ["18) Agency PAN", "ABCDE1234F"],
+    ["19) Agency GSTIN", "19ABCDE1234F1Z5"],
+    ["20) LOA Memo No. & Date", "LOA-05/DGP dt. 19/01/2026"],
+    ["21) Agreement Date", "20/01/2026"],
+    ["22) Work Order Memo No. & Date", "WO-07/DGP dt. 20/01/2026"],
+    ["23) Date of Commencement of Work", "21/01/2026"],
+    ["24) Date of Completion of Work", "28/01/2026"],
+    ["25) Date of Final Measurement", "28/01/2026"]
+  ],
+
+  "estimateItems": [
+    {
+      "description": "Earth work in excavation of foundation trenches in ordinary soil including dressing of sides and ramming of bottoms as per specification.",
+      "unit": "cum",
+      "rate": 210,
+      "measurements": [
+        { "nos": 1, "l": 15.0, "b": 1.2, "d": 1.5, "qty": 27.0 },
+        { "nos": 1, "l": 12.0, "b": 1.2, "d": 1.5, "qty": 21.6 },
+        { "nos": 1, "l": 10.0, "b": 1.2, "d": 1.5, "qty": 18.0 }
+      ]
+    },
+    {
+      "description": "Filling in foundation trenches and plinth with excavated earth including watering and ramming complete.",
+      "unit": "cum",
+      "rate": 95,
+      "measurements": [
+        { "nos": 1, "l": 15.0, "b": 1.0, "d": 1.2, "qty": 18.0 },
+        { "nos": 1, "l": 12.0, "b": 1.0, "d": 1.2, "qty": 14.4 }
+      ]
+    },
+    {
+      "description": "Plain cement concrete (1:4:8) with stone aggregate in foundation including cost and conveyance of materials and curing complete.",
+      "unit": "cum",
+      "rate": 4500,
+      "measurements": [
+        { "nos": 1, "l": 15.0, "b": 0.9, "d": 0.1, "qty": 1.35 },
+        { "nos": 1, "l": 12.0, "b": 0.9, "d": 0.1, "qty": 1.08 },
+        { "nos": 1, "l": 10.0, "b": 0.9, "d": 0.1, "qty": 0.90 }
+      ]
+    },
+    {
+      "description": "Brick work with well burnt bricks in cement mortar (1:6) in foundation and plinth including scaffolding and curing.",
+      "unit": "cum",
+      "rate": 6200,
+      "measurements": [
+        { "nos": 1, "l": 15.0, "b": 0.23, "d": 0.6, "qty": 2.07 },
+        { "nos": 1, "l": 12.0, "b": 0.23, "d": 0.6, "qty": 1.66 },
+        { "nos": 1, "l": 10.0, "b": 0.23, "d": 0.6, "qty": 1.38 }
+      ]
+    },
+    {
+      "description": "Supplying and laying damp proof course with polythene sheet including overlaps complete.",
+      "unit": "sqm",
+      "rate": 24,
+      "measurements": [
+        { "nos": 1, "l": 15.0, "b": 1.1, "d": 0, "qty": 16.5 },
+        { "nos": 1, "l": 12.0, "b": 1.1, "d": 0, "qty": 13.2 }
+      ]
+    },
+    {
+      "description": "Cement concrete flooring (1:2:4) including finishing smooth with neat cement slurry.",
+      "unit": "sqm",
+      "rate": 540,
+      "measurements": [
+        { "nos": 1, "l": 6.0, "b": 4.5, "d": 0, "qty": 27.0 },
+        { "nos": 1, "l": 5.0, "b": 4.5, "d": 0, "qty": 22.5 },
+        { "nos": 1, "l": 4.0, "b": 4.5, "d": 0, "qty": 18.0 }
+      ]
+    }
+  ],
+
+  "abstractItems": [
+    { "description": "Earth work in excavation", "unit": "cum", "qty": 66.6, "rate": 210, "amount": 13986 },
+    { "description": "Earth filling", "unit": "cum", "qty": 32.4, "rate": 95, "amount": 3078 },
+    { "description": "PCC (1:4:8)", "unit": "cum", "qty": 3.33, "rate": 4500, "amount": 14985 },
+    { "description": "Brick work (1:6)", "unit": "cum", "qty": 5.11, "rate": 6200, "amount": 31682 },
+    { "description": "DPC Polythene sheet", "unit": "sqm", "qty": 29.7, "rate": 24, "amount": 713 },
+    { "description": "Cement concrete flooring", "unit": "sqm", "qty": 67.5, "rate": 540, "amount": 36450 }
+  ],
+
+  "signatures": {
+    "measuredBy": "Measured By : Junior Engineer (Rural Infrastructure)",
+    "verifiedBy": "Verified By : Pradhan, Dhalpara Gram Panchayat",
+    "date": "Date : 28/01/2026"
+  }
+}

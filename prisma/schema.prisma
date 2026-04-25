@@ -1,0 +1,3734 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model GPProfile {
+  id                  String               @id @default(auto()) @map("_id") @db.ObjectId
+  gpname              String
+  gpaddress           String
+  nameinprodhan       String
+  gpcode              String
+  gpnameinshort       String
+  blockname           String
+  gpshortname         String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  linkageCertificates LinkageCertificate[]
+
+  @@map("gp_profiles")
+}
+
+model Visitor {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  totalVisitors Int
+  visitorOnline Int
+}
+
+enum UserRole {
+  user
+  admin
+  staff
+  superadmin
+  agency
+}
+
+enum UserStatus {
+  active
+  inactive
+}
+
+enum Designation {
+  Executive_Assistant
+  Nirman_Sahayak
+  Secretary
+  Sahayak
+  GPKarmee
+  Casual
+}
+
+model User {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  name            String?
+  email           String?        @unique
+  mobileNumber    String?        @unique
+  emailVerified   DateTime?
+  image           String?
+  password        String?
+  role            UserRole       @default(user)
+  // staff then degignation by enum
+  designation     Designation?
+  agencyDetails   AgencyDetails? @relation(fields: [agencyDetailsId], references: [id])
+  agencyDetailsId String?        @db.ObjectId
+  accounts        Account[]
+  sessions        Session[]
+
+  isTwoFactorEnabled    Boolean                @default(false)
+  twoFactorConfirmation TwoFactorConfirmation?
+  // Added security fields
+  failedLoginAttempts   Int                    @default(0) // Tracks consecutive failed attempts
+  //////////////////////////////////////////////////
+  // Session control (prevent multiple login)
+  //////////////////////////////////////////////////
+
+  sessionToken  String?   @unique
+  sessionExpiry DateTime?
+  lockoutExpiry DateTime? // Temporary lock expiration timestamp
+  imageKey      String?
+
+  userStatus UserStatus @default(active)
+
+  Leave          Leave[]
+  approvedLeaves Leave[]      @relation("ApproverLeaves")
+  attendances    Attendance[]
+
+  notifications                Notification[]
+  messagesSent                 Message[]                    @relation("MessagesSent")
+  messagesReceived             Message[]                    @relation("MessagesReceived")
+  warishapplicaton             WarishApplication[]
+  warishDocument               WarishDocument[]
+  bookings                     Booking[]
+  auditLog                     AuditLog[]
+  familyLineageCertificate     FamilyLineageCertificate[]
+  Quotation                    Quotation[]
+  Order                        Order[]
+  meetings                     Meeting[]                    @relation("MeetingCreatedBy")
+  meetingDocuments             MeetingDocument[]            @relation("MeetingDocumentUploadedBy")
+  nocApplications              NocApplication[]
+  domicileCertificateEnquiries DomicileCertificateEnquiry[]
+  landConversionApplications   LandConversionApplication[]
+  workEstimateItems            WorkEstimateItem[]
+  workMeasurementBooks         WorkMeasurementBook[]
+  workBillAbstracts            WorkBillAbstract[]
+  workBillDeductions           WorkBillDeduction[]
+  linkageApplications          LinkageApplication[]
+  noticeAcknowledgments        NoticeAcknowledgment[]
+}
+
+model Account {
+  id                String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String  @db.ObjectId
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  User User @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerAccountId])
+}
+
+model LoginAttempt {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String?
+  ipAddress String
+  success   Boolean
+  createdAt DateTime @default(now())
+}
+
+model BlockedIP {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  ipAddress String    @unique
+  expiresAt DateTime?
+}
+
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorToken {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model TwoFactorConfirmation {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  userId String @db.ObjectId
+  User   User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId])
+}
+
+model HeroSectionImage {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  heroImageDescription String
+  imageKey             String @unique
+  imageUrl             String
+}
+
+model GalleryImage {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  title              String
+  description        String?
+  category           String
+  cloudinaryPublicId String   @unique
+  imageUrl           String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("gallery_images")
+}
+
+enum Leavestatus {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+model Leave {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  User           User        @relation(fields: [userId], references: [id])
+  userId         String      @db.ObjectId
+  startDate      DateTime
+  endDate        DateTime
+  status         Leavestatus @default(pending)
+  reason         String
+  leaveType      String?
+  durationInDays Float?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  approver       User?       @relation("ApproverLeaves", fields: [approverId], references: [id])
+  approverId     String?     @db.ObjectId
+}
+
+model WarishApplication {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  reportingDate         DateTime
+  acknowlegment         String   @unique
+  applicantName         String
+  applicantMobileNumber String
+  relationwithdeceased  String
+  nameOfDeceased        String
+  dateOfDeath           DateTime
+
+  gender                    Gender
+  maritialStatus            MaritialStatus
+  fatherName                String
+  spouseName                String?
+  villageName               String
+  postOffice                String
+  warishDetails             WarishDetail[]
+  assingstaffId             String?                     @db.ObjectId
+  fieldreportRemark         String?
+  adminNoteRemark           String?
+  warishRefNo               String?
+  warishRefDate             DateTime?
+  approvalYear              String?
+  renewdate                 DateTime?
+  warishApplicationStatus   WarishApplicationStatus     @default(submitted)
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  User                      User?                       @relation(fields: [userId], references: [id])
+  userId                    String?                     @db.ObjectId
+  warishdocumentverified    Boolean                     @default(false)
+  digitallySigned           Boolean                     @default(false)
+  WarishDocument            WarishDocument[]
+  WarishModificationRequest WarishModificationRequest[]
+
+  @@index([applicantName, nameOfDeceased])
+}
+
+model WarishDetail {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  name                String
+  gender              Gender
+  relation            FamilyRelationship
+  livingStatus        LivingStatus
+  maritialStatus      MaritialStatus
+  hasbandName         String?
+  children            WarishDetail[]     @relation("ParentChild")
+  parent              WarishDetail?      @relation("ParentChild", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId            String?            @db.ObjectId
+  warishApplication   WarishApplication  @relation(fields: [warishApplicationId], references: [id], onDelete: Cascade)
+  warishApplicationId String             @db.ObjectId
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  @@index([name, warishApplicationId])
+}
+
+enum Gender {
+  male
+  female
+  other
+}
+
+enum MaritialStatus {
+  married
+  unmarried
+  divorced
+  widowed
+}
+
+enum LivingStatus {
+  alive
+  dead
+}
+
+enum WarishApplicationStatus {
+  submitted
+  pending
+  process
+  approved
+  rejected
+  cancelled
+  renewed
+}
+
+enum FamilyRelationship {
+  Son
+  Daughter
+  Father
+  Mother
+  Brother
+  Wife
+  Husband
+  Sister
+  Grandfather
+  Grandmother
+  Grandson
+  Granddaughter
+  Uncle
+  Aunt
+  Nephew
+  Niece
+  Cousin
+  Stepfather
+  Stepmother
+  Stepson
+  Stepdaughter
+  Stepbrother
+  Stepsister
+  HalfBrother
+  HalfSister
+  FatherInLaw
+  MotherInLaw
+  SonInLaw
+  DaughterInLaw
+  GranddaughterInLaw
+  BrotherInLaw
+  SisterInLaw
+  Greatgrandson
+  Greatgranddaughter
+  GreatgranddaughterInLaw
+  GreatNephew
+  GreatNiece
+}
+
+enum AgencyType {
+  FARM
+  INDIVIDUAL
+}
+
+model AgencyDetails {
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
+  name           String      @unique
+  agencyType     AgencyType  @default(INDIVIDUAL)
+  proprietorName String? // Added for farm agencies
+  mobileNumber   String?
+  email          String?
+  pan            String?
+  tin            String?
+  gst            String?
+  contactDetails String
+  cooperative    Boolean     @default(false)
+  Bidagency      Bidagency[]
+  Bid            Bid[]
+  Order          Order[]
+  users          User[]
+  Notice         Notice[]
+}
+
+model ApprovedActionPlanDetails {
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear       String
+  themeName           String
+  activityCode        String  @unique
+  activityName        String
+  activityDescription String
+  activityFor         String
+  sector              String
+  locationofAsset     String
+  estimatedCost       Int
+  totalduration       String
+  schemeName          String
+  generalFund         Int
+  scFund              Int
+  stFund              Int
+  isPublish           Boolean @default(false)
+
+  WorksDetail    WorksDetail[]
+  AggrementModel AggrementModel[]
+}
+
+model NitDetails {
+  id                            String        @id @default(auto()) @map("_id") @db.ObjectId
+  memoNumber                    Int
+  memoDate                      DateTime
+  isSupply                      Boolean       @default(false)
+  supplyitemname                String?
+  publishingDate                DateTime
+  documentDownloadFrom          DateTime
+  startTime                     DateTime
+  endTime                       DateTime
+  technicalBidOpeningDate       DateTime
+  financialBidOpeningDate       DateTime?
+  placeOfOpeningBids            String
+  bidValidity                   Int
+  isPublished                   Boolean       @default(false)
+  publishhardcopy               String?
+  nitCount                      String        @default("1st call")
+  createdAt                     DateTime      @default(now())
+  updatedAt                     DateTime      @updatedAt
+  documents                     Document[]
+  WorksDetail                   WorksDetail[]
+  percentageofworkvaluerequired Int           @default(60)
+  // Selected Tender Term Template IDs to include in this NIT's terms.
+  // If empty array ([]), default terms from constants/tenderterm.ts will be used when generating NIT PDF.
+  // If templates are selected, their terms will be combined with active individual tender terms.
+  // If no templates and no active individual terms exist, default terms will be used as fallback.
+  termsTemplateIds              String[]      @default([])
+  // NEW FIELD: NIT submission mode
+  nitMode                       NitMode       @default(ONLINE)
+}
+
+enum NitMode {
+  MANUAL
+  ONLINE
+}
+
+enum TenderStatus {
+  publish
+  published
+  ToBeOpened
+  TechnicalBidOpening
+  TechnicalEvaluation
+  FinancialBidOpening
+  FinancialEvaluation
+  AOC
+  Retender
+  Cancelled
+}
+
+enum WorkPhotoStatus {
+  onset
+  ongoing
+  complete
+}
+
+enum workStatus {
+  approved
+  tenderPublish
+  workorder
+  yettostart
+  workinprogress
+  workcompleted
+  billgenerated
+  billpaid
+}
+
+model WorksDetail {
+  id                          String                    @id @default(auto()) @map("_id") @db.ObjectId
+  workslno                    Int
+  participationFee            Int
+  earnestMoneyFee             Int
+  finalEstimateAmount         Int
+  tenderStatus                TenderStatus
+  nitDetailsId                String                    @db.ObjectId
+  nitDetails                  NitDetails                @relation(fields: [nitDetailsId], references: [id])
+  biddingAgencies             Bidagency[]
+  completionDate              DateTime?
+  workCommencementDate        DateTime?
+  createdAt                   DateTime                  @default(now())
+  updatedAt                   DateTime                  @updatedAt
+  AwardofContract             AwardofContract?          @relation(fields: [awardofContractId], references: [id])
+  approvedActionPlanDetailsId String                    @db.ObjectId
+  paymentDetails              PaymentDetails[]
+  workStatus                  workStatus                @default(approved)
+  boqPrepared                 Boolean                   @default(false)
+  ApprovedActionPlanDetails   ApprovedActionPlanDetails @relation(fields: [approvedActionPlanDetailsId], references: [id])
+  awardofContractId           String?                   @db.ObjectId
+  WorkOrderCancellation       WorkOrderCancellation[]
+  AOCDetails                  AOC[]
+  workEstimateItems           WorkEstimateItem[]
+  workMeasurementBooks        WorkMeasurementBook[]
+  workEstimate                WorkEstimate?
+  developmentProjects         DevelopmentProject[]
+  workBillAbstracts           WorkBillAbstract[]
+  workPhotos                  WorkPhoto[]
+}
+
+model Bidagency {
+  id                           String                      @id @default(auto()) @map("_id") @db.ObjectId
+  agencydetails                AgencyDetails               @relation(fields: [agencyDetailsId], references: [id])
+  biddingAmount                Int?
+  WorksDetail                  WorksDetail?                @relation(fields: [worksDetailId], references: [id])
+  worksDetailId                String?                     @db.ObjectId
+  agencyDetailsId              String                      @unique @db.ObjectId
+  technicalEvelution           TechnicalEvelutiondocument? @relation(fields: [technicalEvelutiondocumentId], references: [id])
+  technicalEvelutiondocumentId String?                     @db.ObjectId
+  workorderdetails             workorderdetails[]
+  AggrementModel               AggrementModel[]
+  earnestMoneyRegister         EarnestMoneyRegister[]
+  workPhotos                   WorkPhoto[]
+}
+
+model WorkPhoto {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  WorksDetail     WorksDetail     @relation(fields: [worksDetailId], references: [id])
+  worksDetailId   String          @db.ObjectId
+  Bidagency       Bidagency?      @relation(fields: [bidagencyId], references: [id])
+  bidagencyId     String?         @db.ObjectId
+  status          WorkPhotoStatus
+  imageUrl        String
+  publicId        String
+  isVerified      Boolean         @default(false)
+  isRejected      Boolean         @default(false)
+  rejectionReason String?
+  uploadedAt      DateTime        @default(now())
+  latitude        Float?
+  longitude       Float?
+}
+
+model TechnicalEvelutiondocument {
+  id                         String             @id @default(auto()) @map("_id") @db.ObjectId
+  credencial                 Credencial         @relation(fields: [credencialId], references: [id])
+  validityofdocument         Validityofdocument @relation(fields: [validityofdocumentId], references: [id])
+  byelow                     Boolean            @default(false)
+  pfregistrationupdatechalan Boolean            @default(false)
+  declaration                Boolean            @default(false)
+  machinary                  Boolean            @default(false)
+  qualify                    Boolean            @default(false)
+  remarks                    String?
+  bidagencyId                String             @db.ObjectId // Ensure this is correct
+  credencialId               String             @db.ObjectId
+  validityofdocumentId       String             @db.ObjectId
+  Bidagency                  Bidagency[]
+}
+
+model Credencial {
+  id                         String                       @id @default(auto()) @map("_id") @db.ObjectId
+  sixtyperamtput             Boolean
+  workorder                  Boolean                      @default(false)
+  paymentcertificate         Boolean                      @default(false)
+  comcertificat              Boolean                      @default(false)
+  TechnicalEvelutiondocument TechnicalEvelutiondocument[]
+}
+
+model Validityofdocument {
+  id                         String                       @id @default(auto()) @map("_id") @db.ObjectId
+  itreturn                   Boolean                      @default(false)
+  gst                        Boolean                      @default(false)
+  tradelicence               Boolean                      @default(false)
+  ptax                       Boolean                      @default(false)
+  TechnicalEvelutiondocument TechnicalEvelutiondocument[]
+}
+
+model AwardofContract {
+  id                 String             @id @default(auto()) @map("_id") @db.ObjectId
+  workodermenonumber String
+  workordeermemodate DateTime
+  isdelivery         Boolean            @default(false)
+  deliveryDate       DateTime?
+  workorderdetails   workorderdetails[]
+  WorksDetail        WorksDetail[]
+}
+
+enum EarnestMoneyStatus {
+  pending
+  paid
+  refunded
+  forfeited
+}
+
+model EarnestMoneyRegister {
+  id                 String             @id @default(auto()) @map("_id") @db.ObjectId
+  earnestMoneyAmount Int
+  paymentstatus      EarnestMoneyStatus @default(pending)
+  bidderName         Bidagency          @relation(fields: [bidderId], references: [id])
+  bidderId           String             @db.ObjectId
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  paymentDate        DateTime?
+  paymentMethod      PaymentMethod?
+  chequeNumber       String?
+  chequeDate         DateTime?
+}
+
+model workorderdetails {
+  id                     String          @id @default(auto()) @map("_id") @db.ObjectId
+  awardofcontractdetails AwardofContract @relation(fields: [awardofContractId], references: [id])
+  Bidagency              Bidagency?      @relation(fields: [bidagencyId], references: [id])
+  bidagencyId            String?         @db.ObjectId
+  awardofContractId      String          @db.ObjectId
+}
+
+model PaymentDetails {
+  id                    String             @id @default(auto()) @map("_id") @db.ObjectId
+  grossBillAmount       Int
+  lessIncomeTax         IncomeTaxRegister? @relation(fields: [incomeTaxRegisterId], references: [id])
+  lessLabourWelfareCess LabourWelfareCess? @relation(fields: [labourWelfareCessId], references: [id])
+  lessTdsCgst           TdsCgst?           @relation(fields: [tdsCgstId], references: [id])
+  lessTdsSgst           TdsSgst?           @relation(fields: [tdsSgstId], references: [id])
+  securityDeposit       SecrutityDeposit?  @relation(fields: [secrutityDepositId], references: [id])
+  billPaymentDate       DateTime
+  eGramVoucher          String
+  eGramVoucherDate      DateTime
+  gpmsVoucherNumber     String
+  gpmsVoucherDate       DateTime
+  billType              String
+  mbrefno               String
+  netAmt                Int
+  workcompletaitiondate DateTime?
+  isfinalbill           Boolean            @default(false)
+  isVerified            Boolean            @default(false)
+  secrutityDepositId    String             @db.ObjectId
+  incomeTaxRegisterId   String             @db.ObjectId
+  labourWelfareCessId   String             @db.ObjectId
+  tdsCgstId             String             @db.ObjectId
+  tdsSgstId             String             @db.ObjectId
+  WorksDetail           WorksDetail        @relation(fields: [worksDetailId], references: [id])
+  worksDetailId         String             @db.ObjectId
+}
+
+enum SecrutityDepositStatus {
+  paid
+  unpaid
+}
+
+model SecrutityDeposit {
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  securityDepositAmt Int
+  maturityDate       DateTime?
+  PaymentDetails     PaymentDetails[]
+  paymentMethod      PaymentMethod?
+  chequeNumber       String?
+  chequeDate         DateTime?
+  paymentDate        DateTime?
+  transactionID      String?
+  paymentstatus      SecrutityDepositStatus @default(unpaid)
+  createdAt          DateTime               @default(now())
+}
+
+enum PaymentMethod {
+  CASH
+  CHEQUE
+  ONLINE_TRANSFER
+}
+
+model IncomeTaxRegister {
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  incomeTaaxAmount Int
+  paid             Boolean          @default(false)
+  createdAt        DateTime         @default(now())
+  paidAt           DateTime?
+  paymentMethod    PaymentMethod?
+  chequeNumber     String?
+  PaymentDetails   PaymentDetails[]
+}
+
+model LabourWelfareCess {
+  id                   String           @id @default(auto()) @map("_id") @db.ObjectId
+  labourWelfarecessAmt Int
+  paid                 Boolean          @default(false)
+  createdAt            DateTime         @default(now())
+  PaymentDetails       PaymentDetails[]
+}
+
+model TdsCgst {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  tdscgstAmt     Int
+  paid           Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  PaymentDetails PaymentDetails[]
+}
+
+model TdsSgst {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  tdsSgstAmt     Int
+  paid           Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  PaymentDetails PaymentDetails[]
+}
+
+model AggrementModel {
+  id                          String                    @id @default(auto()) @map("_id") @db.ObjectId
+  aggrementno                 String
+  aggrementdate               DateTime
+  workdetails                 ApprovedActionPlanDetails @relation(fields: [approvedActionPlanDetailsId], references: [id])
+  acceptagency                Bidagency                 @relation(fields: [bidagencyId], references: [id])
+  approvedActionPlanDetailsId String                    @db.ObjectId
+  bidagencyId                 String                    @db.ObjectId
+}
+
+model PDF {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  filename   String
+  contentUrl String
+  createdAt  DateTime @default(now())
+}
+
+model TenderPublish {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  description      String
+  publishAuthority String
+  startdate        DateTime
+  enddate          DateTime
+  documentUrl      String
+  documentKey      String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model AdminMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  bgColor   String   @default("bg-blue-600")
+  textColor String   @default("text-white")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TubewellStock {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubewellType String
+  quantity     Int
+  lastUpdated  DateTime @default(now())
+}
+
+model News {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  date      DateTime @default(now())
+  fileUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Circular {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  content   String
+  date      DateTime @default(now())
+  fileUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tender {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  openDate    DateTime
+  closeDate   DateTime
+  fileUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum NotificationType {
+  INFO // = "INFO"
+  WARNING // = "WARNING"
+  ERROR // = "ERROR"
+  SUCCESS // = "SUCCESS"
+}
+
+model Notification {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String           @db.ObjectId
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  type      NotificationType @default(INFO)
+  link      String?
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId    String   @db.ObjectId
+  recipientId String   @db.ObjectId
+  content     String
+  createdAt   DateTime @default(now())
+  sender      User     @relation("MessagesSent", fields: [senderId], references: [id])
+  recipient   User     @relation("MessagesReceived", fields: [recipientId], references: [id])
+}
+
+model adminMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogPost {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  excerpt   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model UsefulLink {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FormDownload {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  category      String
+  downloadUrl   String
+  assetId       String
+  downloadCount Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Statistic {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  value     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Activity {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  action    String
+  details   String
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Complaint {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  details   String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GovernmentScheme {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  icon        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("government_schemes")
+}
+
+model Document {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  fileUrl     String
+  fileKey     String
+  nitId       String     @db.ObjectId
+  nit         NitDetails @relation(fields: [nitId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  Quotation   Quotation? @relation(fields: [quotationId], references: [id])
+  quotationId String?    @db.ObjectId
+  Order       Order?     @relation(fields: [orderId], references: [id])
+  orderId     String?    @db.ObjectId
+}
+
+enum ProdhanStatus {
+  active
+  inactive
+}
+
+model ActiveProdhanDetails {
+  id                 String        @id @default(auto()) @map("_id") @db.ObjectId
+  fname              String
+  lname              String
+  middlename         String?
+  gender             Gender
+  dateOfBirth        DateTime
+  status             ProdhanStatus @default(active)
+  mobileNumber       String
+  joinDate           DateTime
+  address            String
+  villageName        String
+  periodOfWork       String
+  periodEndDate      DateTime
+  activeprodhanImage String?
+}
+
+model Email {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  to          String[]
+  cc          String[]
+  bcc         String[]
+  subject     String
+  content     String
+  from        String
+  attachments Attachment[]
+  status      EmailStatus  @default(SENT)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Attachment {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileName     String
+  fileUrl      String
+  cloudinaryId String
+  email        Email    @relation(fields: [emailId], references: [id])
+  emailId      String   @db.ObjectId
+  createdAt    DateTime @default(now())
+}
+
+enum EmailStatus {
+  SENT
+  FAILED
+  PENDING
+}
+
+model EmailService {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  emailservicestatus Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model WarishDocument {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  warishId           String            @db.ObjectId
+  documentType       String
+  cloudinaryUrl      String
+  cloudinaryPublicId String
+  verified           Boolean           @default(false)
+  digitallySigned    Boolean           @default(false)
+  remarks            String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  warish             WarishApplication @relation(fields: [warishId], references: [id])
+  User               User?             @relation(fields: [userId], references: [id])
+  userId             String?           @db.ObjectId
+}
+
+// const noticeTypes = ["Tender", "Notice", "Circular", "Other"];
+
+enum NoticeTypes {
+  Tender
+  Notice
+  Circular
+  Agency
+  Other
+}
+
+enum NoticeStatus {
+  OPEN
+  COMPLETED
+}
+
+model Notice {
+  id               String               @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  description      String
+  department       String
+  type             NoticeTypes // Tender, Notice, Circular, Agency, Other
+  status           NoticeStatus         @default(OPEN)
+  reference        String               @unique
+  files            File[]
+  agencyId         String?              @db.ObjectId
+  agency           AgencyDetails?       @relation(fields: [agencyId], references: [id])
+  acknowledgments  NoticeAcknowledgment[]
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+}
+
+model NoticeAcknowledgment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  noticeId  String   @db.ObjectId
+  userId    String   @db.ObjectId
+  notice    Notice   @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt    DateTime @default(now())
+
+  @@unique([noticeId, userId])
+}
+
+model File {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  url          String
+  cloudinaryId String? // Add this field
+  type         String
+  noticeId     String   @db.ObjectId
+  notice       Notice   @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum ServiceType {
+  WATER_TANKER
+  DUSTBIN_VAN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+model Booking {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  serviceType   ServiceType
+  userId        String        @db.ObjectId
+  employeeId    String?       @db.ObjectId // Made optional
+  name          String
+  address       String
+  phone         String
+  bookingDate   DateTime
+  status        BookingStatus @default(PENDING)
+  amount        Float
+  isPaid        Boolean       @default(false)
+  paymentDate   DateTime?
+  receiptNumber String?
+  confirmedBy   String?       @db.ObjectId
+  confirmedAt   DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  cancelledAt   DateTime?
+  isDeposited   Boolean       @default(false)
+  depositDate   DateTime?
+  notes         String? // Added for additional notes
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([employeeId])
+}
+
+model ServiceFee {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  serviceType ServiceType
+  amount      Float
+  updatedBy   String      @db.ObjectId
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([serviceType])
+}
+
+model ReceiptCounter {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  year       String   @unique
+  lastNumber Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
+model ServiceAvailability {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  serviceType ServiceType
+  date        DateTime // Date without time component
+  available   Boolean     @default(true)
+  capacity    Int         @default(3)
+  booked      Int         @default(0)
+  maintenance Boolean     @default(false) // Added maintenance flag
+  notes       String? // Added for maintenance notes
+  createdBy   String?     @db.ObjectId // Track who created/modified
+  updatedBy   String?     @db.ObjectId
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@unique([serviceType, date])
+  @@index([date])
+  @@index([serviceType])
+}
+
+model AuditLog {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  action      String
+  entityId    String
+  entityType  String
+  details     String?
+  userId      String     @db.ObjectId
+  user        User       @relation(fields: [userId], references: [id])
+  createdAt   DateTime   @default(now())
+  Quotation   Quotation? @relation(fields: [quotationId], references: [id])
+  quotationId String?    @db.ObjectId
+}
+
+model FamilyMember {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  relation   String
+  age        Int?
+  occupation String?
+
+  parentId String?        @db.ObjectId
+  parent   FamilyMember?  @relation("FamilyHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children FamilyMember[] @relation("FamilyHierarchy")
+
+  certificateId String?                   @db.ObjectId
+  certificate   FamilyLineageCertificate? @relation(fields: [certificateId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FamilyLineageCertificate {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  certificateNo String @unique
+
+  // Ancestor details
+  ancestorName  String
+  casteCategory String
+
+  // Address details
+  village    String
+  postOffice String
+  block      String
+  district   String
+  state      String
+
+  // Family tree
+  familyMembers FamilyMember[]
+
+  // Certificate status and workflow
+  status         CertificateStatus @default(DRAFT)
+  issueDate      DateTime?
+  expiryDate     DateTime?
+  validityMonths Int               @default(6)
+
+  // Workflow tracking
+  fieldEnquiry FieldEnquiry?
+  approvals    Approval[]
+  renewals     Renewal[]
+
+  // Issuing authority
+  issuedBy    String?
+  designation String?
+
+  // Applicant details
+  applicantName    String
+  applicantPhone   String
+  applicantEmail   String?
+  applicantAddress String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    String?  @db.ObjectId
+}
+
+model FieldEnquiry {
+  id            String                   @id @default(auto()) @map("_id") @db.ObjectId
+  certificateId String                   @unique @db.ObjectId
+  certificate   FamilyLineageCertificate @relation(fields: [certificateId], references: [id])
+
+  enquiryOfficer  String
+  enquiryDate     DateTime
+  findings        String
+  recommendations String
+  status          EnquiryStatus @default(PENDING)
+
+  // Evidence collected
+  witnessNames      String[]
+  documentsVerified String[]
+  communityVerified Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Approval {
+  id            String                   @id @default(auto()) @map("_id") @db.ObjectId
+  certificateId String                   @db.ObjectId
+  certificate   FamilyLineageCertificate @relation(fields: [certificateId], references: [id])
+
+  approverName String
+  designation  String
+  approvalDate DateTime
+  status       ApprovalStatus
+  comments     String?
+  level        Int // 1 for first level, 2 for second level, etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Renewal {
+  id                    String                   @id @default(auto()) @map("_id") @db.ObjectId
+  originalCertificateId String                   @db.ObjectId
+  certificate           FamilyLineageCertificate @relation(fields: [originalCertificateId], references: [id])
+
+  renewalDate   DateTime
+  newExpiryDate DateTime
+  renewalReason String
+  status        RenewalStatus @default(PENDING)
+
+  // Updated information if any
+  updatedFamilyTree Json?
+  additionalNotes   String?
+
+  processedBy   String?
+  processedDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum CertificateStatus {
+  DRAFT
+  FIELD_ENQUIRY_PENDING
+  FIELD_ENQUIRY_COMPLETED
+  APPROVAL_PENDING
+  APPROVED
+  ISSUED
+  EXPIRED
+  REJECTED
+  CANCELLED
+}
+
+enum EnquiryStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  RETURNED_FOR_CLARIFICATION
+}
+
+enum RenewalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+// -----------------------------
+// NOC for Puja/Festival Models
+// -----------------------------
+
+enum NocApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  VERIFIED
+  APPROVAL_PENDING
+  APPROVED
+  REJECTED
+  ISSUED
+  CANCELLED
+}
+
+enum NocEventCategory {
+  PUJA
+  FESTIVAL
+  PROCESSION
+  FAIR
+  OTHER
+}
+
+model NocApplication {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  applicationNo String               @unique
+  status        NocApplicationStatus @default(DRAFT)
+
+  // Applicant details
+  applicantName    String
+  applicantPhone   String
+  applicantEmail   String?
+  applicantAddress String
+
+  // Organizer & event details
+  organizerName String
+  organizerType String? // Club / Committee / Others
+  eventName     String
+  eventCategory NocEventCategory @default(PUJA)
+  eventLocation String
+
+  startDate          DateTime
+  endDate            DateTime
+  expectedAttendance Int?
+
+  // Facilities/permissions requested
+  loudspeakerRequired    Boolean @default(false)
+  electricityRequired    Boolean @default(false)
+  roadClosureRequired    Boolean @default(false)
+  additionalRequirements String?
+
+  // Reference details when issued
+  refNo   String?
+  refDate DateTime?
+
+  // Relations
+  verification NocVerification?
+  approvals    NocApproval[]
+  documents    NocDocument[]
+  certificate  NocCertificate?
+  createdBy    User?            @relation(fields: [createdById], references: [id])
+  createdById  String?          @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([eventCategory, startDate, endDate])
+  @@map("noc_applications")
+}
+
+model NocVerification {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String         @unique @db.ObjectId
+  application   NocApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  inspectorName  String
+  inspectionDate DateTime
+  findings       String?
+  recommended    Boolean  @default(false)
+  conditions     String[] // Additional conditions suggested
+  checklist      Json? // Arbitrary checklist like police/fire permissions, route map, etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("noc_verifications")
+}
+
+model NocApproval {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String         @db.ObjectId
+  application   NocApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  approverName String
+  designation  String
+  approvalDate DateTime
+  status       ApprovalStatus // Reuse global approval status enum
+  comments     String?
+  level        Int // 1,2,... for multi-level approvals
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId, level])
+  @@map("noc_approvals")
+}
+
+model NocDocument {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String         @db.ObjectId
+  application   NocApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  documentType String // APPLICATION_LETTER, ID_PROOF, CLUB_REG_CERT, ROUTE_MAP, etc.
+  fileUrl      String
+  fileKey      String
+  uploadedBy   String   @db.ObjectId
+  uploadedAt   DateTime @default(now())
+
+  @@index([applicationId, documentType])
+  @@map("noc_documents")
+}
+
+model NocCertificate {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String         @unique @db.ObjectId
+  application   NocApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  certificateNo     String    @unique
+  issueDate         DateTime
+  expiryDate        DateTime?
+  conditions        String[]
+  signedBy          String
+  signedDesignation String
+  pdfUrl            String?
+  pdfKey            String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("noc_certificates")
+}
+
+model WorkOrderCancellation {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId  String      @db.ObjectId
+  worksDetail  WorksDetail @relation(fields: [workOrderId], references: [id])
+  cancelReason String
+  cancelDate   DateTime    @default(now())
+  cancelledBy  String
+  remarks      String?
+  documents    String?
+  status       String      @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@map("work_order_cancellations")
+}
+
+model ApiSecretKey {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      String   @unique
+  key       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Yeardatas {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  yeardata    String        @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  villageInfo VillageInfo[]
+}
+
+model VillageInfo {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lgdcode   Int
+  jlno      Int
+  name      String
+  isDraft   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  EducationalInstitutionData EducationalInstitutionData? @relation(fields: [educationalInstitutionDataId], references: [id])
+  villagePopulation          VillagePopulation?          @relation(fields: [villagePopulationId], references: [id])
+  VillageEducation           VillageEducation?           @relation(fields: [villageEducationId], references: [id])
+  VillageInfrastructure      VillageInfrastructure?      @relation(fields: [villageInfrastructureId], references: [id])
+  HealthData                 HealthData?                 @relation(fields: [healthDataId], references: [id])
+  SanitationData             SanitationData?             @relation(fields: [sanitationDataId], references: [id])
+  WaterSupplyData            WaterSupplyData?            @relation(fields: [waterSupplyDataId], references: [id])
+  EconomicData               EconomicData?               @relation(fields: [economicDataId], references: [id])
+  yeardatas                  Yeardatas?                  @relation(fields: [yeardatasId], references: [id])
+
+  // Foreign Keys
+  villagePopulationId          String?             @db.ObjectId
+  educationalInstitutionDataId String?             @db.ObjectId
+  villageInfrastructureId      String?             @db.ObjectId
+  villageEducationId           String?             @db.ObjectId
+  healthDataId                 String?             @db.ObjectId
+  sanitationDataId             String?             @db.ObjectId
+  waterSupplyDataId            String?             @db.ObjectId
+  economicDataId               String?             @db.ObjectId
+  yeardatasId                  String?             @db.ObjectId
+  ElectorInformation           ElectorInformation? @relation(fields: [electorInformationId], references: [id])
+  electorInformationId         String?             @db.ObjectId
+  PublicPlace                  PublicPlace?        @relation(fields: [publicPlaceId], references: [id])
+  publicPlaceId                String?             @db.ObjectId
+  IndustryInfo                 IndustryInfo?       @relation(fields: [industryInfoId], references: [id])
+  industryInfoId               String?             @db.ObjectId
+
+  // Composite unique constraint for lgdcode + year combination
+  @@unique([lgdcode, yeardatasId])
+  @@unique([jlno, yeardatasId])
+}
+
+model VillagePopulation {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  household        Int      @default(0)
+  male             Int      @default(0)
+  female           Int      @default(0)
+  ltmale           Int      @default(0)
+  ltfemale         Int      @default(0)
+  scmale           Int      @default(0)
+  scfemale         Int      @default(0)
+  stmale           Int      @default(0)
+  stfemale         Int      @default(0)
+  obcmale          Int      @default(0)
+  obcfemale        Int      @default(0)
+  childrenmale06   Int      @default(0)
+  childrenfemale06 Int      @default(0)
+  isDraft          Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model EducationalInstitutionData {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  ssk                  Int      @default(0) // Shishu Shiksha Kendra
+  anganwadi            Int      @default(0)
+  primarySchool        Int      @default(0)
+  upperPrimary         Int      @default(0)
+  highSchool           Int      @default(0)
+  higherSecondary      Int      @default(0)
+  madrasah             Int      @default(0)
+  juniorHigh           Int      @default(0)
+  college              Int      @default(0)
+  university           Int      @default(0)
+  technicalInstitute   Int      @default(0)
+  vocationalCenter     Int      @default(0)
+  adultEducationCenter Int      @default(0)
+  libraryCount         Int      @default(0)
+  computerCenter       Int      @default(0)
+  isDraft              Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model VillageInfrastructure {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  anganwadi             Int      @default(0)
+  icdsCentre            Int      @default(0)
+  healthCentre          Int      @default(0)
+  subCentre             Int      @default(0)
+  primaryHealthCenter   Int      @default(0)
+  communityHealthCenter Int      @default(0)
+  veterinaryHospital    Int      @default(0)
+  postOffice            Int      @default(0)
+  bankBranch            Int      @default(0)
+  atmCenter             Int      @default(0)
+  policeStation         Int      @default(0)
+  policeOutpost         Int      @default(0)
+  fireStation           Int      @default(0)
+  busStand              Int      @default(0)
+  railwayStation        Int      @default(0)
+  marketComplex         Int      @default(0)
+  fairPriceShop         Int      @default(0)
+  cooperativeSociety    Int      @default(0)
+  selfHelpGroups        Int      @default(0)
+  isDraft               Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model VillageEducation {
+  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
+  totalStudents            Int      @default(0)
+  maleStudents             Int      @default(0)
+  femaleStudents           Int      @default(0)
+  scStudents               Int      @default(0)
+  stStudents               Int      @default(0)
+  obcStudents              Int      @default(0)
+  dropoutRate              Float    @default(0)
+  maleDropoutRate          Float    @default(0)
+  femaleDropoutRate        Float    @default(0)
+  teacherCount             Int      @default(0)
+  maleTeachers             Int      @default(0)
+  femaleTeachers           Int      @default(0)
+  trainedTeachers          Int      @default(0)
+  midDayMealBeneficiaries  Int      @default(0)
+  scholarshipBeneficiaries Int      @default(0)
+  digitalClassrooms        Int      @default(0)
+  playgroundAvailable      Boolean  @default(false)
+  libraryAvailable         Boolean  @default(false)
+  computerLabAvailable     Boolean  @default(false)
+  isDraft                  Boolean  @default(true)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model HealthData {
+  id                      String   @id @default(auto()) @map("_id") @db.ObjectId
+  birthRate               Float    @default(0)
+  deathRate               Float    @default(0)
+  infantMortalityRate     Float    @default(0)
+  maternalMortalityRate   Float    @default(0)
+  immunizationCoverage    Float    @default(0)
+  malnutritionRate        Float    @default(0)
+  anemiaCases             Int      @default(0)
+  tuberculosisCases       Int      @default(0)
+  malariaIncidence        Int      @default(0)
+  dengueIncidence         Int      @default(0)
+  pregnantWomen           Int      @default(0)
+  institutionalDeliveries Int      @default(0)
+  homeDeliveries          Int      @default(0)
+  contraceptiveUsers      Int      @default(0)
+  familyPlanningAdopters  Int      @default(0)
+  healthInsuranceCoverage Int      @default(0)
+  ayushTreatmentSeekers   Int      @default(0)
+  isDraft                 Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model SanitationData {
+  id                        String   @id @default(auto()) @map("_id") @db.ObjectId
+  householdsWithToilets     Int      @default(0)
+  householdsUsingToilets    Int      @default(0)
+  publicToiletFacilities    Int      @default(0)
+  communityToilets          Int      @default(0)
+  schoolToilets             Int      @default(0)
+  anganwadiToilets          Int      @default(0)
+  solidWasteManagement      Boolean  @default(false)
+  liquidWasteManagement     Boolean  @default(false)
+  wasteSegregationPractice  Boolean  @default(false)
+  compostPits               Int      @default(0)
+  bioGasPlants              Int      @default(0)
+  drainageSystem            Boolean  @default(false)
+  openDefecationFree        Boolean  @default(false)
+  swachhBharatMissionStatus String? // "Achieved", "In Progress", "Not Started"
+  isDraft                   Boolean  @default(true)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model WaterSupplyData {
+  id                          String   @id @default(auto()) @map("_id") @db.ObjectId
+  pipedWaterConnections       Int      @default(0)
+  handPumps                   Int      @default(0)
+  tubewells                   Int      @default(0)
+  openWells                   Int      @default(0)
+  borewells                   Int      @default(0)
+  waterTankers                Int      @default(0)
+  waterSourcesTested          Int      @default(0)
+  safeWaterSources            Int      @default(0)
+  unsafeWaterSources          Int      @default(0)
+  waterQualityTested          Boolean  @default(false)
+  fluorideContamination       Boolean  @default(false)
+  arsenicContamination        Boolean  @default(false)
+  ironContamination           Boolean  @default(false)
+  waterTreatmentPlant         Boolean  @default(false)
+  rainwaterHarvesting         Int      @default(0)
+  waterConservationStructures Int      @default(0)
+  jjmCoverage                 Float    @default(0) // Jal Jeevan Mission coverage percentage
+  isDraft                     Boolean  @default(true)
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model EconomicData {
+  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
+  totalWorkers             Int      @default(0)
+  mainWorkers              Int      @default(0)
+  marginalWorkers          Int      @default(0)
+  nonWorkers               Int      @default(0)
+  cultivators              Int      @default(0)
+  agriculturalLabourers    Int      @default(0)
+  householdIndustryWorkers Int      @default(0)
+  otherWorkers             Int      @default(0)
+  unemploymentRate         Float    @default(0)
+  femaleWorkParticipation  Float    @default(0)
+  averageIncome            Float    @default(0)
+  belowPovertyLine         Int      @default(0)
+  bankAccountHolders       Int      @default(0)
+  kccHolders               Int      @default(0) // Kisan Credit Card
+  pmKisanBeneficiaries     Int      @default(0)
+  mgnregaJobCards          Int      @default(0)
+  mgnregaWorkDays          Int      @default(0)
+  skillDevelopmentTrainees Int      @default(0)
+  entrepreneurshipPrograms Int      @default(0)
+  isDraft                  Boolean  @default(true)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model ElectorInformation {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  year              Int      @default(2023)
+  totalVoters       Int      @default(0)
+  maleVoters        Int      @default(0)
+  femaleVoters      Int      @default(0)
+  thirdGenderVoters Int      @default(0)
+  pollingStations   Int      @default(0)
+  isDraft           Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model PublicPlace {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  communityHalls  Int      @default(0)
+  parks           Int      @default(0)
+  playgrounds     Int      @default(0)
+  publicLibraries Int      @default(0)
+  culturalCenters Int      @default(0)
+  crematoriums    Int      @default(0)
+  burialGrounds   Int      @default(0)
+  isDraft         Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model IndustryInfo {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  smallScaleIndustries Int      @default(0)
+  cottageIndustries    Int      @default(0)
+  agroBasedUnits       Int      @default(0)
+  handloomUnits        Int      @default(0)
+  others               String?
+  isDraft              Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  VillageInfo VillageInfo[]
+}
+
+model Ashaworker {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  mobileNumber   String
+  homeAddress    String
+  workingVillage String
+  recordDate     DateTime // Specific date of data collection or entry
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Angwariworker {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  mobileNumber   String
+  homeAddress    String
+  workingVillage String
+  recordDate     DateTime // This is the specific date you're referring to
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model SHGGroup {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  groupName        String
+  formationDate    DateTime
+  village          String
+  totalMembers     Int
+  groupLeaderName  String
+  groupLeaderPhone String
+  address          String // Full address of the group meeting place or office
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Quotation {
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
+  nitNo               String          @unique
+  nitDate             DateTime
+  quotationType       QuotationType
+  workName            String
+  description         String?
+  estimatedAmount     Float
+  submissionDate      DateTime
+  submissionTime      String
+  openingDate         DateTime
+  openingTime         String
+  quantity            String?
+  unit                String?
+  specifications      String?
+  itemCondition       String?
+  workLocation        String?
+  eligibilityCriteria String?
+  status              QuotationStatus @default(DRAFT)
+  publishedAt         DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  // Relations
+  createdById          String                @db.ObjectId
+  createdBy            User                  @relation(fields: [createdById], references: [id])
+  bids                 Bid[]
+  comparativeStatement ComparativeStatement?
+  order                Order?
+  documents            Document[]
+  auditLogs            AuditLog[]
+
+  @@map("quotations")
+}
+
+model Bid {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount      Float
+  submittedAt DateTime @default(now())
+  rank        Int?
+  isSelected  Boolean  @default(false)
+  remarks     String?
+
+  // Relations
+  quotationId     String        @db.ObjectId
+  quotation       Quotation     @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  agencyDetailsId String        @db.ObjectId
+  agencyDetails   AgencyDetails @relation(fields: [agencyDetailsId], references: [id])
+
+  @@map("bids")
+}
+
+model ComparativeStatement {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  remarks   String?
+
+  // Relations
+  quotationId String    @unique @db.ObjectId
+  quotation   Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  @@map("comparative_statements")
+}
+
+model Order {
+  id                   String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderNo              String        @unique
+  orderDate            DateTime
+  deliveryDate         DateTime
+  orderAmount          Float
+  estimatedAmount      Float
+  savings              Float
+  deliveryAddress      String
+  paymentTerms         String?
+  specialInstructions  String?
+  status               OrderStatus   @default(PENDING)
+  paymentStatus        PaymentStatus @default(PENDING)
+  completionPercentage Int           @default(0)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  // Relations
+  quotationId     String          @unique @db.ObjectId
+  quotation       Quotation       @relation(fields: [quotationId], references: [id])
+  agencyDetailsId String          @db.ObjectId
+  agencyDetails   AgencyDetails   @relation(fields: [agencyDetailsId], references: [id])
+  createdById     String          @db.ObjectId
+  createdBy       User            @relation(fields: [createdById], references: [id])
+  items           OrderItem[]
+  timeline        OrderTimeline[]
+  documents       Document[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id             String  @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  specifications String?
+  quantity       Int
+  unit           String
+  rate           Float
+  amount         Float
+
+  // Relations
+  orderId String @db.ObjectId
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model OrderTimeline {
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime
+  event     String
+  status    TimelineStatus
+  remarks   String?
+  createdAt DateTime       @default(now())
+
+  // Relations
+  orderId String @db.ObjectId
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_timeline")
+}
+
+// Enums
+enum QuotationType {
+  WORK
+  SUPPLY
+  SALE
+}
+
+enum QuotationStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  CANCELLED
+}
+
+enum BidderStatus {
+  ACTIVE
+  INACTIVE
+  BLACKLISTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  DELIVERED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  ADVANCE_PAID
+  PROCESSING
+  PAID
+  OVERDUE
+}
+
+enum TimelineStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+// Simplified Prisma schema for Warish Application with basic modification system
+
+// Simple Modification Request Model
+model WarishModificationRequest {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  warishApplicationId String?            @db.ObjectId // Now optional
+  warishDetailId      String?            @db.ObjectId // Optional
+  targetType          String // 'application' or 'detail'
+  warishApplication   WarishApplication? @relation(fields: [warishApplicationId], references: [id], onDelete: Cascade)
+
+  // Support for multiple field modifications
+  // Array of { field: string, oldValue: string, newValue: string }
+  modifications Json?
+
+  fieldToModify         String? // Deprecated: use modifications
+  currentValue          String? // Deprecated: use modifications
+  proposedValue         String? // Deprecated: use modifications
+  reasonForModification String // Reason for the change
+  requestedBy           String // Name of person requesting
+  requestedDate         DateTime                  @default(now())
+  status                ModificationRequestStatus @default(pending)
+  reviewedBy            String? // Name of person who reviewed
+  reviewedDate          DateTime? // Date of review
+  reviewComments        String? // Comments from reviewer
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  @@index([warishApplicationId])
+  @@index([warishDetailId])
+  @@index([status])
+  @@index([requestedDate])
+  @@index([targetType])
+  @@index([warishApplicationId, warishDetailId])
+  // At least one of warishApplicationId or warishDetailId must be non-null (enforced in application logic)
+  // targetType should be 'application' if warishApplicationId is set, 'detail' if warishDetailId is set
+  @@map("warish_modification_requests")
+}
+
+// Enums
+
+enum ApplicationStatus {
+  pending
+  approved
+  rejected
+  under_review
+}
+
+enum ModificationRequestStatus {
+  pending
+  approved
+  rejected
+}
+
+enum MeetingType {
+  UPASAMITY
+  GENERAL
+  ARTHO
+  SPECIAL_GRAM_SABHA
+  REGULAR_GRAM_SABHA
+}
+
+enum MeetingStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  POSTPONED
+}
+
+enum UpasamitySubtype {
+  SIPLA_PARIKATHAMA
+  SIKHA_O_JANASANTHA
+  NARI_O_SHISHU
+  KRISHA_O_PANI_SAMPAD
+}
+
+model Meeting {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  meetingType      MeetingType
+  meetingDate      DateTime
+  startTime        String
+  endTime          String
+  venue            String
+  agenda           String
+  description      String?
+  status           MeetingStatus     @default(SCHEDULED)
+  financialYear    String
+  month            String
+  attendance       Int?
+  quorumAchieved   Boolean           @default(false)
+  isPublished      Boolean           @default(false)
+  publishedAt      DateTime?
+  upasamitySubtype UpasamitySubtype? // Only for UPASAMITY meetings
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  // Relations
+  createdBy     String            @db.ObjectId
+  createdByUser User              @relation("MeetingCreatedBy", fields: [createdBy], references: [id])
+  attendees     MeetingAttendee[]
+  resolutions   Resolution[]
+  minutes       MeetingMinutes?
+  documents     MeetingDocument[]
+}
+
+model MeetingAttendee {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  meetingId String  @db.ObjectId
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  name          String
+  designation   String?
+  village       String?
+  phone         String?
+  email         String?
+  isPresent     Boolean   @default(false)
+  arrivalTime   DateTime?
+  departureTime DateTime?
+  remarks       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Resolution {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  meetingId String  @db.ObjectId
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  resolutionNumber       String
+  subject                String
+  description            String
+  decision               String
+  budgetAmount           Float?
+  implementationTimeline String?
+  responsiblePerson      String?
+  status                 String  @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED
+  votingResults          Json? // Store voting details as JSON
+  remarks                String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MeetingMinutes {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  meetingId String  @unique @db.ObjectId
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  keyDiscussions      String
+  decisions           String
+  actionItems         String
+  nextMeetingDate     DateTime?
+  nextMeetingAgenda   String?
+  attendanceSummary   String?
+  specialObservations String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MeetingDocument {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  meetingId String  @db.ObjectId
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  documentType   String // AGENDA, MINUTES, RESOLUTION, ATTENDANCE, OTHER
+  title          String
+  fileName       String
+  fileUrl        String
+  fileKey        String
+  fileSize       Int?
+  uploadedBy     String @db.ObjectId
+  uploadedByUser User   @relation("MeetingDocumentUploadedBy", fields: [uploadedBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AOC {
+  id                String       @id @default(auto()) @map("_id") @db.ObjectId
+  aocmenonumber     String
+  aocordeermemodate DateTime
+  bidAmount         Int
+  bidagencyid       String       @db.ObjectId
+  WorksDetail       WorksDetail? @relation(fields: [worksDetailId], references: [id])
+  worksDetailId     String?      @db.ObjectId
+}
+
+model DomicileCertificateEnquiry {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  memoNo              String
+  memoDate            DateTime
+  letterNumber        String?
+  letterDate          DateTime?
+  applicantName       String
+  applicantFatherName String
+  applicantAddress    String
+  applicantVillage    String
+  applicantPostOffice String
+  applicantDistrict   String
+  applicantState      String
+
+  // Enquiry Findings
+  enquiryFindings EnquiryFinding[]
+
+  // Documents Verified
+  documentsVerified DocumentVerified[]
+
+  // Final Report
+  isPermanentResident Boolean
+  finalRemarks        String?
+
+  // Metadata
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdBy     String   @db.ObjectId
+  createdByUser User     @relation(fields: [createdBy], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("domicile_certificate_enquiries")
+}
+
+model EnquiryFinding {
+  id                           String @id @default(auto()) @map("_id") @db.ObjectId
+  domicileCertificateEnquiryId String @db.ObjectId
+  serialNumber                 Int
+  particulars                  String
+  details                      String
+
+  domicileCertificateEnquiry DomicileCertificateEnquiry @relation(fields: [domicileCertificateEnquiryId], references: [id], onDelete: Cascade)
+
+  @@map("enquiry_findings")
+}
+
+model DocumentVerified {
+  id                           String  @id @default(auto()) @map("_id") @db.ObjectId
+  domicileCertificateEnquiryId String  @db.ObjectId
+  serialNumber                 Int
+  documentName                 String
+  documentNumber               String?
+  issuedAuthority              String
+
+  domicileCertificateEnquiry DomicileCertificateEnquiry @relation(fields: [domicileCertificateEnquiryId], references: [id], onDelete: Cascade)
+
+  @@map("documents_verified")
+}
+
+model TenderTerms {
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
+  category  TermCategory
+  title     String
+  content   String
+  isActive  Boolean      @default(true)
+  order     Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("tender_terms")
+}
+
+enum TermCategory {
+  ELIGIBLE
+  QUALIFICATION_CRITERIA
+  TERMS_CONDITIONS
+}
+
+// ================= ENUMS =================
+
+enum LandConversionStatus {
+  DRAFT
+  SUBMITTED
+  VERIFICATION_PENDING
+  VERIFIED
+  VERIFICATION_REJECTED
+  INSPECTION_PENDING
+  INSPECTION_COMPLETED
+  INSPECTION_REJECTED
+  APPROVAL_PENDING
+  APPROVED
+  REJECTED
+  ISSUED
+  CANCELLED
+}
+
+// ================= MAIN APPLICATION =================
+
+model LandConversionApplication {
+  id            String               @id @default(auto()) @map("_id") @db.ObjectId
+  applicationNo String               @unique
+  status        LandConversionStatus @default(DRAFT)
+
+  // Applicant details
+  applicantName    String
+  applicantPhone   String
+  applicantEmail   String?
+  applicantAddress String
+
+  // Land details (first/primary land; additional lands in landDetails)
+  khatianNo String
+  plotNo    String
+  mouza     String
+  jlNo      String
+
+  landAreaDec String
+
+  // Conversion details
+  presentLandUse  String
+  proposedLandUse String
+
+  // Multiple lands per certificate (additional parcels)
+  landDetails LandConversionLandDetail[]
+
+  // Uploaded documents (ID proof, land documents)
+  documents LandConversionDocument[]
+
+  // Workflow relations (ONE-TO-ONE)
+  verification LandConversionVerification?
+  inspection   LandConversionInspection?
+  approval     LandConversionApproval?
+  certificate  LandConversionCertificate?
+
+  // User relation
+  createdBy   User?   @relation(fields: [createdById], references: [id])
+  createdById String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ================= ADDITIONAL LAND PARCELS (one certificate = multiple lands) =================
+
+model LandConversionLandDetail {
+  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                    @db.ObjectId
+  application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  khatianNo       String
+  plotNo          String
+  mouza           String
+  jlNo            String
+  landAreaDec     String
+  presentLandUse  String
+  proposedLandUse String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId])
+  @@map("land_conversion_land_details")
+}
+
+// ================= APPLICATION DOCUMENTS (ID proof, land documents) =================
+
+enum LandConversionDocumentType {
+  ID_PROOF
+  LAND_DOCUMENT
+  OTHER
+}
+
+model LandConversionDocument {
+  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                    @db.ObjectId
+  application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  documentType       LandConversionDocumentType
+  cloudinaryUrl      String
+  cloudinaryPublicId String
+  verified           Boolean                    @default(false)
+  remarks            String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([applicationId])
+  @@map("land_conversion_documents")
+}
+
+// ================= VERIFICATION =================
+
+model LandConversionVerification {
+  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                    @unique @db.ObjectId
+  application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  verifiedBy        String
+  verificationDate  DateTime
+  remarks           String?
+  status            ApprovalStatus @default(PENDING)
+  documentsVerified Boolean        @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("land_conversion_verifications")
+}
+
+// ================= INSPECTION =================
+
+model LandConversionInspection {
+  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                    @unique @db.ObjectId
+  application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  inspectorName   String
+  scheduledDate   DateTime
+  inspectionDate  DateTime?
+  report          String?
+  findings        String?
+  recommendations String?
+  status          ApprovalStatus @default(PENDING)
+  siteAddress     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("land_conversion_inspections")
+}
+
+// ================= APPROVAL (FIXED) =================
+
+model LandConversionApproval {
+  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                    @unique @db.ObjectId
+  application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  approverName String
+  designation  String
+  approvalDate DateTime?
+  status       ApprovalStatus @default(PENDING)
+  comments     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("land_conversion_approvals")
+}
+
+// ================= CERTIFICATE =================
+
+model LandConversionCertificate {
+  id            String                    @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                    @unique @db.ObjectId
+  application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  certificateNo        String   @unique
+  memoNumber           String
+  issueDate            DateTime
+  signatoryName        String?
+  signatoryDesignation String?
+  pdfUrl               String?
+  pdfKey               String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("land_conversion_certificates")
+}
+
+// Estimate MB Bill Models 
+
+model WorkEstimateItem {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Add work relationship
+  workDetailId String?      @db.ObjectId
+  workDetail   WorksDetail? @relation(fields: [workDetailId], references: [id], onDelete: Cascade)
+
+  // Link to Schedule Rate
+  scheduleRateId String?       @db.ObjectId
+  scheduleRate   ScheduleRate? @relation(fields: [scheduleRateId], references: [id])
+
+  // Relations
+  workMeasurementBooks WorkMeasurementBook[]
+
+  slNo           Int
+  schedulePageNo String // e.g., "P-49 It-d/ii"
+  description    String
+  nos            Float  @default(1)
+  length         Float  @default(0)
+  breadth        Float  @default(0)
+  depth          Float  @default(0)
+  height         Float  @default(0)
+  quantity       Float
+  unit           String // m, cum, no, each, etc.
+  rate           Float
+  amount         Float
+  measurements   Json?
+  subItems       Json? // id* quantity* unit* rate* amount*
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, workDetailId])
+  @@map("work_estimate_items")
+}
+
+model WorkMeasurementBook {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  workDetailId     String?           @db.ObjectId
+  workDetail       WorksDetail?      @relation(fields: [workDetailId], references: [id], onDelete: Cascade)
+  estimateItemId   String?           @db.ObjectId // Link to original estimate item (parent for subitems)
+  subItemId        String? // For subitem entries: id of subitem within parent (e.g. "parentId-sub-0")
+  workEstimateItem WorkEstimateItem? @relation(fields: [estimateItemId], references: [id])
+
+  mbNumber     String // e.g., "MB-10", "MB-53"
+  mbPageNumber String // e.g., "P-03", "P-04"
+
+  workItemDescription String // Description from estimate
+  unit                String
+  quantityExecuted    Float // Quantity actually executed
+  rate                Float
+  amount              Float
+  measurements        Json?
+
+  measuredDate DateTime
+  measuredBy   String
+  checkedBy    String? // Officer who checked the measurement
+  remarks      String?
+
+  orderIndex Int? // Order in which this entry was added to the MB book
+
+  status MeasurementBookStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, workDetailId])
+  @@map("work_measurement_books")
+}
+
+enum MeasurementBookStatus {
+  DRAFT
+  VERIFIED
+  APPROVED
+  REJECTED
+}
+
+model WorkEstimate {
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  workDetailId String      @unique @db.ObjectId
+  workDetail   WorksDetail @relation(fields: [workDetailId], references: [id], onDelete: Cascade)
+
+  projectName  String
+  projectCode  String
+  location     String
+  preparedBy   String
+  estimateDate DateTime
+
+  contingency Float @default(0)
+
+  // Additional charges
+  labourCess   Float @default(0)
+  gst          Float @default(0)
+  otherCharges Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("work_estimates")
+}
+
+model WorkBillAbstract {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  worksDetailId String      @db.ObjectId
+  worksDetail   WorksDetail @relation(fields: [worksDetailId], references: [id], onDelete: Cascade)
+
+  billNumber String   @unique
+  billType   String // e.g., "1st & Final Bill"
+  period     String // e.g., "2024-25"
+  billDate   DateTime @default(now())
+
+  contractualPercentage Float                   @default(0)
+  itemwiseTotal         Float
+  contractualDeduction  Float
+  actualValue           Float
+  grossBillAmount       Float                   @default(0)
+  entries               WorkBillAbstractEntry[]
+  deductions            WorkBillDeduction[]
+
+  status BillStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("work_bill_abstracts")
+}
+
+model WorkBillAbstractEntry {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  workBillAbstractId String           @db.ObjectId
+  workBillAbstract   WorkBillAbstract @relation(fields: [workBillAbstractId], references: [id], onDelete: Cascade)
+
+  mbNumber            String
+  mbPageNumber        String
+  workItemDescription String
+  unit                String
+  quantityExecuted    Float
+  rate                Float
+  amount              Float
+  remarks             String?
+
+  estimateItemId String? @db.ObjectId
+  subItemId      String?
+  mbEntryId      String? @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("work_bill_abstract_entries")
+}
+
+model WorkBillDeduction {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String           @db.ObjectId
+  user               User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workBillAbstractId String           @db.ObjectId
+  workBillAbstract   WorkBillAbstract @relation(fields: [workBillAbstractId], references: [id], onDelete: Cascade)
+
+  // Bill details
+  billType          String    @default("1st & Final Bill")
+  billPaymentDate   DateTime?
+  eGramVoucher      String?
+  eGramVoucherDate  DateTime?
+  gpmsVoucherNumber String?
+  gpmsVoucherDate   DateTime?
+
+  // Gross amount (from bill abstract actual value)
+  grossBillAmount Float
+
+  // Deductions - stored directly without relations
+  lessIncomeTaxPercentage Float @default(1.00)
+  lessIncomeTaxAmount     Float @default(0)
+
+  lessGstTdsPercentage Float @default(0.00)
+  lessGstTdsAmount     Float @default(0)
+  lessCgstAmount       Float @default(0)
+  lessSgstAmount       Float @default(0)
+
+  lessLabourWelfareCessPercentage Float @default(1.00)
+  lessLabourWelfareCessAmount     Float @default(0)
+
+  lessSecurityDepositPercentage Float @default(10.00)
+  lessSecurityDepositAmount     Float @default(0)
+
+  lessRoyaltyAmount    Float @default(0)
+  otherDeductionAmount Float @default(0)
+
+  // Total and net
+  totalDeduction   Float
+  netPayableAmount Float
+
+  // Status
+  isFinalBill Boolean   @default(false)
+  isVerified  Boolean   @default(false)
+  verifiedBy  String?
+  verifiedAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, workBillAbstractId])
+  @@map("work_bill_deductions")
+}
+
+// Templates that bundle reusable tender terms and conditions content
+model TenderTermTemplate {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  content     Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("tender_term_templates")
+}
+
+// Development Works Estimate System
+model EstimateType {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  name        String  @unique // e.g., "Road Construction", "Building Construction"
+  code        String  @unique // e.g., "road", "building"
+  description String?
+  icon        String? // emoji or icon identifier
+  color       String? // color code for UI
+  isActive    Boolean @default(true)
+
+  // Template fields for this estimate type
+  dimensionFields Json? // Define what dimensions are needed (length, width, depth, capacity, etc.)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  scheduleRates ScheduleRate[]
+  projects      DevelopmentProject[]
+
+  @@map("estimate_types")
+}
+
+model EstimateTemplate {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  estimateType String
+  items        Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("estimate_templates")
+}
+
+model ScheduleRate {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  code        String // e.g., "12.a", "WB-001"
+  description String // work item description
+  unit        String // Cum, Sqm, Rmt, Nos, Kg, etc.
+  rate        Float // rate per unit
+  category    String // Earthwork, Masonry, Concrete, etc.
+
+  chapter       String?
+  pageReference String?
+
+  // Link to estimate type
+  estimateTypeId String       @db.ObjectId
+  estimateType   EstimateType @relation(fields: [estimateTypeId], references: [id], onDelete: Cascade)
+
+  isActive  Boolean @default(true)
+  verified  Boolean @default(false)
+  isPattern Boolean @default(false)
+
+  // Relations
+  subItems ScheduleRateSubItem[]
+
+  effectiveFrom DateTime  @default(now())
+  effectiveTo   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  workItems         WorkItem[]
+  workEstimateItems WorkEstimateItem[]
+
+  @@map("schedule_rates")
+}
+
+model ScheduleRateSubItem {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  scheduleRateId String       @db.ObjectId
+  scheduleRate   ScheduleRate @relation(fields: [scheduleRateId], references: [id], onDelete: Cascade)
+
+  description String
+  unit        String
+  rate        Float
+  amount      Float? // Optional calculated field
+  quantity    Float? // Optional default quantity
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("schedule_rate_sub_items")
+}
+
+model DevelopmentProject {
+  id               String  @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  location         String
+  activityCode     String?
+  contractor       String?
+  engineerInCharge String?
+
+  // Link to existing WorksDetail
+  worksDetailId String?      @db.ObjectId
+  worksDetail   WorksDetail? @relation(fields: [worksDetailId], references: [id])
+
+  // Estimate type reference
+  estimateTypeId String       @db.ObjectId
+  estimateType   EstimateType @relation(fields: [estimateTypeId], references: [id])
+
+  // Project dimensions (stored as JSON for flexibility)
+  dimensions Json? // { length: 100, width: 0.3, depth: 0.4, unit: "M" }
+
+  // Financial details
+  estimatedCost    Float @default(0)
+  sanctionedAmount Float @default(0)
+  spentAmount      Float @default(0)
+
+  // Additional charges
+  additionalCharges Json? // { sgst: 9.0, cgst: 9.0, labourCess: 1.0, contingency: 3.0 }
+
+  // Project timeline
+  startDate DateTime?
+  endDate   DateTime?
+
+  // Progress tracking
+  physicalProgress  Float @default(0)
+  financialProgress Float @default(0)
+
+  // Status
+  status ProjectStatus @default(PLANNING)
+
+  // Audit fields
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?  @db.ObjectId
+
+  // Relations
+  workItems       WorkItem[]
+  measurements    MeasurementEntry[]
+  billAbstracts   BillAbstract[]
+  progressUpdates ProgressUpdate[]
+  milestones      ProjectMilestone[]
+
+  @@map("development_projects")
+}
+
+model WorkItem {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String             @db.ObjectId
+  project   DevelopmentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  scheduleRateId String       @db.ObjectId
+  scheduleRate   ScheduleRate @relation(fields: [scheduleRateId], references: [id])
+
+  description String
+  unit        String
+  quantity    Float
+  rate        Float
+  amount      Float
+  category    String
+
+  // Dimensions
+  nos     Float @default(1)
+  length  Float @default(0)
+  breadth Float @default(0)
+  depth   Float @default(0)
+  height  Float @default(0)
+
+  measurements Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("work_items")
+}
+
+model MeasurementEntry {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String             @db.ObjectId
+  project   DevelopmentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  workItemDescription String
+  unit                String
+  rate                Float
+
+  // Measurement dimensions
+  length   Float?
+  breadth  Float?
+  height   Float?
+  depth    Float?
+  quantity Float
+  amount   Float
+
+  // MB Reference
+  mbNumber     String?
+  mbPageNumber String?
+
+  measuredDate DateTime
+  measuredBy   String
+  verifiedBy   String?
+  remarks      String?
+
+  status MeasurementStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("measurement_entries")
+}
+
+model BillAbstract {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String             @db.ObjectId
+  project   DevelopmentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  billNumber String   @unique
+  billDate   DateTime
+  period     String
+
+  totalWorkDone      Float
+  previousBillAmount Float
+  currentBillAmount  Float
+  cumulativeAmount   Float
+
+  // Deductions stored as JSON
+  deductions Json // { securityDeposit, workContractTax, incomeTax, labourCess, other }
+  netPayable Float
+
+  status BillStatus @default(DRAFT)
+
+  createdBy  String
+  approvedBy String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("bill_abstracts")
+}
+
+model ProgressUpdate {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String             @db.ObjectId
+  project   DevelopmentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  date              DateTime
+  physicalProgress  Float
+  financialProgress Float
+  workDescription   String
+  issues            String?
+  nextMilestone     String?
+  photos            String[] // Array of photo URLs
+
+  updatedBy String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("progress_updates")
+}
+
+model ProjectMilestone {
+  id        String             @id @default(auto()) @map("_id") @db.ObjectId
+  projectId String             @db.ObjectId
+  project   DevelopmentProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  targetDate  DateTime
+  actualDate  DateTime?
+  status      MilestoneStatus @default(PENDING)
+  percentage  Float           @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("project_milestones")
+}
+
+// Enums for Development Works
+enum ProjectStatus {
+  PLANNING
+  ONGOING
+  COMPLETED
+  DELAYED
+  SUSPENDED
+  CANCELLED
+}
+
+enum MeasurementStatus {
+  DRAFT
+  VERIFIED
+  APPROVED
+  REJECTED
+}
+
+enum BillStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  PAID
+  REJECTED
+}
+
+enum MilestoneStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELAYED
+}
+
+model Mouzaname {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  name            String
+  jlno            String
+  totalHouseholds Int?
+
+  villageDataId String?      @db.ObjectId
+  VillageData   VillageData? @relation(fields: [villageDataId], references: [id])
+
+  populationSummary PopulationSummary[]
+  voterSummaryIds   String[]       @db.ObjectId
+  voterSummary      VoterSummary[] @relation(fields: [voterSummaryIds], references: [id])
+  toiletSummary     ToiletSummary[]
+  waterSummary      WaterSummary[]
+  population        Population[]
+  educationSummary  EducationSummary[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sansad {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear String?
+  sansadname    String
+  sansadnumber  String        @unique
+  VillageData   VillageData[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Member {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear      String?
+  salutation         String
+  firstName          String
+  middleName         String? // Optional
+  lastName           String? // Optional
+  fatherGuardianName String? // Optional
+  dob                DateTime // Store as DateTime
+  gender             String // 'male', 'female', 'other'
+  maritalStatus      String // 'single', 'married', 'divorced', etc.
+  religion           String
+  caste              String? // Optional
+  eduQualification   String
+  computerLiterate   String // 'yes', 'no'
+  motherTongue       String
+  bloodGroup         String // 'A+', 'B-', etc.
+  contactNo          String // Store as a string for phone numbers
+  whatsappNo         String? // Optional
+  email              String       @unique // Ensure unique email addresses
+  address            String
+  village            String
+  pin                String // Store as a string (6-digit PIN code)
+  postOffice         String
+  district           String
+  policeStation      String
+  aadhar             String?      @unique // Ensure unique Aadhar numbers
+  pan                String? // Optional
+  epic               String? // Optional
+  profession         String
+  annualFamilyIncome String
+  mouzaIds           String[]     @db.ObjectId
+  politicalParty     String?
+  photo              String? // Optional, store file path or URL for images
+  createdAt          DateTime     @default(now()) // Automatically set the current time when the document is created
+  updatedAt          DateTime     @updatedAt // Automatically updated on record modification
+  VillageData        VillageData? @relation(fields: [villageDataId], references: [id])
+  villageDataId      String?      @db.ObjectId
+}
+
+model PollingDetails {
+  id                 String       @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear      String?
+  pollingdetailsno   Int          @unique
+  pollingdetailsname String
+  malevoter          Int
+  femalevoter        Int
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  VillageData        VillageData? @relation(fields: [villageDataId], references: [id])
+  villageDataId      String?      @db.ObjectId
+}
+
+model Population {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear String?
+  male          Int
+  female        Int
+  st            Int
+  sc            Int
+  obc           Int
+  other         Int
+  hindu         Int
+  muslim        Int
+  christian     Int
+  otherReligion Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mouzaId String    @db.ObjectId
+  mouza   Mouzaname @relation(fields: [mouzaId], references: [id])
+}
+
+model VillageData {
+  id                   String           @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear        String?
+  pollingstatusdetaial PollingDetails[]
+  memberdetails        Member[]
+  sansaddetails        Sansad           @relation(fields: [sansadId], references: [id])
+  sansadId             String           @db.ObjectId
+  mouzadetails         Mouzaname[]
+}
+
+model PopulationSummary {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear String?
+
+  mouzaId String    @db.ObjectId
+  mouza   Mouzaname @relation(fields: [mouzaId], references: [id])
+
+  totalMale   Int
+  totalFemale Int
+
+  scMale   Int
+  scFemale Int
+
+  stMale   Int
+  stFemale Int
+
+  obcMale   Int
+  obcFemale Int
+
+  genMale   Int
+  genFemale Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VoterSummary {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear String?
+
+  pollingStationNo   String
+  pollingStationName String
+
+  mouzaIds String[]     @db.ObjectId
+  mouzas   Mouzaname[]  @relation(fields: [mouzaIds], references: [id])
+
+  totalMaleVoter   Int
+  totalFemaleVoter Int
+
+  scMaleVoter   Int
+  scFemaleVoter Int
+
+  stMaleVoter   Int
+  stFemaleVoter Int
+
+  obcMaleVoter   Int
+  obcFemaleVoter Int
+
+  genMaleVoter   Int
+  genFemaleVoter Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ToiletSummary {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear String?
+
+  mouzaId String    @db.ObjectId
+  mouza   Mouzaname @relation(fields: [mouzaId], references: [id])
+
+  totalHousehold     Int
+  toiletAvailable    Int
+  toiletNotAvailable Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WaterSummary {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear String?
+
+  mouzaId String    @db.ObjectId
+  mouza   Mouzaname @relation(fields: [mouzaId], references: [id])
+
+  tapWater Int
+  handPump Int
+  well     Int
+  pond     Int
+  other    Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EducationSummary {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  
+  mouzaId         String    @db.ObjectId
+  mouza           Mouzaname @relation(fields: [mouzaId], references: [id])
+
+    ssk                  Int      @default(0) // Shishu Shiksha Kendra
+  anganwadi            Int      @default(0)
+  primarySchool        Int      @default(0)
+  upperPrimary         Int      @default(0)
+  highSchool           Int      @default(0)
+  higherSecondary      Int      @default(0)
+  madrasah             Int      @default(0)
+  juniorHigh           Int      @default(0)
+  college              Int      @default(0)
+  university           Int      @default(0)
+  technicalInstitute   Int      @default(0)
+  vocationalCenter     Int      @default(0)
+  adultEducationCenter Int      @default(0)
+  libraryCount         Int      @default(0)
+  computerCenter       Int      @default(0)
+  isDraft              Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  }
+
+model Pond {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  location  String
+  area      String?
+  status    PondStatus  @default(AVAILABLE)
+  leases    PondLease[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+enum PondStatus {
+  AVAILABLE
+  LEASED
+}
+
+model PondLease {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  pondId String @db.ObjectId
+  pond   Pond   @relation(fields: [pondId], references: [id])
+
+  leasePartyName         String
+  leasePartyFatherName   String?
+  leasePartyAddressLine1 String?
+  leasePartyAddressLine2 String?
+  leasePartyCity         String?
+  leasePartyPin          String?
+  leasePartyMobile       String
+  leaseAmountYearly      Float
+  leaseStartDate         DateTime
+  leaseEndDate           DateTime
+  totalAmount            Float
+  paidAmount             Float              @default(0)
+  pendingAmount          Float
+  status                 LeaseStatus        @default(ACTIVE)
+  remarks                String?
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  payments               PondLeasePayment[]
+
+  @@index([pondId])
+  @@index([leasePartyName])
+  @@index([status])
+}
+
+model PondLeasePayment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  pondLeaseId String    @db.ObjectId
+  pondLease   PondLease @relation(fields: [pondLeaseId], references: [id], onDelete: Cascade)
+
+  amountPaid Float
+
+  paymentDate DateTime
+
+  paymentMethod PaymentMethod @default(CASH)
+
+  transactionId String?
+
+  remarks String?
+
+  createdAt DateTime @default(now())
+
+  @@index([pondLeaseId])
+  @@index([paymentDate])
+}
+
+enum LeaseStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  EXPIRED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LEAVE
+  HALF_DAY
+  WORK_FROM_HOME
+}
+
+model Attendance {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
+
+  date     DateTime
+  checkIn  DateTime?
+  checkOut DateTime?
+  status   AttendanceStatus @default(PRESENT)
+  notes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@map("attendances")
+}
+
+model SystemConfig {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  key         String   @unique
+  value       String
+  description String?
+  level       Int      @default(1)
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================================================
+// TUBEWELL WORKFLOW MODELS
+// ============================================================================
+
+model Mistri {
+  id            String              @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  mobileNumber  String?
+  address       String?
+  isActive      Boolean             @default(true)
+  bankName      String?
+  accountNumber String?
+  ifscCode      String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  workOrders    TubewellWorkOrder[]
+}
+
+model TubewellMaterial {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  bengaliName String?
+  unit        String // e.g., "pcs", "ft", "kg"
+  stock       Int      @default(0)
+  rate        Float    @default(0.0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  stockLogs  TubewellStockLog[]
+  orderItems TubewellOrderMaterial[]
+}
+
+enum StockTransactionType {
+  IN
+  OUT
+}
+
+model TubewellStockLog {
+  id              String               @id @default(auto()) @map("_id") @db.ObjectId
+  materialId      String               @db.ObjectId
+  material        TubewellMaterial     @relation(fields: [materialId], references: [id])
+  transactionType StockTransactionType
+  quantity        Int
+  rate            Float?
+  remarks         String?
+  referenceId     String?
+  createdAt       DateTime             @default(now())
+  userId          String?              @db.ObjectId
+}
+
+enum RepairRequestStatus {
+  PENDING
+  APPROVED
+  WORK_ORDER_ISSUED
+  COMPLETED
+  REJECTED
+}
+
+model TubewellRepairRequest {
+  id             String              @id @default(auto()) @map("_id") @db.ObjectId
+  citizenName    String
+  mobileNumber   String?
+  address        String
+  mouza          String
+  problemDetails String?
+  status         RepairRequestStatus @default(PENDING)
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  workOrders     TubewellWorkOrder[]
+}
+
+enum WorkOrderStatus {
+  ISSUED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model TubewellWorkOrder {
+  id          String                 @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber String                 @unique
+  requestId   String?                @db.ObjectId
+  request     TubewellRepairRequest? @relation(fields: [requestId], references: [id])
+  mistriId    String                 @db.ObjectId
+  mistri      Mistri                 @relation(fields: [mistriId], references: [id])
+
+  mustiAmount    Float           @default(0) // Manual entry for labor charge, now optional
+  status         WorkOrderStatus @default(ISSUED)
+  issueDate      DateTime        @default(now())
+  completionDate DateTime?
+
+  materials         TubewellOrderMaterial[]
+  billId            String?                   @db.ObjectId
+  bill              TubewellBill?             @relation(fields: [billId], references: [id])
+  masterRollEntries TubewellMasterRollEntry[]
+}
+
+model TubewellMasterRollEntry {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String            @db.ObjectId
+  workOrder   TubewellWorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+
+  nameOfPlace   String
+  villageSansad String
+
+  items TubewellMasterRollItem[]
+
+  total Float
+}
+
+model TubewellMasterRollItem {
+  id                String                  @id @default(auto()) @map("_id") @db.ObjectId
+  masterRollEntryId String                  @db.ObjectId
+  masterRollEntry   TubewellMasterRollEntry @relation(fields: [masterRollEntryId], references: [id], onDelete: Cascade)
+
+  workType String // e.g., "Pipe Lifting", "Bore Drilling"
+  quantity Int
+  rate     Float
+  total    Float
+}
+
+model TubewellOrderMaterial {
+  id          String            @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String            @db.ObjectId
+  workOrder   TubewellWorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  materialId  String            @db.ObjectId
+  material    TubewellMaterial  @relation(fields: [materialId], references: [id])
+  quantity    Int
+  rate        Float
+}
+
+enum TubewellBillStatus {
+  GENERATED
+  PAID
+  CANCELLED
+}
+
+model TubewellBill {
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  billNumber        String              @unique
+  workOrders        TubewellWorkOrder[]
+  totalMaterialCost Float
+  totalLaborCost    Float
+  netAmount         Float
+  status            TubewellBillStatus  @default(GENERATED)
+  billDate          DateTime            @default(now())
+  paymentDate       DateTime?
+}
+
+model TubewellLaborRate {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  workType         String // e.g., "UPPERING", "LOWERING", "REPAIRING", "GORA_KHORA"
+  rate             Float
+  effectiveFrom    DateTime @default(now())
+  resolutionNumber String? // optional reference to a government resolution
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([workType, effectiveFrom])
+}
+
+enum LinkageApplicationStatus {
+  DRAFT
+  SUBMITTED
+  VALIDATION_PENDING
+  VALIDATED
+  OWNERSHIP_PENDING
+  OWNERSHIP_VERIFIED
+  APPROVAL_PENDING
+  APPROVED
+  ISSUED
+  RENEWAL_PENDING
+  RENEWED
+  DISPUTED
+  REJECTED
+  CANCELLED
+}
+
+enum LinkageValidationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LinkageOwnershipStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum DisputeStatus {
+  PENDING
+  UNDER_REVIEW
+  RESOLVED
+  REJECTED
+}
+
+enum LinkagePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum LinkageServiceChannel {
+  ONLINE
+  OFFLINE
+  CAMP
+}
+
+model LinkageApplication {
+  id                              String                          @id @default(auto()) @map("_id") @db.ObjectId
+  applicationNo                   String                          @unique
+  status                          LinkageApplicationStatus        @default(SUBMITTED)
+  serviceChannel                  LinkageServiceChannel           @default(ONLINE)
+  priority                        LinkagePriority                 @default(NORMAL)
+  applicantName                   String
+  applicantPhone                  String
+  applicantEmail                  String?
+  applicantNationalId             String?
+  applicantDob                    DateTime?
+  applicantGuardianName           String?
+  applicantAddress                String
+  applicantVillage                String?
+  applicantPostOffice             String?
+  applicantBlock                  String?
+  applicantDistrict               String?
+  applicantState                  String?
+  officeCode                      String?
+  jurisdictionCode                String?
+  linkageType                     String?
+  linkageCategory                 String?
+  linkageReason                   String?
+  linkedEntityName                String?
+  linkedEntityAddress             String?
+  documents                       String[]
+  submittedAt                     DateTime?
+  validatedAt                     DateTime?
+  ownershipVerifiedAt             DateTime?
+  approvedAt                      DateTime?
+  rejectedReason                  String?
+  rejectedBy                      String?
+  createdAt                       DateTime                        @default(now())
+  updatedAt                       DateTime                        @updatedAt
+  createdBy                       User?                           @relation(fields: [createdById], references: [id])
+  createdById                     String?                         @db.ObjectId
+  verification                    LinkageDocumentValidation?
+  ownership                       LinkageOwnershipVerification?
+  certificate                     LinkageCertificate?
+  renewals                        LinkageRenewal[]
+  disputes                        LinkageDispute[]
+  linkageApplicationBeneficiaries LinkageApplicationBeneficiary[]
+
+  @@index([status, createdAt])
+  @@index([officeCode, status])
+  @@index([applicantNationalId])
+  @@index([applicantName])
+  @@index([linkedEntityName])
+}
+
+model LinkageDocumentValidation {
+  id                String                  @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId     String                  @unique @db.ObjectId
+  application       LinkageApplication      @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  validatorName     String
+  validatorId       String?
+  validatorRole     String?
+  officeCode        String?
+  validationDate    DateTime
+  findings          String?
+  rejectionReason   String?
+  status            LinkageValidationStatus @default(PENDING)
+  documentsVerified String[]                @default([])
+  checklist         Json?
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+}
+
+model LinkageOwnershipVerification {
+  id                 String                 @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId      String                 @unique @db.ObjectId
+  application        LinkageApplication     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  officerName        String
+  officerId          String?
+  officerRole        String?
+  officeCode         String?
+  verificationDate   DateTime
+  remarks            String?
+  rejectionReason    String?
+  ownershipConfirmed Boolean                @default(false)
+  status             LinkageOwnershipStatus @default(PENDING)
+  verifiedBy         String?
+  proofDocuments     String[]               @default([])
+  processedDate      DateTime?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+}
+
+model LinkageCertificate {
+  id                String               @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId     String               @unique @db.ObjectId
+  application       LinkageApplication   @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  certificateNo     String               @unique
+  referenceNo       String?
+  memoNo            String?
+  certificateType   String?
+  certificateBody   String?
+  issueDate         DateTime
+  expiryDate        DateTime?
+  issuingOfficeCode String?
+  issuingAuthority  String?
+  conditions        String[]
+  signedBy          String
+  signedDesignation String
+  digitalSignHash   String?
+  pdfUrl            String?
+  pdfKey            String?
+  verificationUrl   String?
+  qrCodeData        String?
+  gpProfileId       String?              @db.ObjectId
+  gpProfile         GPProfile?           @relation(fields: [gpProfileId], references: [id])
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  linkageRenewals   LinkageRenewal[]
+  linkageDisputes   LinkageDispute[]
+  beneficiaries     LinkageBeneficiary[]
+
+  @@index([issueDate])
+}
+
+model LinkageRenewal {
+  id                   String              @id @default(auto()) @map("_id") @db.ObjectId
+  certificateId        String              @db.ObjectId
+  certificate          LinkageCertificate  @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  renewalDate          DateTime
+  newExpiryDate        DateTime?
+  renewalReason        String
+  renewalOrderNo       String?
+  renewalRemarks       String?
+  status               RenewalStatus       @default(PENDING)
+  processedBy          String?
+  processedDate        DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  linkageApplication   LinkageApplication? @relation(fields: [linkageApplicationId], references: [id])
+  linkageApplicationId String?             @db.ObjectId
+
+  @@index([certificateId])
+  @@index([status])
+}
+
+model LinkageDispute {
+  id                   String              @id @default(auto()) @map("_id") @db.ObjectId
+  certificateId        String              @db.ObjectId
+  certificate          LinkageCertificate  @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  raisedByName         String
+  raisedByPhone        String
+  grievanceNo          String?
+  reason               String
+  status               DisputeStatus       @default(PENDING)
+  assignedTo           String?
+  assignedRole         String?
+  hearingDate          DateTime?
+  resolutionNotes      String?
+  disposalOrderNo      String?
+  resolvedAt           DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  linkageApplication   LinkageApplication? @relation(fields: [linkageApplicationId], references: [id])
+  linkageApplicationId String?             @db.ObjectId
+
+  @@index([certificateId])
+  @@index([status])
+}
+
+model LinkageBeneficiary {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  relation String
+
+  gender        Gender?
+  livingStatus  LivingStatus?
+  parentId      String?              @db.ObjectId
+  parent        LinkageBeneficiary?  @relation("LinkageBeneficiaryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children      LinkageBeneficiary[] @relation("LinkageBeneficiaryHierarchy")
+  certificateId String               @db.ObjectId
+  certificate   LinkageCertificate   @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+
+  @@index([certificateId])
+}
+
+model LinkageApplicationBeneficiary {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  relation String
+
+  gender        Gender?
+  livingStatus  LivingStatus?
+  parentId      String?                         @db.ObjectId
+  parent        LinkageApplicationBeneficiary?  @relation("LinkageApplicationBeneficiaryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children      LinkageApplicationBeneficiary[] @relation("LinkageApplicationBeneficiaryHierarchy")
+  applicationId String                          @db.ObjectId
+  application   LinkageApplication              @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime                        @default(now())
+  updatedAt     DateTime                        @updatedAt
+
+  @@index([applicationId])
+} 
+model Holiday {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  date        DateTime @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("holidays")
+}
+
+model SamabyathiApplication {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  applicantName  String
+  mobileNumber   String
+  villageName    String
+  deceasedName   String
+  relation       String
+  dateOfDeath    DateTime
+
+  status         String   @default("PENDING")
+  sanctionAmount Float?
+  
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  musterRolls    MusterRoll[]
+}
+
+model Allotment {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  amount       Float
+  remaining    Float
+  receivedDate DateTime
+
+  createdAt    DateTime @default(now())
+}
+
+model MusterRoll {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId   String   @db.ObjectId
+  application     SamabyathiApplication @relation(fields: [applicationId], references: [id])
+
+  musterRollNo    String?
+
+  allottedAmount  Float
+  paymentStatus   String   @default("PENDING")
+
+  createdAt       DateTime @default(now())
+}

@@ -1,0 +1,149 @@
+{
+  "schemas": [
+    [
+      {
+        "name": "pageNo",
+        "type": "text",
+        "position": {
+          "x": 160,
+          "y": 10
+        },
+        "width": 40,
+        "height": 6,
+        "fontSize": 9,
+        "alignment": "right",
+        "content": "",
+        "readOnly": false,
+        "required": false,
+        "fontName": "Roboto"
+      },
+      {
+        "name": "broughtForward",
+        "type": "text",
+        "position": {
+          "x": 20,
+          "y": 22
+        },
+        "width": 170,
+        "height": 7,
+        "fontSize": 10,
+        "alignment": "right",
+        "content": "",
+        "readOnly": false,
+        "required": false,
+        "fontName": "Roboto"
+      },
+      {
+        "name": "carryForward",
+        "type": "text",
+        "position": {
+          "x": 20,
+          "y": 275
+        },
+        "width": 170,
+        "height": 7,
+        "fontSize": 10,
+        "alignment": "right",
+        "content": "",
+        "readOnly": false,
+        "required": false,
+        "fontName": "Roboto"
+      },
+      {
+        "name": "mbTable",
+        "type": "table",
+        "position": {
+          "x": 20,
+          "y": 30
+        },
+        "width": 170,
+        "height": 240,
+        "content": "[[\"1\",\"Earth work in excavation of foun\",\"1\",\"10.00\",\"1.20\",\"1.50\",\"18.00\",\"cum\",\"210.00\",\"3780.00\"],[\"\",\"Measurement – 2\",\"1\",\"8.00\",\"1.20\",\"1.50\",\"14.40\",\"cum\",\"210.00\",\"3024.00\"]]",
+        "showHead": true,
+        "head": [
+          "Sl",
+          "Description",
+          "Nos",
+          "L",
+          "B",
+          "D",
+          "Qty",
+          "Unit",
+          "Rate",
+          "Amount"
+        ],
+        "headWidthPercentages": [4, 34, 6, 7, 7, 7, 7, 6, 10, 12],
+        "tableStyles": {
+          "borderWidth": 0.1,
+          "borderColor": "#555555"
+        },
+        "headStyles": {
+          "fontName": "Roboto",
+          "fontSize": 8,
+          "characterSpacing": 1,
+          "alignment": "left",
+          "verticalAlignment": "top",
+          "lineHeight": 0.5,
+          "fontColor": "#000000",
+          "borderColor": "#000000",
+          "backgroundColor": "#2980ba",
+          "borderWidth": {
+            "top": 0.2,
+            "right": 0,
+            "bottom": 0.3,
+            "left": 0
+          },
+          "padding": {
+            "top": 2,
+            "right": 2,
+            "bottom": 2,
+            "left": 2
+          }
+        },
+        "bodyStyles": {
+          "fontName": "Roboto",
+          "fontSize": 10,
+          "alignment": "center",
+          "lineHeight": 0.2,
+          "fontColor": "#000000",
+          "borderColor": "#7e7e7e",
+          "alternateBackgroundColor": "#f8f8f8",
+          "borderWidth": {
+            "top": 0.1,
+            "right": 0.1,
+            "bottom": 0.1,
+            "left": 0.1
+          },
+          "padding": {
+            "top": 1,
+            "right": 1,
+            "bottom": 1,
+            "left": 1
+          }
+        },
+        "columnStyles": {
+          "alignment": {
+            "0": "left",
+            "1": "left",
+            "2": "left",
+            "3": "left",
+            "4": "left",
+            "5": "left",
+            "6": "left",
+            "7": "center",
+            "8": "center",
+            "9": "center"
+          }
+        },
+        "readOnly": false,
+        "required": false
+      }
+    ]
+  ],
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [20, 20, 20, 20]
+  },
+  "pdfmeVersion": "5.5.6"
+}

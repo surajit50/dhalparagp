@@ -1,0 +1,128 @@
+{
+  "schemas": [
+    [
+      {
+        "name": "pageNo",
+        "type": "text",
+        "position": {
+          "x": 160,
+          "y": 10
+        },
+        "width": 40,
+        "height": 6,
+        "fontSize": 9,
+        "alignment": "right",
+        "content": "",
+        "fontName": "Roboto",
+        "readOnly": false,
+        "required": false
+      },
+      {
+        "name": "certText",
+        "type": "text",
+        "content": "Certified that the above measurements have been recorded on the spot and the work has been completed as per specification.",
+        "position": {
+          "x": 20,
+          "y": 111.9
+        },
+        "width": 170,
+        "height": 15,
+        "rotate": 0,
+        "alignment": "justify",
+        "verticalAlignment": "top",
+        "fontSize": 12,
+        "lineHeight": 1.3,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "fontName": "Roboto",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "required": false,
+        "readOnly": false
+      },
+      {
+        "name": "measuredBy",
+        "type": "text",
+        "content": "Measured By : ____________________",
+        "position": {
+          "x": 20,
+          "y": 130
+        },
+        "width": 80,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 11,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "fontName": "Roboto",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "required": false,
+        "readOnly": false
+      },
+      {
+        "name": "verifiedBy",
+        "type": "text",
+        "content": "Verified By : ____________________",
+        "position": {
+          "x": 110,
+          "y": 130
+        },
+        "width": 80,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "right",
+        "verticalAlignment": "middle",
+        "fontSize": 11,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "fontName": "Roboto",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "required": false,
+        "readOnly": false
+      },
+      {
+        "name": "date",
+        "type": "text",
+        "content": "Date : _____________",
+        "position": {
+          "x": 20,
+          "y": 150
+        },
+        "width": 80,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "fontSize": 11,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "fontName": "Roboto",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
+        "required": false,
+        "readOnly": false
+      }
+    ]
+  ],
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [20, 20, 20, 20]
+  },
+  "pdfmeVersion": "5.5.6"
+}

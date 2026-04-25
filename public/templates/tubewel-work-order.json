@@ -1,0 +1,225 @@
+{
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [0, 0, 0, 0]
+  },
+  "schemas": [
+    [
+      {
+        "name": "gpTitle",
+        "type": "text",
+        "content": "OFFICE OF THE DHALPARA GRAM PANCHAYAT",
+        "position": { "x": 10, "y": 10 },
+        "width": 190,
+        "height": 8,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "fontSize": 16,
+        "fontColor": "#003399",
+        "fontName": "NotoSansJP-Bold",
+        "readOnly": true
+      },
+      {
+        "name": "gpAddress",
+        "type": "text",
+        "content": "Post – Trimohini | Block – Hili | District – Dakshin Dinajpur",
+        "position": { "x": 10, "y": 18 },
+        "width": 190,
+        "height": 6,
+        "alignment": "center",
+        "fontSize": 10,
+        "fontName": "NotoSansJP-Regular",
+        "readOnly": true
+      },
+      {
+        "name": "orderTitle",
+        "type": "text",
+        "content": "WORK ORDER FOR INSTALLATION / REPAIR OF HAND TUBEWELL",
+        "position": { "x": 10, "y": 26 },
+        "width": 190,
+        "height": 7,
+        "alignment": "center",
+        "fontSize": 12,
+        "fontName": "NotoSansJP-Bold",
+        "readOnly": true
+      },
+
+      {
+        "name": "memoLabel",
+        "type": "text",
+        "content": "Memo No:",
+        "position": { "x": 10, "y": 38 },
+        "width": 40,
+        "height": 6,
+        "fontSize": 10,
+        "fontName": "NotoSansJP-Regular",
+        "readOnly": true
+      },
+      {
+        "name": "memoValue",
+        "type": "text",
+        "content": "5/R/DAPT/55",
+        "position": { "x": 45, "y": 38 },
+        "width": 60,
+        "height": 6,
+        "fontSize": 10,
+        "fontName": "NotoSansJP-Regular"
+      },
+      {
+        "name": "dateValue",
+        "type": "text",
+        "content": "22-02-2025",
+        "position": { "x": 150, "y": 38 },
+        "width": 50,
+        "height": 6,
+        "alignment": "right",
+        "fontSize": 10,
+        "fontName": "NotoSansJP-Regular"
+      },
+
+      {
+        "name": "toText",
+        "type": "text",
+        "content": "To: Sri Ratan Mistri, Vill – Dhalpara",
+        "position": { "x": 10, "y": 50 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 11,
+        "fontName": "NotoSansJP-Regular"
+      },
+
+      {
+        "name": "subject",
+        "type": "text",
+        "content": "Subject: Work Order for New Hand Tubewell Installation",
+        "position": { "x": 10, "y": 58 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 11,
+        "fontName": "NotoSansJP-Regular"
+      },
+
+      {
+        "name": "bodyText",
+        "type": "multiVariableText",
+        "content": "You are hereby instructed to undertake installation / repair work of hand tubewell at the location mentioned below.",
+        "position": { "x": 10, "y": 68 },
+        "width": 190,
+        "height": 10,
+        "fontSize": 11,
+        "fontName": "NotoSansJP-Regular"
+      },
+
+      {
+        "name": "location",
+        "type": "text",
+        "content": "Location: Near House of Sri Bimal Das, Mouza – Dhalpara",
+        "position": { "x": 10, "y": 82 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 11
+      },
+
+      {
+        "name": "beneficiary",
+        "type": "text",
+        "content": "Beneficiary: Smt. Gita Das",
+        "position": { "x": 10, "y": 90 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 11
+      },
+
+      {
+        "name": "scopeTitle",
+        "type": "text",
+        "content": "Scope of Work",
+        "position": { "x": 10, "y": 100 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 12,
+        "fontName": "NotoSansJP-Bold"
+      },
+
+      
+
+      {
+        "name": "termsTitle",
+        "type": "text",
+        "content": "Terms & Conditions",
+        "position": { "x": 10, "y": 160 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 12,
+        "fontName": "NotoSansJP-Bold"
+      },
+
+      
+
+      {
+        "name": "labourCharge",
+        "type": "text",
+        "content": "Labour Charge: ₹ 2500",
+        "position": { "x": 10, "y": 205 },
+        "width": 190,
+        "height": 6,
+        "fontSize": 11
+      },
+
+      {
+        "name": "completionTitle",
+        "type": "text",
+        "content": "WORK COMPLETION & SATISFACTION CERTIFICATE",
+        "position": { "x": 10, "y": 220 },
+        "width": 190,
+        "height": 7,
+        "alignment": "center",
+        "fontSize": 12,
+        "fontName": "NotoSansJP-Bold"
+      },
+
+      {
+        "name": "completionText",
+        "type": "text",
+        "content": "Certified that the above tubewell work has been completed satisfactorily and is functioning properly.",
+        "position": { "x": 10, "y": 230 },
+        "width": 190,
+        "height": 20,
+        "fontSize": 11
+      },
+
+      {
+        "name": "beneficiarySign",
+        "type": "text",
+        "content": "Beneficiary Signature",
+        "position": { "x": 10, "y": 260 },
+        "width": 60,
+        "height": 6,
+        "fontSize": 10
+      },
+      
+
+
+      {
+        "name": "assistantSign",
+        "type": "text",
+        "content": "Job Assistant",
+        "position": { "x": 80, "y": 260 },
+        "width": 60,
+        "height": 6,
+        "fontSize": 10
+      },
+
+      {
+        "name": "pradhanSign",
+        "type": "text",
+        "content": "Pradhan",
+        "position": { "x": 150, "y": 260 },
+        "width": 50,
+        "height": 6,
+        "fontSize": 10
+      }
+    ]
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "basePdf": { "width": 210, "height": 297, "padding": [15, 15, 15, 15] },
+  "schemas": [
+    [
+      {
+        "name": "header",
+        "type": "text",
+        "position": { "x": 10, "y": 10 },
+        "width": 190,
+        "height": 10,
+        "alignment": "center",
+        "fontSize": 20,
+        "content": "Samabyathi Prakalpa - Muster Roll",
+        "fontColor": "#000000"
+      },
+      {
+        "name": "musterRollNo",
+        "type": "text",
+        "position": { "x": 10, "y": 25 },
+        "width": 90,
+        "height": 8,
+        "fontSize": 12,
+        "fontColor": "#000000"
+      },
+      {
+        "name": "date",
+        "type": "text",
+        "position": { "x": 110, "y": 25 },
+        "width": 90,
+        "height": 8,
+        "alignment": "right",
+        "fontSize": 12,
+        "fontColor": "#000000"
+      },
+      {
+        "name": "table",
+        "type": "table",
+        "position": { "x": 10, "y": 40 },
+        "width": 190,
+        "height": 180,
+        "head": [
+          "Sl No", "Applicant", "Deceased", "Village", "Amount", "Signature"
+        ],
+        "headWidthPercentages": [10, 25, 25, 15, 10, 15],
+        "tableStyles": {
+          "borderWidth": 0.5,
+          "borderColor": "#000000"
+        },
+        "headStyles": {
+          "fillColor": "#F3F4F6",
+          "textColor": "#000000"
+        },
+        "bodyStyles": {
+          "textColor": "#000000"
+        }
+      },
+      {
+        "name": "footerPrepared",
+        "type": "text",
+        "position": { "x": 10, "y": 240 },
+        "width": 60,
+        "height": 10,
+        "alignment": "center",
+        "fontSize": 12,
+        "fontColor": "#000000",
+        "content": "Prepared By"
+      },
+      {
+        "name": "footerSecretary",
+        "type": "text",
+        "position": { "x": 75, "y": 240 },
+        "width": 60,
+        "height": 10,
+        "alignment": "center",
+        "fontSize": 12,
+        "fontColor": "#000000",
+        "content": "EA / Secretary"
+      },
+      {
+        "name": "footerPradhan",
+        "type": "text",
+        "position": { "x": 140, "y": 240 },
+        "width": 60,
+        "height": 10,
+        "alignment": "center",
+        "fontSize": 12,
+        "fontColor": "#000000",
+        "content": "Pradhan Signature"
+      }
+    ]
+  ]
+}
