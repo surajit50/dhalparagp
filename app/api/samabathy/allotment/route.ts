@@ -41,9 +41,12 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json();
 
-  if (!body.amount || body.amount <= 0) {
-    return Response.json({ error: "Invalid amount" }, { status: 400 });
-  }
+  if (!body.amount || body.amount <= 0 || body.amount > 200000) {
+  return Response.json(
+    { error: "Amount must be between 1 and 2,00,000" },
+    { status: 400 }
+  );
+}
 
   try {
     // ✅ 1. Create allotment
