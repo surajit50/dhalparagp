@@ -43,7 +43,10 @@ export const applicationSchema = z.object({
 });
 
 export const allotmentSchema = z.object({
-  amount: z.number().min(1),
+  amount: z
+    .number()
+    .min(1, "Amount must be at least 1")
+    .max(200000, "Amount cannot exceed 2,00,000"),
   receivedDate: z.string(),
 });
 
