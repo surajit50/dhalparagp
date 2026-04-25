@@ -46,8 +46,8 @@ interface SamabyathiApplication {
   deceasedName: string;
   relation: string;
   dateOfDeath: Date | string;
-  voterId?: string;
-  aadhaarNumber?: string;
+  voterId: string | null;
+  aadhaarNumber: string | null;
   status: string;
   sanctionAmount: number | null;
   createdAt: Date | string;
