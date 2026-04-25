@@ -112,8 +112,8 @@ export default async function Dashboard() {
                 <span className="text-sm font-semibold leading-none text-gray-900">
                   {cuser.name || "User"}
                 </span>
-                <span className="mt-1 text-xs font-medium leading-none text-gray-500">
-                  Citizen
+                <span className="mt-1 text-xs font-medium leading-none text-gray-500 capitalize">
+                  {cuser.role}
                 </span>
               </div>
             </div>

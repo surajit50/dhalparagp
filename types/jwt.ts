@@ -8,6 +8,6 @@ export interface CustomJwtPayload extends JwtPayload {
   id: string
   email: string
   name: string | null
-  role: "admin" | "staff" | "superadmin" | "user"
+  role: "admin" | "staff" | "superadmin" | "user" | "agency" | "citizen"
   // Standard claims like 'exp', 'iat', 'sub' are inherited from JwtPayload
 }
