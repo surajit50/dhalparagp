@@ -21,7 +21,7 @@ export type MenuItemProps = {
   color?: string;
   submenu: boolean;
   subMenuItems: MenuItemProps[];
-  allowedRoles: ("user" | "admin" | "staff" | "superadmin" | "agency")[];
+  allowedRoles: ("user" | "admin" | "staff" | "superadmin" | "agency" )[];
 };
 
 // Color Constants
@@ -83,6 +83,11 @@ export const publicUserMenuItems: MenuItemProps[] = [
     ]),
     createMenuItem("Bulk Processing", ["user"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
     createMenuItem("Issuance Reports", ["user"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
+  ]),
+
+  createMenuItem("Samabyathi Scheme", ["user"], undefined, FaRegFileAlt, COLORS.green, [
+    createMenuItem("Apply for Scheme", ["user"], `${BASE_URLS.user}/samabyathi/apply`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Check Status", ["user"], `${BASE_URLS.user}/samabyathi/status`, FaChevronCircleRight, COLORS.blue),
   ]),
 
   createMenuItem("Profile & Account", ["user"], undefined, MdAccountCircle, COLORS.purple, [

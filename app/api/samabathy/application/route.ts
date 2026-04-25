@@ -1,7 +1,22 @@
 import { db } from "@/lib/db";
 import { SAMABYATHI_CONFIG } from "@/constants/samabyathi";
+import { auth } from "@/auth";
+
+async function generateApplicationNumber() {
+  const year = new Date().getFullYear().toString();
+  
+  const counter = await db.samabyathiCounter.upsert({
+    where: { year },
+    update: { lastNumber: { increment: 1 } },
+    create: { year, lastNumber: 1 },
+  });
+  
+  const sequence = counter.lastNumber.toString().padStart(4, "0");
+  return `SAM/${year}/${sequence}`;
+}
 
 export async function POST(req: Request) {
+  const session = await auth();
   const body = await req.json();
   const sanctionAmount = SAMABYATHI_CONFIG.AMOUNT_PER_APP;
 
@@ -18,6 +33,8 @@ export async function POST(req: Request) {
   }
 
   try {
+    const applicationNumber = await generateApplicationNumber();
+
     const result = await db.$transaction(async (tx) => {
       // ✅ Get total remaining fund (ALL allotments)
       const totalRemainingData = await tx.allotment.aggregate({
@@ -29,8 +46,11 @@ export async function POST(req: Request) {
       let status: "PENDING" | "APPROVED" = "PENDING";
       let sanction: number | null = null;
 
-      // ✅ Instant sanction logic
-      if (totalRemaining >= sanctionAmount) {
+      // Only auto-approve if user is admin/staff and fund is available
+      const isAdmin = session?.user?.role === "admin" || session?.user?.role === "superadmin" || session?.user?.role === "staff";
+
+      // ✅ Instant sanction logic (only for admin/staff)
+      if (isAdmin && totalRemaining >= sanctionAmount) {
         let remainingToDeduct = sanctionAmount;
 
         const allotments = await tx.allotment.findMany({
@@ -57,9 +77,10 @@ export async function POST(req: Request) {
         sanction = sanctionAmount;
       }
 
-      // ✅ Create application ONLY
+      // ✅ Create application
       const app = await tx.samabyathiApplication.create({
         data: {
+          applicationNumber,
           applicantName: body.applicantName,
           mobileNumber: body.mobileNumber,
           villageName: body.villageName,
@@ -68,6 +89,7 @@ export async function POST(req: Request) {
           dateOfDeath: new Date(body.dateOfDeath),
           status,
           sanctionAmount: sanction,
+          userId: session?.user?.id,
         },
       });
 

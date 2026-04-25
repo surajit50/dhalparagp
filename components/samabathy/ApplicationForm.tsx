@@ -15,8 +15,16 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardDescription,
+  CardFooter,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import {
   Select,
@@ -30,11 +38,27 @@ import {
   SAMABYATHI_RELATIONS,
 } from "@/constants/samabyathi";
 import { villagenameOption } from "@/constants";
+import {
+  User,
+  Phone,
+  MapPin,
+  UserMinus,
+  HeartHandshake,
+  CalendarDays,
+  SendHorizontal,
+  Info,
+} from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 type FormData = z.infer<typeof applicationSchema>;
 
-export default function ApplicationForm() {
+export default function ApplicationForm({
+  onSuccess,
+}: {
+  onSuccess?: (app: any) => void;
+}) {
   const [loading, setLoading] = useState(false);
+  const [submittedApp, setSubmittedApp] = useState<any>(null);
   const form = useForm<FormData>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
@@ -59,8 +83,13 @@ export default function ApplicationForm() {
       });
 
       if (response.ok) {
-        toast.success("Application submitted successfully");
+        const result = await response.json();
+        setSubmittedApp(result.data);
+        toast.success(
+          `Application submitted! ID: ${result.data.applicationNumber}`,
+        );
         form.reset();
+        if (onSuccess) onSuccess(result.data);
       } else {
         const errData = await response.json();
         toast.error(errData.error || "Failed to submit application");
@@ -72,25 +101,79 @@ export default function ApplicationForm() {
     }
   };
 
+  if (submittedApp) {
+    return (
+      <div className="space-y-6 animate-in fade-in zoom-in duration-300">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
+          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <SendHorizontal className="h-6 w-6 text-green-600" />
+          </div>
+          <h3 className="text-xl font-bold text-green-900 mb-2">
+            Application Submitted!
+          </h3>
+          <p className="text-green-700 mb-6">
+            Your application has been received and is pending approval.
+          </p>
+
+          <div className="bg-white border border-green-100 rounded-md p-4 max-w-sm mx-auto shadow-sm">
+            <p className="text-sm text-gray-500 uppercase font-bold tracking-wider mb-1">
+              Your Application Number
+            </p>
+            <p className="text-2xl font-mono font-bold text-primary">
+              {submittedApp.applicationNumber}
+            </p>
+          </div>
+
+          <p className="text-sm text-green-600 mt-6 italic">
+            Please keep this number for future reference to check your status.
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={() => setSubmittedApp(null)}
+        >
+          Submit Another Application
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-sm">
-      <CardHeader>
-        <CardTitle className="text-xl">New Samabyathi Application</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <Card className="shadow-md border-none ring-1 ring-border/50 overflow-hidden">
+          <CardHeader className="bg-muted/30 pb-8">
+            <div className="flex items-center gap-2 text-primary mb-1">
+              <Info className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase tracking-wider">
+                Application Form
+              </span>
+            </div>
+            <CardTitle className="text-2xl font-bold">
+              Applicant Information
+            </CardTitle>
+            <CardDescription>
+              Enter the details of the person applying for the assistance.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
             <FormField
               control={form.control}
               name="applicantName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Applicant Name</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    Applicant Name
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Full name of applicant" {...field} />
+                    <Input
+                      placeholder="Enter full name"
+                      {...field}
+                      className="bg-background/50 focus:bg-background transition-colors"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -102,12 +185,16 @@ export default function ApplicationForm() {
               name="mobileNumber"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mobile Number</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    Mobile Number
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="10-digit number"
+                      placeholder="10-digit mobile number"
                       {...field}
                       maxLength={10}
+                      className="bg-background/50 focus:bg-background transition-colors"
                     />
                   </FormControl>
                   <FormMessage />
@@ -119,15 +206,18 @@ export default function ApplicationForm() {
               control={form.control}
               name="villageName"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Village</FormLabel>
+                <FormItem className="md:col-span-2">
+                  <FormLabel className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    Village / Locality
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Village" />
+                      <SelectTrigger className="bg-background/50 focus:bg-background transition-colors">
+                        <SelectValue placeholder="Select the village name" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -142,15 +232,34 @@ export default function ApplicationForm() {
                 </FormItem>
               )}
             />
+          </CardContent>
 
+          <Separator className="bg-border/50" />
+
+          <CardHeader className="bg-muted/10">
+            <CardTitle className="text-2xl font-bold">
+              Deceased Information
+            </CardTitle>
+            <CardDescription>
+              Provide details about the deceased person.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 pb-8">
             <FormField
               control={form.control}
               name="deceasedName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name of Deceased</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <UserMinus className="h-4 w-4 text-muted-foreground" />
+                    Name of Deceased
+                  </FormLabel>
                   <FormControl>
-                    <Input placeholder="Deceased Person's Name" {...field} />
+                    <Input
+                      placeholder="Enter name of deceased"
+                      {...field}
+                      className="bg-background/50 focus:bg-background transition-colors"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -162,14 +271,17 @@ export default function ApplicationForm() {
               name="relation"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Relation with Deceased</FormLabel>
+                  <FormLabel className="flex items-center gap-2">
+                    <HeartHandshake className="h-4 w-4 text-muted-foreground" />
+                    Relationship
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Relation" />
+                      <SelectTrigger className="bg-background/50 focus:bg-background transition-colors">
+                        <SelectValue placeholder="Select relationship" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -189,24 +301,48 @@ export default function ApplicationForm() {
               control={form.control}
               name="dateOfDeath"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date of Death</FormLabel>
+                <FormItem className="md:col-span-2">
+                  <FormLabel className="flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4 text-muted-foreground" />
+                    Date of Death
+                  </FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input
+                      type="date"
+                      {...field}
+                      className="bg-background/50 focus:bg-background transition-colors block"
+                    />
                   </FormControl>
+                  <FormDescription>
+                    Select the exact date as mentioned in the death certificate.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            <div className="md:col-span-2 pt-4">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Submitting..." : "Submit Application"}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+          </CardContent>
+          <CardFooter className="bg-muted/30 border-t p-6">
+            <Button
+              type="submit"
+              className="w-full md:w-auto md:min-w-[200px] ml-auto gap-2 shadow-lg shadow-primary/20"
+              disabled={loading}
+              size="lg"
+            >
+              {loading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <SendHorizontal className="h-4 w-4" />
+                  Submit Application
+                </>
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </form>
+    </Form>
   );
 }

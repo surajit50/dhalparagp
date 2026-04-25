@@ -13,11 +13,26 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { SAMABYATHI_CONFIG } from "@/constants/samabyathi";
 import FullPageLoader from "./FullPageLoader";
+import { useEffect } from "react";
 
 export default function GenerateMusterButton() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [eligibleCount, setEligibleCount] = useState<number | null>(null);
   const router = useRouter();
+
+  const fetchEligibleCount = async () => {
+    try {
+      const ids = await getEligibleApplicationIds();
+      setEligibleCount(ids.length);
+    } catch (err) {
+      console.error("Error fetching eligible count:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchEligibleCount();
+  }, []);
 
   const handleClick = async () => {
     setLoading(true);
@@ -53,6 +68,7 @@ export default function GenerateMusterButton() {
       toast.success(
         `Generated ${total} muster roll(s) - ₹${(total * SAMABYATHI_CONFIG.AMOUNT_PER_APP).toLocaleString("en-IN")}`,
       );
+      await fetchEligibleCount();
       router.refresh();
     } catch (err) {
       console.error("[v0] Error generating muster roll:", err);
@@ -73,24 +89,33 @@ export default function GenerateMusterButton() {
         title="Generating Muster Rolls"
         description="Please wait while we process and generate the muster rolls for eligible applications."
       />
-      <Button
-        type="button"
-        onClick={handleClick}
-        disabled={loading}
-        className="w-full"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="animate-spin mr-2 h-4 w-4" />
-            Generating ({progress}%)
-          </>
-        ) : (
-          <>
-            <FilePlus className="mr-2 h-4 w-4" />
-            Generate Muster
-          </>
+      <div className="flex flex-col gap-1">
+        <Button
+          type="button"
+          onClick={handleClick}
+          disabled={loading || eligibleCount === 0}
+          className="w-full"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin mr-2 h-4 w-4" />
+              Generating ({progress}%)
+            </>
+          ) : (
+            <>
+              <FilePlus className="mr-2 h-4 w-4" />
+              Generate Muster
+            </>
+          )}
+        </Button>
+        {eligibleCount !== null && (
+          <p className="text-[10px] text-center text-muted-foreground font-medium">
+            {eligibleCount > 0
+              ? `${eligibleCount} pending application(s) ready`
+              : "No pending applications"}
+          </p>
         )}
-      </Button>
+      </div>
     </div>
   );
 }

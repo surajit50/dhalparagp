@@ -29,7 +29,6 @@ import {
 import type { RootState } from "@/redux/store";
 import { toggleMenu } from "@/redux/slices/menuSlice";
 
-
 type Role = "user" | "admin" | "staff" | "superadmin" | "agency";
 
 interface DashboardConfig {
@@ -39,6 +38,7 @@ interface DashboardConfig {
 
 const DASHBOARD_CONFIG: Record<Role, DashboardConfig> = {
   user: { title: "User Dashboard", items: publicUserMenuItems },
+
   admin: { title: "Admin Portal", items: adminMenuItems },
   staff: { title: "Staff Portal", items: employeeMenuItems },
   superadmin: { title: "Super Admin Portal", items: superAdminMenuItems },

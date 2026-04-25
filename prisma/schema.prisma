@@ -35,6 +35,7 @@ enum UserRole {
   staff
   superadmin
   agency
+  citizen
 }
 
 enum UserStatus {
@@ -107,6 +108,7 @@ model User {
   workBillDeductions           WorkBillDeduction[]
   linkageApplications          LinkageApplication[]
   noticeAcknowledgments        NoticeAcknowledgment[]
+  samabyathiApplications       SamabyathiApplication[]
 }
 
 model Account {
@@ -984,28 +986,28 @@ enum NoticeStatus {
 }
 
 model Notice {
-  id               String               @id @default(auto()) @map("_id") @db.ObjectId
-  title            String
-  description      String
-  department       String
-  type             NoticeTypes // Tender, Notice, Circular, Agency, Other
-  status           NoticeStatus         @default(OPEN)
-  reference        String               @unique
-  files            File[]
-  agencyId         String?              @db.ObjectId
-  agency           AgencyDetails?       @relation(fields: [agencyId], references: [id])
-  acknowledgments  NoticeAcknowledgment[]
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
+  id              String                 @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  description     String
+  department      String
+  type            NoticeTypes // Tender, Notice, Circular, Agency, Other
+  status          NoticeStatus           @default(OPEN)
+  reference       String                 @unique
+  files           File[]
+  agencyId        String?                @db.ObjectId
+  agency          AgencyDetails?         @relation(fields: [agencyId], references: [id])
+  acknowledgments NoticeAcknowledgment[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
 }
 
 model NoticeAcknowledgment {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  noticeId  String   @db.ObjectId
-  userId    String   @db.ObjectId
-  notice    Notice   @relation(fields: [noticeId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  readAt    DateTime @default(now())
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  noticeId String   @db.ObjectId
+  userId   String   @db.ObjectId
+  notice   Notice   @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt   DateTime @default(now())
 
   @@unique([noticeId, userId])
 }
@@ -2941,8 +2943,8 @@ model Mouzaname {
   VillageData   VillageData? @relation(fields: [villageDataId], references: [id])
 
   populationSummary PopulationSummary[]
-  voterSummaryIds   String[]       @db.ObjectId
-  voterSummary      VoterSummary[] @relation(fields: [voterSummaryIds], references: [id])
+  voterSummaryIds   String[]            @db.ObjectId
+  voterSummary      VoterSummary[]      @relation(fields: [voterSummaryIds], references: [id])
   toiletSummary     ToiletSummary[]
   waterSummary      WaterSummary[]
   population        Population[]
@@ -3017,7 +3019,7 @@ model PollingDetails {
 }
 
 model Population {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   financialYear String?
   male          Int
   female        Int
@@ -3048,7 +3050,7 @@ model VillageData {
 }
 
 model PopulationSummary {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   financialYear String?
 
   mouzaId String    @db.ObjectId
@@ -3074,14 +3076,14 @@ model PopulationSummary {
 }
 
 model VoterSummary {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   financialYear String?
 
   pollingStationNo   String
   pollingStationName String
 
-  mouzaIds String[]     @db.ObjectId
-  mouzas   Mouzaname[]  @relation(fields: [mouzaIds], references: [id])
+  mouzaIds String[]    @db.ObjectId
+  mouzas   Mouzaname[] @relation(fields: [mouzaIds], references: [id])
 
   totalMaleVoter   Int
   totalFemaleVoter Int
@@ -3103,7 +3105,7 @@ model VoterSummary {
 }
 
 model ToiletSummary {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   financialYear String?
 
   mouzaId String    @db.ObjectId
@@ -3118,7 +3120,7 @@ model ToiletSummary {
 }
 
 model WaterSummary {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
   financialYear String?
 
   mouzaId String    @db.ObjectId
@@ -3135,12 +3137,12 @@ model WaterSummary {
 }
 
 model EducationSummary {
-  id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  
-  mouzaId         String    @db.ObjectId
-  mouza           Mouzaname @relation(fields: [mouzaId], references: [id])
+  id String @id @default(auto()) @map("_id") @db.ObjectId
 
-    ssk                  Int      @default(0) // Shishu Shiksha Kendra
+  mouzaId String    @db.ObjectId
+  mouza   Mouzaname @relation(fields: [mouzaId], references: [id])
+
+  ssk                  Int      @default(0) // Shishu Shiksha Kendra
   anganwadi            Int      @default(0)
   primarySchool        Int      @default(0)
   upperPrimary         Int      @default(0)
@@ -3158,8 +3160,7 @@ model EducationSummary {
   isDraft              Boolean  @default(true)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-
-  }
+}
 
 model Pond {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
@@ -3681,7 +3682,8 @@ model LinkageApplicationBeneficiary {
   updatedAt     DateTime                        @updatedAt
 
   @@index([applicationId])
-} 
+}
+
 model Holiday {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -3694,21 +3696,31 @@ model Holiday {
 }
 
 model SamabyathiApplication {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  applicantName  String
-  mobileNumber   String
-  villageName    String
-  deceasedName   String
-  relation       String
-  dateOfDeath    DateTime
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  applicationNumber String?  @unique
+  applicantName     String
+  mobileNumber      String
+  villageName       String
+  deceasedName      String
+  relation          String
+  dateOfDeath       DateTime
 
-  status         String   @default("PENDING")
+  status         String @default("PENDING")
   sanctionAmount Float?
-  
 
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  musterRolls    MusterRoll[]
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  musterRolls MusterRoll[]
+}
+
+model SamabyathiCounter {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  year       String   @unique
+  lastNumber Int      @default(0)
+  updatedAt  DateTime @updatedAt
 }
 
 model Allotment {
@@ -3717,18 +3729,18 @@ model Allotment {
   remaining    Float
   receivedDate DateTime
 
-  createdAt    DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
 model MusterRoll {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  applicationId   String   @db.ObjectId
-  application     SamabyathiApplication @relation(fields: [applicationId], references: [id])
+  id            String                @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String                @db.ObjectId
+  application   SamabyathiApplication @relation(fields: [applicationId], references: [id])
 
-  musterRollNo    String?
+  musterRollNo String?
 
-  allottedAmount  Float
-  paymentStatus   String   @default("PENDING")
+  allottedAmount Float
+  paymentStatus  String @default("PENDING")
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 }
