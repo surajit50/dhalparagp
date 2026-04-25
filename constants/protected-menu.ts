@@ -67,51 +67,59 @@ const createMenuItem = (
 });
   
 export const publicUserMenuItems: MenuItemProps[] = [
-  createMenuItem("Dashboard", ["user"], `${BASE_URLS.user}/home`, MdDashboard, COLORS.blue),
+  createMenuItem("Dashboard", ["user", "citizen"], `${BASE_URLS.user}/home`, MdDashboard, COLORS.blue),
 
-  createMenuItem("Certificates", ["user"], undefined, MdDescription, COLORS.red, [
-    createMenuItem("Inheritance Certificate", ["user"], undefined, FaRegFileAlt, COLORS.yellow, [
-      createMenuItem("Apply for Certificate", ["user"], `${BASE_URLS.user}/warish/apply`, FaChevronCircleRight, COLORS.yellow),
-      createMenuItem("Check Status", ["user"], `${BASE_URLS.user}/warish/status`, FaChevronCircleRight, COLORS.blue),
+  createMenuItem("Certificates", ["user", "citizen"], undefined, MdDescription, COLORS.red, [
+    createMenuItem("Inheritance Certificate", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.yellow, [
+      createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/warish/apply`, FaChevronCircleRight, COLORS.yellow),
+      createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/warish/status`, FaChevronCircleRight, COLORS.blue),
     ]),
-    createMenuItem("Land Conversion NOC", ["user"], `${BASE_URLS.user}/land-conversion/application`, FaRegFileAlt, COLORS.green),
-    createMenuItem("Linkage Certificate", ["user"], `${BASE_URLS.user}/linkage/application`, FaRegFileAlt, COLORS.blue),
-    createMenuItem("Bulk Processing", ["user"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
-    createMenuItem("Issuance Reports", ["user"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
+    createMenuItem("Land Conversion NOC", ["user", "citizen"], `${BASE_URLS.user}/land-conversion/application`, FaRegFileAlt, COLORS.green),
+    createMenuItem("Linkage Certificate", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.blue, [
+      createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/linkage/apply`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/linkage/status`, FaChevronCircleRight, COLORS.teal),
+    ]),
+    createMenuItem("Bulk Processing", ["user", "citizen"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
+    createMenuItem("Issuance Reports", ["user", "citizen"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
   ]),
 
-  createMenuItem("Profile & Account", ["user"], undefined, MdAccountCircle, COLORS.purple, [
-    createMenuItem("Personal Information", ["user"], undefined, MdPersonAdd, COLORS.indigo, [
-      createMenuItem("View Profile", ["user"], `${BASE_URLS.user}/profile/view`, FaChevronCircleRight, COLORS.indigo),
-      createMenuItem("Edit Profile", ["user"], `${BASE_URLS.user}/profile/edit`, FaChevronCircleRight, COLORS.pink),
-    ]),
-    createMenuItem("Security Settings", ["user"], undefined, MdSecurity, COLORS.red, [
-      createMenuItem("Change Password", ["user"], `${BASE_URLS.user}/profile/change-password`, FaChevronCircleRight, COLORS.red),
-      createMenuItem("Two-Factor Auth", ["user"], `${BASE_URLS.user}/profile/2fa`, FaChevronCircleRight, COLORS.orange),
-    ]),
-    createMenuItem("Notifications", ["user"], `${BASE_URLS.user}/notifications`, MdNotifications, COLORS.pink),
+  createMenuItem("Samabyathi Scheme", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.green, [
+    createMenuItem("Apply for Scheme", ["user", "citizen"], `${BASE_URLS.user}/samabyathi/apply`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/samabyathi/status`, FaChevronCircleRight, COLORS.blue),
   ]),
 
-  createMenuItem("Financial Services", ["user"], undefined, MdAttachMoney, COLORS.lime, [
-    createMenuItem("Payments", ["user"], undefined, MdPayment, COLORS.lime, [
-      createMenuItem("Payment History", ["user"], `${BASE_URLS.user}/payments/history`, FaChevronCircleRight, COLORS.lime),
-      createMenuItem("Payment Methods", ["user"], `${BASE_URLS.user}/payments/methods`, FaChevronCircleRight, COLORS.blue),
+  createMenuItem("Profile & Account", ["user", "citizen"], undefined, MdAccountCircle, COLORS.purple, [
+    createMenuItem("Personal Information", ["user", "citizen"], undefined, MdPersonAdd, COLORS.indigo, [
+      createMenuItem("View Profile", ["user", "citizen"], `${BASE_URLS.user}/profile/view`, FaChevronCircleRight, COLORS.indigo),
+      createMenuItem("Edit Profile", ["user", "citizen"], `${BASE_URLS.user}/profile/edit`, FaChevronCircleRight, COLORS.pink),
     ]),
-    createMenuItem("Receipts", ["user"], `${BASE_URLS.user}/payments/receipts`, MdReceipt, COLORS.green),
+    createMenuItem("Security Settings", ["user", "citizen"], undefined, MdSecurity, COLORS.red, [
+      createMenuItem("Change Password", ["user", "citizen"], `${BASE_URLS.user}/profile/change-password`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Two-Factor Auth", ["user", "citizen"], `${BASE_URLS.user}/profile/2fa`, FaChevronCircleRight, COLORS.orange),
+    ]),
+    createMenuItem("Notifications", ["user", "citizen"], `${BASE_URLS.user}/notifications`, MdNotifications, COLORS.pink),
   ]),
 
-  createMenuItem("Support & Resources", ["user"], undefined, MdHelp, COLORS.orange, [
-    createMenuItem("Help Desk", ["user"], undefined, MdFeedback, COLORS.orange, [
-      createMenuItem("Submit Feedback", ["user"], `${BASE_URLS.user}/feedback`, FaChevronCircleRight, COLORS.orange),
-      createMenuItem("File Complaint", ["user"], `${BASE_URLS.user}/record-complaint`, FaChevronCircleRight, COLORS.red),
+  createMenuItem("Financial Services", ["user", "citizen"], undefined, MdAttachMoney, COLORS.lime, [
+    createMenuItem("Payments", ["user", "citizen"], undefined, MdPayment, COLORS.lime, [
+      createMenuItem("Payment History", ["user", "citizen"], `${BASE_URLS.user}/payments/history`, FaChevronCircleRight, COLORS.lime),
+      createMenuItem("Payment Methods", ["user", "citizen"], `${BASE_URLS.user}/payments/methods`, FaChevronCircleRight, COLORS.blue),
     ]),
-    createMenuItem("Knowledge Base", ["user"], undefined, MdLocalLibrary, COLORS.teal, [
-      createMenuItem("FAQs", ["user"], `${BASE_URLS.user}/resources/faqs`, FaChevronCircleRight, COLORS.cyan),
-      createMenuItem("User Guides", ["user"], `${BASE_URLS.user}/resources/user-guide`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Receipts", ["user", "citizen"], `${BASE_URLS.user}/payments/receipts`, MdReceipt, COLORS.green),
+  ]),
+
+  createMenuItem("Support & Resources", ["user", "citizen"], undefined, MdHelp, COLORS.orange, [
+    createMenuItem("Help Desk", ["user", "citizen"], undefined, MdFeedback, COLORS.orange, [
+      createMenuItem("Submit Feedback", ["user", "citizen"], `${BASE_URLS.user}/feedback`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("File Complaint", ["user", "citizen"], `${BASE_URLS.user}/record-complaint`, FaChevronCircleRight, COLORS.red),
     ]),
-    createMenuItem("Documents", ["user"], `${BASE_URLS.user}/resources/documents`, MdFolder, COLORS.teal),
-    createMenuItem("Announcements", ["user"], `${BASE_URLS.user}/announcements`, MdAnnouncement, COLORS.red),
-    createMenuItem("Calendar", ["user"], `${BASE_URLS.user}/calendar`, MdCalendarToday, COLORS.red),
+    createMenuItem("Knowledge Base", ["user", "citizen"], undefined, MdLocalLibrary, COLORS.teal, [
+      createMenuItem("FAQs", ["user", "citizen"], `${BASE_URLS.user}/resources/faqs`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("User Guides", ["user", "citizen"], `${BASE_URLS.user}/resources/user-guide`, FaChevronCircleRight, COLORS.blue),
+    ]),
+    createMenuItem("Documents", ["user", "citizen"], `${BASE_URLS.user}/resources/documents`, MdFolder, COLORS.teal),
+    createMenuItem("Announcements", ["user", "citizen"], `${BASE_URLS.user}/announcements`, MdAnnouncement, COLORS.red),
+    createMenuItem("Calendar", ["user", "citizen"], `${BASE_URLS.user}/calendar`, MdCalendarToday, COLORS.red),
   ]),
 ];
 
