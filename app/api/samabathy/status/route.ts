@@ -12,13 +12,15 @@ export async function GET(req: Request) {
     const application = await db.samabyathiApplication.findUnique({
       where: { applicationNumber },
       select: {
-        applicationNumber: true,
-        applicantName: true,
-        deceasedName: true,
-        status: true,
-        createdAt: true,
-        sanctionAmount: true,
-      },
+                applicationNumber: true,
+                applicantName: true,
+                deceasedName: true,
+                voterId: true,
+                aadhaarNumber: true,
+                status: true,
+                createdAt: true,
+                sanctionAmount: true,
+              },
     });
 
     if (!application) {

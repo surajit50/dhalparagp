@@ -47,6 +47,8 @@ import {
   CalendarDays,
   SendHorizontal,
   Info,
+  CreditCard,
+  Fingerprint,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -68,6 +70,8 @@ export default function ApplicationForm({
       deceasedName: "",
       relation: "",
       dateOfDeath: "",
+      voterId: "",
+      aadhaarNumber: "",
     },
   });
 
@@ -172,6 +176,49 @@ export default function ApplicationForm({
                     <Input
                       placeholder="Enter full name"
                       {...field}
+                      className="bg-background/50 focus:bg-background transition-colors"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="voterId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    Voter ID Number
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter Voter ID"
+                      {...field}
+                      className="bg-background/50 focus:bg-background transition-colors"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="aadhaarNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Fingerprint className="h-4 w-4 text-muted-foreground" />
+                    Aadhaar Number
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="12-digit Aadhaar"
+                      {...field}
+                      maxLength={12}
                       className="bg-background/50 focus:bg-background transition-colors"
                     />
                   </FormControl>

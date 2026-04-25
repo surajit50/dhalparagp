@@ -21,11 +21,13 @@ export async function POST(req: Request) {
   const sanctionAmount = SAMABYATHI_CONFIG.AMOUNT_PER_APP;
 
   if (
-    !body.applicantName ||
-    !body.mobileNumber ||
-    !body.deceasedName ||
-    !body.dateOfDeath
-  ) {
+      !body.applicantName ||
+      !body.mobileNumber ||
+      !body.deceasedName ||
+      !body.dateOfDeath ||
+      !body.voterId ||
+      !body.aadhaarNumber
+    ) {
     return Response.json(
       { error: "Missing required fields" },
       { status: 400 }
@@ -87,6 +89,8 @@ export async function POST(req: Request) {
           deceasedName: body.deceasedName,
           relation: body.relation,
           dateOfDeath: new Date(body.dateOfDeath),
+          voterId: body.voterId,
+          aadhaarNumber: body.aadhaarNumber,
           status,
           sanctionAmount: sanction,
           userId: session?.user?.id,

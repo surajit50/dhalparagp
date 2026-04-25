@@ -46,6 +46,8 @@ interface SamabyathiApplication {
   deceasedName: string;
   relation: string;
   dateOfDeath: Date | string;
+  voterId?: string;
+  aadhaarNumber?: string;
   status: string;
   sanctionAmount: number | null;
   createdAt: Date | string;
@@ -89,8 +91,11 @@ export default function SamabyathiTable({ data }: SamabyathiTableProps) {
           <span className="font-semibold text-foreground">
             {row.getValue("applicantName")}
           </span>
-          <span className="text-xs text-muted-foreground font-mono uppercase tracking-tighter">
-            ID: {row.original.id.slice(-6)}
+          <span className="text-xs text-muted-foreground font-mono">
+            Voter: {row.original.voterId || "N/A"}
+          </span>
+          <span className="text-xs text-muted-foreground font-mono">
+            Aadhaar: {row.original.aadhaarNumber || "N/A"}
           </span>
         </div>
       ),

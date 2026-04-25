@@ -3703,6 +3703,8 @@ model SamabyathiApplication {
   deceasedName      String
   relation          String
   dateOfDeath       DateTime
+  voterId           String?
+  aadhaarNumber     String?
 
   status         String @default("PENDING")
   sanctionAmount Float?

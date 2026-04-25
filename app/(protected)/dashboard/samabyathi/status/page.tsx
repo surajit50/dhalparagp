@@ -16,6 +16,8 @@ import {
   CheckCircle2,
   Clock,
   AlertCircle,
+  CreditCard,
+  Fingerprint,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -156,6 +158,25 @@ export default function SamabyathiStatusPage() {
                   <p className="text-sm text-muted-foreground">Submitted On</p>
                   <p className="font-medium">
                     {formatDate(statusData.createdAt)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-muted/30 p-3 rounded-md border border-muted-foreground/10 grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1 mb-1">
+                    <CreditCard className="h-3 w-3" /> Voter ID
+                  </p>
+                  <p className="font-mono text-sm font-semibold">
+                    {statusData.voterId || "N/A"}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold flex items-center gap-1 mb-1">
+                    <Fingerprint className="h-3 w-3" /> Aadhaar
+                  </p>
+                  <p className="font-mono text-sm font-semibold">
+                    {statusData.aadhaarNumber || "N/A"}
                   </p>
                 </div>
               </div>
