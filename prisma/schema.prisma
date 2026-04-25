@@ -35,7 +35,6 @@ enum UserRole {
   staff
   superadmin
   agency
-  citizen
 }
 
 enum UserStatus {
