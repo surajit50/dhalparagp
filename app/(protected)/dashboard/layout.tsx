@@ -1,17 +1,21 @@
 import Header from "@/components/protectedComponent/Header";
 import UnifiedSidebar from "@/components/protectedComponent/unified-sidebar";
+import { currentUser } from "@/lib/auth";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
 }
 
-export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
+export default async function ProtectedLayout({ children }: ProtectedLayoutProps) {
+  const user = await currentUser();
+  const role = (user?.role?.toLowerCase() as "user" | "admin" | "staff" | "superadmin" | "agency" | "citizen") || "user";
+
   return (
     <div className="min-h-screen bg-muted/30 flex">
 
       {/* Sidebar */}
-      <UnifiedSidebar role="user" />
+      <UnifiedSidebar role={role} />
 
       {/* Content Area */}
       <div className="flex flex-col flex-1 lg:ml-72">
