@@ -28,7 +28,7 @@ export default async function WarishApplicationTable() {
     db.warishApplication.findMany({
       where: {
         warishApplicationStatus: "submitted",
-        User: { role: "user" }
+        User: { role: { in: ["user", "citizen"] } }
       },
       include: { User: true },
       orderBy: { createdAt: "desc" },

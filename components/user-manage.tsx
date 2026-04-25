@@ -109,10 +109,10 @@ export default function UserManagementClient({
   // Determine available tabs and creation roles based on current user
   const availableRoles =
     currentUserRole === "superadmin"
-      ? ["user", "staff", "admin", "superadmin", "agency"]
+      ? ["user", "staff", "admin", "superadmin", "agency", "citizen"]
       : currentUserRole === "admin"
-        ? ["user", "staff", "agency"] // Admins now see user, staff, and agency
-        : ["user"];
+        ? ["user", "staff", "agency", "citizen"] // Admins now see user, staff, agency, and citizen
+        : ["user", "citizen"];
 
   const form = useForm<z.infer<typeof CreateUserSchema>>({
     resolver: zodResolver(CreateUserSchema),
@@ -517,6 +517,12 @@ export default function UserManagementClient({
               <TabsTrigger value="agency" className="min-w-[100px]">
                 <ShieldCheck className="h-4 w-4 mr-2" />
                 Agency
+              </TabsTrigger>
+            )}
+            {availableRoles.includes("citizen") && (
+              <TabsTrigger value="citizen" className="min-w-[100px]">
+                <User className="h-4 w-4 mr-2" />
+                Citizen
               </TabsTrigger>
             )}
           </TabsList>

@@ -83,7 +83,7 @@ export const CreateUserSchema = z.object({
   name: z.string().min(1, {
     message: "Name is required",
   }),
-  role: z.enum([UserRole.admin, UserRole.user, UserRole.staff, UserRole.superadmin, UserRole.agency]),
+  role: z.enum([UserRole.admin, UserRole.user, UserRole.staff, UserRole.superadmin, UserRole.agency, UserRole.citizen]),
   mobileNumber: z.string().regex(/^[0-9]{10}$/, {
     message: "Mobile number must be a valid 10 digit number",
   }),

@@ -113,7 +113,7 @@ export const userProfileImage = async (imageurl: string, imageKey: string) => {
   }
 };
 
-export type UserRole = 'user' | 'admin' | 'staff' | 'superadmin' | 'agency'
+export type UserRole = 'user' | 'admin' | 'staff' | 'superadmin' | 'agency' | 'citizen'
 
 export async function toggleTwoFactor(userIds: string[], enable: boolean) {
   // Allow both 'admin' and 'superadmin' to toggle 2FA

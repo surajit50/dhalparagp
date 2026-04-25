@@ -63,7 +63,7 @@ import {
   KeyRound,
   UserPlus,
   Search,
-  Ghost
+  Ghost,
 } from "lucide-react";
 
 type UserType = {
@@ -79,10 +79,13 @@ type UserType = {
 
 type Props = {
   initialUsers: UserType[];
-  currentUserRole: string; 
+  currentUserRole: string;
 };
 
-export default function UserManagementClient({ initialUsers, currentUserRole }: Props) {
+export default function UserManagementClient({
+  initialUsers,
+  currentUserRole,
+}: Props) {
   const [users, setUsers] = useState<UserType[]>(initialUsers);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
@@ -91,12 +94,12 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
   const [searchQuery, setSearchQuery] = useState("");
 
   // Determine available tabs and creation roles based on current user
-  const availableRoles = 
+  const availableRoles =
     currentUserRole === "superadmin"
-      ? ["user", "staff", "admin", "superadmin", "agency"]
+      ? ["user", "staff", "admin", "superadmin", "agency", "citizen"]
       : currentUserRole === "admin"
-      ? ["user", "agency"]
-      : ["user"]; // Default fallback for basic users if they somehow access this
+        ? ["user", "agency", "citizen"]
+        : ["user", "citizen"]; // Default fallback for basic users if they somehow access this
 
   const form = useForm<z.infer<typeof CreateUserSchema>>({
     resolver: zodResolver(CreateUserSchema),
@@ -132,7 +135,11 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
           setUsers((prev) => [...prev, newUser]);
         }
       } else {
-        toast({ title: "Error", description: result.error, variant: "destructive" });
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
       }
     });
   };
@@ -141,8 +148,8 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
 
   const currentFilteredUsers = users.filter((user) => {
     const matchesRole = user.role === selectedRole;
-    const matchesSearch = 
-      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch =
+      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesRole && matchesSearch;
   });
@@ -176,17 +183,23 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
 
     startTransition(async () => {
       const result = await toggleTwoFactor(selectedUsers, enable);
-      
+
       if (result.success) {
         setUsers((prev) =>
           prev.map((u) =>
-            selectedUsers.includes(u.id) ? { ...u, isTwoFactorEnabled: enable } : u,
+            selectedUsers.includes(u.id)
+              ? { ...u, isTwoFactorEnabled: enable }
+              : u,
           ),
         );
         setSelectedUsers([]);
         toast({ title: "Success", description: result.message });
       } else {
-         toast({ title: "Error", description: result.message, variant: "destructive" });
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        });
       }
     });
   };
@@ -196,17 +209,27 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
       const result = await updateUserRole(userId, role);
 
       if (result.success) {
-        setUsers((prev) => prev.map((u) => (u.id === userId ? { ...u, role } : u)));
+        setUsers((prev) =>
+          prev.map((u) => (u.id === userId ? { ...u, role } : u)),
+        );
         toast({ title: "Role Updated", description: result.message });
       } else {
-         toast({ title: "Error", description: result.message, variant: "destructive" });
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        });
       }
     });
   };
 
   const handleSendPasswordReset = async (user: UserType) => {
     if (!user.email) {
-      toast({ title: "Error", description: "User email not available", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "User email not available",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -217,9 +240,16 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
         method: "POST",
         body: JSON.stringify({ email: user.email }),
       });
-      toast({ title: "Reset Link Sent", description: "Password reset email sent successfully" });
+      toast({
+        title: "Reset Link Sent",
+        description: "Password reset email sent successfully",
+      });
     } catch {
-      toast({ title: "Error", description: "Failed to send reset link", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to send reset link",
+        variant: "destructive",
+      });
     }
 
     setResettingUsers((prev) => {
@@ -238,7 +268,7 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
             Manage your team members, roles, and security settings.
           </p>
         </div>
-        
+
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button className="gap-2 shadow-sm">
@@ -250,11 +280,15 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>
-                Fill in the details below to invite a new member to the platform.
+                Fill in the details below to invite a new member to the
+                platform.
               </DialogDescription>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mt-4">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6 mt-4"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -276,7 +310,11 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                       <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                          <Input placeholder="john@example.com" type="email" {...field} />
+                          <Input
+                            placeholder="john@example.com"
+                            type="email"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -302,7 +340,11 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="••••••••" type="password" {...field} />
+                          <Input
+                            placeholder="••••••••"
+                            type="password"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -333,11 +375,23 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                           </FormControl>
                           <SelectContent>
                             {/* Dynamically hide creation roles based on user permissions */}
-                            {availableRoles.includes("user") && <SelectItem value="user">User</SelectItem>}
-                            {availableRoles.includes("staff") && <SelectItem value="staff">Staff</SelectItem>}
-                            {availableRoles.includes("admin") && <SelectItem value="admin">Admin</SelectItem>}
-                            {availableRoles.includes("superadmin") && <SelectItem value="superadmin">Super Admin</SelectItem>}
-                            {availableRoles.includes("agency") && <SelectItem value="agency">Agency</SelectItem>}
+                            {availableRoles.includes("user") && (
+                              <SelectItem value="user">User</SelectItem>
+                            )}
+                            {availableRoles.includes("staff") && (
+                              <SelectItem value="staff">Staff</SelectItem>
+                            )}
+                            {availableRoles.includes("admin") && (
+                              <SelectItem value="admin">Admin</SelectItem>
+                            )}
+                            {availableRoles.includes("superadmin") && (
+                              <SelectItem value="superadmin">
+                                Super Admin
+                              </SelectItem>
+                            )}
+                            {availableRoles.includes("agency") && (
+                              <SelectItem value="agency">Agency</SelectItem>
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -352,7 +406,10 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Designation</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
                             <FormControl>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select designation" />
@@ -372,9 +429,13 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                     />
                   )}
                 </div>
-                
+
                 <DialogFooter className="pt-4 border-t">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isPending}>
@@ -387,30 +448,59 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
         </Dialog>
       </div>
 
-      <Tabs value={selectedRole} onValueChange={(v) => setSelectedRole(v as UserRole)} className="w-full">
+      <Tabs
+        value={selectedRole}
+        onValueChange={(v) => setSelectedRole(v as UserRole)}
+        className="w-full"
+      >
         <ScrollArea className="w-full whitespace-nowrap pb-2">
           <TabsList className="inline-flex h-10 items-center justify-start rounded-md bg-muted p-1 text-muted-foreground w-full sm:w-auto">
             {/* Conditional Tab Rendering */}
             {availableRoles.includes("user") && (
-              <TabsTrigger value="user" className="min-w-[100px]"><User className="h-4 w-4 mr-2" />Users</TabsTrigger>
+              <TabsTrigger value="user" className="min-w-[100px]">
+                <User className="h-4 w-4 mr-2" />
+                Users
+              </TabsTrigger>
             )}
             {availableRoles.includes("staff") && (
-              <TabsTrigger value="staff" className="min-w-[100px]"><Users className="h-4 w-4 mr-2" />Staff</TabsTrigger>
+              <TabsTrigger value="staff" className="min-w-[100px]">
+                <Users className="h-4 w-4 mr-2" />
+                Staff
+              </TabsTrigger>
             )}
             {availableRoles.includes("admin") && (
-              <TabsTrigger value="admin" className="min-w-[100px]"><UserCog className="h-4 w-4 mr-2" />Admin</TabsTrigger>
+              <TabsTrigger value="admin" className="min-w-[100px]">
+                <UserCog className="h-4 w-4 mr-2" />
+                Admin
+              </TabsTrigger>
             )}
             {availableRoles.includes("superadmin") && (
-              <TabsTrigger value="superadmin" className="min-w-[120px]"><Shield className="h-4 w-4 mr-2" />Super Admin</TabsTrigger>
+              <TabsTrigger value="superadmin" className="min-w-[120px]">
+                <Shield className="h-4 w-4 mr-2" />
+                Super Admin
+              </TabsTrigger>
             )}
             {availableRoles.includes("agency") && (
-              <TabsTrigger value="agency" className="min-w-[100px]"><ShieldCheck className="h-4 w-4 mr-2" />Agency</TabsTrigger>
+              <TabsTrigger value="agency" className="min-w-[100px]">
+                <ShieldCheck className="h-4 w-4 mr-2" />
+                Agency
+              </TabsTrigger>
+            )}
+            {availableRoles.includes("citizen") && (
+              <TabsTrigger value="citizen" className="min-w-[100px]">
+                <User className="h-4 w-4 mr-2" />
+                Citizen
+              </TabsTrigger>
             )}
           </TabsList>
         </ScrollArea>
 
         {availableRoles.map((role) => (
-          <TabsContent key={role} value={role} className="mt-4 focus-visible:outline-none">
+          <TabsContent
+            key={role}
+            value={role}
+            className="mt-4 focus-visible:outline-none"
+          >
             <Card className="shadow-sm border-muted">
               <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-muted/20 border-b">
                 <div className="flex items-center gap-2">
@@ -455,8 +545,8 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                     <Ghost className="h-12 w-12 text-muted-foreground/50 mb-4" />
                     <h3 className="text-lg font-semibold">No users found</h3>
                     <p className="text-sm text-muted-foreground max-w-sm mt-1">
-                      {searchQuery 
-                        ? `We couldn't find anyone matching "${searchQuery}".` 
+                      {searchQuery
+                        ? `We couldn't find anyone matching "${searchQuery}".`
                         : `There are currently no users assigned to the ${role} role.`}
                     </p>
                   </div>
@@ -466,52 +556,76 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                       <TableHeader className="bg-muted/50 sticky top-0 z-10 backdrop-blur-sm">
                         <TableRow>
                           <TableHead className="w-[50px]">
-                            <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} aria-label="Select all" />
+                            <Checkbox
+                              checked={allSelected}
+                              onCheckedChange={handleSelectAll}
+                              aria-label="Select all"
+                            />
                           </TableHead>
                           <TableHead className="w-[80px]">S.No</TableHead>
                           <TableHead>User Profile</TableHead>
                           <TableHead>Designation</TableHead>
                           <TableHead>Security</TableHead>
                           <TableHead>Role</TableHead>
-                          <TableHead className="text-right pr-6">Actions</TableHead>
+                          <TableHead className="text-right pr-6">
+                            Actions
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
 
                       <TableBody>
                         {currentFilteredUsers.map((user, index) => (
-                          <TableRow key={user.id} className="group hover:bg-muted/30 transition-colors">
+                          <TableRow
+                            key={user.id}
+                            className="group hover:bg-muted/30 transition-colors"
+                          >
                             <TableCell>
                               <Checkbox
                                 checked={selectedUsers.includes(user.id)}
-                                onCheckedChange={() => handleSelectUser(user.id)}
+                                onCheckedChange={() =>
+                                  handleSelectUser(user.id)
+                                }
                                 aria-label={`Select ${user.name}`}
                               />
                             </TableCell>
 
-                            <TableCell className="text-muted-foreground">{index + 1}</TableCell>
+                            <TableCell className="text-muted-foreground">
+                              {index + 1}
+                            </TableCell>
 
                             <TableCell>
                               <div className="flex items-center gap-3">
                                 <Avatar className="h-9 w-9 border">
-                                  <AvatarImage src={user.avatar || "/avatar.png"} />
+                                  <AvatarImage
+                                    src={user.avatar || "/avatar.png"}
+                                  />
                                   <AvatarFallback className="bg-primary/10 text-primary">
                                     {user.name?.charAt(0) || "U"}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div className="flex flex-col">
-                                  <span className="font-medium text-sm">{user.name}</span>
-                                  <span className="text-xs text-muted-foreground">{user.email}</span>
+                                  <span className="font-medium text-sm">
+                                    {user.name}
+                                  </span>
+                                  <span className="text-xs text-muted-foreground">
+                                    {user.email}
+                                  </span>
                                 </div>
                               </div>
                             </TableCell>
 
                             <TableCell>
                               {user.designation ? (
-                                <Badge variant="secondary" className="font-normal">
+                                <Badge
+                                  variant="secondary"
+                                  className="font-normal"
+                                >
                                   {user.designation.replace(/_/g, " ")}
                                 </Badge>
                               ) : (
-                                <span className="text-muted-foreground text-xs italic">N/A</span>
+                                <span className="text-muted-foreground text-xs italic">
+                                  N/A
+                                </span>
                               )}
                             </TableCell>
 
@@ -522,7 +636,10 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                                     2FA Enabled
                                   </Badge>
                                 ) : (
-                                  <Badge variant="outline" className="text-muted-foreground font-normal">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-muted-foreground font-normal"
+                                  >
                                     Disabled
                                   </Badge>
                                 )}
@@ -533,7 +650,9 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                               {currentUserRole === "superadmin" ? (
                                 <Select
                                   value={user.role}
-                                  onValueChange={(v: UserRole) => handleRoleChange(user.id, v)}
+                                  onValueChange={(v: UserRole) =>
+                                    handleRoleChange(user.id, v)
+                                  }
                                 >
                                   <SelectTrigger className="w-[130px] h-8 text-xs">
                                     <SelectValue />
@@ -542,12 +661,19 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                                     <SelectItem value="user">User</SelectItem>
                                     <SelectItem value="staff">Staff</SelectItem>
                                     <SelectItem value="admin">Admin</SelectItem>
-                                    <SelectItem value="superadmin">Super Admin</SelectItem>
-                                    <SelectItem value="agency">Agency</SelectItem>
+                                    <SelectItem value="superadmin">
+                                      Super Admin
+                                    </SelectItem>
+                                    <SelectItem value="agency">
+                                      Agency
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                               ) : (
-                                <Badge variant="outline" className="uppercase text-[10px] tracking-wider">
+                                <Badge
+                                  variant="outline"
+                                  className="uppercase text-[10px] tracking-wider"
+                                >
                                   {user.role}
                                 </Badge>
                               )}
@@ -559,12 +685,16 @@ export default function UserManagementClient({ initialUsers, currentUserRole }: 
                                 variant="ghost"
                                 className="h-8 w-8 p-0 hover:bg-muted"
                                 onClick={() => handleSendPasswordReset(user)}
-                                disabled={!user.email || resettingUsers.has(user.id)}
+                                disabled={
+                                  !user.email || resettingUsers.has(user.id)
+                                }
                                 title="Send Password Reset"
                               >
                                 <KeyRound
                                   className={`h-4 w-4 text-muted-foreground ${
-                                    resettingUsers.has(user.id) ? "animate-spin" : ""
+                                    resettingUsers.has(user.id)
+                                      ? "animate-spin"
+                                      : ""
                                   }`}
                                 />
                                 <span className="sr-only">Reset Password</span>

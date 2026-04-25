@@ -3,13 +3,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import PendingApplicationsTable from "./pending-applications-table";
 import AssignedApplicationsTable from "./assigned-applications-table";
 
-
 export default async function WarishManagement() {
   const [pending, assigned] = await Promise.all([
     db.warishApplication.findMany({
       where: {
         warishApplicationStatus: "submitted",
-        User: { NOT: { role: "user" } },
+        User: { role: { notIn: ["user", "citizen"] } },
       },
       include: { User: true },
       orderBy: { createdAt: "desc" },
@@ -27,18 +26,17 @@ export default async function WarishManagement() {
   const staffMembers = await db.user.findMany({
     where: {
       role: "staff",
-      userStatus: "active"
+      userStatus: "active",
     },
     select: {
       id: true,
-      name: true
+      name: true,
     },
   });
-  
 
   // Filter out staff members with null names
   const validStaffMembers = staffMembers.filter(
-    (staff): staff is { id: string; name: string } => staff.name !== null
+    (staff): staff is { id: string; name: string } => staff.name !== null,
   );
 
   return (

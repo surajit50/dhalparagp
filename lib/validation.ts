@@ -27,13 +27,19 @@ import { villagenameOption } from "@/constants";
 
 export const applicationSchema = z.object({
   applicantName: z.string().min(2, "Name is too short"),
-  mobileNumber: z.string().length(10, "Mobile number must be 10 digits"),
+  mobileNumber: z
+    .string()
+    .length(10, "Mobile number must be 10 digits")
+    .regex(/^[0-9]+$/, "Mobile number must contain only digits"),
   villageName: z.enum(villagenameOption.map((item) => item.value) as [string, ...string[]]),
   deceasedName: z.string().min(2, "Deceased name is too short"),
   relation: z.enum(SAMABYATHI_RELATIONS as [string, ...string[]]),
   dateOfDeath: z.string().min(1, "Date of death is required"),
   voterId: z.string().min(1, "Voter ID is required"),
-  aadhaarNumber: z.string().length(12, "Aadhaar number must be 12 digits"),
+  aadhaarNumber: z
+    .string()
+    .length(12, "Aadhaar number must be 12 digits")
+    .regex(/^[0-9]+$/, "Aadhaar number must contain only digits"),
 });
 
 export const allotmentSchema = z.object({

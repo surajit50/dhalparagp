@@ -39,6 +39,17 @@ export const getUserByUserRole = async () => {
   } catch (error) {}
 };
 
+export const getUserByCitizenRole = async () => {
+  try {
+    const user = await db.user.findMany({
+      where: {
+        role: "citizen",
+      },
+    });
+    return user;
+  } catch (error) {}
+};
+
 // Curren active prodhan
 
 export const getCurrentActiveProdhan = async () => {
