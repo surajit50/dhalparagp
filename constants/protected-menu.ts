@@ -153,7 +153,8 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
   ]),
   //samabathy application
   createMenuItem("Samabyathi Application", ["admin"], undefined, FaRegFileAlt, COLORS.green, [
-    createMenuItem("New Application", ["admin"], `${baseUrl}/manage-samabyathi/applications`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Verify Applications", ["admin"], `${baseUrl}/manage-samabyathi/verify`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("All Applications", ["admin"], `${baseUrl}/manage-samabyathi/applications`, FaChevronCircleRight, COLORS.green),
     createMenuItem("Allotment", ["admin"], `${baseUrl}/manage-samabyathi/allotment`, FaChevronCircleRight, COLORS.green),
     createMenuItem("Muster Roll", ["admin"], `${baseUrl}/manage-samabyathi/muster-roll`, FaChevronCircleRight, COLORS.green),
   ]),

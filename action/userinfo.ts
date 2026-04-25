@@ -224,3 +224,26 @@ export async function updateUser(values: UpdateUserParams) {
     return { error: "Something went wrong" };
   }
 }
+
+export async function resetUserPassword(userId: string) {
+  const currentUsers = await currentUser();
+
+  // Allow both 'admin' and 'superadmin' to reset passwords
+  if (!currentUsers || !["admin", "superadmin"].includes(currentUsers.role)) {
+    return { error: "Unauthorized. Only admins and super admins can reset passwords." };
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash("Test@123", 10);
+
+    await db.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword }
+    });
+
+    return { success: "Password reset to Default (Test@123) successfully" };
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    return { error: "Failed to reset password. Please try again." };
+  }
+}

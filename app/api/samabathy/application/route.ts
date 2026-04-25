@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
       const totalRemaining = totalRemainingData._sum.remaining || 0;
 
-      let status: "PENDING" | "APPROVED" = "PENDING";
+      let status: "UNDER_REVIEW" | "PENDING" | "APPROVED" = "UNDER_REVIEW";
       let sanction: number | null = null;
 
       // Only auto-approve if user is admin/staff and fund is available
