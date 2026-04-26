@@ -38,8 +38,9 @@ export const applicationSchema = z.object({
   voterId: z.string().min(1, "Voter ID is required"),
   aadhaarNumber: z
     .string()
-    .length(12, "Aadhaar number must be 12 digits")
-    .regex(/^[0-9]+$/, "Aadhaar number must contain only digits"),
+    .length(12, "Aadhaar must be 12 digits")
+    .regex(/^\d+$/, "Only numbers allowed"),
+
 });
 
 export const allotmentSchema = z.object({
