@@ -51,7 +51,7 @@ import {
   Fingerprint,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-
+import { formatAadhaar } from "@/lib/format";
 type FormData = z.infer<typeof applicationSchema>;
 
 export default function ApplicationForm({
@@ -205,27 +205,38 @@ export default function ApplicationForm({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="aadhaarNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Fingerprint className="h-4 w-4 text-muted-foreground" />
-                    Aadhaar Number
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="12-digit Aadhaar"
-                      {...field}
-                      maxLength={12}
-                      className="bg-background/50 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            
+
+<FormField
+  control={form.control}
+  name="aadhaarNumber"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel className="flex items-center gap-2">
+        Aadhaar Number
+      </FormLabel>
+
+      <FormControl>
+        <Input
+          placeholder="1111 1111 1111"
+          value={formatAadhaar(field.value || "")}
+          onChange={(e) => {
+            const raw = e.target.value
+              .replace(/\D/g, "")   // only digits
+              .slice(0, 12);       // max 12 digits
+
+            field.onChange(raw);
+          }}
+          maxLength={14} // includes spaces
+          inputMode="numeric"
+          className="bg-background/50 focus:bg-background"
+        />
+      </FormControl>
+
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
             <FormField
               control={form.control}
