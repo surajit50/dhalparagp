@@ -86,8 +86,7 @@ export async function POST() {
     ];
 
     await db.holiday.createMany({
-      data: holidays,
-      skipDuplicates: true,
+      data: holidays
     });
 
     return NextResponse.json({
