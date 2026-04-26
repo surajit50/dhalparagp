@@ -35,10 +35,13 @@ export async function POST(req: Request) {
 
   try {
     const existing = await db.samabyathiApplication.findFirst({
-      where: {
-        aadhaarNumber: data.aadhaarNumber,
-      },
-    });
+  where: {
+    aadhaarNumber: data.aadhaarNumber,
+    status: {
+      not: "REJECTED", // ✅ allow reapply if rejected
+    },
+  },
+});
 
     if (existing) {
       return Response.json(
