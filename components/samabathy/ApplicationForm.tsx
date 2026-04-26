@@ -52,6 +52,7 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { formatAadhaar } from "@/lib/format";
+
 type FormData = z.infer<typeof applicationSchema>;
 
 export default function ApplicationForm({
@@ -86,20 +87,42 @@ export default function ApplicationForm({
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setSubmittedApp(result.data);
-        toast.success(
-          `Application submitted! ID: ${result.data.applicationNumber}`,
-        );
-        form.reset();
-        if (onSuccess) onSuccess(result.data);
-      } else {
-        const errData = await response.json();
-        toast.error(errData.error || "Failed to submit application");
+      // ✅ Safely parse JSON – catch if server returns unexpected response
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        toast.error("Server returned an unexpected response. Please try again.");
+        return;
       }
+
+      if (!response.ok) {
+        // ✅ If server returned field‑level errors, set them on the form
+        if (result.fieldErrors) {
+          Object.entries(result.fieldErrors).forEach(([field, messages]) => {
+            const fieldName = field as keyof FormData;
+            const message = Array.isArray(messages) ? messages[0] : String(messages);
+            form.setError(fieldName, {
+              type: "server",
+              message,
+            });
+          });
+        } else {
+          // Top‑level error as toast
+          toast.error(result.error || "Failed to submit application");
+        }
+        return;
+      }
+
+      // Success
+      setSubmittedApp(result.data);
+      toast.success(
+        `Application submitted! ID: ${result.data.applicationNumber}`
+      );
+      form.reset();
+      if (onSuccess) onSuccess(result.data);
     } catch (error) {
-      toast.error("An unexpected error occurred");
+      toast.error("An unexpected network error occurred");
     } finally {
       setLoading(false);
     }
@@ -205,38 +228,33 @@ export default function ApplicationForm({
               )}
             />
 
-            
-
-<FormField
-  control={form.control}
-  name="aadhaarNumber"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel className="flex items-center gap-2">
-        Aadhaar Number
-      </FormLabel>
-
-      <FormControl>
-        <Input
-          placeholder="1111 1111 1111"
-          value={formatAadhaar(field.value || "")}
-          onChange={(e) => {
-            const raw = e.target.value
-              .replace(/\D/g, "")   // only digits
-              .slice(0, 12);       // max 12 digits
-
-            field.onChange(raw);
-          }}
-          maxLength={14} // includes spaces
-          inputMode="numeric"
-          className="bg-background/50 focus:bg-background"
-        />
-      </FormControl>
-
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+            <FormField
+              control={form.control}
+              name="aadhaarNumber"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    Aadhaar Number
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="1111 1111 1111"
+                      value={formatAadhaar(field.value || "")}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                          .replace(/\D/g, "")
+                          .slice(0, 12);
+                        field.onChange(raw);
+                      }}
+                      maxLength={14}
+                      inputMode="numeric"
+                      className="bg-background/50 focus:bg-background"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
