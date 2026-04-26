@@ -291,51 +291,32 @@ export default function ApplicationForm({
                     )}
                   />
 
-                  {/* Voter ID */}
+                  {/* Relationship */}
                   <FormField
                     control={form.control}
-                    name="voterId"
+                    name="relation"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                          Voter ID Number
+                          Relationship
                         </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter your Voter ID"
-                            {...field}
-                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Aadhaar Number */}
-                  <FormField
-                    control={form.control}
-                    name="aadhaarNumber"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                          Aadhaar Number
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="XXXX XXXX XXXX"
-                            value={formatAadhaar(field.value || "")}
-                            onChange={(e) => {
-                              const raw = e.target.value
-                                .replace(/\D/g, "")
-                                .slice(0, 12);
-                              field.onChange(raw);
-                            }}
-                            maxLength={14}
-                            inputMode="numeric"
-                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
-                          />
-                        </FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-slate-300 dark:border-slate-700 focus:border-purple-500 dark:focus:border-purple-400">
+                              <SelectValue placeholder="Select relationship" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {SAMABYATHI_RELATIONS.map((rel) => (
+                              <SelectItem key={rel} value={rel}>
+                                {rel}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -415,37 +396,57 @@ export default function ApplicationForm({
                       </FormItem>
                     )}
                   />
-
-                  {/* Relationship */}
+                  
+{/* Voter ID */}
                   <FormField
                     control={form.control}
-                    name="relation"
+                    name="voterId"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                          Relationship
+                          Voter ID Number
                         </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="border-slate-300 dark:border-slate-700 focus:border-purple-500 dark:focus:border-purple-400">
-                              <SelectValue placeholder="Select relationship" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {SAMABYATHI_RELATIONS.map((rel) => (
-                              <SelectItem key={rel} value={rel}>
-                                {rel}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your Voter ID"
+                            {...field}
+                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+
+                  {/* Aadhaar Number */}
+                  <FormField
+                    control={form.control}
+                    name="aadhaarNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Aadhaar Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="XXXX XXXX XXXX"
+                            value={formatAadhaar(field.value || "")}
+                            onChange={(e) => {
+                              const raw = e.target.value
+                                .replace(/\D/g, "")
+                                .slice(0, 12);
+                              field.onChange(raw);
+                            }}
+                            maxLength={14}
+                            inputMode="numeric"
+                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
 
                   {/* Date of Death */}
                   <FormField
