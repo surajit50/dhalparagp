@@ -49,6 +49,8 @@ import {
   Info,
   CreditCard,
   Fingerprint,
+  CheckCircle2,
+  Copy,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { formatAadhaar } from "@/lib/format";
@@ -62,6 +64,7 @@ export default function ApplicationForm({
 }) {
   const [loading, setLoading] = useState(false);
   const [submittedApp, setSubmittedApp] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
   const form = useForm<FormData>({
     resolver: zodResolver(applicationSchema),
     defaultValues: {
@@ -128,297 +131,373 @@ export default function ApplicationForm({
     }
   };
 
+  const handleCopyApplicationNumber = () => {
+    navigator.clipboard.writeText(submittedApp.applicationNumber);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast.success("Application number copied to clipboard");
+  };
+
   if (submittedApp) {
     return (
-      <div className="space-y-6 animate-in fade-in zoom-in duration-300">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <SendHorizontal className="h-6 w-6 text-green-600" />
-          </div>
-          <h3 className="text-xl font-bold text-green-900 mb-2">
-            Application Submitted!
-          </h3>
-          <p className="text-green-700 mb-6">
-            Your application has been received and is pending approval.
-          </p>
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="space-y-6 animate-in fade-in zoom-in duration-500">
+            {/* Success Card */}
+            <Card className="border-none shadow-lg bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 overflow-hidden relative">
+              <div className="absolute -right-16 -top-16 w-40 h-40 bg-emerald-200/20 dark:bg-emerald-800/20 rounded-full blur-3xl" />
+              <div className="absolute -left-16 -bottom-16 w-40 h-40 bg-teal-200/20 dark:bg-teal-800/20 rounded-full blur-3xl" />
+              
+              <CardContent className="pt-8 relative z-10">
+                <div className="flex justify-center mb-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-emerald-400/20 rounded-full blur-lg animate-pulse" />
+                    <div className="relative w-16 h-16 bg-emerald-100 dark:bg-emerald-900 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                  </div>
+                </div>
+                
+                <h2 className="text-2xl font-bold text-center text-emerald-900 dark:text-emerald-100 mb-2">
+                  Application Submitted!
+                </h2>
+                
+                <p className="text-center text-emerald-700 dark:text-emerald-300 mb-8">
+                  Your application has been received and is now pending approval. Please keep your application number safe.
+                </p>
 
-          <div className="bg-white border border-green-100 rounded-md p-4 max-w-sm mx-auto shadow-sm">
-            <p className="text-sm text-gray-500 uppercase font-bold tracking-wider mb-1">
-              Your Application Number
-            </p>
-            <p className="text-2xl font-mono font-bold text-primary">
-              {submittedApp.applicationNumber}
-            </p>
-          </div>
+                {/* Application Number Box */}
+                <div className="bg-white dark:bg-slate-900 border-2 border-emerald-200 dark:border-emerald-800 rounded-lg p-6 mb-6">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold tracking-widest mb-3">
+                    Application Number
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <p className="text-3xl font-mono font-bold text-emerald-600 dark:text-emerald-400 flex-1 text-balance">
+                      {submittedApp.applicationNumber}
+                    </p>
+                    <button
+                      onClick={handleCopyApplicationNumber}
+                      className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                      title="Copy application number"
+                    >
+                      <Copy className={`h-5 w-5 transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`} />
+                    </button>
+                  </div>
+                </div>
 
-          <p className="text-sm text-green-600 mt-6 italic">
-            Please keep this number for future reference to check your status.
-          </p>
+                <p className="text-sm text-emerald-600 dark:text-emerald-400 text-center italic font-medium">
+                  Use this number to check your application status anytime.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Action Button */}
+            <Button
+              variant="outline"
+              className="w-full border-emerald-200 dark:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950"
+              onClick={() => {
+                setSubmittedApp(null);
+                form.reset();
+              }}
+            >
+              Submit Another Application
+            </Button>
+          </div>
         </div>
-
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => setSubmittedApp(null)}
-        >
-          Submit Another Application
-        </Button>
       </div>
     );
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <Card className="shadow-md border-none ring-1 ring-border/50 overflow-hidden">
-          <CardHeader className="bg-muted/30 pb-8">
-            <div className="flex items-center gap-2 text-primary mb-1">
-              <Info className="h-4 w-4" />
-              <span className="text-xs font-bold uppercase tracking-wider">
-                Application Form
-              </span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <Info className="h-4 w-4" />
+            <span>Application Form</span>
+          </div>
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
+            Assistance Application
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-300">
+            Fill in your information below to apply for assistance
+          </p>
+        </div>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            {/* Applicant Information Card */}
+            <Card className="shadow-lg border-slate-200 dark:border-slate-800 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                    <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">
+                      Applicant Information
+                    </CardTitle>
+                    <CardDescription className="text-slate-600 dark:text-slate-400 mt-1">
+                      Enter your personal details below
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="pt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Applicant Name */}
+                  <FormField
+                    control={form.control}
+                    name="applicantName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Full Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your full name"
+                            {...field}
+                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Mobile Number */}
+                  <FormField
+                    control={form.control}
+                    name="mobileNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Mobile Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="10-digit number"
+                            {...field}
+                            maxLength={10}
+                            inputMode="numeric"
+                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Voter ID */}
+                  <FormField
+                    control={form.control}
+                    name="voterId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Voter ID Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter your Voter ID"
+                            {...field}
+                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Aadhaar Number */}
+                  <FormField
+                    control={form.control}
+                    name="aadhaarNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Aadhaar Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="XXXX XXXX XXXX"
+                            value={formatAadhaar(field.value || "")}
+                            onChange={(e) => {
+                              const raw = e.target.value
+                                .replace(/\D/g, "")
+                                .slice(0, 12);
+                              field.onChange(raw);
+                            }}
+                            maxLength={14}
+                            inputMode="numeric"
+                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Village Selection */}
+                  <FormField
+                    control={form.control}
+                    name="villageName"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Village / Locality
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400">
+                              <SelectValue placeholder="Select your village" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {villagenameOption.map((village) => (
+                              <SelectItem key={village.value} value={village.value}>
+                                {village.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Deceased Information Card */}
+            <Card className="shadow-lg border-slate-200 dark:border-slate-800 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                    <UserMinus className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">
+                      Deceased Information
+                    </CardTitle>
+                    <CardDescription className="text-slate-600 dark:text-slate-400 mt-1">
+                      Provide details about the deceased person
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="pt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Name of Deceased */}
+                  <FormField
+                    control={form.control}
+                    name="deceasedName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Name of Deceased
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter name"
+                            {...field}
+                            className="border-slate-300 dark:border-slate-700 focus:border-purple-500 dark:focus:border-purple-400"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Relationship */}
+                  <FormField
+                    control={form.control}
+                    name="relation"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Relationship
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="border-slate-300 dark:border-slate-700 focus:border-purple-500 dark:focus:border-purple-400">
+                              <SelectValue placeholder="Select relationship" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {SAMABYATHI_RELATIONS.map((rel) => (
+                              <SelectItem key={rel} value={rel}>
+                                {rel}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Date of Death */}
+                  <FormField
+                    control={form.control}
+                    name="dateOfDeath"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Date of Death
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            {...field}
+                            className="border-slate-300 dark:border-slate-700 focus:border-purple-500 dark:focus:border-purple-400"
+                          />
+                        </FormControl>
+                        <FormDescription className="text-slate-500 dark:text-slate-400">
+                          As mentioned in the death certificate
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Submit Button */}
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                disabled={loading}
+                size="lg"
+                className="px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 gap-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <SendHorizontal className="h-4 w-4" />
+                    <span>Submit Application</span>
+                  </>
+                )}
+              </Button>
             </div>
-            <CardTitle className="text-2xl font-bold">
-              Applicant Information
-            </CardTitle>
-            <CardDescription>
-              Enter the details of the person applying for the assistance.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6">
-            <FormField
-              control={form.control}
-              name="applicantName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    Applicant Name
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter full name"
-                      {...field}
-                      className="bg-background/50 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="voterId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    Voter ID Number
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Voter ID"
-                      {...field}
-                      className="bg-background/50 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="aadhaarNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    Aadhaar Number
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="1111 1111 1111"
-                      value={formatAadhaar(field.value || "")}
-                      onChange={(e) => {
-                        const raw = e.target.value
-                          .replace(/\D/g, "")
-                          .slice(0, 12);
-                        field.onChange(raw);
-                      }}
-                      maxLength={14}
-                      inputMode="numeric"
-                      className="bg-background/50 focus:bg-background"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="mobileNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    Mobile Number
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="10-digit mobile number"
-                      {...field}
-                      maxLength={10}
-                      className="bg-background/50 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="villageName"
-              render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                    Village / Locality
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50 focus:bg-background transition-colors">
-                        <SelectValue placeholder="Select the village name" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {villagenameOption.map((village) => (
-                        <SelectItem key={village.value} value={village.value}>
-                          {village.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-
-          <Separator className="bg-border/50" />
-
-          <CardHeader className="bg-muted/10">
-            <CardTitle className="text-2xl font-bold">
-              Deceased Information
-            </CardTitle>
-            <CardDescription>
-              Provide details about the deceased person.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 pb-8">
-            <FormField
-              control={form.control}
-              name="deceasedName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <UserMinus className="h-4 w-4 text-muted-foreground" />
-                    Name of Deceased
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter name of deceased"
-                      {...field}
-                      className="bg-background/50 focus:bg-background transition-colors"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="relation"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2">
-                    <HeartHandshake className="h-4 w-4 text-muted-foreground" />
-                    Relationship
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50 focus:bg-background transition-colors">
-                        <SelectValue placeholder="Select relationship" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {SAMABYATHI_RELATIONS.map((rel) => (
-                        <SelectItem key={rel} value={rel}>
-                          {rel}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dateOfDeath"
-              render={({ field }) => (
-                <FormItem className="md:col-span-2">
-                  <FormLabel className="flex items-center gap-2">
-                    <CalendarDays className="h-4 w-4 text-muted-foreground" />
-                    Date of Death
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                      className="bg-background/50 focus:bg-background transition-colors block"
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Select the exact date as mentioned in the death certificate.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardFooter className="bg-muted/30 border-t p-6">
-            <Button
-              type="submit"
-              className="w-full md:w-auto md:min-w-[200px] ml-auto gap-2 shadow-lg shadow-primary/20"
-              disabled={loading}
-              size="lg"
-            >
-              {loading ? (
-                <>
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <SendHorizontal className="h-4 w-4" />
-                  Submit Application
-                </>
-              )}
-            </Button>
-          </CardFooter>
-        </Card>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }
