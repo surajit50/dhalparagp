@@ -1,16 +1,17 @@
 import { db } from "@/lib/db";
 import { SAMABYATHI_CONFIG } from "@/constants/samabyathi";
 import { auth } from "@/auth";
+import { applicationSchema } from "@/lib/validation"; // ✅ import Zod schema
 
 async function generateApplicationNumber() {
   const year = new Date().getFullYear().toString();
-  
+
   const counter = await db.samabyathiCounter.upsert({
     where: { year },
     update: { lastNumber: { increment: 1 } },
     create: { year, lastNumber: 1 },
   });
-  
+
   const sequence = counter.lastNumber.toString().padStart(4, "0");
   return `SAM/${year}/${sequence}`;
 }
@@ -20,39 +21,40 @@ export async function POST(req: Request) {
   const body = await req.json();
   const sanctionAmount = SAMABYATHI_CONFIG.AMOUNT_PER_APP;
 
-  if (
-      !body.applicantName ||
-      !body.mobileNumber ||
-      !body.deceasedName ||
-      !body.dateOfDeath ||
-      !body.voterId ||
-      !body.aadhaarNumber
-    ) {
+  // ✅ Validate with Zod – returns detailed field errors
+  const parsed = applicationSchema.safeParse(body);
+  if (!parsed.success) {
+    const fieldErrors = parsed.error.flatten().fieldErrors;
     return Response.json(
-      { error: "Missing required fields" },
+      { error: "Validation failed", fieldErrors },
       { status: 400 }
     );
   }
+
+  const data = parsed.data;
 
   try {
-
     const existing = await db.samabyathiApplication.findFirst({
-    where: {
-      aadhaarNumber: body.aadhaarNumber,
-    },
-  });
+      where: {
+        aadhaarNumber: data.aadhaarNumber,
+      },
+    });
 
-  if (existing) {
-    return Response.json(
-      { error: "Application already submitted with this Aadhaar" },
-      { status: 400 }
-    );
-  }
-    
+    if (existing) {
+      return Response.json(
+        {
+          error: "Application already submitted with this Aadhaar",
+          fieldErrors: {
+            aadhaarNumber: ["This Aadhaar is already registered."],
+          },
+        },
+        { status: 400 }
+      );
+    }
+
     const applicationNumber = await generateApplicationNumber();
 
     const result = await db.$transaction(async (tx) => {
-      // ✅ Get total remaining fund (ALL allotments)
       const totalRemainingData = await tx.allotment.aggregate({
         _sum: { remaining: true },
       });
@@ -62,10 +64,11 @@ export async function POST(req: Request) {
       let status: "UNDER_REVIEW" | "PENDING" | "APPROVED" = "UNDER_REVIEW";
       let sanction: number | null = null;
 
-      // Only auto-approve if user is admin/staff and fund is available
-      const isAdmin = session?.user?.role === "admin" || session?.user?.role === "superadmin" || session?.user?.role === "staff";
+      const isAdmin =
+        session?.user?.role === "admin" ||
+        session?.user?.role === "superadmin" ||
+        session?.user?.role === "staff";
 
-      // ✅ Instant sanction logic (only for admin/staff)
       if (isAdmin && totalRemaining >= sanctionAmount) {
         let remainingToDeduct = sanctionAmount;
 
@@ -76,16 +79,11 @@ export async function POST(req: Request) {
 
         for (const a of allotments) {
           if (remainingToDeduct <= 0) break;
-
           const deduct = Math.min(a.remaining, remainingToDeduct);
-
           await tx.allotment.update({
             where: { id: a.id },
-            data: {
-              remaining: { decrement: deduct },
-            },
+            data: { remaining: { decrement: deduct } },
           });
-
           remainingToDeduct -= deduct;
         }
 
@@ -93,25 +91,22 @@ export async function POST(req: Request) {
         sanction = sanctionAmount;
       }
 
-      // ✅ Create application
-      const app = await tx.samabyathiApplication.create({
+      return tx.samabyathiApplication.create({
         data: {
           applicationNumber,
-          applicantName: body.applicantName,
-          mobileNumber: body.mobileNumber,
-          villageName: body.villageName,
-          deceasedName: body.deceasedName,
-          relation: body.relation,
-          dateOfDeath: new Date(body.dateOfDeath),
-          voterId: body.voterId,
-          aadhaarNumber: body.aadhaarNumber,
+          applicantName: data.applicantName,
+          mobileNumber: data.mobileNumber,
+          villageName: data.villageName,
+          deceasedName: data.deceasedName,
+          relation: data.relation,
+          dateOfDeath: new Date(data.dateOfDeath),
+          voterId: data.voterId,
+          aadhaarNumber: data.aadhaarNumber,
           status,
           sanctionAmount: sanction,
           userId: session?.user?.id,
         },
       });
-
-      return app;
     });
 
     return Response.json({
@@ -121,18 +116,17 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return Response.json(
-      { error: "Server error" },
+      { error: "An unexpected server error occurred. Please try again later." },
       { status: 500 }
     );
   }
 }
 
-// 👉 GET
 export async function GET() {
   const data = await db.samabyathiApplication.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      musterRolls: true, // will be empty until separate generation
+      musterRolls: true,
     },
   });
 
