@@ -35,6 +35,20 @@ export async function POST(req: Request) {
   }
 
   try {
+
+    const existing = await db.samabyathiApplication.findFirst({
+    where: {
+      aadhaarNumber: body.aadhaarNumber,
+    },
+  });
+
+  if (existing) {
+    return Response.json(
+      { error: "Application already submitted with this Aadhaar" },
+      { status: 400 }
+    );
+  }
+    
     const applicationNumber = await generateApplicationNumber();
 
     const result = await db.$transaction(async (tx) => {
