@@ -68,6 +68,7 @@ async function seedApplications(count: number) {
     await prisma.samabyathiApplication.createMany({
       data: batch,
     });
+    
 
     console.log(`Inserted ${i + batch.length}/${count}`);
   }
