@@ -64,7 +64,7 @@ async function seedApplications(count: number) {
       status: "PENDING",
 
       sanctionAmount: 2000
-
+    })
     await prisma.samabyathiApplication.createMany({
       data: batch,
     });
