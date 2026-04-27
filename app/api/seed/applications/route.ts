@@ -61,14 +61,9 @@ async function seedApplications(count: number) {
       relation: randomItem(relations),
       dateOfDeath: generateDate(),
 
-      status: ["PENDING"][
-        Math.floor(Math.random() * 3)
-      ],
+      status: "PENDING",
 
-      sanctionAmount: Math.random() > 0.6
-        ? Math.floor(Math.random() * 50000) + 1000
-        : null,
-    }));
+      sanctionAmount: 2000
 
     await prisma.samabyathiApplication.createMany({
       data: batch,
