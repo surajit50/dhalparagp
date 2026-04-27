@@ -8,7 +8,7 @@ export default async function VerifyApplicationsPage() {
       status: "UNDER_REVIEW",
     },
     orderBy: {
-      createdAt: "desc",
+      createdAt: "asc",
     },
   });
 
