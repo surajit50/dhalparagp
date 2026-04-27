@@ -2,10 +2,10 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Calendar, CheckCircle, XCircle, MapPin } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -19,7 +19,7 @@ interface InspectionItem {
   siteAddress: string;
   scheduledDate: string;
   inspectorName: string;
-  status: "SCHEDULED" | "COMPLETED" | "REJECTED";
+  status: string;
 }
 
 export default function SiteInspectionPage() {
@@ -42,7 +42,7 @@ export default function SiteInspectionPage() {
               `${it.application.mouza}, JL-${it.application.jlNo}, Plot-${it.application.plotNo}`,
             scheduledDate: new Date(it.scheduledDate).toISOString().slice(0, 10),
             inspectorName: it.inspectorName,
-            status: "SCHEDULED" as const,
+            status: it.status,
           })),
         );
       } else if (!result.success) {
@@ -57,6 +57,14 @@ export default function SiteInspectionPage() {
 
   const handleCompleteInspection = (approve: boolean) => {
     if (!selected) return;
+    if (!report.trim()) {
+      toast({
+        title: "Report required",
+        description: "Please write the inspection findings before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     startTransition(async () => {
       const result = await completeInspection(selected.id, report, approve);
@@ -89,7 +97,7 @@ export default function SiteInspectionPage() {
               `${it.application.mouza}, JL-${it.application.jlNo}, Plot-${it.application.plotNo}`,
             scheduledDate: new Date(it.scheduledDate).toISOString().slice(0, 10),
             inspectorName: it.inspectorName,
-            status: "SCHEDULED" as const,
+            status: it.status,
           })),
         );
       }
@@ -143,6 +151,9 @@ export default function SiteInspectionPage() {
                         {it.scheduledDate} • {it.inspectorName}
                       </CardDescription>
                     </CardHeader>
+                    <CardContent>
+                      <Badge>{it.status}</Badge>
+                    </CardContent>
                   </Card>
                 ))}
               </div>

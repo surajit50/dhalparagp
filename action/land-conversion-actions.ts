@@ -3,6 +3,11 @@
 import { revalidatePath } from "next/cache"
 import { db } from "@/lib/db"
 import { currentUser } from "@/lib/auth"
+import { uploadToCloudinary } from "@/app/lib/cloudinary"
+import { generate } from "@pdfme/generator"
+import { image, line, multiVariableText, rectangle, table, text } from "@pdfme/schemas"
+import path from "path"
+import { promises as fs } from "fs"
 import {
   landConversionApplicationSchema,
   type LandConversionApplicationInput,
@@ -21,6 +26,26 @@ type ActionResult<T = unknown> = {
   message?: string
   error?: string
   data?: T
+}
+
+type LandConversionCertificatePrintData = {
+  certificateNo: string
+  memoNumber: string
+  issueDate: Date
+  signatoryName: string | null
+  signatoryDesignation: string | null
+  applicantName: string
+  applicantAddress: string
+  applicantPhone: string
+  lands: {
+    khatianNo: string
+    plotNo: string
+    mouza: string
+    jlNo: string
+    landAreaDec: string
+    presentLandUse: string
+    proposedLandUse: string
+  }[]
 }
 
 async function generateApplicationNo(): Promise<string> {
@@ -509,12 +534,30 @@ export async function issueCertificate(
   applicationId: string,
   memoNumber: string,
   issueDate: string,
+  signatoryName?: string,
+  signatoryDesignation?: string,
 ): Promise<
   ActionResult<{
     certificate: LandConversionCertificate
   }>
 > {
   try {
+    const trimmedMemoNumber = memoNumber.trim()
+    if (!trimmedMemoNumber) {
+      return {
+        success: false,
+        error: "Memo number is required",
+      }
+    }
+
+    const parsedIssueDate = new Date(issueDate)
+    if (Number.isNaN(parsedIssueDate.getTime())) {
+      return {
+        success: false,
+        error: "Please provide a valid issue date",
+      }
+    }
+
     const application = await db.landConversionApplication.findUnique({
       where: { id: applicationId },
     })
@@ -526,16 +569,35 @@ export async function issueCertificate(
       }
     }
 
+    if (application.status !== LandConversionStatus.APPROVED) {
+      return {
+        success: false,
+        error: "Only approved applications can be issued",
+      }
+    }
+
+    const existingCertificate = await db.landConversionCertificate.findUnique({
+      where: { applicationId: application.id },
+      select: { id: true, certificateNo: true },
+    })
+
+    if (existingCertificate) {
+      return {
+        success: false,
+        error: `Certificate already issued (${existingCertificate.certificateNo})`,
+      }
+    }
+
     const certificateNo = await generateCertificateNo()
 
     const certificate = await db.landConversionCertificate.create({
       data: {
         applicationId: application.id,
         certificateNo,
-        memoNumber,
-        issueDate: new Date(issueDate),
-        signatoryName: null,
-        signatoryDesignation: null,
+        memoNumber: trimmedMemoNumber,
+        issueDate: parsedIssueDate,
+        signatoryName: signatoryName?.trim() || null,
+        signatoryDesignation: signatoryDesignation?.trim() || null,
       },
     })
 
@@ -547,6 +609,7 @@ export async function issueCertificate(
     })
 
     revalidatePath("/admindashboard/manage-land-conversion/issue")
+    revalidatePath("/admindashboard/manage-land-conversion/print")
 
     return {
       success: true,
@@ -672,6 +735,68 @@ export async function getApplicationById(applicationId: string) {
   }
 }
 
+function formatCertificateDate(value: Date | string | null | undefined): string {
+  if (!value) return ""
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return ""
+  return date.toLocaleDateString("en-GB")
+}
+
+function buildLandConversionPdfInputs(
+  certificateData: LandConversionCertificatePrintData,
+  logoBase64: string | null,
+) {
+  const paragraph1 = `This is to certify that ${certificateData.applicantName}, residing at ${certificateData.applicantAddress}, has been granted a No Objection Certificate for conversion of the land described below.`
+
+  const landDetails = certificateData.lands
+    .map((land, index) => {
+      return `${index + 1}. Khatian No: ${land.khatianNo}, Plot No: ${land.plotNo}, Mouza: ${land.mouza}, JL No: ${land.jlNo}, Area: ${land.landAreaDec} dec, Present use: ${land.presentLandUse}, Proposed use: ${land.proposedLandUse}`
+    })
+    .join("\n")
+
+  const conversionDetails =
+    "The above land is hereby permitted to be converted from its present use to the proposed use, subject to compliance with the conditions mentioned below and applicable laws."
+
+  return [
+    {
+      logo: logoBase64,
+      certificateNumber: certificateData.certificateNo,
+      memoNumber: certificateData.memoNumber,
+      issueDate: formatCertificateDate(certificateData.issueDate),
+      applicantName: certificateData.applicantName,
+      applicantAddress: certificateData.applicantAddress,
+      applicantPhone: certificateData.applicantPhone,
+      paragraph1,
+      landDetails,
+      conversionDetails,
+      signatoryName: certificateData.signatoryName || "",
+      signatoryDesignation: certificateData.signatoryDesignation || "",
+    },
+  ]
+}
+
+async function loadLandConversionTemplate() {
+  const templateFilePath = path.join(
+    process.cwd(),
+    "public",
+    "templates",
+    "land-conversion-certificate.json",
+  )
+  const templateRaw = await fs.readFile(templateFilePath, "utf8")
+  return JSON.parse(templateRaw)
+}
+
+async function loadLogoBase64() {
+  try {
+    const logoPath = path.join(process.cwd(), "public", "images", "logo.png")
+    const logoBuffer = await fs.readFile(logoPath)
+    return `data:image/png;base64,${logoBuffer.toString("base64")}`
+  } catch (error) {
+    console.error("Failed to load logo for land conversion certificate:", error)
+    return null
+  }
+}
+
 export async function getIssuedCertificatesForPrint(): Promise<
   ActionResult<
     {
@@ -682,6 +807,7 @@ export async function getIssuedCertificatesForPrint(): Promise<
       certificateNo: string
       memoNumber: string
       issueDate: Date
+      pdfUrl: string | null
     }[]
   >
 > {
@@ -701,6 +827,7 @@ export async function getIssuedCertificatesForPrint(): Promise<
         certificateNo: c.certificateNo,
         memoNumber: c.memoNumber,
         issueDate: c.issueDate,
+        pdfUrl: c.pdfUrl,
       })),
     }
   } catch (error) {
@@ -758,5 +885,113 @@ export async function getCertificateForPrint(certificateId: string) {
   } catch (error) {
     console.error("Error fetching certificate for print:", error)
     return { success: false as const, error: "Failed to load certificate" }
+  }
+}
+
+export async function generateAndStoreCertificatePdf(
+  certificateId: string,
+): Promise<ActionResult<{ pdfUrl: string; certificateNo: string }>> {
+  try {
+    const cert = await db.landConversionCertificate.findUnique({
+      where: { id: certificateId },
+      include: {
+        application: { include: { landDetails: true } },
+      },
+    })
+
+    if (!cert) {
+      return { success: false, error: "Certificate not found" }
+    }
+
+    if (cert.pdfUrl) {
+      return {
+        success: true,
+        data: {
+          pdfUrl: cert.pdfUrl,
+          certificateNo: cert.certificateNo,
+        },
+      }
+    }
+
+    const app = cert.application
+    const lands = [
+      {
+        khatianNo: app.khatianNo,
+        plotNo: app.plotNo,
+        mouza: app.mouza,
+        jlNo: app.jlNo,
+        landAreaDec: app.landAreaDec,
+        presentLandUse: app.presentLandUse,
+        proposedLandUse: app.proposedLandUse,
+      },
+      ...app.landDetails.map((l) => ({
+        khatianNo: l.khatianNo,
+        plotNo: l.plotNo,
+        mouza: l.mouza,
+        jlNo: l.jlNo,
+        landAreaDec: l.landAreaDec,
+        presentLandUse: l.presentLandUse,
+        proposedLandUse: l.proposedLandUse,
+      })),
+    ]
+
+    const certificateData: LandConversionCertificatePrintData = {
+      certificateNo: cert.certificateNo,
+      memoNumber: cert.memoNumber,
+      issueDate: cert.issueDate,
+      signatoryName: cert.signatoryName,
+      signatoryDesignation: cert.signatoryDesignation,
+      applicantName: app.applicantName,
+      applicantAddress: app.applicantAddress,
+      applicantPhone: app.applicantPhone,
+      lands,
+    }
+
+    const template = await loadLandConversionTemplate()
+    const logoBase64 = await loadLogoBase64()
+    const inputs = buildLandConversionPdfInputs(certificateData, logoBase64)
+
+    const pdfBuffer = await generate({
+      template,
+      inputs,
+      plugins: {
+        text,
+        image,
+        table,
+        line,
+        multiVariableText,
+        rectangle,
+      },
+    })
+
+    const pdfBase64 = Buffer.from(pdfBuffer).toString("base64")
+    const uploadResult = await uploadToCloudinary(
+      `data:application/pdf;base64,${pdfBase64}`,
+      "land_conversion/certificates",
+    )
+
+    await db.landConversionCertificate.update({
+      where: { id: cert.id },
+      data: {
+        pdfUrl: uploadResult.url,
+        pdfKey: uploadResult.public_id,
+      },
+    })
+
+    revalidatePath("/admindashboard/manage-land-conversion/print")
+
+    return {
+      success: true,
+      data: {
+        pdfUrl: uploadResult.url,
+        certificateNo: cert.certificateNo,
+      },
+    }
+  } catch (error) {
+    console.error("Error generating and storing land conversion PDF:", error)
+    return {
+      success: false,
+      error: "Failed to generate and store certificate PDF",
+    }
   }
 }

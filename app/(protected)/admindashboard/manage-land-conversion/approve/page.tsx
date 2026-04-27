@@ -17,7 +17,7 @@ interface ApprovalItem {
   id: string;
   applicantName: string;
   applicationNo: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: string;
 }
 
 export default function ApprovalWorkflowPage() {
@@ -36,7 +36,7 @@ export default function ApprovalWorkflowPage() {
             id: a.id,
             applicantName: a.applicantName,
             applicationNo: a.applicationNo,
-            status: "PENDING" as const,
+            status: a.status,
           })),
         );
       } else if (!result.success) {
@@ -51,6 +51,14 @@ export default function ApprovalWorkflowPage() {
 
   const takeAction = (approve: boolean) => {
     if (!selected) return;
+    if (!approve && !comments.trim()) {
+      toast({
+        title: "Comments required",
+        description: "Please add rejection comments before rejecting.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     startTransition(async () => {
       const result = await approveApplication(selected.id, comments, approve);
@@ -79,7 +87,7 @@ export default function ApprovalWorkflowPage() {
             id: a.id,
             applicantName: a.applicantName,
             applicationNo: a.applicationNo,
-            status: "PENDING" as const,
+            status: a.status,
           })),
         );
       }
@@ -163,6 +171,7 @@ export default function ApprovalWorkflowPage() {
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
                             placeholder="Add approval/rejection comments"
+                            disabled={isPending}
                           />
                         </div>
                         <div className="flex gap-3">

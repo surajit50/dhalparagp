@@ -21,12 +21,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { generatePDF } from "@/lib/pdf-generator";
 import {
   getIssuedCertificatesForPrint,
-  getCertificateForPrint,
+  generateAndStoreCertificatePdf,
 } from "@/action/land-conversion-actions";
-import { gpname, nameinprodhan } from "@/constants/gpinfor";
 import { formatDate } from "@/utils/utils";
 
 type CertificateItem = {
@@ -37,24 +35,7 @@ type CertificateItem = {
   certificateNo: string;
   memoNumber: string;
   issueDate: Date;
-};
-
-const templatePath = "/templates/land-conversion-certificate.json";
-
-const getBase64FromUrl = async (url: string) => {
-  try {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.error("Error loading image:", error);
-    return null;
-  }
+  pdfUrl: string | null;
 };
 
 export default function LandConversionPrintPage() {
@@ -127,7 +108,13 @@ export default function LandConversionPrintPage() {
   const handleDownload = async (certificateId: string) => {
     setPrintingId(certificateId);
     try {
-      const result = await getCertificateForPrint(certificateId);
+      const existing = allItems.find((item) => item.id === certificateId);
+      if (existing?.pdfUrl) {
+        window.open(existing.pdfUrl, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      const result = await generateAndStoreCertificatePdf(certificateId);
       if (!result.success || !result.data) {
         toast({
           title: "Failed to generate certificate",
@@ -136,67 +123,12 @@ export default function LandConversionPrintPage() {
         });
         return;
       }
-
-      const {
-        certificateNo,
-        memoNumber,
-        issueDate,
-        signatoryName,
-        signatoryDesignation,
-        applicantName,
-        applicantAddress,
-        applicantPhone,
-        lands,
-      } = result.data;
-
-      const formattedIssueDate = issueDate ? formatDate(issueDate) : "";
-
-      const paragraph1 = `This is to certify that ${applicantName}, residing at ${applicantAddress}, has been granted a No Objection Certificate for conversion of the land described below.`;
-
-      const landDetails = lands
-        .map((land, index) => {
-          return `${index + 1}. Khatian No: ${land.khatianNo}, Plot No: ${
-            land.plotNo
-          }, Mouza: ${land.mouza}, JL No: ${land.jlNo},  Area: ${land.landAreaDec} dec, Present use: ${
-            land.presentLandUse
-          }, Proposed use: ${land.proposedLandUse}`;
-        })
-        .join("\n");
-
-      const conversionDetails = `The above land is hereby permitted to be converted from its present use to the proposed use, subject to compliance with the conditions mentioned below and applicable laws.`;
-
-      const logoBase64 = await getBase64FromUrl("/images/logo.png");
-
-      const inputs = [
-        {
-          logo: logoBase64,
-          gpname: gpname,
-          certificateNumber: certificateNo,
-          memoNumber: memoNumber,
-          issueDate: formattedIssueDate,
-          applicantName,
-          applicantAddress,
-          applicantPhone,
-          paragraph1,
-          landDetails,
-          conversionDetails,
-          signatoryName: signatoryName || nameinprodhan,
-          signatoryDesignation: signatoryDesignation || undefined,
-        },
-      ];
-
-      const pdf = await generatePDF(templatePath, inputs);
-      if (!pdf || !pdf.buffer) {
-        throw new Error("PDF generation failed");
-      }
-
-      const blob = new Blob([pdf.buffer], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `land_conversion_certificate_${certificateNo}.pdf`;
-      link.click();
-      URL.revokeObjectURL(url);
+      setAllItems((prev) =>
+        prev.map((item) =>
+          item.id === certificateId ? { ...item, pdfUrl: result.data!.pdfUrl } : item,
+        ),
+      );
+      window.open(result.data.pdfUrl, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("Error generating land conversion certificate PDF:", error);
       toast({

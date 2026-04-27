@@ -24,6 +24,22 @@ interface ApplicationSummary {
   status: LandConversionStatus;
 }
 
+const statusBadgeClass: Record<LandConversionStatus, string> = {
+  DRAFT: "bg-gray-100 text-gray-700",
+  SUBMITTED: "bg-blue-100 text-blue-800",
+  VERIFICATION_PENDING: "bg-blue-100 text-blue-800",
+  VERIFIED: "bg-green-100 text-green-800",
+  VERIFICATION_REJECTED: "bg-red-100 text-red-800",
+  INSPECTION_PENDING: "bg-amber-100 text-amber-800",
+  INSPECTION_COMPLETED: "bg-green-100 text-green-800",
+  INSPECTION_REJECTED: "bg-red-100 text-red-800",
+  APPROVAL_PENDING: "bg-indigo-100 text-indigo-800",
+  APPROVED: "bg-green-100 text-green-800",
+  REJECTED: "bg-red-100 text-red-800",
+  ISSUED: "bg-emerald-100 text-emerald-800",
+  CANCELLED: "bg-red-100 text-red-800",
+};
+
 export default function DocumentVerificationPage() {
   const { toast } = useToast();
   const [applications, setApplications] = useState<ApplicationSummary[]>([]);
@@ -53,6 +69,14 @@ export default function DocumentVerificationPage() {
 
   const takeAction = (action: "verify" | "reject") => {
     if (!selected) return;
+    if (action === "reject" && !remarks.trim()) {
+      toast({
+        title: "Remarks required",
+        description: "Please provide rejection remarks before rejecting.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     startTransition(async () => {
       const result = await verifyApplication(selected.id, remarks, action);
@@ -146,7 +170,12 @@ export default function DocumentVerificationPage() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <Badge>{app.mouza}</Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge>{app.mouza}</Badge>
+                          <Badge className={statusBadgeClass[app.status]}>
+                            {app.status}
+                          </Badge>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -192,13 +221,14 @@ export default function DocumentVerificationPage() {
                       />
                     </div>
                     <div className="flex gap-3">
-                      <Button onClick={() => takeAction("verify")}>
+                      <Button onClick={() => takeAction("verify")} disabled={isPending}>
                         <CheckCircle className="h-4 w-4 mr-2" />
                         Verify
                       </Button>
                       <Button
                         variant="destructive"
                         onClick={() => takeAction("reject")}
+                        disabled={isPending}
                       >
                         <XCircle className="h-4 w-4 mr-2" />
                         Reject

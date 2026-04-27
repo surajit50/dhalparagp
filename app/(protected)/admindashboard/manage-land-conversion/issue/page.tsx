@@ -17,7 +17,7 @@ interface IssueItem {
   id: string;
   applicationNo: string;
   applicantName: string;
-  status: "APPROVED" | "ISSUED";
+  status: string;
 }
 
 export default function IssueNOCPage() {
@@ -25,7 +25,9 @@ export default function IssueNOCPage() {
   const [items, setItems] = useState<IssueItem[]>([]);
   const [selected, setSelected] = useState<IssueItem | null>(null);
   const [memoNumber, setMemoNumber] = useState("");
-  const [issueDate, setIssueDate] = useState("");
+  const [issueDate, setIssueDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [signatoryName, setSignatoryName] = useState("");
+  const [signatoryDesignation, setSignatoryDesignation] = useState("");
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function IssueNOCPage() {
             id: a.id,
             applicationNo: a.applicationNo,
             applicantName: a.applicantName,
-            status: "APPROVED" as const,
+            status: a.status,
           })),
         );
       } else if (!result.success) {
@@ -51,10 +53,32 @@ export default function IssueNOCPage() {
   }, [toast]);
 
   const issueNoc = () => {
-    if (!selected || !memoNumber || !issueDate) return;
+    if (!selected) {
+      toast({
+        title: "Select an application",
+        description: "Choose one approved application from the list to issue certificate.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!memoNumber.trim() || !issueDate) {
+      toast({
+        title: "Missing required details",
+        description: "Memo number and issue date are mandatory.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     startTransition(async () => {
-      const result = await issueCertificate(selected.id, memoNumber, issueDate);
+      const result = await issueCertificate(
+        selected.id,
+        memoNumber,
+        issueDate,
+        signatoryName,
+        signatoryDesignation,
+      );
       if (!result.success) {
         toast({
           title: "Failed to issue NOC",
@@ -69,7 +93,9 @@ export default function IssueNOCPage() {
         description: `NOC issued for ${selected.applicationNo}`,
       });
       setMemoNumber("");
-      setIssueDate("");
+      setIssueDate(new Date().toISOString().slice(0, 10));
+      setSignatoryName("");
+      setSignatoryDesignation("");
       setSelected(null);
 
       const refreshed = await getApplicationsForIssuance();
@@ -79,7 +105,7 @@ export default function IssueNOCPage() {
             id: a.id,
             applicationNo: a.applicationNo,
             applicantName: a.applicantName,
-            status: "APPROVED" as const,
+            status: a.status,
           })),
         );
       }
@@ -151,6 +177,7 @@ export default function IssueNOCPage() {
                               value={memoNumber}
                               onChange={(e) => setMemoNumber(e.target.value)}
                               placeholder="e.g., 123/LC/2025"
+                            disabled={isPending}
                             />
                           </div>
                           <div>
@@ -160,17 +187,38 @@ export default function IssueNOCPage() {
                               type="date"
                               value={issueDate}
                               onChange={(e) => setIssueDate(e.target.value)}
+                            disabled={isPending}
                             />
                           </div>
+                        <div>
+                          <Label htmlFor="signatoryName">Signatory Name</Label>
+                          <Input
+                            id="signatoryName"
+                            value={signatoryName}
+                            onChange={(e) => setSignatoryName(e.target.value)}
+                            placeholder="e.g., Prodhan"
+                            disabled={isPending}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="signatoryDesignation">Signatory Designation</Label>
+                          <Input
+                            id="signatoryDesignation"
+                            value={signatoryDesignation}
+                            onChange={(e) => setSignatoryDesignation(e.target.value)}
+                            placeholder="e.g., Gram Panchayat Head"
+                            disabled={isPending}
+                          />
+                        </div>
                         </div>
                         <div className="flex gap-3">
-                          <Button onClick={issueNoc}>
+                          <Button onClick={issueNoc} disabled={isPending}>
                             <CheckCircle className="h-4 w-4 mr-2" />
-                            Issue NOC
+                            {isPending ? "Issuing..." : "Issue NOC"}
                           </Button>
-                          <Button variant="outline">
+                          <Button variant="outline" disabled>
                             <Download className="h-4 w-4 mr-2" />
-                            Preview
+                            Preview (Coming Soon)
                           </Button>
                         </div>
                       </>
