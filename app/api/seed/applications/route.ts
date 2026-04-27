@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
 interface SeedRequest {
   count?: number;
   clear?: boolean;
 }
 
-// Sample Data
+// Sample data (unchanged)
 const firstNames = [
   "Ramesh", "Suresh", "Rajesh", "Mahesh", "Dinesh", "Prakash",
   "Vikram", "Arun", "Amit", "Ajay", "Sanjay", "Ravi",
@@ -27,63 +27,48 @@ const relations = [
   "Father", "Mother", "Brother", "Sister",
 ];
 
-// Helpers
-function randomItem<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function generateName() {
-  return `${randomItem(firstNames)} ${randomItem(lastNames)}`;
-}
-
-function generatePhone() {
-  return `${Math.floor(1000000000 + Math.random() * 9000000000)}`;
-}
-
-function generateDate(days = 365) {
+const randomItem = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+const generateName = () => `${randomItem(firstNames)} ${randomItem(lastNames)}`;
+const generatePhone = (index: number) => `${1_000_000_000 + index}`;
+const generateDate = (days = 365) => {
   const now = new Date();
   const randomDays = Math.floor(Math.random() * days);
-  return new Date(now.getTime() - randomDays * 86400000);
-}
+  return new Date(now.getTime() - randomDays * 86_400_000);
+};
 
-// MAIN SEED FUNCTION
 async function seedApplications(count: number) {
-  const batchSize = 100;
-
-  for (let i = 0; i < count; i += batchSize) {
-    const batch = Array.from({
-      length: Math.min(batchSize, count - i),
-    }).map(() => ({
+  const BATCH = 100;
+  for (let i = 0; i < count; i += BATCH) {
+    const size = Math.min(BATCH, count - i);
+    const data = Array.from({ length: size }, (_, idx) => ({
       applicantName: generateName(),
-      mobileNumber: generatePhone(),
+      mobileNumber: generatePhone(i + idx),   // guarantee uniqueness
       villageName: randomItem(villages),
       deceasedName: generateName(),
       relation: randomItem(relations),
       dateOfDeath: generateDate(),
+      status: 'PENDING',
+      sanctionAmount: 2000,
+    }));
 
-      status: "PENDING",
-
-      sanctionAmount: 2000
-    })
-    await prisma.samabyathiApplication.createMany({
-      data: batch,
-    });
-    
-
-    console.log(`Inserted ${i + batch.length}/${count}`);
+    await prisma.samabyathiApplication.createMany({ data });
+    console.log(`Inserted ${i + data.length}/${count}`);
   }
 }
 
-// POST API
 export async function POST(req: NextRequest) {
-  try {
-    const body: SeedRequest = await req.json().catch(() => ({}));
+  // Security guard
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json({ success: false, error: 'Not allowed' }, { status: 403 });
+  }
 
-    const count = body.count ?? 500;
+  try {
+    const body = (await req.json()) as SeedRequest;
+    const count = Math.min(body.count ?? 500, 10_000); // reasonable cap
     const clear = body.clear ?? false;
 
     if (clear) {
-      await prisma.musterRoll.deleteMany();
+      // Only clear the target table
       await prisma.samabyathiApplication.deleteMany();
     }
 
@@ -91,24 +76,24 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `${count} applications created`,
+      message: `Created ${count} applications`,
     });
   } catch (error) {
     console.error(error);
-
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to seed data",
+        error: process.env.NODE_ENV === 'development' ? (error as Error).message : 'Failed to seed',
       },
       { status: 500 }
     );
   }
 }
 
-// GET API (info)
 export async function GET() {
+  const currentCount = await prisma.samabyathiApplication.count();
   return NextResponse.json({
-    message: "POST { count?: number, clear?: boolean }",
+    message: 'POST { count?: number, clear?: boolean }',
+    currentRecords: currentCount,
   });
 }
