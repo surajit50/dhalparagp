@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,27 +11,10 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import {
-  Check,
-  X,
-  Loader2,
-  User,
-  Calendar,
-  MapPin,
-  CreditCard,
-  Fingerprint,
-  Phone,
-  HeartHandshake,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Check, X, Loader2 } from "lucide-react";
 
 interface Application {
   id: string;
@@ -42,7 +25,6 @@ interface Application {
   deceasedName: string;
   relation: string;
   dateOfDeath: string;
-  voterId?: string;
   aadhaarNumber?: string;
   status: string;
   createdAt: string;
@@ -54,154 +36,264 @@ export default function VerifyApplicationsClient({
   initialData: Application[];
 }) {
   const [data, setData] = useState<Application[]>(initialData);
-  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [loadingIds, setLoadingIds] = useState<string[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const [lastAction, setLastAction] = useState<any>(null);
 
-  const handleAction = async (id: string, action: "VERIFY" | "REJECT") => {
-    setLoadingId(id);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  // 🔍 Filter
+  const filtered = useMemo(() => {
+    return data.filter(
+      (app) =>
+        app.applicantName.toLowerCase().includes(search.toLowerCase()) ||
+        app.mobileNumber.includes(search)
+    );
+  }, [data, search]);
+
+  // ✅ Action
+  const handleAction = async (ids: string[], action: "VERIFY" | "REJECT") => {
+    setLoadingIds(ids);
+
     try {
       const res = await fetch("/api/samabathy/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, action }),
+        body: JSON.stringify({ ids, action }),
       });
 
       if (res.ok) {
+        const removed = data.filter((d) => ids.includes(d.id));
+        setLastAction({ removed });
+
+        setData((prev) => prev.filter((d) => !ids.includes(d.id)));
+        setSelectedIds([]);
+
         toast.success(
-          action === "VERIFY" ? "Application verified" : "Application rejected",
+          action === "VERIFY"
+            ? `${ids.length} verified`
+            : `${ids.length} rejected`
         );
-        setData(data.filter((app) => app.id !== id));
-      } else {
-        const err = await res.json();
-        toast.error(err.error || "Action failed");
       }
-    } catch (error) {
-      toast.error("An error occurred");
+    } catch {
+      toast.error("Failed");
     } finally {
-      setLoadingId(null);
+      setLoadingIds([]);
     }
   };
 
-  if (data.length === 0) {
-    return (
-      <Card className="mt-8">
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <div className="bg-muted rounded-full p-4 mb-4">
-            <Check className="h-8 w-8 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl font-semibold">All caught up!</h3>
-          <p className="text-muted-foreground">
-            No applications pending review at this time.
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  // 🔁 Undo
+  const undo = () => {
+    if (lastAction) {
+      setData((prev) => [...lastAction.removed, ...prev]);
+      toast.success("Undo successful");
+    }
+  };
+
+  // ⌨️ Keyboard
+  useEffect(() => {
+    const keyHandler = (e: KeyboardEvent) => {
+      if (filtered.length === 0) return;
+
+      // Focus search
+      if (e.key === "/") {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+
+      // Undo
+      if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+        undo();
+      }
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedIndex((i) => Math.min(i + 1, filtered.length - 1));
+          break;
+
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedIndex((i) => Math.max(i - 1, 0));
+          break;
+
+        case "Enter":
+        case "v":
+        case "V":
+          handleAction([filtered[selectedIndex].id], "VERIFY");
+          break;
+
+        case "r":
+        case "R":
+          handleAction([filtered[selectedIndex].id], "REJECT");
+          break;
+
+        case "Escape":
+          setSelectedIds([]);
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", keyHandler);
+    return () => window.removeEventListener("keydown", keyHandler);
+  }, [filtered, selectedIndex]);
+
+  // Multi select
+  const toggleSelect = (id: string, index: number, e: any) => {
+    if (e.shiftKey) {
+      const range = filtered.slice(
+        Math.min(selectedIndex, index),
+        Math.max(selectedIndex, index) + 1
+      );
+      setSelectedIds(range.map((r) => r.id));
+    } else if (e.ctrlKey || e.metaKey) {
+      setSelectedIds((prev) =>
+        prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+      );
+    } else {
+      setSelectedIds([id]);
+      setSelectedIndex(index);
+    }
+  };
 
   return (
     <div className="space-y-4">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {data.map((app) => (
-          <Card
-            key={app.id}
-            className="overflow-hidden border-l-4 border-l-amber-500 shadow-sm"
+
+      {/* Top Bar */}
+      <div className="flex justify-between gap-2">
+        <Input
+          ref={searchRef}
+          placeholder="Search... (/)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm"
+        />
+
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            disabled={!selectedIds.length}
+            onClick={() => handleAction(selectedIds, "VERIFY")}
+            className="bg-emerald-600 hover:bg-emerald-700"
           >
-            <CardHeader className="bg-muted/30 pb-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <Badge
-                    variant="outline"
-                    className="mb-2 bg-amber-50 text-amber-700 border-amber-200"
+            Verify Selected
+          </Button>
+
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!selectedIds.length}
+            onClick={() => handleAction(selectedIds, "REJECT")}
+            className="text-red-600"
+          >
+            Reject Selected
+          </Button>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="border rounded-xl overflow-hidden">
+        <Table>
+          <TableHeader className="sticky top-0 bg-background z-10">
+            <TableRow>
+              <TableHead></TableHead>
+              <TableHead>ID</TableHead>
+              <TableHead>Applicant</TableHead>
+              <TableHead>Mobile</TableHead>
+              <TableHead>Village</TableHead>
+              <TableHead>Deceased</TableHead>
+              <TableHead>DOD</TableHead>
+              <TableHead>Aadhaar</TableHead>
+              <TableHead></TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {filtered.map((app, i) => (
+              <TableRow
+                key={app.id}
+                onClick={(e) => toggleSelect(app.id, i, e)}
+                className={`cursor-pointer ${
+                  selectedIds.includes(app.id)
+                    ? "bg-primary/10"
+                    : i === selectedIndex
+                    ? "bg-muted/40"
+                    : ""
+                }`}
+              >
+                <TableCell>
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(app.id)}
+                    readOnly
+                  />
+                </TableCell>
+
+                <TableCell>{app.applicationNumber}</TableCell>
+
+                <TableCell>
+                  <div className="font-medium">{app.applicantName}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {format(new Date(app.createdAt), "dd MMM")}
+                  </div>
+                </TableCell>
+
+                <TableCell>{app.mobileNumber}</TableCell>
+                <TableCell>{app.villageName}</TableCell>
+
+                <TableCell className="text-red-600">
+                  {app.deceasedName}
+                </TableCell>
+
+                <TableCell>
+                  {format(new Date(app.dateOfDeath), "dd MMM yyyy")}
+                </TableCell>
+
+                <TableCell className="font-mono text-xs">
+                  {app.aadhaarNumber
+                    ? `XXXX XXXX ${app.aadhaarNumber.slice(-4)}`
+                    : "N/A"}
+                </TableCell>
+
+                <TableCell className="flex gap-1">
+                  <Button
+                    size="icon"
+                    disabled={loadingIds.includes(app.id)}
+                    onClick={() => handleAction([app.id], "VERIFY")}
+                    className="bg-emerald-600"
                   >
-                    UNDER REVIEW
-                  </Badge>
-                  <CardTitle className="text-lg">
-                    {app.applicationNumber || "Pending ID"}
-                  </CardTitle>
-                </div>
-                <div className="text-right text-xs text-muted-foreground">
-                  {format(new Date(app.createdAt), "dd MMM yyyy")}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="pt-4 space-y-3">
-              <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-primary/60" />
-                  <span className="font-medium truncate">
-                    {app.applicantName}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-primary/60" />
-                  <span className="truncate">{app.mobileNumber}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary/60" />
-                  <span className="truncate">{app.villageName}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <HeartHandshake className="h-4 w-4 text-primary/60" />
-                  <span className="truncate italic text-muted-foreground">{app.relation}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4 text-red-500/60" />
-                  <span className="font-medium truncate">
-                    {app.deceasedName}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>{format(new Date(app.dateOfDeath), "dd MMM yy")}</span>
-                </div>
-              </div>
+                    {loadingIds.includes(app.id) ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Check />
+                    )}
+                  </Button>
 
-              <div className="bg-muted/50 p-2 rounded-md space-y-1 mt-2">
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <CreditCard className="h-3 w-3" /> Voter ID
-                  </span>
-                  <span className="font-mono font-medium">
-                    {app.voterId || "N/A"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    <Fingerprint className="h-3 w-3" /> Aadhaar
-                  </span>
-                  <span className="font-mono font-medium">
-                    {app.aadhaarNumber || "N/A"}
-                  </span>
-                </div>
-              </div>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    disabled={loadingIds.includes(app.id)}
+                    onClick={() => handleAction([app.id], "REJECT")}
+                  >
+                    <X />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-              <div className="flex gap-2 pt-4">
-                <Button
-                  className="flex-1 bg-emerald-600 hover:bg-emerald-700"
-                  size="sm"
-                  disabled={loadingId === app.id}
-                  onClick={() => handleAction(app.id, "VERIFY")}
-                >
-                  {loadingId === app.id ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <Check className="h-4 w-4 mr-2" />
-                  )}
-                  Verify
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 text-red-600 hover:text-red-700 border-red-200 hover:bg-red-50"
-                  size="sm"
-                  disabled={loadingId === app.id}
-                  onClick={() => handleAction(app.id, "REJECT")}
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Reject
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Shortcuts */}
+      <div className="text-xs text-muted-foreground flex flex-wrap gap-3">
+        <span>↑ ↓ Navigate</span>
+        <span>Shift = Multi-select</span>
+        <span>Enter / V = Verify</span>
+        <span>R = Reject</span>
+        <span>/ Search</span>
+        <span>Ctrl + Z Undo</span>
       </div>
     </div>
   );
