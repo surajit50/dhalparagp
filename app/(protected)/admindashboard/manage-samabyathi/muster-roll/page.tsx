@@ -1,9 +1,9 @@
 import { db } from "@/lib/db";
 import MusterRollGroupClient from "@/components/samabathy/MusterRollGroupClient";
 import GenerateMusterButton from "@/components/samabathy/GenerateMusterButton";
-import { FileText, IndianRupee, Users, CheckCircle } from "lucide-react";
+import { IndianRupee, Users, CheckCircle, FileText } from "lucide-react";
 
-export const dynamic = "force-dynamic"; // ⬅️ THIS IS THE KEY LINE
+export const dynamic = "force-dynamic";
 
 export default async function MusterPage() {
   const data = await db.musterRoll.findMany({
@@ -18,20 +18,28 @@ export default async function MusterPage() {
 
   return (
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">
-            Muster Roll Dashboard
-          </h1>
-          <p className="text-slate-500">
-            Manage distribution and beneficiary payments
-          </p>
+
+      {/* 🔷 HERO HEADER */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 p-6 text-white shadow-lg">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Muster Roll Dashboard
+            </h1>
+            <p className="text-blue-100 text-sm">
+              Samabyathi Assistance Distribution System
+            </p>
+          </div>
+
+          <GenerateMusterButton />
         </div>
-        <GenerateMusterButton />
+
+        <div className="absolute right-0 top-0 opacity-10 text-9xl font-bold">
+          MR
+        </div>
       </div>
 
-      {/* STATS */}
+      {/* 📊 STATS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard title="Beneficiaries" value={totalBeneficiaries} icon={<Users />} />
         <StatCard title="Total Amount" value={`₹${totalAmount.toLocaleString("en-IN")}`} icon={<IndianRupee />} />
@@ -39,28 +47,38 @@ export default async function MusterPage() {
         <StatCard title="Pending" value={pending} icon={<FileText />} color="yellow" />
       </div>
 
-      {/* GROUP LIST */}
+      {/* 📦 LIST */}
       <MusterRollGroupClient data={data as any} />
     </div>
   );
 }
 
+/* 🔥 PREMIUM STAT CARD */
 function StatCard({ title, value, icon, color = "blue" }: any) {
   const colors: any = {
-    blue: "bg-blue-50 text-blue-600",
-    green: "bg-green-50 text-green-600",
-    yellow: "bg-yellow-50 text-yellow-600",
+    blue: "from-blue-500 to-indigo-500",
+    green: "from-emerald-500 to-green-500",
+    yellow: "from-amber-500 to-orange-500",
   };
 
   return (
-    <div className="bg-white border rounded-xl p-4 shadow-sm flex items-center justify-between">
-      <div>
-        <p className="text-sm text-slate-500">{title}</p>
-        <p className="text-xl font-bold text-slate-900">{value}</p>
+    <div className="relative overflow-hidden rounded-2xl bg-white/70 backdrop-blur border shadow-md hover:shadow-xl transition-all p-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xs text-slate-500 uppercase tracking-wide">
+            {title}
+          </p>
+          <p className="text-2xl font-bold text-slate-900 mt-1">
+            {value}
+          </p>
+        </div>
+
+        <div className={`p-3 rounded-xl bg-gradient-to-br ${colors[color]} text-white shadow`}>
+          {icon}
+        </div>
       </div>
-      <div className={`p-2 rounded-lg ${colors[color]}`}>
-        {icon}
-      </div>
+
+      <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-gradient-to-br opacity-10 rounded-full blur-2xl"></div>
     </div>
   );
 }
