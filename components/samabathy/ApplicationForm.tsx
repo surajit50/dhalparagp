@@ -59,8 +59,10 @@ type FormData = z.infer<typeof applicationSchema>;
 
 export default function ApplicationForm({
   onSuccess,
+  isDialog = false,
 }: {
   onSuccess?: (app: any) => void;
+  isDialog?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [submittedApp, setSubmittedApp] = useState<any>(null);
@@ -95,7 +97,9 @@ export default function ApplicationForm({
       try {
         result = await response.json();
       } catch {
-        toast.error("Server returned an unexpected response. Please try again.");
+        toast.error(
+          "Server returned an unexpected response. Please try again.",
+        );
         return;
       }
 
@@ -104,7 +108,9 @@ export default function ApplicationForm({
         if (result.fieldErrors) {
           Object.entries(result.fieldErrors).forEach(([field, messages]) => {
             const fieldName = field as keyof FormData;
-            const message = Array.isArray(messages) ? messages[0] : String(messages);
+            const message = Array.isArray(messages)
+              ? messages[0]
+              : String(messages);
             form.setError(fieldName, {
               type: "server",
               message,
@@ -120,7 +126,7 @@ export default function ApplicationForm({
       // Success
       setSubmittedApp(result.data);
       toast.success(
-        `Application submitted! ID: ${result.data.applicationNumber}`
+        `Application submitted! ID: ${result.data.applicationNumber}`,
       );
       form.reset();
       if (onSuccess) onSuccess(result.data);
@@ -140,14 +146,18 @@ export default function ApplicationForm({
 
   if (submittedApp) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+      <div
+        className={
+          isDialog ? "p-0" : "min-h-screen flex items-center justify-center p-4"
+        }
+      >
+        <div className={isDialog ? "w-full" : "w-full max-w-md"}>
           <div className="space-y-6 animate-in fade-in zoom-in duration-500">
             {/* Success Card */}
             <Card className="border-none shadow-lg bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 overflow-hidden relative">
               <div className="absolute -right-16 -top-16 w-40 h-40 bg-emerald-200/20 dark:bg-emerald-800/20 rounded-full blur-3xl" />
               <div className="absolute -left-16 -bottom-16 w-40 h-40 bg-teal-200/20 dark:bg-teal-800/20 rounded-full blur-3xl" />
-              
+
               <CardContent className="pt-8 relative z-10">
                 <div className="flex justify-center mb-6">
                   <div className="relative">
@@ -157,13 +167,14 @@ export default function ApplicationForm({
                     </div>
                   </div>
                 </div>
-                
+
                 <h2 className="text-2xl font-bold text-center text-emerald-900 dark:text-emerald-100 mb-2">
                   Application Submitted!
                 </h2>
-                
+
                 <p className="text-center text-emerald-700 dark:text-emerald-300 mb-8">
-                  Your application has been received and is now pending approval. Please keep your application number safe.
+                  Your application has been received and is now pending
+                  approval. Please keep your application number safe.
                 </p>
 
                 {/* Application Number Box */}
@@ -180,7 +191,9 @@ export default function ApplicationForm({
                       className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
                       title="Copy application number"
                     >
-                      <Copy className={`h-5 w-5 transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`} />
+                      <Copy
+                        className={`h-5 w-5 transition-colors ${copied ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500"}`}
+                      />
                     </button>
                   </div>
                 </div>
@@ -209,21 +222,29 @@ export default function ApplicationForm({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div
+      className={
+        isDialog
+          ? "p-0"
+          : "min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 p-4 sm:p-6 lg:p-8"
+      }
+    >
+      <div className={isDialog ? "w-full" : "max-w-4xl mx-auto"}>
         {/* Header Section */}
-        <div className="mb-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            <Info className="h-4 w-4" />
-            <span>Application Form</span>
+        {!isDialog && (
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              <Info className="h-4 w-4" />
+              <span>Application Form</span>
+            </div>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
+              Assistance Application
+            </h1>
+            <p className="text-lg text-slate-600 dark:text-slate-300">
+              Fill in your information below to apply for assistance
+            </p>
           </div>
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-3">
-            Assistance Application
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300">
-            Fill in your information below to apply for assistance
-          </p>
-        </div>
+        )}
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -342,7 +363,10 @@ export default function ApplicationForm({
                           </FormControl>
                           <SelectContent>
                             {villagenameOption.map((village) => (
-                              <SelectItem key={village.value} value={village.value}>
+                              <SelectItem
+                                key={village.value}
+                                value={village.value}
+                              >
                                 {village.label}
                               </SelectItem>
                             ))}
@@ -396,8 +420,8 @@ export default function ApplicationForm({
                       </FormItem>
                     )}
                   />
-                  
-{/* Voter ID */}
+
+                  {/* Voter ID */}
                   <FormField
                     control={form.control}
                     name="voterId"
@@ -446,7 +470,6 @@ export default function ApplicationForm({
                       </FormItem>
                     )}
                   />
-                  
 
                   {/* Date of Death */}
                   <FormField

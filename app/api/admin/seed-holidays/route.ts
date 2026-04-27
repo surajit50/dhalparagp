@@ -85,14 +85,34 @@ export async function POST() {
       { name: "Chhath Puja Holiday", date: new Date("2026-11-16"), description: "State Holiday" },
     ];
 
+    // Group holidays by date to avoid unique constraint issues if the DB has a unique index on date
+    const groupedHolidays = holidays.reduce((acc: any[], current) => {
+      const dateKey = current.date.toISOString().split('T')[0];
+      const existing = acc.find(h => h.date.toISOString().split('T')[0] === dateKey);
+      
+      if (existing) {
+        existing.name = `${existing.name} & ${current.name}`;
+        if (current.description && !existing.description?.includes(current.description)) {
+          existing.description = existing.description 
+            ? `${existing.description}, ${current.description}`
+            : current.description;
+        }
+      } else {
+        acc.push({ ...current });
+      }
+      return acc;
+    }, []);
+
+    await db.holiday.deleteMany({});
+
     await db.holiday.createMany({
-      data: holidays
+      data: groupedHolidays
     });
 
     return NextResponse.json({
       success: true,
-      count: holidays.length,
-      message: "West Bengal holidays seeded successfully",
+      count: groupedHolidays.length,
+      message: "West Bengal holidays seeded successfully (grouped by date)",
     });
   } catch (error) {
     console.error(error);

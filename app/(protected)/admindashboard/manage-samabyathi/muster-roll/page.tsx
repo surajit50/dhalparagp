@@ -31,10 +31,15 @@ export default async function MusterPage() {
             </p>
           </div>
 
-          <GenerateMusterButton />
+          <div className="relative z-10">
+            <GenerateMusterButton />
+          </div>
         </div>
 
-        <div className="absolute right-0 top-0 opacity-10 text-9xl font-bold">
+        <div
+          className="absolute right-0 top-0 opacity-10 text-9xl font-bold pointer-events-none select-none"
+          aria-hidden="true"
+        >
           MR
         </div>
       </div>

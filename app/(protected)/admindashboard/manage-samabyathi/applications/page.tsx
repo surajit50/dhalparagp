@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import SamabyathiTable from "@/components/samabathy/SamabyathiTable";
 import { FinancialYearFilter } from "@/components/FinancialYearFilter";
+import CreateApplicationDialog from "@/components/samabathy/CreateApplicationDialog";
 import {
   getFinancialYearDateRange,
   getCurrentFinancialYear,
@@ -66,12 +67,7 @@ export default async function ApplicationsPage({
             scheme.
           </p>
         </div>
-        <Button asChild className="gap-2 shadow-sm">
-          <Link href="/admindashboard/manage-samabyathi/applications/new">
-            <PlusCircle className="h-4 w-4" />
-            New Application
-          </Link>
-        </Button>
+        <CreateApplicationDialog />
       </div>
 
       {/* Stats Cards */}

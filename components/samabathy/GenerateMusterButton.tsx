@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, FilePlus } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -10,10 +10,8 @@ import {
   generateMusterRollBatch,
   finalizeMusterRollGeneration,
 } from "@/app/actions/generate-muster-roll";
-import { Progress } from "@/components/ui/progress";
 import { SAMABYATHI_CONFIG } from "@/constants/samabyathi";
 import FullPageLoader from "./FullPageLoader";
-import { useEffect } from "react";
 
 export default function GenerateMusterButton() {
   const [loading, setLoading] = useState(false);
@@ -27,6 +25,7 @@ export default function GenerateMusterButton() {
       setEligibleCount(ids.length);
     } catch (err) {
       console.error("Error fetching eligible count:", err);
+      setEligibleCount(null);
     }
   };
 
@@ -42,7 +41,7 @@ export default function GenerateMusterButton() {
       const ids = await getEligibleApplicationIds();
 
       if (ids.length === 0) {
-        toast.error("No eligible applications found");
+        toast.error("No eligible applications found (Approved + not in Muster Roll)");
         setLoading(false);
         return;
       }
@@ -73,7 +72,9 @@ export default function GenerateMusterButton() {
     } catch (err) {
       console.error("[v0] Error generating muster roll:", err);
       toast.error(
-        err instanceof Error ? err.message : "Failed to generate muster roll",
+        err instanceof Error
+          ? err.message
+          : "Failed to generate muster roll",
       );
     } finally {
       setLoading(false);
@@ -93,7 +94,7 @@ export default function GenerateMusterButton() {
         <Button
           type="button"
           onClick={handleClick}
-          disabled={loading || eligibleCount === 0}
+          disabled={loading}
           className="w-full"
         >
           {loading ? (
@@ -113,6 +114,11 @@ export default function GenerateMusterButton() {
             {eligibleCount > 0
               ? `${eligibleCount} pending application(s) ready`
               : "No pending applications"}
+          </p>
+        )}
+        {eligibleCount === null && (
+          <p className="text-[10px] text-center text-amber-600 font-medium">
+            Unable to check pending applications
           </p>
         )}
       </div>

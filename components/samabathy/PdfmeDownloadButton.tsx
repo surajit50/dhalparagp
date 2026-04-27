@@ -2,28 +2,41 @@
 
 import { useState } from "react";
 import { generate } from "@pdfme/generator";
-import templateJson from "@/lib/pdfme/template.json";
+
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 import { toast } from "sonner";
+import { generatePDF } from "../pdfgenerator";
+import { formatDate } from "@/utils/utils";
 
+const templatePath = "/templates/samabhathy.json";
 interface MusterRollData {
   id: string;
+  musterRollNo: string | null;
+  createdAt: Date;
   allottedAmount: number;
   paymentStatus: string;
   application: {
     applicantName: string;
     villageName: string;
     deceasedName: string;
+    aadhaarNumber: string | null;
+    relation: string;
+    dateOfDeath: Date;
   };
 }
 
 interface PdfmeDownloadButtonProps {
-  musterRollNo: string;
+  musterRollNo: string | null;
+  createdAt: Date;
   data: MusterRollData[];
 }
 
-export default function PdfmeDownloadButton({ musterRollNo, data }: PdfmeDownloadButtonProps) {
+export default function PdfmeDownloadButton({
+  musterRollNo,
+  createdAt,
+  data,
+}: PdfmeDownloadButtonProps) {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGeneratePdf = async () => {
@@ -34,19 +47,25 @@ export default function PdfmeDownloadButton({ musterRollNo, data }: PdfmeDownloa
         (index + 1).toString(),
         item.application.applicantName,
         item.application.deceasedName,
+        item.application.aadhaarNumber || "",
+        item.application.relation,
         item.application.villageName,
-        `Rs. ${item.allottedAmount}`,
-        "" // Empty signature column
+        // dd/mm/yyyy
+        formatDate(item.application.dateOfDeath),
+        `${item.allottedAmount.toFixed(2)}`,
+        "", // Empty signature column
       ]);
 
-      const inputs = [{
-        musterRollNo: `No: ${musterRollNo}`,
-        date: `Date: ${new Date().toLocaleDateString("en-IN")}`,
-        table: tableData,
-      }];
+      const inputs = [
+        {
+          mrno: musterRollNo ? `No: ${musterRollNo}` : "",
+          dateField: `Date: ${formatDate(createdAt)}`,
+          data: tableData,
+        },
+      ];
 
-      const pdf = await generate({ template: templateJson as any, inputs });
-      
+      const pdf = await generatePDF(templatePath, inputs);
+
       const blob = new Blob([pdf.buffer], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -55,7 +74,7 @@ export default function PdfmeDownloadButton({ musterRollNo, data }: PdfmeDownloa
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       toast.success("PDF generated successfully");
     } catch (error) {
       console.error("Failed to generate PDF", error);
@@ -66,8 +85,8 @@ export default function PdfmeDownloadButton({ musterRollNo, data }: PdfmeDownloa
   };
 
   return (
-    <Button 
-      onClick={handleGeneratePdf} 
+    <Button
+      onClick={handleGeneratePdf}
       disabled={isGenerating}
       variant="outline"
       className="gap-2"

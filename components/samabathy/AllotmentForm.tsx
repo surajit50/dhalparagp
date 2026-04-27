@@ -16,16 +16,12 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { toast } from "sonner";
 import AllotmentChart from "./AllotmentChart";
 import AllotmentTrend from "./AllotmentTrend";
+import FullPageLoader from "./FullPageLoader";
 
 type FormData = z.infer<typeof allotmentSchema>;
 
@@ -38,6 +34,7 @@ interface Summary {
 export default function AllotmentForm() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const fetchSummary = async () => {
     const res = await fetch("/api/samabathy/allotment");
@@ -61,6 +58,7 @@ export default function AllotmentForm() {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
+    setProgress(30);
 
     try {
       const res = await fetch("/api/samabathy/allotment", {
@@ -68,23 +66,32 @@ export default function AllotmentForm() {
         body: JSON.stringify(data),
       });
 
+      setProgress(80);
+
       if (res.ok) {
+        setProgress(100);
         toast.success("Allotment saved!");
         form.reset();
-        fetchSummary();
+        await fetchSummary();
       } else {
         toast.error("Failed to save");
       }
     } catch {
       toast.error("Error occurred");
+    } finally {
+      setLoading(false);
+      setProgress(0);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
-      
+      <FullPageLoader
+        isLoading={loading}
+        progress={progress}
+        title="Saving Allotment"
+        description="Please wait while we record the new fund allotment for the Samabyathi scheme."
+      />
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4 rounded-2xl shadow-md">
@@ -104,9 +111,9 @@ export default function AllotmentForm() {
         <Card className="p-4 rounded-2xl shadow-md">
           <p className="text-sm text-muted-foreground">Used</p>
           <p className="text-2xl font-bold text-red-500">
-            ₹{(
-              (summary?.totalAmount || 0) -
-              (summary?.totalRemaining || 0)
+            ₹
+            {(
+              (summary?.totalAmount || 0) - (summary?.totalRemaining || 0)
             ).toLocaleString("en-IN")}
           </p>
         </Card>
@@ -114,7 +121,6 @@ export default function AllotmentForm() {
 
       {/* Main Layout */}
       <div className="grid md:grid-cols-2 gap-6">
-        
         {/* FORM */}
         <Card className="rounded-2xl shadow-lg">
           <CardHeader>
@@ -185,9 +191,7 @@ export default function AllotmentForm() {
               remaining={summary?.totalRemaining || 0}
             />
 
-            <AllotmentTrend
-              data={summary?.recentAllotments || []}
-            />
+            <AllotmentTrend data={summary?.recentAllotments || []} />
           </CardContent>
         </Card>
       </div>

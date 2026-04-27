@@ -18,21 +18,16 @@ const FETCH_LIMIT = 200;
 const AMOUNT_PER_APP = SAMABYATHI_CONFIG.AMOUNT_PER_APP;
 
 export async function getEligibleApplicationIds(): Promise<string[]> {
-  try {
-    const applications = await db.samabyathiApplication.findMany({
-      where: {
-        status: "APPROVED",
-        musterRolls: { none: {} },
-      },
-      select: { id: true },
-      orderBy: { createdAt: "asc" },
-      take: FETCH_LIMIT,
-    });
-    return applications.map(app => app.id);
-  } catch (error) {
-    console.error("Error fetching application IDs:", error);
-    return [];
-  }
+  const applications = await db.samabyathiApplication.findMany({
+    where: {
+      status: "APPROVED",
+      musterRolls: { none: {} },
+    },
+    select: { id: true },
+    orderBy: { createdAt: "asc" },
+    take: FETCH_LIMIT,
+  });
+  return applications.map((app) => app.id);
 }
 
 export async function generateMusterRollBatch(
