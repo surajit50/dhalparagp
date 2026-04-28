@@ -14,7 +14,7 @@ import { Printer, Download, Eye, Loader2, MapPin, FileText } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast";
 import { getIssuedNOCs } from "@/action/land-conversion-actions";
 import LandConversionLayout from "../components/LandConversionLayout";
-
+import QRCode from 'qrcode'
 // ─── Configuration ──────────────────────────────────────────────────────────
 const PANCHAYAT_HEADING = "Office of the Pradhan";
 const PANCHAYAT_ADDRESS = "No 3 Dhalpara Gram Panchayat, Trimohini, Hili, Dakshin Dinajpur";
