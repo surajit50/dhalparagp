@@ -24,25 +24,79 @@ export default function CoverPagePrint({ workCoverPageType }: CoverPagePDFProps)
     ? getFinancialYear(workCoverPageType.completionDate)
     : "N/A";
 
-  // Helper to fetch image and return a proper Data URL
-  // Helper to fetch image and return a proper Data URL
-const getSafeImageBase64 = async (url: string | null | undefined): Promise<string> => {
-  if (!url) return "";
-  try {
-    const dataUrl = (await getBase64FromUrl(url)) as string;
-    // Ensure it's a full Data URL (starts with data:image/)
-    if (!dataUrl.startsWith("data:image/")) {
-      console.warn("Image missing data URL prefix, adding it");
-      const response = await fetch(url);
-      const mime = response.headers.get("content-type") || "image/jpeg";
-      return `data:${mime};base64,${dataUrl}`;
+  const cropImageToCover = async (
+    dataUrl: string,
+    targetWidth: number,
+    targetHeight: number
+  ): Promise<string> => {
+    return await new Promise((resolve) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const srcW = img.width;
+        const srcH = img.height;
+        if (!srcW || !srcH) {
+          resolve(dataUrl);
+          return;
+        }
+
+        const targetRatio = targetWidth / targetHeight;
+        const srcRatio = srcW / srcH;
+
+        let sx = 0;
+        let sy = 0;
+        let sw = srcW;
+        let sh = srcH;
+
+        if (srcRatio > targetRatio) {
+          sw = srcH * targetRatio;
+          sx = (srcW - sw) / 2;
+        } else if (srcRatio < targetRatio) {
+          sh = srcW / targetRatio;
+          sy = (srcH - sh) / 2;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(dataUrl);
+          return;
+        }
+
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+        resolve(canvas.toDataURL("image/jpeg", 0.92));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  };
+
+  // Helper to fetch image and return a proper Data URL (cropped to cover frame)
+  const getSafeImageBase64 = async (
+    url: string | null | undefined,
+    targetWidth?: number,
+    targetHeight?: number
+  ): Promise<string> => {
+    if (!url) return "";
+    try {
+      let dataUrl = (await getBase64FromUrl(url)) as string;
+      // Ensure it's a full Data URL (starts with data:image/)
+      if (!dataUrl.startsWith("data:image/")) {
+        const response = await fetch(url);
+        const mime = response.headers.get("content-type") || "image/jpeg";
+        dataUrl = `data:${mime};base64,${dataUrl}`;
+      }
+
+      if (targetWidth && targetHeight) {
+        return await cropImageToCover(dataUrl, targetWidth, targetHeight);
+      }
+      return dataUrl;
+    } catch (err) {
+      console.error("Failed to load image:", url, err);
+      return ""; // return empty string, label will show fallback text
     }
-    return dataUrl;
-  } catch (err) {
-    console.error("Failed to load image:", url, err);
-    return ""; // return empty string, label will show fallback text
-  }
-};
+  };
 
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
@@ -61,9 +115,9 @@ const getSafeImageBase64 = async (url: string | null | undefined): Promise<strin
       const completePhoto = getPhotoByStatus("complete");
 
       const [onsetBase64, ongoingBase64, completeBase64] = await Promise.all([
-        getSafeImageBase64(onsetPhoto?.imageUrl),
-        getSafeImageBase64(ongoingPhoto?.imageUrl),
-        getSafeImageBase64(completePhoto?.imageUrl),
+        getSafeImageBase64(onsetPhoto?.imageUrl, 580, 320),
+        getSafeImageBase64(ongoingPhoto?.imageUrl, 580, 320),
+        getSafeImageBase64(completePhoto?.imageUrl, 580, 320),
       ]);
 
       const inputs = [
