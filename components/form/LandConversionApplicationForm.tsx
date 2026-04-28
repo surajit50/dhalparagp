@@ -1,9 +1,10 @@
  "use client";
  
- import { useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
  import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
  import { Input } from "@/components/ui/input";
- import { Label } from "@/components/ui/label";
  import { Textarea } from "@/components/ui/textarea";
  import { Button } from "@/components/ui/button";
  import {
@@ -14,6 +15,14 @@
    SelectValue,
  } from "@/components/ui/select";
  import { useToast } from "@/components/ui/use-toast";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
  import {
    FileText,
    CheckCircle,
@@ -24,9 +33,12 @@
    File,
  } from "lucide-react";
  import { createLandConversionApplication } from "@/action/land-conversion-actions";
- import type { LandEntry } from "@/schema/land-conversion";
+import {
+  landConversionApplicationSchema,
+  type LandConversionApplicationInput,
+} from "@/schema/land-conversion";
  
- const emptyLand: LandEntry = {
+const emptyLand: LandConversionApplicationInput["additionalLands"][number] = {
    khatianNo: "",
    plotNo: "",
    mouza: "",
@@ -37,6 +49,35 @@
    proposedLandUse: "",
  };
  
+const defaultValues: LandConversionApplicationInput = {
+  applicantName: "",
+  applicantPhone: "",
+  applicantEmail: "",
+  address: "",
+  khatianNo: "",
+  plotNo: "",
+  mouza: "",
+  jlNo: "",
+  landAreaDec: "",
+  presentLandUse: "",
+  proposedLandUse: "",
+  additionalLands: [],
+};
+
+const presentLandUseOptions = [
+  { value: "agriculture", label: "Agriculture" },
+  { value: "residential", label: "Residential" },
+  { value: "commercial", label: "Commercial" },
+  { value: "industrial", label: "Industrial" },
+] as const;
+
+const proposedLandUseOptions = [
+  { value: "residential", label: "Residential" },
+  { value: "commercial", label: "Commercial" },
+  { value: "industrial", label: "Industrial" },
+  { value: "institutional", label: "Institutional" },
+] as const;
+
  export default function LandConversionApplicationForm() {
    const { toast } = useToast();
    const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,88 +89,63 @@
      null,
    );
  
-   const [form, setForm] = useState({
-     applicantName: "",
-     applicantPhone: "",
-     applicantEmail: "",
-     address: "",
-     khatianNo: "",
-     plotNo: "",
-     mouza: "",
-     jlNo: "",
-     landAreaDec: "",
-     presentLandUse: "",
-     proposedLandUse: "",
+  const form = useForm<LandConversionApplicationInput>({
+    resolver: zodResolver(landConversionApplicationSchema),
+    defaultValues,
+    mode: "onBlur",
    });
  
-   const [additionalLands, setAdditionalLands] = useState<LandEntry[]>([]);
+  const { control, handleSubmit, reset } = form;
+  const { fields: additionalLands, append, remove } = useFieldArray({
+    control,
+    name: "additionalLands",
+  });
  
-   const addLand = () => setAdditionalLands((p) => [...p, { ...emptyLand }]);
-   const removeLand = (idx: number) =>
-     setAdditionalLands((p) => p.filter((_, i) => i !== idx));
-   const updateAdditionalLand = (idx: number, field: keyof LandEntry, value: string) => {
-     setAdditionalLands((p) => p.map((l, i) => (i === idx ? { ...l, [field]: value } : l)));
-   };
- 
-   const handleSubmit = async (action: "draft" | "submit") => {
-     setIsSubmitting(true);
-     startTransition(async () => {
-       try {
-         const result = await createLandConversionApplication(
-           {
-             ...form,
-             additionalLands,
-           },
-           action === "draft" ? "DRAFT" : "SUBMIT",
-         );
- 
-         if (!result.success) {
-           toast({
-             title: "Error saving application",
-             description: result.error ?? "Please check the form and try again.",
-             variant: "destructive",
-           });
-           return;
-         }
- 
-         setCreatedApplicationId(result.data?.application.id ?? null);
- 
-         toast({
-           title: action === "draft" ? "Draft saved" : "Application submitted",
-           description:
-             action === "draft"
-               ? "Your draft has been saved in the system."
-               : `Application submitted. Application No: ${result.data?.application.applicationNo}. You can upload documents below.`,
-         });
- 
-         if (action === "submit") {
-           setForm({
-             applicantName: "",
-             applicantPhone: "",
-             applicantEmail: "",
-             address: "",
-             khatianNo: "",
-             plotNo: "",
-             mouza: "",
-             jlNo: "",
- 
-             landAreaDec: "",
-             presentLandUse: "",
-             proposedLandUse: "",
-           });
-           setAdditionalLands([]);
-         }
-       } catch (error) {
-         console.error("Failed to submit land conversion application:", error);
-         toast({
-           title: "Error saving application",
-           description: "Unexpected error. Please try again.",
-           variant: "destructive",
-         });
-       } finally {
-         setIsSubmitting(false);
-       }
-     });
+  const submitForm = async (
+    values: LandConversionApplicationInput,
+    action: "draft" | "submit",
+  ) => {
+    setIsSubmitting(true);
+    startTransition(async () => {
+      try {
+        const result = await createLandConversionApplication(
+          values,
+          action === "draft" ? "DRAFT" : "SUBMIT",
+        );
+
+        if (!result.success) {
+          toast({
+            title: "Error saving application",
+            description: result.error ?? "Please check the form and try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        setCreatedApplicationId(result.data?.application.id ?? null);
+
+        toast({
+          title: action === "draft" ? "Draft saved" : "Application submitted",
+          description:
+            action === "draft"
+              ? "Your draft has been saved in the system."
+              : `Application submitted. Application No: ${result.data?.application.applicationNo}. You can upload documents below.`,
+        });
+
+        if (action === "submit") {
+          reset(defaultValues);
+        }
+      } catch (error) {
+        console.error("Failed to submit land conversion application:", error);
+        toast({
+          title: "Error saving application",
+          description: "Unexpected error. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    });
    };
  
    const handleDocumentUpload = async (type: "ID_PROOF" | "LAND_DOCUMENT", file: File) => {
@@ -175,68 +191,67 @@
            <h2 className="text-gray-700 font-semibold">Land Conversion NOC - New Application</h2>
          </div>
          <div className="p-4">
-           <div className="max-w-5xl space-y-6">
+          <Form {...form}>
+            <form className="max-w-5xl space-y-6">
              <Card>
                <CardHeader>
                  <CardTitle>Applicant Information</CardTitle>
                </CardHeader>
                <CardContent className="space-y-4">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div>
-                     <Label htmlFor="applicantName">Full Name *</Label>
-                     <Input
-                       id="applicantName"
-                       value={form.applicantName}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           applicantName: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
-                   <div>
-                     <Label htmlFor="applicantPhone">Phone *</Label>
-                     <Input
-                       id="applicantPhone"
-                       value={form.applicantPhone}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           applicantPhone: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
-                   <div>
-                     <Label htmlFor="applicantEmail">Email</Label>
-                     <Input
-                       id="applicantEmail"
-                       type="email"
-                       value={form.applicantEmail}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           applicantEmail: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
+                  <FormField
+                    control={control}
+                    name="applicantName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name *</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name="applicantPhone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone *</FormLabel>
+                        <FormControl>
+                          <Input {...field} inputMode="tel" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name="applicantEmail"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="email" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                  </div>
-                 <div>
-                   <Label htmlFor="address">Address *</Label>
-                   <Textarea
-                     id="address"
-                     rows={3}
-                     value={form.address}
-                     onChange={(e) =>
-                       setForm((p) => ({
-                         ...p,
-                         address: e.target.value,
-                       }))
-                     }
-                   />
-                 </div>
+                <FormField
+                  control={control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Address *</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={3} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                </CardContent>
              </Card>
  
@@ -246,118 +261,82 @@
                </CardHeader>
                <CardContent className="space-y-4">
                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                   <div>
-                     <Label htmlFor="khatianNo">Khatian No *</Label>
-                     <Input
-                       id="khatianNo"
-                       value={form.khatianNo}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           khatianNo: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
-                   <div>
-                     <Label htmlFor="plotNo">Plot No *</Label>
-                     <Input
-                       id="plotNo"
-                       value={form.plotNo}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           plotNo: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
-                   <div>
-                     <Label htmlFor="mouza">Mouza *</Label>
-                     <Input
-                       id="mouza"
-                       value={form.mouza}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           mouza: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
-                   <div>
-                     <Label htmlFor="jlNo">JL No *</Label>
-                     <Input
-                       id="jlNo"
-                       value={form.jlNo}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           jlNo: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
- 
-                   <div>
-                     <Label htmlFor="landAreaDec">Land Area (Decimal) *</Label>
-                     <Input
-                       id="landAreaDec"
-                       value={form.landAreaDec}
-                       onChange={(e) =>
-                         setForm((p) => ({
-                           ...p,
-                           landAreaDec: e.target.value,
-                         }))
-                       }
-                     />
-                   </div>
+                  {(["khatianNo", "plotNo", "mouza", "jlNo", "landAreaDec"] as const).map(
+                    (name) => (
+                      <FormField
+                        key={name}
+                        control={control}
+                        name={name}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {name === "landAreaDec"
+                                ? "Land Area (Decimal) *"
+                                : `${name.replace(/([A-Z])/g, " $1").trim()} *`}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                inputMode={name === "landAreaDec" ? "decimal" : undefined}
+                                placeholder={name === "landAreaDec" ? "e.g. 5.5" : undefined}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    ),
+                  )}
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                   <div>
-                     <Label>Present Land Use *</Label>
-                     <Select
-                       value={form.presentLandUse}
-                       onValueChange={(v) =>
-                         setForm((p) => ({
-                           ...p,
-                           presentLandUse: v,
-                         }))
-                       }
-                     >
-                       <SelectTrigger>
-                         <SelectValue placeholder="Select present land use" />
-                       </SelectTrigger>
-                       <SelectContent>
-                         <SelectItem value="agriculture">Agriculture</SelectItem>
-                         <SelectItem value="residential">Residential</SelectItem>
-                         <SelectItem value="commercial">Commercial</SelectItem>
-                         <SelectItem value="industrial">Industrial</SelectItem>
-                       </SelectContent>
-                     </Select>
-                   </div>
-                   <div>
-                     <Label>Proposed Land Use *</Label>
-                     <Select
-                       value={form.proposedLandUse}
-                       onValueChange={(v) =>
-                         setForm((p) => ({
-                           ...p,
-                           proposedLandUse: v,
-                         }))
-                       }
-                     >
-                       <SelectTrigger>
-                         <SelectValue placeholder="Select proposed land use" />
-                       </SelectTrigger>
-                       <SelectContent>
-                         <SelectItem value="residential">Residential</SelectItem>
-                         <SelectItem value="commercial">Commercial</SelectItem>
-                         <SelectItem value="industrial">Industrial</SelectItem>
-                         <SelectItem value="institutional">Institutional</SelectItem>
-                       </SelectContent>
-                     </Select>
-                   </div>
+                  <FormField
+                    control={control}
+                    name="presentLandUse"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Present Land Use *</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select present land use" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {presentLandUseOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name="proposedLandUse"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Proposed Land Use *</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select proposed land use" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {proposedLandUseOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                  </div>
                </CardContent>
              </Card>
@@ -372,7 +351,7 @@
                <CardContent className="space-y-4">
                  {additionalLands.map((land, idx) => (
                    <div
-                     key={idx}
+                    key={land.id}
                      className="rounded-lg border border-gray-200 bg-gray-50/50 p-4 space-y-3"
                    >
                      <div className="flex justify-between items-center">
@@ -383,7 +362,7 @@
                          type="button"
                          variant="ghost"
                          size="sm"
-                         onClick={() => removeLand(idx)}
+                        onClick={() => remove(idx)}
                          className="text-red-600 hover:text-red-700"
                        >
                          <Trash2 className="h-4 w-4 mr-1" />
@@ -394,58 +373,87 @@
                        {(
                          ["khatianNo", "plotNo", "mouza", "jlNo", "landAreaDec"] as const
                        ).map((field) => (
-                         <div key={field}>
-                           <Label className="text-xs">
-                             {field === "landAreaDec"
-                               ? "Land area (dec)"
-                               : field.replace(/([A-Z])/g, " $1").trim()}
-                           </Label>
-                           <Input
-                             value={land[field]}
-                             onChange={(e) => updateAdditionalLand(idx, field, e.target.value)}
-                             placeholder={field === "landAreaDec" ? "e.g. 5" : ""}
-                             className="mt-1"
-                           />
-                         </div>
+                        <FormField
+                          key={field}
+                          control={control}
+                          name={`additionalLands.${idx}.${field}`}
+                          render={({ field: nestedField }) => (
+                            <FormItem>
+                              <FormLabel className="text-xs">
+                                {field === "landAreaDec"
+                                  ? "Land area (dec)"
+                                  : field.replace(/([A-Z])/g, " $1").trim()}
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...nestedField}
+                                  placeholder={field === "landAreaDec" ? "e.g. 5" : ""}
+                                  inputMode={field === "landAreaDec" ? "decimal" : undefined}
+                                  className="mt-1"
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
                        ))}
-                       <div>
-                         <Label className="text-xs">Present land use</Label>
-                         <Select
-                           value={land.presentLandUse}
-                           onValueChange={(v) => updateAdditionalLand(idx, "presentLandUse", v)}
-                         >
-                           <SelectTrigger className="mt-1">
-                             <SelectValue placeholder="Select" />
-                           </SelectTrigger>
-                           <SelectContent>
-                             <SelectItem value="agriculture">Agriculture</SelectItem>
-                             <SelectItem value="residential">Residential</SelectItem>
-                             <SelectItem value="commercial">Commercial</SelectItem>
-                             <SelectItem value="industrial">Industrial</SelectItem>
-                           </SelectContent>
-                         </Select>
-                       </div>
-                       <div>
-                         <Label className="text-xs">Proposed land use</Label>
-                         <Select
-                           value={land.proposedLandUse}
-                           onValueChange={(v) => updateAdditionalLand(idx, "proposedLandUse", v)}
-                         >
-                           <SelectTrigger className="mt-1">
-                             <SelectValue placeholder="Select" />
-                           </SelectTrigger>
-                           <SelectContent>
-                             <SelectItem value="residential">Residential</SelectItem>
-                             <SelectItem value="commercial">Commercial</SelectItem>
-                             <SelectItem value="industrial">Industrial</SelectItem>
-                             <SelectItem value="institutional">Institutional</SelectItem>
-                           </SelectContent>
-                         </Select>
-                       </div>
+                      <FormField
+                        control={control}
+                        name={`additionalLands.${idx}.presentLandUse`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Present land use</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="mt-1">
+                                  <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {presentLandUseOptions.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={control}
+                        name={`additionalLands.${idx}.proposedLandUse`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">Proposed land use</FormLabel>
+                            <Select onValueChange={field.onChange} value={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="mt-1">
+                                  <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {proposedLandUseOptions.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
                      </div>
                    </div>
                  ))}
-                 <Button type="button" variant="outline" size="sm" onClick={addLand}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => append({ ...emptyLand })}
+                >
                    <PlusCircle className="h-4 w-4 mr-2" />
                    Add another land parcel
                  </Button>
@@ -466,7 +474,7 @@
                  <CardContent className="space-y-4">
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                      <div>
-                       <Label>ID proof (PDF or image)</Label>
+                      <div className="text-sm font-medium leading-none">ID proof (PDF or image)</div>
                        <div className="mt-2 flex items-center gap-2">
                          <Input
                            type="file"
@@ -485,7 +493,7 @@
                        </div>
                      </div>
                      <div>
-                       <Label>Land document (PDF or image)</Label>
+                      <div className="text-sm font-medium leading-none">Land document (PDF or image)</div>
                        <div className="mt-2 flex items-center gap-2">
                          <Input
                            type="file"
@@ -516,8 +524,9 @@
                <CardContent className="pt-6">
                  <div className="flex flex-col sm:flex-row gap-4">
                    <Button
+                    type="button"
                      variant="outline"
-                     onClick={() => handleSubmit("draft")}
+                    onClick={handleSubmit((values) => submitForm(values, "draft"))}
                      disabled={isSubmitting || isPending}
                      className="flex-1"
                    >
@@ -525,7 +534,8 @@
                      Save as Draft
                    </Button>
                    <Button
-                     onClick={() => handleSubmit("submit")}
+                    type="button"
+                    onClick={handleSubmit((values) => submitForm(values, "submit"))}
                      disabled={isSubmitting || isPending}
                      className="flex-1"
                    >
@@ -539,7 +549,8 @@
                  </div>
                </CardContent>
              </Card>
-           </div>
+            </form>
+          </Form>
          </div>
        </div>
      </div>

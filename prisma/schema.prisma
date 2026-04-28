@@ -1085,6 +1085,15 @@ model ReceiptCounter {
   updatedAt  DateTime @updatedAt
 }
 
+model LandConversionCounter {
+  year                  String   @id @map("_id")
+  lastApplicationNumber Int      @default(0)
+  lastCertificateNumber Int      @default(0)
+  updatedAt             DateTime @updatedAt
+
+  @@map("land_conversion_counters")
+}
+
 model ServiceAvailability {
   id          String      @id @default(auto()) @map("_id") @db.ObjectId
   serviceType ServiceType

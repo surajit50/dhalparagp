@@ -48,38 +48,86 @@ type LandConversionCertificatePrintData = {
   }[]
 }
 
+function extractYearlySerial(value: string): number {
+  // Expected format: `LC-YYYY-####` or `LCC-YYYY-####`
+  const parts = value.split("-")
+  const serialPart = parts.at(-1)
+  if (!serialPart) return 0
+  const n = Number.parseInt(serialPart, 10)
+  return Number.isFinite(n) && n > 0 ? n : 0
+}
+
+async function ensureLandConversionCounterYear(year: number) {
+  const yearStr = String(year)
+
+  // Initialize the counter based on existing data so we don't collide with
+  // already-created application/certificate numbers.
+  const [maxApp, maxCert] = await Promise.all([
+    db.landConversionApplication.findFirst({
+      where: { applicationNo: { startsWith: `LC-${yearStr}-` } },
+      orderBy: { applicationNo: "desc" },
+      select: { applicationNo: true },
+    }),
+    db.landConversionCertificate.findFirst({
+      where: { certificateNo: { startsWith: `LCC-${yearStr}-` } },
+      orderBy: { certificateNo: "desc" },
+      select: { certificateNo: true },
+    }),
+  ])
+
+  const lastApplicationNumber = maxApp
+    ? extractYearlySerial(maxApp.applicationNo)
+    : 0
+  const lastCertificateNumber = maxCert
+    ? extractYearlySerial(maxCert.certificateNo)
+    : 0
+
+  try {
+    await db.landConversionCounter.create({
+      data: {
+        year: yearStr,
+        lastApplicationNumber,
+        lastCertificateNumber,
+      },
+    })
+  } catch (e: any) {
+    // Ignore duplicate counter creation from concurrent requests.
+    if (e?.code !== "P2002") throw e
+  }
+}
+
 async function generateApplicationNo(): Promise<string> {
   const now = new Date()
   const year = now.getFullYear()
-  const startOfYear = new Date(year, 0, 1)
+  const yearStr = String(year)
 
-  const count = await db.landConversionApplication.count({
-    where: {
-      createdAt: {
-        gte: startOfYear,
-      },
-    },
+  await ensureLandConversionCounterYear(year)
+
+  const counter = await db.landConversionCounter.update({
+    where: { year: yearStr },
+    data: { lastApplicationNumber: { increment: 1 } },
+    select: { lastApplicationNumber: true },
   })
 
-  const serial = (count + 1).toString().padStart(4, "0")
-  return `LC-${year}-${serial}`
+  const serial = counter.lastApplicationNumber.toString().padStart(4, "0")
+  return `LC-${yearStr}-${serial}`
 }
 
 async function generateCertificateNo(): Promise<string> {
   const now = new Date()
   const year = now.getFullYear()
-  const startOfYear = new Date(year, 0, 1)
+  const yearStr = String(year)
 
-  const count = await db.landConversionCertificate.count({
-    where: {
-      createdAt: {
-        gte: startOfYear,
-      },
-    },
+  await ensureLandConversionCounterYear(year)
+
+  const counter = await db.landConversionCounter.update({
+    where: { year: yearStr },
+    data: { lastCertificateNumber: { increment: 1 } },
+    select: { lastCertificateNumber: true },
   })
 
-  const serial = (count + 1).toString().padStart(4, "0")
-  return `LCC-${year}-${serial}`
+  const serial = counter.lastCertificateNumber.toString().padStart(4, "0")
+  return `LCC-${yearStr}-${serial}`
 }
 
 export async function createLandConversionApplication(
@@ -749,10 +797,16 @@ function buildLandConversionPdfInputs(
   const paragraph1 = `This is to certify that ${certificateData.applicantName}, residing at ${certificateData.applicantAddress}, has been granted a No Objection Certificate for conversion of the land described below.`
 
   const landDetails = certificateData.lands
-    .map((land, index) => {
-      return `${index + 1}. Khatian No: ${land.khatianNo}, Plot No: ${land.plotNo}, Mouza: ${land.mouza}, JL No: ${land.jlNo}, Area: ${land.landAreaDec} dec, Present use: ${land.presentLandUse}, Proposed use: ${land.proposedLandUse}`
-    })
-    .join("\n")
+    .map((land, index) => [
+      String(index + 1),
+      land.khatianNo,
+      land.plotNo,
+      land.mouza,
+      land.jlNo,
+      land.landAreaDec,
+      land.presentLandUse,
+      land.proposedLandUse,
+    ])
 
   const conversionDetails =
     "The above land is hereby permitted to be converted from its present use to the proposed use, subject to compliance with the conditions mentioned below and applicable laws."
@@ -767,7 +821,7 @@ function buildLandConversionPdfInputs(
       applicantAddress: certificateData.applicantAddress,
       applicantPhone: certificateData.applicantPhone,
       paragraph1,
-      landDetails,
+      landDetails: JSON.stringify(landDetails),
       conversionDetails,
       signatoryName: certificateData.signatoryName || "",
       signatoryDesignation: certificateData.signatoryDesignation || "",
