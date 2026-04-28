@@ -75,55 +75,65 @@ async function generateNocPdf(noc: IssuedNOC) {
   const margin = 15;
   const innerW = pw - margin * 2;
 
-  // HEADER
+  let y = margin;
+
+  // ───────── HEADER ─────────
   doc.setFont("times", "bold");
   doc.setFontSize(14);
-  doc.text(PANCHAYAT_NAME, pw / 2, margin + 8, { align: "center" });
+  doc.text(PANCHAYAT_NAME, pw / 2, y + 8, { align: "center" });
 
   doc.setFontSize(11);
-  doc.text("No. 3 Dhalpara Gram Panchayat", pw / 2, margin + 14, {
+  doc.text("No. 3 Dhalpara Gram Panchayat", pw / 2, y + 14, {
     align: "center",
   });
 
   doc.setFontSize(10);
-  doc.text("Trimohini, Hili, Dakshin Dinajpur", pw / 2, margin + 20, {
+  doc.text("Trimohini, Hili, Dakshin Dinajpur", pw / 2, y + 20, {
     align: "center",
   });
 
-  doc.line(margin, margin + 24, pw - margin, margin + 24);
+  doc.line(margin, y + 24, pw - margin, y + 24);
 
-  // TITLE
+  y += 32;
+
+  // ───────── TITLE ─────────
   doc.setFontSize(13);
-  doc.text("NO OBJECTION CERTIFICATE", pw / 2, margin + 32, {
+  doc.text("NO OBJECTION CERTIFICATE", pw / 2, y, {
     align: "center",
   });
 
-  let y = margin + 42;
+  y += 10;
 
-  // MEMO
-  doc.setFont("times", "normal");
+  // ───────── MEMO + DATE ─────────
+  doc.setFont("times", "bold");
   doc.setFontSize(10);
 
   doc.text(`Memo No: ${noc.nocNo}`, margin, y);
   doc.text(`Date: ${noc.issueDate}`, pw - margin, y, { align: "right" });
 
-  y += 8;
-  doc.text(`Ref: Application No ${noc.applicationNo}`, margin, y);
+  doc.setFont("times", "normal");
+  y += 7;
+
+  doc.text(`Ref: Application No. ${noc.applicationNo}`, margin, y);
 
   y += 10;
 
-  // BODY
+  // ───────── SUBJECT ─────────
   doc.setFont("times", "bold");
   doc.text("TO WHOM IT MAY CONCERN", pw / 2, y, { align: "center" });
 
   y += 10;
 
+  // ───────── BODY ─────────
   doc.setFont("times", "normal");
+  doc.setFontSize(11);
 
   const body = `
-This is to certify that Sri/Smt. ${noc.applicantName},
-resident of ${noc.applicantAddress || "N/A"},
-has applied for land conversion vide Application No. ${noc.applicationNo}.
+This is to certify that Sri/Smt. ${noc.applicantName}, resident of ${
+    noc.applicantAddress || "N/A"
+  }, has applied for land conversion vide Application No. ${
+    noc.applicationNo
+  }.
 
 After careful verification of records, field inspection, and consideration of all relevant documents, it is hereby certified that this Gram Panchayat has no objection to the proposed conversion of land described below.
 
@@ -132,17 +142,23 @@ The permission is granted subject to compliance with all applicable rules and re
 This certificate is issued for official purposes.
 `;
 
-  const lines = doc.splitTextToSize(body, innerW);
-  doc.text(lines, margin, y);
-  y += lines.length * 6 + 4;
+  const lines = doc.splitTextToSize(body.trim(), innerW);
 
-  // LAND TABLE
+  lines.forEach((line: string) => {
+    doc.text(line, margin, y);
+    y += 5;
+  });
+
+  y += 3;
+
+  // ───────── LAND TABLE ─────────
   if (noc.landParcels.length > 0) {
     doc.setFont("times", "bold");
+    doc.setFontSize(10);
     doc.text("SCHEDULE OF LAND", margin, y);
     y += 6;
 
-    const headers = [
+    const cols = [
       "Mouza",
       "JL",
       "Khatian",
@@ -152,17 +168,23 @@ This certificate is issued for official purposes.
       "Proposed",
     ];
 
-    const widths = [20, 15, 20, 20, 15, 30, 30];
+    const colWidths = [25, 12, 22, 18, 15, 28, 28];
 
+    let rowHeight = 6;
+
+    // HEADER
     let x = margin;
-    doc.setFontSize(8);
+    doc.setFont("times", "bold");
 
-    headers.forEach((h, i) => {
-      doc.text(h, x, y);
-      x += widths[i];
+    cols.forEach((col, i) => {
+      doc.rect(x, y, colWidths[i], rowHeight);
+      doc.text(col, x + 2, y + 4);
+      x += colWidths[i];
     });
 
-    y += 5;
+    y += rowHeight;
+
+    // ROWS
     doc.setFont("times", "normal");
 
     noc.landParcels.forEach((p) => {
@@ -178,40 +200,56 @@ This certificate is issued for official purposes.
         p.proposedLandUse,
       ];
 
-      row.forEach((v, i) => {
-        doc.text(v || "-", x2, y);
-        x2 += widths[i];
+      row.forEach((cell, i) => {
+        doc.rect(x2, y, colWidths[i], rowHeight);
+        doc.text(String(cell || "-"), x2 + 2, y + 4);
+        x2 += colWidths[i];
       });
 
-      y += 5;
+      y += rowHeight;
     });
 
-    y += 6;
+    y += 8;
   }
 
-  // SIGNATURE
-  y += 10;
+  // ───────── SIGNATURE ─────────
+  const sigX = pw - margin - 60;
 
-  doc.text("Place: ____________", margin, y);
-  doc.text("Date: ____________", margin, y + 6);
+  doc.text("(Signature with Seal)", sigX, y + 10);
+  doc.text(noc.signatoryDesignation, sigX, y + 16);
+  doc.text("No. 3 Gram Panchayat", sigX, y + 22);
 
-  const sigX = pw - margin - 50;
-  doc.text("(Signature)", sigX, y + 14);
-  doc.text(noc.signatoryDesignation, sigX, y + 20);
-
-  // QR CODE
+  // ───────── QR CODE ─────────
   const verifyUrl = `https://yourdomain.com/verify-noc?noc=${noc.nocNo}`;
   const qr = await QRCode.toDataURL(verifyUrl);
 
-  const size = 25;
-  doc.addImage(qr, "PNG", pw - margin - size, ph - margin - size, size, size);
+  const size = 28;
+
+  doc.addImage(
+    qr,
+    "PNG",
+    pw - margin - size,
+    ph - margin - size,
+    size,
+    size
+  );
 
   doc.setFontSize(7);
   doc.text("Scan to Verify", pw - margin - size, ph - margin - 5);
 
-  // FOOTER
+  // ───────── LEGAL FOOTER ─────────
+  doc.setFontSize(8);
+  doc.setTextColor(80);
+
+  doc.text(
+    "Issued as per applicable provisions of West Bengal Land Reforms Rules.",
+    margin,
+    ph - margin - 8
+  );
+
   doc.setFontSize(7);
   doc.setTextColor(100);
+
   doc.text(
     "This certificate can be verified using the QR code.",
     margin,
@@ -220,6 +258,8 @@ This certificate is issued for official purposes.
 
   return doc;
 }
+  
+
 
 // ───────────────── PAGE ─────────────────
 export default function NOCPrintPage() {
