@@ -266,6 +266,9 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Fund Status", ["admin"], `${BASE_URLS.admin}/fundstatus`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Work Details", ["admin"], `${BASE_URLS.admin}/work-manage/scheme-wise`, FaChevronCircleRight, COLORS.red),
     ]),
+    createMenuItem("Upload Work Photo", ["admin"], `${BASE_URLS.admin}/work-manage/upload-photo`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Work Photos Validation", ["admin"], `${BASE_URLS.admin}/work-manage/photos`, FaChevronCircleRight, COLORS.green),
+    ]),
     createMenuItem("Work Estimate & Billing", ["admin"], undefined, MdReceipt, COLORS.teal, [
       createMenuItem("Estimate Preparation", ["admin"], `${BASE_URLS.admin}/work-manage/estimate-preparation`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("MB Create", ["admin"], `${BASE_URLS.admin}/work-manage/mb-create`, FaChevronCircleRight, COLORS.green),
