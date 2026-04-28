@@ -938,12 +938,34 @@ export async function getIssuedNOCs(): Promise<
   ActionResult<
     {
       id: string
-      nocNo: string
-      issueDate: Date
-      expiryDate: Date
+      certificate: {
+        certificateNo: string
+        memoNumber: string
+        issueDate: Date
+        expiryDate: Date | null
+        signatoryName: string | null
+        signatoryDesignation: string | null
+      }
       application: {
         applicationNo: string
         applicantName: string
+        applicantAddress: string
+        khatianNo: string
+        plotNo: string
+        mouza: string
+        jlNo: string
+        landAreaDec: string
+        presentLandUse: string
+        proposedLandUse: string
+        landDetails: {
+          khatianNo: string
+          plotNo: string
+          mouza: string
+          jlNo: string
+          landAreaDec: string
+          presentLandUse: string
+          proposedLandUse: string
+        }[]
       }
     }[]
   >
@@ -952,33 +974,52 @@ export async function getIssuedNOCs(): Promise<
     const certificates = await db.landConversionCertificate.findMany({
       include: {
         application: {
-          select: {
-            applicationNo: true,
-            applicantName: true,
+          include: {
+            landDetails: true,   // additional parcels
           },
         },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     })
 
     return {
       success: true,
       data: certificates.map((cert) => ({
         id: cert.id,
-        nocNo: cert.certificateNo,
-        issueDate: cert.issueDate,
-        expiryDate: cert.expiryDate ?? cert.issueDate,
-        application: cert.application,
+        certificate: {
+          certificateNo: cert.certificateNo,
+          memoNumber: cert.memoNumber,
+          issueDate: cert.issueDate,
+          expiryDate: cert.expiryDate,
+          signatoryName: cert.signatoryName,
+          signatoryDesignation: cert.signatoryDesignation,
+        },
+        application: {
+          applicationNo: cert.application.applicationNo,
+          applicantName: cert.application.applicantName,
+          applicantAddress: cert.application.applicantAddress,
+          khatianNo: cert.application.khatianNo,
+          plotNo: cert.application.plotNo,
+          mouza: cert.application.mouza,
+          jlNo: cert.application.jlNo,
+          landAreaDec: cert.application.landAreaDec,
+          presentLandUse: cert.application.presentLandUse,
+          proposedLandUse: cert.application.proposedLandUse,
+          landDetails: cert.application.landDetails.map((ld) => ({
+            khatianNo: ld.khatianNo,
+            plotNo: ld.plotNo,
+            mouza: ld.mouza,
+            jlNo: ld.jlNo,
+            landAreaDec: ld.landAreaDec,
+            presentLandUse: ld.presentLandUse,
+            proposedLandUse: ld.proposedLandUse,
+          })),
+        },
       })),
     }
   } catch (error) {
     console.error("Error fetching issued NOCs:", error)
-    return {
-      success: false,
-      error: "Failed to load issued NOCs",
-    }
+    return { success: false, error: "Failed to load issued NOCs" }
   }
 }
 
