@@ -254,6 +254,7 @@ export const adminMenuItems: MenuItemProps[] = [
   createMenuItem("Admin Dashboard", ["admin", "superadmin"], `${BASE_URLS.admin}/home`, MdDashboard, COLORS.blue),
 
   // Project & Works Management
+  // Project & Works Management
   createMenuItem("Project Management", ["admin"], undefined, MdWork, COLORS.blue, [
     createMenuItem("Meeting Management", ["admin"], undefined, MdDateRange, COLORS.purple, [
       createMenuItem("All Meetings", ["admin"], `${BASE_URLS.admin}/meeting-manage`, MdCalendarToday, COLORS.blue),
@@ -265,8 +266,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Work Status Tracking", ["admin"], `${BASE_URLS.admin}/manage-tender/work-status-change`, FaChevronCircleRight, COLORS.indigo),
       createMenuItem("Fund Status", ["admin"], `${BASE_URLS.admin}/fundstatus`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Work Details", ["admin"], `${BASE_URLS.admin}/work-manage/scheme-wise`, FaChevronCircleRight, COLORS.red),
-    ]),
-    createMenuItem("Upload Work Photo", ["admin"], `${BASE_URLS.admin}/work-manage/upload-photo`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Upload Work Photo", ["admin"], `${BASE_URLS.admin}/work-manage/upload-photo`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Work Photos Validation", ["admin"], `${BASE_URLS.admin}/work-manage/photos`, FaChevronCircleRight, COLORS.green),
     ]),
     createMenuItem("Work Estimate & Billing", ["admin"], undefined, MdReceipt, COLORS.teal, [
@@ -276,9 +276,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Bill Deduction", ["admin"], `${BASE_URLS.admin}/work-manage/bill-deduction`, FaChevronCircleRight, COLORS.orange),
     ]),
     createMenuItem("Development Works", ["admin"], undefined, MdAssignmentTurnedIn, COLORS.orange, [
-      createMenuItem("Work Estimate & DPR", ["admin"], `${BASE_URLS.admin}/development-works/work-estimate-dpr`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Work Progress Monitoring", ["admin"], `${BASE_URLS.admin}/development-works/progress-monitoring`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Measurement Book (MB) & Bill Abstract", ["admin"], `${BASE_URLS.admin}/development-works/measurement-book`, FaChevronCircleRight, COLORS.purple),
+     
       createMenuItem("Manage Estimate Types", ["admin"], `${BASE_URLS.admin}/development-works/manage-estimate-types`, FaChevronCircleRight, COLORS.cyan),
       createMenuItem("Estimate Library", ["admin"], undefined, MdLocalLibrary, COLORS.teal, [
         createMenuItem("Library Items", ["admin"], `${BASE_URLS.admin}/development-works/estimate-library`, FaChevronCircleRight, COLORS.blue),
