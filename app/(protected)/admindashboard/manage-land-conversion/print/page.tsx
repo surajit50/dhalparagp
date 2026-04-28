@@ -2,298 +2,509 @@
 
 import { useEffect, useState } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { CardContent } from "@/components/ui/card";
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Printer, Download, Eye, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Search,
-  Download,
-  FileText,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import {
-  getIssuedCertificatesForPrint,
-  generateAndStoreCertificatePdf,
-} from "@/action/land-conversion-actions";
-import { formatDate } from "@/utils/utils";
+import { getIssuedNOCs } from "@/action/land-conversion-actions";
+import LandConversionLayout from "../components/LandConversionLayout";
 
-type CertificateItem = {
+interface IssuedNOC {
   id: string;
-  applicationId: string;
+  nocNo: string;
   applicationNo: string;
   applicantName: string;
-  certificateNo: string;
-  memoNumber: string;
-  issueDate: Date;
-  pdfUrl: string | null;
-};
+  issueDate: string;
+  expiryDate: string;
+}
 
-export default function LandConversionPrintPage() {
-  const { toast } = useToast();
-  const [allItems, setAllItems] = useState<CertificateItem[]>([]);
-  const [q, setQ] = useState("");
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const [loading, setLoading] = useState(false);
-  const [printingId, setPrintingId] = useState<string | null>(null);
+// ─── jsPDF NOC generator ───────────────────────────────────────────────────
 
-  useEffect(() => {
-    let active = true;
+async function generateNocPdf(noc: IssuedNOC): Promise<import("jspdf").jsPDF> {
+  const { jsPDF } = await import("jspdf");
 
-    async function load() {
-      setLoading(true);
-      try {
-        const result = await getIssuedCertificatesForPrint();
-        if (!active) return;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
-        if (result.success && result.data) {
-          setAllItems(result.data);
-        } else {
-          toast({
-            title: "Failed to load certificates",
-            description: result.error ?? "Please try again.",
-            variant: "destructive",
-          });
-        }
-      } catch (error) {
-        if (!active) return;
-        console.error("Error loading certificates:", error);
-        toast({
-          title: "Failed to load certificates",
-          description: "Unexpected error. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    }
+  const pw = doc.internal.pageSize.getWidth();   // 210
+  const ph = doc.internal.pageSize.getHeight();  // 297
 
-    load();
+  const margin = 15;
+  const innerW = pw - margin * 2;
 
-    return () => {
-      active = false;
-    };
-  }, [toast]);
+  // ── Outer double border ──
+  doc.setDrawColor(30, 58, 138);   // blue-900
+  doc.setLineWidth(1.2);
+  doc.rect(margin, margin, innerW, ph - margin * 2);
+  doc.setLineWidth(0.4);
+  doc.rect(margin + 2.5, margin + 2.5, innerW - 5, ph - margin * 2 - 5);
 
-  const filtered = allItems.filter((item) => {
-    const query = q.trim().toLowerCase();
-    if (!query) return true;
-    return (
-      item.applicantName.toLowerCase().includes(query) ||
-      item.applicationNo.toLowerCase().includes(query) ||
-      item.certificateNo.toLowerCase().includes(query) ||
-      item.memoNumber.toLowerCase().includes(query)
-    );
+  // ── Header band ──
+  doc.setFillColor(30, 58, 138);
+  doc.rect(margin + 2.5, margin + 2.5, innerW - 5, 28, "F");
+
+  // Org name
+  doc.setTextColor(255, 255, 255);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(13);
+  doc.text("GOVERNMENT OF WEST BENGAL", pw / 2, margin + 11, { align: "center" });
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "normal");
+  doc.text("Department of Land & Land Reforms", pw / 2, margin + 17, { align: "center" });
+  doc.text("Dhalpara Gram Panchayat", pw / 2, margin + 22, { align: "center" });
+
+  // NOC title
+  doc.setTextColor(30, 58, 138);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(14);
+  doc.text("NO OBJECTION CERTIFICATE (NOC)", pw / 2, margin + 39, { align: "center" });
+
+  // Underline below title
+  doc.setDrawColor(30, 58, 138);
+  doc.setLineWidth(0.5);
+  doc.line(margin + 30, margin + 41, pw - margin - 30, margin + 41);
+
+  // ── Reference / Date row ──
+  let y = margin + 50;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+
+  // Left: NOC No & App No
+  doc.text(`NOC No  :  ${noc.nocNo}`, margin + 8, y);
+  doc.text(`App No  :  ${noc.applicationNo}`, margin + 8, y + 6);
+
+  // Right: dates
+  doc.text(`Date of Issue  :  ${noc.issueDate}`, pw - margin - 8, y, { align: "right" });
+  doc.text(`Valid Upto      :  ${noc.expiryDate}`, pw - margin - 8, y + 6, { align: "right" });
+
+  // Separator line
+  y += 14;
+  doc.setDrawColor(180, 180, 180);
+  doc.setLineWidth(0.3);
+  doc.line(margin + 8, y, pw - margin - 8, y);
+
+  // ── Salutation ──
+  y += 10;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  doc.setTextColor(30, 30, 30);
+
+  const body1 =
+    `This is to certify that the application for land conversion submitted by ` +
+    `Sri/Smt. ${noc.applicantName} (hereinafter referred to as the "Applicant") ` +
+    `bearing Application No. ${noc.applicationNo} has been duly examined and processed ` +
+    `in accordance with the provisions of the West Bengal Land Reforms Act and applicable ` +
+    `rules and regulations.`;
+
+  const lines1 = doc.splitTextToSize(body1, innerW - 16);
+  doc.text(lines1, margin + 8, y);
+  y += lines1.length * 6 + 6;
+
+  const body2 =
+    `After due verification of documents, field inspection reports, and approval by the ` +
+    `competent authority, the Department hereby grants this No Objection Certificate ` +
+    `for the conversion of the specified land parcel from its present land use to the ` +
+    `proposed land use as described in the application.`;
+
+  const lines2 = doc.splitTextToSize(body2, innerW - 16);
+  doc.text(lines2, margin + 8, y);
+  y += lines2.length * 6 + 6;
+
+  const body3 =
+    `This certificate is issued subject to full compliance with all conditions mentioned ` +
+    `in the approved application, subsequent inspection reports, and any directives issued ` +
+    `by the Land Conversion Officer from time to time. Any violation of conditions shall ` +
+    `render this certificate null and void.`;
+
+  const lines3 = doc.splitTextToSize(body3, innerW - 16);
+  doc.text(lines3, margin + 8, y);
+  y += lines3.length * 6 + 6;
+
+  // ── Conditions box ──
+  y += 4;
+  doc.setFillColor(239, 246, 255);   // blue-50
+  doc.setDrawColor(147, 197, 253);   // blue-300
+  doc.setLineWidth(0.3);
+  const condBoxH = 28;
+  doc.roundedRect(margin + 8, y, innerW - 16, condBoxH, 2, 2, "FD");
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(8.5);
+  doc.setTextColor(30, 58, 138);
+  doc.text("CONDITIONS:", margin + 13, y + 6);
+
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50, 50, 50);
+  const conditions = [
+    "1. The conversion must be completed within the validity period of this certificate.",
+    "2. The applicant must obtain all other statutory clearances before commencing work.",
+    "3. This NOC is non-transferable and applies only to the land specified in the application.",
+  ];
+  conditions.forEach((cond, i) => {
+    doc.text(cond, margin + 13, y + 13 + i * 5);
   });
 
-  const total = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const startIndex = (page - 1) * pageSize;
-  const currentItems = filtered.slice(startIndex, startIndex + pageSize);
-  const start = total === 0 ? 0 : startIndex + 1;
-  const end = Math.min(startIndex + currentItems.length, total);
+  // ── Signature section ──
+  y += condBoxH + 20;
+  const sigX = pw - margin - 55;
 
-  const handleDownload = async (certificateId: string) => {
-    setPrintingId(certificateId);
-    try {
-      const existing = allItems.find((item) => item.id === certificateId);
-      if (existing?.pdfUrl) {
-        window.open(existing.pdfUrl, "_blank", "noopener,noreferrer");
-        return;
-      }
+  doc.setDrawColor(50, 50, 50);
+  doc.setLineWidth(0.3);
+  doc.line(sigX, y, pw - margin - 8, y);
 
-      const result = await generateAndStoreCertificatePdf(certificateId);
-      if (!result.success || !result.data) {
+  y += 5;
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(30, 30, 30);
+  doc.text("Authorized Signatory", (sigX + pw - margin - 8) / 2, y, { align: "center" });
+
+  y += 5;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  doc.setTextColor(80, 80, 80);
+  doc.text("Land Conversion Officer", (sigX + pw - margin - 8) / 2, y, { align: "center" });
+  doc.text("Dhalpara Gram Panchayat", (sigX + pw - margin - 8) / 2, y + 4.5, { align: "center" });
+
+  // ── Footer ──
+  const footerY = ph - margin - 6;
+  doc.setDrawColor(180, 180, 180);
+  doc.setLineWidth(0.2);
+  doc.line(margin + 8, footerY - 3, pw - margin - 8, footerY - 3);
+  doc.setFont("helvetica", "italic");
+  doc.setFontSize(7);
+  doc.setTextColor(130, 130, 130);
+  doc.text(
+    `This is a computer-generated certificate. | NOC No: ${noc.nocNo} | Issued: ${noc.issueDate}`,
+    pw / 2,
+    footerY,
+    { align: "center" }
+  );
+
+  return doc;
+}
+
+// ─── Page component ────────────────────────────────────────────────────────
+
+export default function NOCPrintPage() {
+  const { toast } = useToast();
+  const [items, setItems] = useState<IssuedNOC[]>([]);
+  const [selected, setSelected] = useState<IssuedNOC | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      const result = await getIssuedNOCs();
+      if (result.success && result.data) {
+        setItems(
+          result.data.map((n) => ({
+            id: n.id,
+            nocNo: n.nocNo,
+            applicationNo: n.application.applicationNo,
+            applicantName: n.application.applicantName,
+            issueDate: new Date(n.issueDate).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }),
+            expiryDate: new Date(n.expiryDate).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            }),
+          }))
+        );
+      } else if (!result.success) {
         toast({
-          title: "Failed to generate certificate",
+          title: "Failed to load issued NOCs",
           description: result.error ?? "Please try again.",
           variant: "destructive",
         });
-        return;
       }
-      setAllItems((prev) =>
-        prev.map((item) =>
-          item.id === certificateId ? { ...item, pdfUrl: result.data!.pdfUrl } : item,
-        ),
-      );
-      window.open(result.data.pdfUrl, "_blank", "noopener,noreferrer");
-    } catch (error) {
-      console.error("Error generating land conversion certificate PDF:", error);
-      toast({
-        title: "Failed to generate certificate",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Unexpected error. Please try again.",
-        variant: "destructive",
-      });
+      setIsLoading(false);
+    }
+    load();
+  }, [toast]);
+
+  // Download as PDF file
+  const handleDownload = async () => {
+    if (!selected) return;
+    setIsPdfLoading(true);
+    try {
+      const doc = await generateNocPdf(selected);
+      doc.save(`NOC_${selected.nocNo}.pdf`);
+    } catch {
+      toast({ title: "PDF generation failed", variant: "destructive" });
     } finally {
-      setPrintingId(null);
+      setIsPdfLoading(false);
+    }
+  };
+
+  // Open PDF in new browser tab → user can Ctrl+P from there
+  const handlePrint = async () => {
+    if (!selected) return;
+    setIsPdfLoading(true);
+    try {
+      const doc = await generateNocPdf(selected);
+      const blobUrl = doc.output("bloburl") as unknown as string;
+      window.open(blobUrl, "_blank");
+    } catch {
+      toast({ title: "PDF generation failed", variant: "destructive" });
+    } finally {
+      setIsPdfLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9]">
-      <div className="bg-[#1e40af] text-white shadow">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
-          <FileText className="h-7 w-7" />
-          <div>
-            <h1 className="text-lg font-semibold">
-              Land Conversion Management System
-            </h1>
-            <p className="text-xs text-blue-100">Government of West Bengal</p>
-          </div>
+    <LandConversionLayout
+      title="Print Certificates"
+      description="View and print issued land conversion NOC certificates."
+      icon={Printer}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ── Certificate list ── */}
+        <div className="lg:col-span-1 space-y-3">
+          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+            Issued Certificates ({items.length})
+          </h3>
+
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+              <Loader2 className="h-8 w-8 animate-spin mb-2" />
+              <p className="text-sm">Loading certificates...</p>
+            </div>
+          ) : items.length === 0 ? (
+            <div className="text-center py-10 bg-gray-50 rounded-lg border-2 border-dashed">
+              <p className="text-sm text-gray-500">No certificates issued yet</p>
+            </div>
+          ) : (
+            items.map((it) => (
+              <Card
+                key={it.id}
+                className={`cursor-pointer transition-all ${
+                  selected?.id === it.id
+                    ? "border-blue-500 bg-blue-50 shadow-md ring-1 ring-blue-500"
+                    : "hover:bg-gray-50 border-gray-200"
+                }`}
+                onClick={() => setSelected(it)}
+              >
+                <CardHeader className="p-4">
+                  <div className="flex justify-between items-start mb-1">
+                    <CardTitle className="text-base font-bold text-blue-900">
+                      {it.nocNo}
+                    </CardTitle>
+                    <Badge
+                      variant="outline"
+                      className="text-[10px] h-5 bg-blue-50 text-blue-700 border-blue-200"
+                    >
+                      ISSUED
+                    </Badge>
+                  </div>
+                  <CardDescription className="text-xs font-medium text-gray-700">
+                    {it.applicantName}
+                  </CardDescription>
+                  <p className="text-[10px] text-gray-500 mt-2">
+                    App: {it.applicationNo}
+                  </p>
+                </CardHeader>
+              </Card>
+            ))
+          )}
+        </div>
+
+        {/* ── Preview panel ── */}
+        <div className="lg:col-span-2">
+          {selected ? (
+            <div className="space-y-6">
+              <Card className="border-blue-100 shadow-sm">
+                <CardHeader className="bg-slate-50 border-b flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg">Certificate Preview</CardTitle>
+                    <CardDescription>
+                      Review the NOC then print or download as PDF.
+                    </CardDescription>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-9"
+                      onClick={handlePrint}
+                      disabled={isPdfLoading}
+                    >
+                      {isPdfLoading ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Printer className="h-4 w-4 mr-2" />
+                      )}
+                      Print
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="h-9 bg-blue-700 hover:bg-blue-800"
+                      onClick={handleDownload}
+                      disabled={isPdfLoading}
+                    >
+                      {isPdfLoading ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Download className="h-4 w-4 mr-2" />
+                      )}
+                      Download PDF
+                    </Button>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="p-8">
+                  {/* ── On-screen preview (mirrors the PDF layout) ── */}
+                  <div className="border-4 border-double border-blue-200 p-8 bg-white min-h-[600px] relative overflow-hidden font-serif">
+                    {/* watermark */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none select-none">
+                      <span className="text-[120px] font-black uppercase tracking-widest rotate-[-30deg] text-blue-900">
+                        NOC
+                      </span>
+                    </div>
+
+                    {/* Header */}
+                    <div className="text-center space-y-1 mb-8 pb-6 border-b-2 border-blue-900">
+                      <h2 className="text-xl font-extrabold uppercase tracking-widest text-slate-900">
+                        Government of West Bengal
+                      </h2>
+                      <p className="text-sm font-semibold text-slate-600">
+                        Department of Land &amp; Land Reforms
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Dhalpara Gram Panchayat
+                      </p>
+                      <div className="h-1 w-20 bg-blue-800 mx-auto rounded-full mt-2" />
+                      <h3 className="text-lg font-bold pt-3 text-blue-900 underline underline-offset-4">
+                        No Objection Certificate (NOC)
+                      </h3>
+                    </div>
+
+                    {/* Meta row */}
+                    <div className="flex justify-between items-start text-sm font-semibold mb-6">
+                      <div className="space-y-1">
+                        <p>
+                          NOC No:{" "}
+                          <span className="font-mono text-blue-800">
+                            {selected.nocNo}
+                          </span>
+                        </p>
+                        <p>
+                          App No:{" "}
+                          <span className="font-mono text-blue-800">
+                            {selected.applicationNo}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="text-right space-y-1 text-gray-700">
+                        <p>Date of Issue: {selected.issueDate}</p>
+                        <p>Valid Upto: {selected.expiryDate}</p>
+                      </div>
+                    </div>
+
+                    {/* Body */}
+                    <div className="space-y-4 text-sm text-slate-800 leading-relaxed text-justify">
+                      <p>
+                        This is to certify that the application for land conversion
+                        submitted by{" "}
+                        <span className="font-bold border-b border-dotted border-slate-900 px-0.5">
+                          {selected.applicantName}
+                        </span>{" "}
+                        bearing Application No.{" "}
+                        <span className="font-mono font-semibold">
+                          {selected.applicationNo}
+                        </span>{" "}
+                        has been duly examined and processed in accordance with the
+                        provisions of the West Bengal Land Reforms Act and applicable
+                        rules and regulations.
+                      </p>
+
+                      <p>
+                        After due verification of documents, field inspection reports,
+                        and approval by the competent authority, the Department hereby
+                        grants this{" "}
+                        <span className="font-bold">No Objection Certificate</span>{" "}
+                        for the conversion of the specified land parcel from its
+                        present land use to the proposed land use as described in the
+                        application.
+                      </p>
+
+                      <p>
+                        This certificate is issued subject to full compliance with all
+                        conditions mentioned in the approved application, subsequent
+                        inspection reports, and any directives issued by the Land
+                        Conversion Officer from time to time. Any violation of
+                        conditions shall render this certificate null and void.
+                      </p>
+                    </div>
+
+                    {/* Conditions */}
+                    <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-xs text-blue-900 space-y-1">
+                      <p className="font-bold mb-2">CONDITIONS:</p>
+                      <p>
+                        1. The conversion must be completed within the validity period
+                        of this certificate.
+                      </p>
+                      <p>
+                        2. The applicant must obtain all other statutory clearances
+                        before commencing work.
+                      </p>
+                      <p>
+                        3. This NOC is non-transferable and applies only to the land
+                        specified in the application.
+                      </p>
+                    </div>
+
+                    {/* Signature */}
+                    <div className="pt-16 flex justify-end">
+                      <div className="text-center border-t border-slate-900 pt-2 px-10">
+                        <p className="font-bold text-slate-900 text-sm">
+                          Authorized Signatory
+                        </p>
+                        <p className="text-xs text-slate-600">
+                          Land Conversion Officer
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          Dhalpara Gram Panchayat
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="mt-8 pt-3 border-t border-gray-200 text-center text-[10px] text-gray-400 italic">
+                      This is a computer-generated certificate. | NOC No:{" "}
+                      {selected.nocNo} | Issued: {selected.issueDate}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Card className="border-blue-100 shadow-sm">
+              <CardContent className="flex flex-col items-center justify-center py-24 text-muted-foreground">
+                <div className="p-4 bg-slate-50 rounded-full mb-4">
+                  <Eye className="h-12 w-12 text-gray-300" />
+                </div>
+                <p className="text-gray-500 font-medium">
+                  Select a certificate from the list to preview
+                </p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Once selected, you can print or download the NOC as a PDF.
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
-
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="bg-white border border-gray-300 shadow-sm">
-          <div className="bg-[#e2e8f0] px-4 py-3 border-b flex items-center justify-between">
-            <div>
-              <h2 className="text-gray-700 font-semibold">
-                Print Land Conversion Certificates
-              </h2>
-              <p className="text-sm text-gray-600">
-                Search and download issued land conversion certificates.
-              </p>
-            </div>
-            <Badge className="bg-blue-100 text-blue-800 border border-blue-300">
-              Total: {total}
-            </Badge>
-          </div>
-
-          <CardContent className="p-0">
-            <div className="p-4 border-b bg-blue-50">
-              <div className="relative max-w-md">
-                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
-                <Input
-                  value={q}
-                  onChange={(e) => {
-                    setPage(1);
-                    setQ(e.target.value);
-                  }}
-                  placeholder="Search by applicant, application no, certificate no or memo no..."
-                  className="pl-9 border-blue-200 focus:border-blue-500"
-                />
-              </div>
-            </div>
-
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader className="bg-blue-50">
-                  <TableRow>
-                    <TableHead className="text-blue-900 font-semibold w-12">
-                      Sl No
-                    </TableHead>
-                    <TableHead className="text-blue-900 font-semibold">
-                      Applicant Name
-                    </TableHead>
-                    <TableHead className="text-blue-900 font-semibold">
-                      Application No
-                    </TableHead>
-                    <TableHead className="text-blue-900 font-semibold">
-                      Certificate No
-                    </TableHead>
-                    <TableHead className="text-blue-900 font-semibold">
-                      Memo No
-                    </TableHead>
-                    <TableHead className="text-blue-900 font-semibold">
-                      Issue Date
-                    </TableHead>
-                    <TableHead className="text-blue-900 font-semibold text-center">
-                      Action
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {loading ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-6">
-                        Loading certificates...
-                      </TableCell>
-                    </TableRow>
-                  ) : currentItems.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center py-6">
-                        No certificates found.
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    currentItems.map((item, index) => (
-                      <TableRow key={item.id}>
-                        <TableCell>{startIndex + index + 1}</TableCell>
-                        <TableCell>{item.applicantName}</TableCell>
-                        <TableCell>{item.applicationNo}</TableCell>
-                        <TableCell>{item.certificateNo}</TableCell>
-                        <TableCell>{item.memoNumber}</TableCell>
-                        <TableCell>
-                          {item.issueDate
-                            ? formatDate(new Date(item.issueDate))
-                            : ""}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleDownload(item.id)}
-                            disabled={printingId === item.id}
-                          >
-                            <Download className="h-4 w-4 mr-2" />
-                            {printingId === item.id
-                              ? "Generating..."
-                              : "Download"}
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            <div className="flex items-center justify-between px-4 py-3 border-t bg-blue-50">
-              <div className="text-sm text-gray-600">
-                Showing {start}–{end} of {total} certificates
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  aria-label="Previous page"
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-sm text-gray-700">
-                  Page {page} of {totalPages}
-                </span>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))}
-                  disabled={page === totalPages}
-                  aria-label="Next page"
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </div>
-      </div>
-    </div>
+    </LandConversionLayout>
   );
 }

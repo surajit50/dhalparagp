@@ -16,6 +16,7 @@ import {
 import {
   ApprovalStatus,
   LandConversionStatus,
+  LandConversionDocumentType,
   type LandConversionApplication,
   type LandConversionInspection,
   type LandConversionCertificate,
@@ -155,7 +156,9 @@ export async function createLandConversionApplication(
         applicantName: formData.applicantName,
         applicantPhone: formData.applicantPhone,
         applicantEmail: formData.applicantEmail || null,
-        applicantAddress: formData.address,
+        applicantAddress:
+          formData.address ||
+          `${formData.village}, PO: ${formData.postOffice}, PS: ${formData.ps}, Dist: ${formData.district}, State: ${formData.state}`,
         khatianNo: formData.khatianNo,
         plotNo: formData.plotNo,
         mouza: formData.mouza,
@@ -193,6 +196,191 @@ export async function createLandConversionApplication(
     return {
       success: false,
       error: "Failed to create land conversion application",
+    }
+  }
+}
+
+export async function uploadLandConversionDocument(
+  formData: FormData,
+): Promise<ActionResult> {
+  try {
+    const file = formData.get("file") as File
+    const applicationId = formData.get("applicationId") as string
+    const documentType = formData.get(
+      "documentType",
+    ) as LandConversionDocumentType
+
+    if (!file || !applicationId || !documentType) {
+      return {
+        success: false,
+        error: "Missing required fields",
+      }
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer())
+    const base64Image = `data:${file.type};base64,${buffer.toString("base64")}`
+
+    const uploadResult = await uploadToCloudinary(
+      base64Image,
+      "land_conversion/documents",
+    )
+
+    await db.landConversionDocument.create({
+      data: {
+        applicationId,
+        documentType,
+        cloudinaryUrl: uploadResult.url,
+        cloudinaryPublicId: uploadResult.public_id,
+      },
+    })
+
+    revalidatePath("/admindashboard/manage-land-conversion/application")
+
+    return {
+      success: true,
+      message: "Document uploaded successfully",
+    }
+  } catch (error) {
+    console.error("Error uploading land conversion document:", error)
+    return {
+      success: false,
+      error: "Failed to upload document",
+    }
+  }
+}
+
+export async function getPendingVerifications(): Promise<
+  ActionResult<
+    {
+      id: string
+      applicationNo: string
+      applicantName: string
+      mouza: string
+      documents: {
+        id: string
+        name: string
+        url: string
+        status: string
+      }[]
+    }[]
+  >
+> {
+  try {
+    const applications = await db.landConversionApplication.findMany({
+      where: {
+        status: {
+          in: [LandConversionStatus.SUBMITTED, LandConversionStatus.VERIFICATION_PENDING],
+        },
+      },
+      include: {
+        documents: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+
+    return {
+      success: true,
+      data: applications.map((a) => ({
+        id: a.id,
+        applicationNo: a.applicationNo,
+        applicantName: a.applicantName,
+        mouza: a.mouza,
+        documents: a.documents.map((d) => ({
+          id: d.id,
+          name: d.documentType,
+          url: d.cloudinaryUrl,
+          status: d.verified ? "VERIFIED" : "PENDING",
+        })),
+      })),
+    }
+  } catch (error) {
+    console.error("Error fetching pending verifications:", error)
+    return {
+      success: false,
+      error: "Failed to load verification queue",
+    }
+  }
+}
+
+export async function verifyDocuments(
+  applicationId: string,
+  approve: boolean,
+): Promise<ActionResult> {
+  try {
+    const user = await currentUser()
+    const application = await db.landConversionApplication.findUnique({
+      where: { id: applicationId },
+    })
+
+    if (!application) {
+      return {
+        success: false,
+        error: "Application not found",
+      }
+    }
+
+    const nextStatus = approve
+      ? LandConversionStatus.INSPECTION_PENDING
+      : LandConversionStatus.VERIFICATION_REJECTED
+
+    await db.$transaction(async (tx) => {
+      // Update application status
+      await tx.landConversionApplication.update({
+        where: { id: applicationId },
+        data: { status: nextStatus },
+      })
+
+      // Create/Update verification record
+      await tx.landConversionVerification.upsert({
+        where: { applicationId },
+        update: {
+          verifiedBy: user?.name ?? "System",
+          verificationDate: new Date(),
+          status: approve ? ApprovalStatus.APPROVED : ApprovalStatus.REJECTED,
+          documentsVerified: approve,
+        },
+        create: {
+          applicationId,
+          verifiedBy: user?.name ?? "System",
+          verificationDate: new Date(),
+          status: approve ? ApprovalStatus.APPROVED : ApprovalStatus.REJECTED,
+          documentsVerified: approve,
+        },
+      })
+
+      // Update all documents to verified if approved
+      if (approve) {
+        await tx.landConversionDocument.updateMany({
+          where: { applicationId },
+          data: { verified: true },
+        })
+
+        // Also create an inspection record if approved
+        await tx.landConversionInspection.create({
+          data: {
+            applicationId,
+            inspectorName: "TBD", // To be assigned
+            scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Default 7 days later
+            status: ApprovalStatus.PENDING,
+            siteAddress: `${application.mouza}, Plot: ${application.plotNo}, Khatian: ${application.khatianNo}`,
+          },
+        })
+      }
+    })
+
+    revalidatePath("/admindashboard/manage-land-conversion/verify")
+
+    return {
+      success: true,
+      message: approve ? "Documents verified successfully" : "Application rejected",
+    }
+  } catch (error) {
+    console.error("Error verifying documents:", error)
+    return {
+      success: false,
+      error: "Failed to process verification",
     }
   }
 }
@@ -669,6 +857,127 @@ export async function issueCertificate(
     return {
       success: false,
       error: "Failed to issue certificate",
+    }
+  }
+}
+
+export async function getApprovedApplications(): Promise<
+  ActionResult<
+    {
+      id: string
+      applicationNo: string
+      applicantName: string
+      status: LandConversionStatus
+    }[]
+  >
+> {
+  return getApplicationsForIssuance()
+}
+
+export async function issueNOC(
+  applicationId: string,
+  expiryDate: Date,
+): Promise<ActionResult> {
+  try {
+    const user = await currentUser()
+    const application = await db.landConversionApplication.findUnique({
+      where: { id: applicationId },
+    })
+
+    if (!application) {
+      return {
+        success: false,
+        error: "Application not found",
+      }
+    }
+
+    if (application.status !== LandConversionStatus.APPROVED) {
+      return {
+        success: false,
+        error: "Application must be approved first",
+      }
+    }
+
+    const certificateNo = await generateCertificateNo()
+
+    await db.$transaction(async (tx) => {
+      await tx.landConversionCertificate.create({
+        data: {
+          applicationId,
+          certificateNo,
+          memoNumber: `NOC/${new Date().getFullYear()}/${application.applicationNo.split("-").pop()}`,
+          issueDate: new Date(),
+          expiryDate: expiryDate,
+          signatoryName: user?.name ?? "Authorized Signatory",
+          signatoryDesignation: "Pradhan",
+        },
+      })
+
+      await tx.landConversionApplication.update({
+        where: { id: applicationId },
+        data: { status: LandConversionStatus.ISSUED },
+      })
+    })
+
+    revalidatePath("/admindashboard/manage-land-conversion/issue")
+
+    return {
+      success: true,
+      message: "NOC issued successfully",
+    }
+  } catch (error) {
+    console.error("Error issuing NOC:", error)
+    return {
+      success: false,
+      error: "Failed to issue NOC",
+    }
+  }
+}
+
+export async function getIssuedNOCs(): Promise<
+  ActionResult<
+    {
+      id: string
+      nocNo: string
+      issueDate: Date
+      expiryDate: Date
+      application: {
+        applicationNo: string
+        applicantName: string
+      }
+    }[]
+  >
+> {
+  try {
+    const certificates = await db.landConversionCertificate.findMany({
+      include: {
+        application: {
+          select: {
+            applicationNo: true,
+            applicantName: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    })
+
+    return {
+      success: true,
+      data: certificates.map((cert) => ({
+        id: cert.id,
+        nocNo: cert.certificateNo,
+        issueDate: cert.issueDate,
+        expiryDate: cert.expiryDate ?? cert.issueDate,
+        application: cert.application,
+      })),
+    }
+  } catch (error) {
+    console.error("Error fetching issued NOCs:", error)
+    return {
+      success: false,
+      error: "Failed to load issued NOCs",
     }
   }
 }

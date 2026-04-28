@@ -18,6 +18,7 @@ import {
 import SamabyathiTable from "@/components/samabathy/SamabyathiTable";
 import { FinancialYearFilter } from "@/components/FinancialYearFilter";
 import CreateApplicationDialog from "@/components/samabathy/CreateApplicationDialog";
+import ExcelUploadDialog from "@/components/samabathy/ExcelUploadDialog";
 import {
   getFinancialYearDateRange,
   getCurrentFinancialYear,
@@ -67,7 +68,10 @@ export default async function ApplicationsPage({
             scheme.
           </p>
         </div>
-        <CreateApplicationDialog />
+        <div className="flex items-center gap-2">
+          <ExcelUploadDialog />
+          <CreateApplicationDialog />
+        </div>
       </div>
 
       {/* Stats Cards */}

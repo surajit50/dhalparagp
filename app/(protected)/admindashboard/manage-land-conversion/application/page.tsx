@@ -2,23 +2,16 @@
 
 import { FileText } from "lucide-react";
 import LandConversionApplicationForm from "@/components/form/LandConversionApplicationForm";
+import LandConversionLayout from "../components/LandConversionLayout";
 
 export default function LandConversionApplicationPage() {
   return (
-    <div className="min-h-screen bg-[#f1f5f9]">
-      <div className="bg-[#1e40af] text-white shadow">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
-          <FileText className="h-7 w-7" />
-          <div>
-            <h1 className="text-lg font-semibold">
-              Land Conversion Management System
-            </h1>
-            <p className="text-xs text-blue-100">Government of West Bengal</p>
-          </div>
-        </div>
-      </div>
-
+    <LandConversionLayout
+      title="Land Conversion NOC - New Application"
+      description="Fill out the form below to apply for land conversion NOC."
+      icon={FileText}
+    >
       <LandConversionApplicationForm />
-    </div>
+    </LandConversionLayout>
   );
 }

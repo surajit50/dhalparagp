@@ -1,58 +1,66 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, XCircle, Search, FileText } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import {
+  Search,
+  CheckCircle,
+  XCircle,
+  FileSearch,
+  Loader2,
+  ExternalLink,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import {
-  getApplicationsForVerification,
-  verifyApplication,
+  getPendingVerifications,
+  verifyDocuments,
 } from "@/action/land-conversion-actions";
-import type { LandConversionStatus } from "@prisma/client";
 
-interface ApplicationSummary {
+import LandConversionLayout from "../components/LandConversionLayout";
+
+interface VerificationItem {
   id: string;
+  applicationNo: string;
   applicantName: string;
-  khatianNo: string;
-  plotNo: string;
   mouza: string;
-  status: LandConversionStatus;
+  documents: { id: string; name: string; url: string; status: string }[];
 }
-
-const statusBadgeClass: Record<LandConversionStatus, string> = {
-  DRAFT: "bg-gray-100 text-gray-700",
-  SUBMITTED: "bg-blue-100 text-blue-800",
-  VERIFICATION_PENDING: "bg-blue-100 text-blue-800",
-  VERIFIED: "bg-green-100 text-green-800",
-  VERIFICATION_REJECTED: "bg-red-100 text-red-800",
-  INSPECTION_PENDING: "bg-amber-100 text-amber-800",
-  INSPECTION_COMPLETED: "bg-green-100 text-green-800",
-  INSPECTION_REJECTED: "bg-red-100 text-red-800",
-  APPROVAL_PENDING: "bg-indigo-100 text-indigo-800",
-  APPROVED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
-  ISSUED: "bg-emerald-100 text-emerald-800",
-  CANCELLED: "bg-red-100 text-red-800",
-};
 
 export default function DocumentVerificationPage() {
   const { toast } = useToast();
-  const [applications, setApplications] = useState<ApplicationSummary[]>([]);
-  const [selected, setSelected] = useState<ApplicationSummary | null>(null);
-  const [remarks, setRemarks] = useState("");
+  const [items, setItems] = useState<VerificationItem[]>([]);
+  const [selected, setSelected] = useState<VerificationItem | null>(null);
   const [search, setSearch] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    startTransition(async () => {
-      const result = await getApplicationsForVerification();
+    async function load() {
+      const result = await getPendingVerifications();
       if (result.success && result.data) {
-        setApplications(result.data);
+        setItems(
+          result.data.map((it) => ({
+            id: it.id,
+            applicationNo: it.applicationNo,
+            applicantName: it.applicantName,
+            mouza: it.mouza,
+            documents: it.documents.map((d) => ({
+              id: d.id,
+              name: d.name,
+              url: d.url,
+              status: d.status,
+            })),
+          })),
+        );
       } else if (!result.success) {
         toast({
           title: "Failed to load applications",
@@ -60,29 +68,19 @@ export default function DocumentVerificationPage() {
           variant: "destructive",
         });
       }
-    });
+      setIsLoading(false);
+    }
+    load();
   }, [toast]);
 
-  const filtered = applications.filter((a) =>
-    [a.applicantName, a.khatianNo, a.plotNo, a.mouza].some((f) => f.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  const takeAction = (action: "verify" | "reject") => {
+  const handleVerify = (approve: boolean) => {
     if (!selected) return;
-    if (action === "reject" && !remarks.trim()) {
-      toast({
-        title: "Remarks required",
-        description: "Please provide rejection remarks before rejecting.",
-        variant: "destructive",
-      });
-      return;
-    }
 
     startTransition(async () => {
-      const result = await verifyApplication(selected.id, remarks, action);
+      const result = await verifyDocuments(selected.id, approve);
       if (!result.success) {
         toast({
-          title: "Failed to update application",
+          title: "Verification failed",
           description: result.error ?? "Please try again.",
           variant: "destructive",
         });
@@ -90,161 +88,214 @@ export default function DocumentVerificationPage() {
       }
 
       toast({
-        title: action === "verify" ? "Documents Verified" : "Application Rejected",
-        description:
-          action === "verify"
-            ? "Application moved to Site Inspection."
-            : "Remarks recorded and applicant notified.",
+        title: approve ? "Documents Verified" : "Documents Rejected",
+        description: approve
+          ? "Application moved to site inspection."
+          : "Application rejected due to document issues.",
       });
-
-      setRemarks("");
       setSelected(null);
 
-      const refreshed = await getApplicationsForVerification();
+      const refreshed = await getPendingVerifications();
       if (refreshed.success && refreshed.data) {
-        setApplications(refreshed.data);
+        setItems(
+          refreshed.data.map((it) => ({
+            id: it.id,
+            applicationNo: it.applicationNo,
+            applicantName: it.applicantName,
+            mouza: it.mouza,
+            documents: it.documents.map((d) => ({
+              id: d.id,
+              name: d.name,
+              url: d.url,
+              status: d.status,
+            })),
+          })),
+        );
       }
     });
   };
 
+  const filteredItems = items.filter(
+    (it) =>
+      it.applicationNo.toLowerCase().includes(search.toLowerCase()) ||
+      it.applicantName.toLowerCase().includes(search.toLowerCase()),
+  );
+
   return (
-    <div className="min-h-screen bg-[#f1f5f9]">
-      <div className="bg-[#1e40af] text-white shadow">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
-          <FileText className="h-7 w-7" />
-          <div>
-            <h1 className="text-lg font-semibold">
-              Land Conversion Management System
-            </h1>
-            <p className="text-xs text-blue-100">
-              Government of West Bengal
-            </p>
+    <LandConversionLayout
+      title="Document Verification"
+      description="Verify uploaded documents and proof of ownership."
+      icon={FileSearch}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 space-y-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search by ID or name..."
+              className="pl-10 focus:ring-blue-500"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+              Pending Queue ({filteredItems.length})
+            </h3>
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+                <Loader2 className="h-8 w-8 animate-spin mb-2" />
+                <p className="text-sm">Loading queue...</p>
+              </div>
+            ) : filteredItems.length === 0 ? (
+              <div className="text-center py-10 bg-gray-50 rounded-lg border-2 border-dashed">
+                <p className="text-sm text-gray-500">No applications found</p>
+              </div>
+            ) : (
+              filteredItems.map((it) => (
+                <Card
+                  key={it.id}
+                  className={`cursor-pointer transition-all ${
+                    selected?.id === it.id
+                      ? "border-blue-500 bg-blue-50 shadow-md ring-1 ring-blue-500"
+                      : "hover:bg-gray-50 border-gray-200"
+                  }`}
+                  onClick={() => setSelected(it)}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-base font-bold text-blue-900">
+                        {it.applicationNo}
+                      </CardTitle>
+                      <Badge
+                        variant="outline"
+                        className="bg-amber-50 text-amber-700 border-amber-200"
+                      >
+                        PENDING
+                      </Badge>
+                    </div>
+                    <CardDescription className="font-medium text-gray-700">
+                      {it.applicantName}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+              ))
+            )}
           </div>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="bg-white border border-gray-300 shadow-sm">
-          <div className="bg-[#e2e8f0] px-4 py-3 border-b">
-            <h2 className="text-gray-700 font-semibold">
-              Document Verification
-            </h2>
-            <p className="text-sm text-gray-600">
-              Verify uploaded records and validate ownership and land details.
-            </p>
-          </div>
-          <div className="p-4 space-y-6">
-            <Card>
-              <CardContent className="space-y-4">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <Input
-                        placeholder="Search by applicant, khatian, plot or mouza"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="pl-9"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filtered.map((app) => (
-                    <Card
-                      key={app.id}
-                      className={`cursor-pointer ${
-                        selected?.id === app.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "hover:bg-gray-50"
-                      }`}
-                      onClick={() => setSelected(app)}
-                    >
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base">
-                          {app.applicantName}
-                        </CardTitle>
-                        <CardDescription>
-                          Khatian: {app.khatianNo} • Plot: {app.plotNo}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex items-center gap-2">
-                          <Badge>{app.mouza}</Badge>
-                          <Badge className={statusBadgeClass[app.status]}>
-                            {app.status}
-                          </Badge>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5" />
-                  Verification Panel
-                </CardTitle>
-                <CardDescription>Select an application to proceed</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {selected ? (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label>Applicant</Label>
-                        <p className="text-sm">{selected.applicantName}</p>
-                      </div>
-                      <div>
-                        <Label>Khatian / Plot</Label>
-                        <p className="text-sm">
-                          {selected.khatianNo} / {selected.plotNo}
-                        </p>
-                      </div>
-                      <div>
-                        <Label>Mouza</Label>
-                        <p className="text-sm">{selected.mouza}</p>
-                      </div>
+        <div className="lg:col-span-2">
+          <Card className="border-blue-100 shadow-sm">
+            <CardHeader className="bg-slate-50 border-b">
+              <CardTitle className="text-lg">Verification Panel</CardTitle>
+              <CardDescription>
+                Review each document carefully before marking as verified.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              {selected ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50/50 rounded-lg border border-blue-100 text-sm">
+                    <div>
+                      <span className="text-blue-700 font-semibold block uppercase text-[10px]">
+                        Application No
+                      </span>
+                      <span className="font-mono font-bold">
+                        {selected.applicationNo}
+                      </span>
                     </div>
                     <div>
-                      <Label htmlFor="remarks">Remarks</Label>
-                      <Textarea
-                        id="remarks"
-                        rows={3}
-                        value={remarks}
-                        onChange={(e) => setRemarks(e.target.value)}
-                        placeholder="Add verification remarks..."
-                      />
-                    </div>
-                    <div className="flex gap-3">
-                      <Button onClick={() => takeAction("verify")} disabled={isPending}>
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Verify
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => takeAction("reject")}
-                        disabled={isPending}
-                      >
-                        <XCircle className="h-4 w-4 mr-2" />
-                        Reject
-                      </Button>
+                      <span className="text-blue-700 font-semibold block uppercase text-[10px]">
+                        Mouza
+                      </span>
+                      <span className="font-medium">{selected.mouza}</span>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-sm text-gray-600">
-                    No application selected.
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                      <FileSearch className="h-4 w-4" />
+                      Uploaded Documents
+                    </h4>
+                    <div className="grid gap-2">
+                      {selected.documents.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="flex items-center justify-between p-3 bg-white border rounded-md hover:border-blue-300 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 bg-blue-50 text-blue-600 rounded">
+                              <FileSearch className="h-4 w-4" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-gray-800">
+                                {doc.name}
+                              </p>
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] h-4 mt-1"
+                              >
+                                {doc.status}
+                              </Badge>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            asChild
+                          >
+                            <a
+                              href={doc.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <ExternalLink className="h-4 w-4 mr-2" />
+                              View
+                            </a>
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-4 pt-4 border-t">
+                    <Button
+                      className="flex-1 bg-green-600 hover:bg-green-700 h-11"
+                      onClick={() => handleVerify(true)}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                      )}
+                      All Documents Verified
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className="flex-1 h-11"
+                      onClick={() => handleVerify(false)}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <XCircle className="h-4 w-4 mr-2" />
+                      )}
+                      Reject Application
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                  <FileSearch className="h-12 w-12 text-gray-300 mb-4" />
+                  <p className="text-gray-500">
+                    Select an application from the queue to verify documents
                   </p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
+    </LandConversionLayout>
   );
 }

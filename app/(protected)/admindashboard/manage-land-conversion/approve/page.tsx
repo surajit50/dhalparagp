@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, UserCheck } from "lucide-react";
+import { CheckCircle, XCircle, UserCheck, Loader2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import {
   getApplicationsForApproval,
   approveApplication,
 } from "@/action/land-conversion-actions";
+import LandConversionLayout from "../components/LandConversionLayout";
 
 interface ApprovalItem {
   id: string;
@@ -26,9 +27,10 @@ export default function ApprovalWorkflowPage() {
   const [selected, setSelected] = useState<ApprovalItem | null>(null);
   const [comments, setComments] = useState("");
   const [isPending, startTransition] = useTransition();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    startTransition(async () => {
+    async function load() {
       const result = await getApplicationsForApproval();
       if (result.success && result.data) {
         setQueue(
@@ -46,7 +48,9 @@ export default function ApprovalWorkflowPage() {
           variant: "destructive",
         });
       }
-    });
+      setIsLoading(false);
+    }
+    load();
   }, [toast]);
 
   const takeAction = (approve: boolean) => {
@@ -95,115 +99,130 @@ export default function ApprovalWorkflowPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f1f5f9]">
-      <div className="bg-[#1e40af] text-white shadow">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-3">
-          <UserCheck className="h-7 w-7" />
-          <div>
-            <h1 className="text-lg font-semibold">
-              Land Conversion Management System
-            </h1>
-            <p className="text-xs text-blue-100">
-              Government of West Bengal
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="bg-white border border-gray-300 shadow-sm">
-          <div className="bg-[#e2e8f0] px-4 py-3 border-b">
-            <h2 className="text-gray-700 font-semibold">
-              Approval Workflow
-            </h2>
-            <p className="text-sm text-gray-600">
-              Review inspection reports and decide.
-            </p>
-          </div>
-          <div className="p-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-1 space-y-3">
-                {queue.map((item) => (
-                  <Card
-                    key={item.id}
-                    className={`cursor-pointer ${
-                      selected?.id === item.id
-                        ? "border-blue-500 bg-blue-50"
-                        : "hover:bg-gray-50"
-                    }`}
-                    onClick={() => setSelected(item)}
-                  >
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">
-                        {item.applicationNo}
-                      </CardTitle>
-                      <CardDescription>{item.applicantName}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <Badge>{item.status}</Badge>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-              <div className="lg:col-span-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Decision Panel</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {selected ? (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <Label>Application No</Label>
-                            <p>{selected.applicationNo}</p>
-                          </div>
-                          <div>
-                            <Label>Applicant</Label>
-                            <p>{selected.applicantName}</p>
-                          </div>
-                        </div>
-                        <div>
-                          <Label htmlFor="comments">Comments</Label>
-                          <Textarea
-                            id="comments"
-                            rows={4}
-                            value={comments}
-                            onChange={(e) => setComments(e.target.value)}
-                            placeholder="Add approval/rejection comments"
-                            disabled={isPending}
-                          />
-                        </div>
-                        <div className="flex gap-3">
-                          <Button
-                            onClick={() => takeAction(true)}
-                            disabled={isPending}
-                          >
-                            <CheckCircle className="h-4 w-4 mr-2" />
-                            Approve
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            onClick={() => takeAction(false)}
-                            disabled={isPending}
-                          >
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Reject
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <p className="text-sm text-gray-600">
-                        Select an application from the list.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
+    <LandConversionLayout
+      title="Approval Workflow"
+      description="Review inspection reports and decide on application approval."
+      icon={UserCheck}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-1 space-y-3">
+          <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">
+            Pending Approvals ({queue.length})
+          </h3>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+              <Loader2 className="h-8 w-8 animate-spin mb-2" />
+              <p className="text-sm">Loading queue...</p>
             </div>
-          </div>
+          ) : queue.length === 0 ? (
+            <div className="text-center py-10 bg-gray-50 rounded-lg border-2 border-dashed">
+              <p className="text-sm text-gray-500">No applications pending approval</p>
+            </div>
+          ) : (
+            queue.map((item) => (
+              <Card
+                key={item.id}
+                className={`cursor-pointer transition-all ${
+                  selected?.id === item.id
+                    ? "border-blue-500 bg-blue-50 shadow-md ring-1 ring-blue-500"
+                    : "hover:bg-gray-50 border-gray-200"
+                }`}
+                onClick={() => setSelected(item)}
+              >
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-base font-bold text-blue-900">
+                      {item.applicationNo}
+                    </CardTitle>
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                      {item.status}
+                    </Badge>
+                  </div>
+                  <CardDescription className="font-medium text-gray-700">
+                    {item.applicantName}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ))
+          )}
+        </div>
+        <div className="lg:col-span-2">
+          <Card className="border-blue-100 shadow-sm">
+            <CardHeader className="bg-slate-50 border-b">
+              <CardTitle className="text-lg">Decision Panel</CardTitle>
+              <CardDescription>
+                Review details and provide your decision.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6 pt-6">
+              {selected ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-blue-50/50 rounded-lg border border-blue-100">
+                    <div>
+                      <Label className="text-blue-700 font-semibold">Application No</Label>
+                      <p className="text-lg font-mono font-bold text-slate-800">
+                        {selected.applicationNo}
+                      </p>
+                    </div>
+                    <div>
+                      <Label className="text-blue-700 font-semibold">Applicant Name</Label>
+                      <p className="text-lg font-bold text-slate-800">
+                        {selected.applicantName}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="comments" className="text-gray-700 font-medium">
+                      Approval/Rejection Comments *
+                    </Label>
+                    <Textarea
+                      id="comments"
+                      rows={5}
+                      value={comments}
+                      onChange={(e) => setComments(e.target.value)}
+                      placeholder="Provide detailed reasons for your decision..."
+                      disabled={isPending}
+                      className="focus:ring-blue-500 border-gray-300"
+                    />
+                  </div>
+                  <div className="flex gap-4 pt-2">
+                    <Button
+                      className="flex-1 bg-green-600 hover:bg-green-700 h-11"
+                      onClick={() => takeAction(true)}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                      )}
+                      Approve Application
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      className="flex-1 h-11"
+                      onClick={() => takeAction(false)}
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <XCircle className="h-4 w-4 mr-2" />
+                      )}
+                      Reject Application
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+                  <UserCheck className="h-12 w-12 text-gray-300 mb-4" />
+                  <p className="text-gray-500">Select an application from the queue to review</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </div>
+    </LandConversionLayout>
   );
 }

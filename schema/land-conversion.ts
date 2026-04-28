@@ -31,7 +31,12 @@ export const landConversionApplicationSchema = z.object({
   applicantName: requiredText("Applicant name"),
   applicantPhone: phoneSchema,
   applicantEmail: z.string().trim().email("Enter a valid email address").optional().or(z.literal("")),
-  address: requiredText("Address"),
+  village: requiredText("Village"),
+  postOffice: z.string().default("Trimohini"),
+  ps: z.string().default("Hili"),
+  state: z.string().default("West Bengal"),
+  district: z.string().default("Dakshin Dinajpur"),
+  address: z.string().optional(),
 
   // First land (required); additional lands in lands array
   khatianNo: requiredText("Khatian number"),
