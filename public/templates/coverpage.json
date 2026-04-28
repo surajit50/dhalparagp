@@ -4,10 +4,7 @@
       {
         "name": "field37",
         "type": "rectangle",
-        "position": {
-          "x": 135.56,
-          "y": 81.66
-        },
+        "position": { "x": 135.56, "y": 81.66 },
         "width": 62.44,
         "height": 30.69,
         "rotate": 0,
@@ -22,10 +19,7 @@
       {
         "name": "field40",
         "type": "rectangle",
-        "position": {
-          "x": 10,
-          "y": 10
-        },
+        "position": { "x": 10, "y": 10 },
         "width": 189.97,
         "height": 32.54,
         "rotate": 0,
@@ -40,10 +34,7 @@
       {
         "name": "field24",
         "type": "rectangle",
-        "position": {
-          "x": 15,
-          "y": 73
-        },
+        "position": { "x": 15, "y": 73 },
         "width": 180,
         "height": 56,
         "rotate": 0,
@@ -58,10 +49,7 @@
       {
         "name": "field34",
         "type": "rectangle",
-        "position": {
-          "x": 5,
-          "y": 5
-        },
+        "position": { "x": 5, "y": 5 },
         "width": 200,
         "height": 287,
         "rotate": 0,
@@ -77,10 +65,7 @@
         "name": "field22 copy 2",
         "type": "text",
         "content": "Work Sl No:",
-        "position": {
-          "x": 110,
-          "y": 92
-        },
+        "position": { "x": 110, "y": 92 },
         "width": 42,
         "height": 9.79,
         "rotate": 0,
@@ -102,10 +87,7 @@
         "name": "field1",
         "type": "text",
         "content": "No 3 Dhalpara Gram Panchayat",
-        "position": {
-          "x": 15,
-          "y": 12
-        },
+        "position": { "x": 15, "y": 12 },
         "width": 140,
         "height": 10,
         "rotate": 0,
@@ -127,10 +109,7 @@
         "name": "field2",
         "type": "text",
         "content": "Hili Block, Dakshin Dinajpur",
-        "position": {
-          "x": 15,
-          "y": 24
-        },
+        "position": { "x": 15, "y": 24 },
         "width": 140,
         "height": 6,
         "rotate": 0,
@@ -152,10 +131,7 @@
         "name": "field3",
         "type": "text",
         "content": "Financial Year: 2023-2024",
-        "position": {
-          "x": 128,
-          "y": 31
-        },
+        "position": { "x": 128, "y": 31 },
         "width": 72,
         "height": 6.61,
         "rotate": 0,
@@ -177,10 +153,7 @@
         "name": "fund",
         "type": "text",
         "content": "Fund- 5th SFC",
-        "position": {
-          "x": 141,
-          "y": 12
-        },
+        "position": { "x": 141, "y": 12 },
         "width": 55,
         "height": 6.61,
         "rotate": 0,
@@ -202,10 +175,7 @@
         "name": "field9",
         "type": "text",
         "content": "Project Identification",
-        "position": {
-          "x": 15,
-          "y": 40
-        },
+        "position": { "x": 15, "y": 40 },
         "width": 180,
         "height": 8,
         "rotate": 0,
@@ -227,10 +197,7 @@
         "name": "workname",
         "type": "text",
         "content": "Installation of a water vending machine with a solar system at Trimohini Primary Health Sub Centre in Kismatdapat.",
-        "position": {
-          "x": 15,
-          "y": 52
-        },
+        "position": { "x": 15, "y": 52 },
         "width": 180,
         "height": 18,
         "rotate": 0,
@@ -252,10 +219,7 @@
         "name": "field20",
         "type": "text",
         "content": "",
-        "position": {
-          "x": 200,
-          "y": 200
-        },
+        "position": { "x": 200, "y": 200 },
         "width": 0,
         "height": 0,
         "rotate": 0,
@@ -277,10 +241,7 @@
         "name": "field19",
         "type": "text",
         "content": "Activity Code:",
-        "position": {
-          "x": 20,
-          "y": 83
-        },
+        "position": { "x": 20, "y": 83 },
         "width": 48,
         "height": 7,
         "rotate": 0,
@@ -302,10 +263,7 @@
         "name": "activitycode",
         "type": "text",
         "content": "485858524",
-        "position": {
-          "x": 68,
-          "y": 83
-        },
+        "position": { "x": 68, "y": 83 },
         "width": 40,
         "height": 7,
         "rotate": 0,
@@ -327,10 +285,7 @@
         "name": "field22",
         "type": "text",
         "content": "NIT Memo No:",
-        "position": {
-          "x": 110,
-          "y": 83
-        },
+        "position": { "x": 110, "y": 83 },
         "width": 48,
         "height": 7,
         "rotate": 0,
@@ -352,10 +307,7 @@
         "name": "field22 copy",
         "type": "text",
         "content": "NIT Date:",
-        "position": {
-          "x": 20,
-          "y": 93
-        },
+        "position": { "x": 20, "y": 93 },
         "width": 40,
         "height": 7,
         "rotate": 0,
@@ -377,10 +329,7 @@
         "name": "nitmemo",
         "type": "text",
         "content": "141/${gpcode}/2024",
-        "position": {
-          "x": 155,
-          "y": 83
-        },
+        "position": { "x": 155, "y": 83 },
         "width": 38,
         "height": 7,
         "rotate": 0,
@@ -402,10 +351,7 @@
         "name": "nitmeodate",
         "type": "text",
         "content": "24/03/2024",
-        "position": {
-          "x": 60,
-          "y": 93
-        },
+        "position": { "x": 60, "y": 93 },
         "width": 48,
         "height": 7,
         "rotate": 0,
@@ -427,10 +373,7 @@
         "name": "workslno",
         "type": "text",
         "content": "22 out of 26",
-        "position": {
-          "x": 155,
-          "y": 92
-        },
+        "position": { "x": 155, "y": 92 },
         "width": 38,
         "height": 7,
         "rotate": 0,
@@ -452,10 +395,7 @@
         "name": "field11 copy5",
         "type": "text",
         "content": "Completion Date:",
-        "position": {
-          "x": 110,
-          "y": 93
-        },
+        "position": { "x": 110, "y": 93 },
         "width": 48,
         "height": 7,
         "rotate": 0,
@@ -477,10 +417,7 @@
         "name": "workcompletation",
         "type": "text",
         "content": "14/05/2025",
-        "position": {
-          "x": 155,
-          "y": 103
-        },
+        "position": { "x": 155, "y": 103 },
         "width": 38,
         "height": 7,
         "rotate": 0,
@@ -501,10 +438,7 @@
       {
         "name": "field24 copy",
         "type": "rectangle",
-        "position": {
-          "x": 15,
-          "y": 133
-        },
+        "position": { "x": 15, "y": 133 },
         "width": 180,
         "height": 32,
         "rotate": 0,
@@ -520,10 +454,7 @@
         "name": "field11 copy",
         "type": "text",
         "content": "Work Order Details",
-        "position": {
-          "x": 15,
-          "y": 138
-        },
+        "position": { "x": 15, "y": 138 },
         "width": 100,
         "height": 7,
         "rotate": 0,
@@ -545,10 +476,7 @@
         "name": "field22 copy 3",
         "type": "text",
         "content": "Memo No:",
-        "position": {
-          "x": 20,
-          "y": 150
-        },
+        "position": { "x": 20, "y": 150 },
         "width": 35,
         "height": 7,
         "rotate": 0,
@@ -570,10 +498,7 @@
         "name": "field22 copy 4",
         "type": "text",
         "content": "Date:",
-        "position": {
-          "x": 20,
-          "y": 158
-        },
+        "position": { "x": 20, "y": 158 },
         "width": 25,
         "height": 7,
         "rotate": 0,
@@ -595,10 +520,7 @@
         "name": "field22 copy 5",
         "type": "text",
         "content": "Agreement:",
-        "position": {
-          "x": 95,
-          "y": 150
-        },
+        "position": { "x": 95, "y": 150 },
         "width": 45,
         "height": 7,
         "rotate": 0,
@@ -620,10 +542,7 @@
         "name": "workordermemo",
         "type": "text",
         "content": "141/${gpcode}/2024",
-        "position": {
-          "x": 55,
-          "y": 150
-        },
+        "position": { "x": 55, "y": 150 },
         "width": 38,
         "height": 7,
         "rotate": 0,
@@ -645,10 +564,7 @@
         "name": "workmemodate",
         "type": "text",
         "content": "24/03/2024",
-        "position": {
-          "x": 45,
-          "y": 158
-        },
+        "position": { "x": 45, "y": 158 },
         "width": 48,
         "height": 7,
         "rotate": 0,
@@ -670,10 +586,7 @@
         "name": "agrementdetails",
         "type": "text",
         "content": "141/${gpcode}/2024",
-        "position": {
-          "x": 140,
-          "y": 150
-        },
+        "position": { "x": 140, "y": 150 },
         "width": 53,
         "height": 7,
         "rotate": 0,
@@ -694,10 +607,7 @@
       {
         "name": "field24 copy 2",
         "type": "rectangle",
-        "position": {
-          "x": 15,
-          "y": 170
-        },
+        "position": { "x": 15, "y": 170 },
         "width": 180,
         "height": 24,
         "rotate": 0,
@@ -713,10 +623,7 @@
         "name": "field11 copy 2",
         "type": "text",
         "content": "Agency Details",
-        "position": {
-          "x": 15,
-          "y": 175
-        },
+        "position": { "x": 15, "y": 175 },
         "width": 70,
         "height": 7,
         "rotate": 0,
@@ -738,10 +645,7 @@
         "name": "agencydetails",
         "type": "text",
         "content": "Sujay Mondal, Chakdapat , Trimohini , Hili, Dakshin Dinajpur, Mob: 8942805098",
-        "position": {
-          "x": 25,
-          "y": 182.68
-        },
+        "position": { "x": 25, "y": 182.68 },
         "width": 175,
         "height": 10,
         "rotate": 0,
@@ -763,10 +667,7 @@
         "name": "field11 copy 3",
         "type": "text",
         "content": "Fund Details",
-        "position": {
-          "x": 15,
-          "y": 197
-        },
+        "position": { "x": 15, "y": 197 },
         "width": 70,
         "height": 7,
         "rotate": 0,
@@ -787,19 +688,12 @@
       {
         "name": "fundetailstable",
         "type": "table",
-        "position": {
-          "x": 15,
-          "y": 203
-        },
+        "position": { "x": 15, "y": 203 },
         "width": 180,
         "height": 18,
         "content": "[[\"₹123,564.00\",\"₹123,564.00\",\"₹123,564.00\"]]",
         "showHead": true,
-        "head": [
-          "Estimate Cost",
-          "Awarded Cost",
-          "Expenditure"
-        ],
+        "head": ["Estimate Cost", "Awarded Cost", "Expenditure"],
         "headWidthPercentages": [33.33, 33.33, 33.34],
         "tableStyles": {
           "borderWidth": 0.3,
@@ -815,18 +709,8 @@
           "fontColor": "#ffffff",
           "borderColor": "#2d3748",
           "backgroundColor": "#1a365d",
-          "borderWidth": {
-            "top": 0.1,
-            "right": 0.1,
-            "bottom": 0.1,
-            "left": 0.1
-          },
-          "padding": {
-            "top": 2,
-            "right": 2,
-            "bottom": 2,
-            "left": 2
-          }
+          "borderWidth": { "top": 0.1, "right": 0.1, "bottom": 0.1, "left": 0.1 },
+          "padding": { "top": 2, "right": 2, "bottom": 2, "left": 2 }
         },
         "bodyStyles": {
           "fontName": "Roboto",
@@ -839,22 +723,10 @@
           "borderColor": "#cbd5e0",
           "backgroundColor": "",
           "alternateBackgroundColor": "#f7fafc",
-          "borderWidth": {
-            "top": 0.1,
-            "right": 0.1,
-            "bottom": 0.1,
-            "left": 0.1
-          },
-          "padding": {
-            "top": 2,
-            "right": 2,
-            "bottom": 2,
-            "left": 2
-          }
+          "borderWidth": { "top": 0.1, "right": 0.1, "bottom": 0.1, "left": 0.1 },
+          "padding": { "top": 2, "right": 2, "bottom": 2, "left": 2 }
         },
-        "columnStyles": {
-
-        },
+        "columnStyles": {},
         "required": false,
         "readOnly": false,
         "columnWidths": [60, 60, 60]
@@ -862,24 +734,12 @@
       {
         "name": "paymentdetails",
         "type": "table",
-        "position": {
-          "x": 12.53,
-          "y": 222
-        },
+        "position": { "x": 12.53, "y": 222 },
         "width": 187.06,
         "height": 12.9392,
         "content": "[[\"123456.00\",\"1234.00\",\"1113.00\",\"3634.00\",\"4567.00\",\"13214.00\",\"123456.00\",\"1st and Final Bill\"]]",
         "showHead": true,
-        "head": [
-          "Gross Bill",
-          "IT",
-          "Cess",
-          "SD Money",
-          "GST",
-          "Total Deduction",
-          "Net Amount",
-          "Bill Type"
-        ],
+        "head": ["Gross Bill", "IT", "Cess", "SD Money", "GST", "Total Deduction", "Net Amount", "Bill Type"],
         "headWidthPercentages": [12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5, 12.5],
         "tableStyles": {
           "borderWidth": 0.3,
@@ -895,18 +755,8 @@
           "fontColor": "#ffffff",
           "borderColor": "#2d3748",
           "backgroundColor": "#1a365d",
-          "borderWidth": {
-            "top": 0.1,
-            "right": 0.1,
-            "bottom": 0.1,
-            "left": 0.1
-          },
-          "padding": {
-            "top": 2,
-            "right": 1,
-            "bottom": 2,
-            "left": 1
-          }
+          "borderWidth": { "top": 0.1, "right": 0.1, "bottom": 0.1, "left": 0.1 },
+          "padding": { "top": 2, "right": 1, "bottom": 2, "left": 1 }
         },
         "bodyStyles": {
           "fontName": "Roboto",
@@ -919,22 +769,10 @@
           "borderColor": "#cbd5e0",
           "backgroundColor": "",
           "alternateBackgroundColor": "#f7fafc",
-          "borderWidth": {
-            "top": 0.1,
-            "right": 0.1,
-            "bottom": 0.1,
-            "left": 0.1
-          },
-          "padding": {
-            "top": 2,
-            "right": 1,
-            "bottom": 2,
-            "left": 1
-          }
+          "borderWidth": { "top": 0.1, "right": 0.1, "bottom": 0.1, "left": 0.1 },
+          "padding": { "top": 2, "right": 1, "bottom": 2, "left": 1 }
         },
-        "columnStyles": {
-
-        },
+        "columnStyles": {},
         "required": false,
         "readOnly": false
       },
@@ -942,10 +780,7 @@
         "name": "field11 copy 4",
         "type": "text",
         "content": "Payment Details",
-        "position": {
-          "x": 15,
-          "y": 216
-        },
+        "position": { "x": 15, "y": 216 },
         "width": 70,
         "height": 7,
         "rotate": 0,
@@ -967,10 +802,7 @@
         "name": "watermark",
         "type": "text",
         "content": "22",
-        "position": {
-          "x": 50,
-          "y": 100
-        },
+        "position": { "x": 50, "y": 100 },
         "width": 110,
         "height": 110,
         "rotate": 45,
@@ -991,10 +823,7 @@
       {
         "name": "onset_label",
         "type": "text",
-        "position": {
-          "x": 12,
-          "y": 268
-        },
+        "position": { "x": 12, "y": 268 },
         "width": 58,
         "height": 5,
         "alignment": "center",
@@ -1007,10 +836,7 @@
       {
         "name": "photo_onset",
         "type": "image",
-        "position": {
-          "x": 12,
-          "y": 255
-        },
+        "position": { "x": 12, "y": 255 },
         "width": 58,
         "height": 32,
         "content": ""
@@ -1018,10 +844,7 @@
       {
         "name": "ongoing_label",
         "type": "text",
-        "position": {
-          "x": 76,
-          "y": 268
-        },
+        "position": { "x": 76, "y": 268 },
         "width": 58,
         "height": 5,
         "alignment": "center",
@@ -1034,10 +857,7 @@
       {
         "name": "photo_ongoing",
         "type": "image",
-        "position": {
-          "x": 76,
-          "y": 255
-        },
+        "position": { "x": 76, "y": 255 },
         "width": 58,
         "height": 32,
         "content": ""
@@ -1045,10 +865,7 @@
       {
         "name": "complete_label",
         "type": "text",
-        "position": {
-          "x": 140,
-          "y": 268
-        },
+        "position": { "x": 140, "y": 268 },
         "width": 58,
         "height": 5,
         "alignment": "center",
@@ -1061,10 +878,7 @@
       {
         "name": "photo_complete",
         "type": "image",
-        "position": {
-          "x": 140,
-          "y": 255
-        },
+        "position": { "x": 140, "y": 255 },
         "width": 58,
         "height": 32,
         "content": ""
@@ -1072,53 +886,41 @@
       {
         "name": "box_onset",
         "type": "rectangle",
-        "position": {
-          "x": 12,
-          "y": 255
-        },
+        "position": { "x": 12, "y": 255 },
         "width": 58,
         "height": 32,
         "borderWidth": 1,
         "borderColor": "#cbd5e0",
-        "color": "#f8fafc",
+        "color": "",   // ✅ FIXED: removed solid fill
         "content": ""
       },
       {
         "name": "box_ongoing",
         "type": "rectangle",
-        "position": {
-          "x": 76,
-          "y": 255
-        },
+        "position": { "x": 76, "y": 255 },
         "width": 58,
         "height": 32,
         "borderWidth": 1,
         "borderColor": "#cbd5e0",
-        "color": "#f8fafc",
+        "color": "",   // ✅ FIXED: removed solid fill
         "content": ""
       },
       {
         "name": "box_complete",
         "type": "rectangle",
-        "position": {
-          "x": 140,
-          "y": 255
-        },
+        "position": { "x": 140, "y": 255 },
         "width": 58,
         "height": 32,
         "borderWidth": 1,
         "borderColor": "#cbd5e0",
-        "color": "#f8fafc",
+        "color": "",   // ✅ FIXED: removed solid fill
         "content": ""
       },
       {
         "name": "static_onset",
         "type": "text",
         "content": "Onset Photo",
-        "position": {
-          "x": 12,
-          "y": 249
-        },
+        "position": { "x": 12, "y": 249 },
         "width": 58,
         "height": 6,
         "alignment": "center",
@@ -1130,10 +932,7 @@
         "name": "static_ongoing",
         "type": "text",
         "content": "Ongoing Photo",
-        "position": {
-          "x": 76,
-          "y": 249
-        },
+        "position": { "x": 76, "y": 249 },
         "width": 58,
         "height": 6,
         "alignment": "center",
@@ -1145,10 +944,7 @@
         "name": "static_complete",
         "type": "text",
         "content": "Complete Photo",
-        "position": {
-          "x": 140,
-          "y": 249
-        },
+        "position": { "x": 140, "y": 249 },
         "width": 58,
         "height": 6,
         "alignment": "center",
@@ -1161,7 +957,7 @@
   "basePdf": {
     "width": 210,
     "height": 297,
-    "padding": [10, 10, 10, 10]
+    "padding": [5, 5, 5, 5]
   },
   "pdfmeVersion": "6.0.6"
 }
