@@ -316,7 +316,7 @@ export default function NOCPrintPage() {
   };
 
   return (
-    <LandConversionLayout>
+    <div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* LIST */}
         <div className="space-y-3">
@@ -385,6 +385,6 @@ export default function NOCPrintPage() {
           )}
         </div>
       </div>
-    </LandConversionLayout>
+    </div>
   );
 }
