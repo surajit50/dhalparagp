@@ -25,23 +25,24 @@ export default function CoverPagePrint({ workCoverPageType }: CoverPagePDFProps)
     : "N/A";
 
   // Helper to fetch image and return a proper Data URL
-  const getSafeImageBase64 = async (url: string | null | undefined): Promise<string> => {
-    if (!url) return "";
-    try {
-      const dataUrl = await getBase64FromUrl(url);
-      // Ensure it's a full Data URL (starts with data:image/)
-      if (!dataUrl.startsWith("data:image/")) {
-        console.warn("Image missing data URL prefix, adding it");
-        const response = await fetch(url);
-        const mime = response.headers.get("content-type") || "image/jpeg";
-        return `data:${mime};base64,${dataUrl}`;
-      }
-      return dataUrl;
-    } catch (err) {
-      console.error("Failed to load image:", url, err);
-      return ""; // return empty string, label will show fallback text
+  // Helper to fetch image and return a proper Data URL
+const getSafeImageBase64 = async (url: string | null | undefined): Promise<string> => {
+  if (!url) return "";
+  try {
+    const dataUrl = (await getBase64FromUrl(url)) as string;
+    // Ensure it's a full Data URL (starts with data:image/)
+    if (!dataUrl.startsWith("data:image/")) {
+      console.warn("Image missing data URL prefix, adding it");
+      const response = await fetch(url);
+      const mime = response.headers.get("content-type") || "image/jpeg";
+      return `data:${mime};base64,${dataUrl}`;
     }
-  };
+    return dataUrl;
+  } catch (err) {
+    console.error("Failed to load image:", url, err);
+    return ""; // return empty string, label will show fallback text
+  }
+};
 
   const handleGeneratePDF = async () => {
     setIsGenerating(true);
