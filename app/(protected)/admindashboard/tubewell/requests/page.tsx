@@ -1,35 +1,86 @@
 import { getRepairRequests } from "@/action/tubewell";
 import { db } from "@/lib/db";
-import { Plus, Wrench, AlertTriangle, CheckCircle2, Settings2 } from "lucide-react";
+import {
+  Plus,
+  Wrench,
+  AlertTriangle,
+  CheckCircle2,
+  Settings2,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 
+export const dynamic = "force-dynamic";
+
+const colorMap = {
+  yellow: {
+    text: "text-yellow-600",
+    bg: "bg-yellow-50",
+  },
+  blue: {
+    text: "text-blue-600",
+    bg: "bg-blue-50",
+  },
+  purple: {
+    text: "text-purple-600",
+    bg: "bg-purple-50",
+  },
+  green: {
+    text: "text-green-600",
+    bg: "bg-green-50",
+  },
+};
+
 export default async function RequestsPage() {
   const [requests, stats] = await Promise.all([
-  fetch(`${https://www.dhalparagp.in/api/tubewell`, {
-    next: { tags: ["repair-requests"] },
-  }).then((res) => res.json()),
-
-  db.tubewellRepairRequest.groupBy({
-    by: ["status"],
-    _count: { id: true },
-  }),
-]);
+    getRepairRequests(),
+    db.tubewellRepairRequest.groupBy({
+      by: ["status"],
+      _count: { id: true },
+    }),
+  ]);
 
   const statsMap = stats.reduce(
     (acc, curr) => {
       acc[curr.status] = curr._count.id;
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   );
 
   const pending = statsMap["PENDING"] || 0;
   const approved = statsMap["APPROVED"] || 0;
   const inProgress = statsMap["WORK_ORDER_ISSUED"] || 0;
   const completed = statsMap["COMPLETED"] || 0;
+
+  const statsData = [
+    {
+      label: "Pending Approval",
+      value: pending,
+      color: "yellow",
+      icon: AlertTriangle,
+    },
+    {
+      label: "Ready for W.O.",
+      value: approved,
+      color: "blue",
+      icon: Wrench,
+    },
+    {
+      label: "Work Issued",
+      value: inProgress,
+      color: "purple",
+      icon: Settings2,
+    },
+    {
+      label: "Completed",
+      value: completed,
+      color: "green",
+      icon: CheckCircle2,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
@@ -44,8 +95,8 @@ export default async function RequestsPage() {
               Repair Requests
             </h1>
             <p className="text-slate-500 mt-2 max-w-2xl">
-              Efficiently manage and track citizen complaints for tubewell maintenance. 
-              Monitor progress from initial log to final completion.
+              Efficiently manage and track citizen complaints for tubewell
+              maintenance. Monitor progress from initial log to final completion.
             </p>
           </div>
 
@@ -59,31 +110,37 @@ export default async function RequestsPage() {
 
         {/* STATS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { label: "Pending Approval", value: pending, color: "yellow", icon: AlertTriangle },
-            { label: "Ready for W.O.", value: approved, color: "blue", icon: Wrench },
-            { label: "Work Issued", value: inProgress, color: "purple", icon: Settings2 },
-            { label: "Completed", value: completed, color: "green", icon: CheckCircle2 },
-          ].map((stat, i) => (
-            <div key={i} className="group bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
-                    {stat.label}
-                  </p>
-                  <h2 className={`text-3xl font-extrabold mt-2 text-${stat.color}-600 group-hover:scale-105 transition-transform duration-200`}>
-                    {stat.value}
-                  </h2>
-                </div>
-                <div className={`p-3 bg-${stat.color}-50 rounded-xl text-${stat.color}-600 group-hover:rotate-12 transition-transform duration-200`}>
-                  <stat.icon className="h-6 w-6" />
+          {statsData.map((stat, i) => {
+            const colors = colorMap[stat.color as keyof typeof colorMap];
+
+            return (
+              <div
+                key={i}
+                className="group bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
+                      {stat.label}
+                    </p>
+                    <h2
+                      className={`text-3xl font-extrabold mt-2 ${colors.text} group-hover:scale-105 transition-transform duration-200`}
+                    >
+                      {stat.value}
+                    </h2>
+                  </div>
+                  <div
+                    className={`p-3 ${colors.bg} rounded-xl ${colors.text} group-hover:rotate-12 transition-transform duration-200`}
+                  >
+                    <stat.icon className="h-6 w-6" />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        {/* TABLE SECTION */}
+        {/* TABLE */}
         <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
           {requests.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -94,7 +151,8 @@ export default async function RequestsPage() {
                 No Repair Requests Found
               </h3>
               <p className="text-slate-500 mt-2 max-w-xs mx-auto">
-                Your request queue is currently empty. Start by logging a new citizen complaint.
+                Your request queue is currently empty. Start by logging a new
+                citizen complaint.
               </p>
 
               <Button asChild className="mt-8 gap-2 rounded-xl px-8 shadow-sm">
