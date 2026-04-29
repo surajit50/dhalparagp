@@ -195,15 +195,6 @@ export const getRepairRequests = unstable_cache(
   { tags: ["repair-requests"] }
 );
 
-export const getRepairRequests = unstable_cache(
-  async () =>
-    db.tubewellRepairRequest.findMany({
-      where: { workOrders: { none: {} } },
-      orderBy: { createdAt: "desc" },
-    }),
-  ["repair-requests"],
-  { tags: ["repair-requests"] }
-);
 
 // ==========================================
 // WORK ORDER ACTIONS
