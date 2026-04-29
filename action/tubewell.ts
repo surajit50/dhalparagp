@@ -495,7 +495,7 @@ export const getWorkOrders = unstable_cache(
         materials: { include: { material: true } },
         masterRollEntries: { include: { items: true } },
       },
-      orderBy: { createdAt: "desc" }, // safer than issueDate
+       
     }),
   ["work-orders"],
   { tags: ["work-orders"] }
