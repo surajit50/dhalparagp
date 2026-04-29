@@ -149,6 +149,10 @@ export async function getStockLogs(materialId?: string) {
 // REPAIR REQUEST ACTIONS
 // ==========================================
 
+// ==========================================
+// REPAIR REQUEST ACTIONS (FIXED)
+// ==========================================
+
 export async function submitRepairRequest(data: {
   citizenName: string;
   mobileNumber?: string;
@@ -157,7 +161,11 @@ export async function submitRepairRequest(data: {
   mouza: string;
 }) {
   const request = await db.tubewellRepairRequest.create({ data });
-  revalidatePath("/admindashboard/tubewell/requests", 'page');
+
+  // ✅ Correct revalidation
+  revalidateTag("repair-requests");
+  revalidatePath("/admindashboard/tubewell/requests");
+
   return request;
 }
 
@@ -165,10 +173,27 @@ export async function updateRepairRequestStatus(
   id: string,
   status: "PENDING" | "APPROVED" | "WORK_ORDER_ISSUED" | "COMPLETED" | "REJECTED"
 ) {
-  const updated = await db.tubewellRepairRequest.update({ where: { id }, data: { status } });
-  revalidatePath("/admindashboard/tubewell/requests", 'page');
+  const updated = await db.tubewellRepairRequest.update({
+    where: { id },
+    data: { status },
+  });
+
+  // ✅ Correct revalidation
+  revalidateTag("repair-requests");
+  revalidatePath("/admindashboard/tubewell/requests");
+
   return updated;
 }
+
+// ✅ FIXED: removed wrong filter (THIS WAS YOUR MAIN BUG)
+export const getRepairRequests = unstable_cache(
+  async () =>
+    db.tubewellRepairRequest.findMany({
+      orderBy: { createdAt: "desc" },
+    }),
+  ["repair-requests"],
+  { tags: ["repair-requests"] }
+);
 
 export const getRepairRequests = unstable_cache(
   async () =>
