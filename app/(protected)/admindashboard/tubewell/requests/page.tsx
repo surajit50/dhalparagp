@@ -15,22 +15,10 @@ import { columns } from "./columns";
 export const dynamic = "force-dynamic";
 
 const colorMap = {
-  yellow: {
-    text: "text-yellow-600",
-    bg: "bg-yellow-50",
-  },
-  blue: {
-    text: "text-blue-600",
-    bg: "bg-blue-50",
-  },
-  purple: {
-    text: "text-purple-600",
-    bg: "bg-purple-50",
-  },
-  green: {
-    text: "text-green-600",
-    bg: "bg-green-50",
-  },
+  yellow: { text: "text-yellow-600", bg: "bg-yellow-50" },
+  blue: { text: "text-blue-600", bg: "bg-blue-50" },
+  purple: { text: "text-purple-600", bg: "bg-purple-50" },
+  green: { text: "text-green-600", bg: "bg-green-50" },
 };
 
 export default async function RequestsPage() {
@@ -42,6 +30,8 @@ export default async function RequestsPage() {
     }),
   ]);
 
+  console.log("DATA:", requests); // 🔥 debug
+
   const statsMap = stats.reduce(
     (acc, curr) => {
       acc[curr.status] = curr._count.id;
@@ -50,33 +40,28 @@ export default async function RequestsPage() {
     {} as Record<string, number>
   );
 
-  const pending = statsMap["PENDING"] || 0;
-  const approved = statsMap["APPROVED"] || 0;
-  const inProgress = statsMap["WORK_ORDER_ISSUED"] || 0;
-  const completed = statsMap["COMPLETED"] || 0;
-
   const statsData = [
     {
       label: "Pending Approval",
-      value: pending,
+      value: statsMap["PENDING"] || 0,
       color: "yellow",
       icon: AlertTriangle,
     },
     {
       label: "Ready for W.O.",
-      value: approved,
+      value: statsMap["APPROVED"] || 0,
       color: "blue",
       icon: Wrench,
     },
     {
       label: "Work Issued",
-      value: inProgress,
+      value: statsMap["WORK_ORDER_ISSUED"] || 0,
       color: "purple",
       icon: Settings2,
     },
     {
       label: "Completed",
-      value: completed,
+      value: statsMap["COMPLETED"] || 0,
       color: "green",
       icon: CheckCircle2,
     },
@@ -84,88 +69,49 @@ export default async function RequestsPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white p-6 rounded-2xl border shadow-sm">
+        <div className="flex justify-between items-center bg-white p-6 rounded-2xl border shadow-sm">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Wrench className="h-6 w-6 text-primary" />
-              </div>
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              <Wrench className="h-6 w-6 text-primary" />
               Repair Requests
             </h1>
-            <p className="text-slate-500 mt-2 max-w-2xl">
-              Efficiently manage and track citizen complaints for tubewell
-              maintenance. Monitor progress from initial log to final completion.
-            </p>
           </div>
 
-          <Button asChild className="gap-2 rounded-xl px-6 py-6 shadow-md hover:shadow-lg transition-all duration-200">
+          <Button asChild>
             <Link href="/admindashboard/tubewell/requests/add">
-              <Plus className="h-5 w-5" />
-              <span className="font-semibold">Log New Request</span>
+              <Plus className="h-4 w-4" />
+              Add Request
             </Link>
           </Button>
         </div>
 
         {/* STATS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {statsData.map((stat, i) => {
-            const colors = colorMap[stat.color as keyof typeof colorMap];
+            const c = colorMap[stat.color as keyof typeof colorMap];
 
             return (
-              <div
-                key={i}
-                className="group bg-white rounded-2xl border p-6 shadow-sm hover:shadow-md transition-all duration-200"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-500 uppercase tracking-wider">
-                      {stat.label}
-                    </p>
-                    <h2
-                      className={`text-3xl font-extrabold mt-2 ${colors.text} group-hover:scale-105 transition-transform duration-200`}
-                    >
-                      {stat.value}
-                    </h2>
-                  </div>
-                  <div
-                    className={`p-3 ${colors.bg} rounded-xl ${colors.text} group-hover:rotate-12 transition-transform duration-200`}
-                  >
-                    <stat.icon className="h-6 w-6" />
-                  </div>
-                </div>
+              <div key={i} className="bg-white p-4 rounded-xl border">
+                <p className="text-sm text-gray-500">{stat.label}</p>
+                <h2 className={`text-2xl font-bold ${c.text}`}>
+                  {stat.value}
+                </h2>
               </div>
             );
           })}
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-2xl border shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border p-4">
           {requests.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="p-4 bg-slate-50 rounded-full mb-6">
-                <Wrench className="h-12 w-12 text-slate-300" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900">
-                No Repair Requests Found
-              </h3>
-              <p className="text-slate-500 mt-2 max-w-xs mx-auto">
-                Your request queue is currently empty. Start by logging a new
-                citizen complaint.
-              </p>
-
-              <Button asChild className="mt-8 gap-2 rounded-xl px-8 shadow-sm">
-                <Link href="/admindashboard/tubewell/requests/add">
-                  <Plus className="h-4 w-4" />
-                  Log Request
-                </Link>
-              </Button>
-            </div>
+            <p className="text-center text-gray-500 py-10">
+              No data found
+            </p>
           ) : (
-            <div className="p-6">
-              <DataTable columns={columns} data={requests} />
-            </div>
+            <DataTable columns={columns} data={requests} />
           )}
         </div>
       </div>
