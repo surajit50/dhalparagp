@@ -494,7 +494,8 @@ export const getWorkOrders = unstable_cache(
       },
       orderBy: { issueDate: "desc" },
     }),
-  
+  ["work-orders"], // ✅ cache key
+  { tags: ["work-orders"] } // ✅ required for revalidation
 );
 
 // ==========================================
