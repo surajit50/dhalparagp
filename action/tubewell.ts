@@ -487,8 +487,8 @@ export async function updateWorkOrderStatus(
 }
 
 export const getWorkOrders = unstable_cache(
-  async () => {
-    return db.tubewellWorkOrder.findMany({
+  async () =>
+    db.tubewellWorkOrder.findMany({
       include: {
         mistri: true,
         request: true,
@@ -496,12 +496,10 @@ export const getWorkOrders = unstable_cache(
         masterRollEntries: { include: { items: true } },
       },
       orderBy: { createdAt: "desc" }, // safer than issueDate
-    });
-  },
+    }),
   ["work-orders"],
   { tags: ["work-orders"] }
 );
-
 // ==========================================
 // BILLING (MUSTOR) ACTIONS
 // ==========================================
