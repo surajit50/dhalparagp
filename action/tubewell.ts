@@ -163,7 +163,7 @@ export async function submitRepairRequest(data: {
   const request = await db.tubewellRepairRequest.create({ data });
 
   // ✅ Correct revalidation
-  revalidateTag("repair-requests");
+  revalidateTag("repair-requests", 'max');
   revalidatePath("/admindashboard/tubewell/requests");
 
   return request;
@@ -179,7 +179,7 @@ export async function updateRepairRequestStatus(
   });
 
   // ✅ Correct revalidation
-  revalidateTag("repair-requests");
+  revalidateTag("repair-requests", 'max' );
   revalidatePath("/admindashboard/tubewell/requests");
 
   return updated;
