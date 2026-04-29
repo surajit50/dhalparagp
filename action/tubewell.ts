@@ -494,8 +494,7 @@ export const getWorkOrders = unstable_cache(
       },
       orderBy: { issueDate: "desc" },
     }),
-  ["work-orders"],
-  { tags: ["work-orders"] }
+  
 );
 
 // ==========================================
