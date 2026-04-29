@@ -487,18 +487,19 @@ export async function updateWorkOrderStatus(
 }
 
 export const getWorkOrders = unstable_cache(
-  async () =>
-    db.tubewellWorkOrder.findMany({
+  async () => {
+    return db.tubewellWorkOrder.findMany({
       include: {
         mistri: true,
         request: true,
         materials: { include: { material: true } },
         masterRollEntries: { include: { items: true } },
       },
-      orderBy: { issueDate: "desc" },
-    }),
-  ["work-orders"], // ✅ cache key
-  { tags: ["work-orders"] } // ✅ required for revalidation
+      orderBy: { createdAt: "desc" }, // safer than issueDate
+    });
+  },
+  ["work-orders"],
+  { tags: ["work-orders"] }
 );
 
 // ==========================================
