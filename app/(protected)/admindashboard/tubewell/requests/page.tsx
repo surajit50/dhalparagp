@@ -8,12 +8,15 @@ import { columns } from "./columns";
 
 export default async function RequestsPage() {
   const [requests, stats] = await Promise.all([
-    getRepairRequests(),
-    db.tubewellRepairRequest.groupBy({
-      by: ["status"],
-      _count: { id: true },
-    }),
-  ]);
+  fetch(`${https://www.dhalparagp.in/api/tubewell`, {
+    next: { tags: ["repair-requests"] },
+  }).then((res) => res.json()),
+
+  db.tubewellRepairRequest.groupBy({
+    by: ["status"],
+    _count: { id: true },
+  }),
+]);
 
   const statsMap = stats.reduce(
     (acc, curr) => {
