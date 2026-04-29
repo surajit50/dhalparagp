@@ -445,71 +445,53 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
 
                       {/* Actions Column */}
                       <TableCell className="text-right">
-                        <DropdownMenu>
+
+<DropdownMenu>
+
                           <DropdownMenuTrigger asChild>
-                            <Button size="icon" variant="ghost" className="h-8 w-8">
+                            <Button size="icon" variant="ghost">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
-  <div className="cursor-pointer">
-    <AddPaymentDialog lease={lease} />
-  </div>
-</DropdownMenuItem>
 
-<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
-  <div className="cursor-pointer">
-    <ExtendLeaseDialog lease={lease} />
-  </div>
-</DropdownMenuItem>
+                          <DropdownMenuContent align="end">
 
-<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
-  <div className="cursor-pointer">
-    <EditLeaseDialog lease={lease} />
-  </div>
-</DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                              <LeaseAgreementPrint lease={lease} />
+                            </DropdownMenuItem>
 
-<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
-  <div className="cursor-pointer">
-    <NoticeGenerateDialog lease={lease} />
-  </div>
-</DropdownMenuItem>
+                            <AddPaymentDialog lease={lease} />
 
-<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
-  <div className="cursor-pointer">
-    <LeaseAgreementPrint lease={lease} />
-  </div>
-</DropdownMenuItem>
-                            <DropdownMenuSeparator />
+                            <ExtendLeaseDialog lease={lease} />
+
+                            <EditLeaseDialog lease={lease} />
+
+                            <NoticeGenerateDialog lease={lease} />
+
                             {lease.status === "ACTIVE" && (
                               <>
                                 <DropdownMenuItem
-                                  onClick={() => handleStatusUpdate(lease.id, "COMPLETED")}
-                                  className="text-green-600 focus:text-green-600"
+                                  onClick={() =>
+                                    handleStatusUpdate(lease.id, "COMPLETED")
+                                  }
                                 >
-                                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                                  <CheckCircle2 className="h-4 w-4 mr-2 text-green-600" />
                                   Mark Completed
                                 </DropdownMenuItem>
+
                                 <DropdownMenuItem
-                                  onClick={() => handleStatusUpdate(lease.id, "CANCELLED")}
-                                  className="text-red-600 focus:text-red-600"
+                                  onClick={() =>
+                                    handleStatusUpdate(lease.id, "CANCELLED")
+                                  }
                                 >
-                                  <XCircle className="h-4 w-4 mr-2" />
+                                  <XCircle className="h-4 w-4 mr-2 text-red-600" />
                                   Cancel Lease
                                 </DropdownMenuItem>
                               </>
                             )}
-                            {lease.status !== "ACTIVE" && (
-                              <DropdownMenuItem
-                                onClick={() => handleDelete(lease.id)}
-                                className="text-red-600 focus:text-red-600"
-                              >
-                                <XCircle className="h-4 w-4 mr-2" />
-                                Delete Record
-                              </DropdownMenuItem>
-                            )}
+
                           </DropdownMenuContent>
+
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
