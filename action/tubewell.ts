@@ -189,6 +189,9 @@ export async function updateRepairRequestStatus(
 export const getRepairRequests = unstable_cache(
   async () =>
     db.tubewellRepairRequest.findMany({
+      where: {
+        status: "APPROVED",
+      },
       orderBy: { createdAt: "desc" },
     }),
   ["repair-requests"],
