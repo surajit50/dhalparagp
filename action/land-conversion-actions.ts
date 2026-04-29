@@ -22,6 +22,26 @@ import {
   type LandConversionCertificate,
 } from "@prisma/client"
 
+//memo no generate year wise number/DGP/(LC)/full year
+
+async function generateMemoNumber() {
+  const year = new Date().getFullYear().toString()
+
+  // Format: 001/DGP/2026  — sequential within the current year
+  const maxCert = await db.landConversionCertificate.findFirst({
+    where: { memoNumber: { endsWith: `/DGP/(LC)/${year}` } },
+    orderBy: { memoNumber: "desc" },
+    select: { memoNumber: true },
+  })
+
+  const last = maxCert?.memoNumber?.split("/")[0] || "000"
+  const next = (parseInt(last, 10) + 1).toString().padStart(3, "0")
+
+  return `${next}/DGP/${year}`
+}
+
+
+
 type ActionResult<T = unknown> = {
   success: boolean
   message?: string
@@ -668,15 +688,13 @@ export async function approveApplication(
 ): Promise<ActionResult> {
   try {
     const user = await currentUser()
+
     const application = await db.landConversionApplication.findUnique({
       where: { id: applicationId },
     })
 
     if (!application) {
-      return {
-        success: false,
-        error: "Application not found",
-      }
+      return { success: false, error: "Application not found" }
     }
 
     const nextStatus = approve
@@ -684,10 +702,9 @@ export async function approveApplication(
       : LandConversionStatus.REJECTED
 
     await db.$transaction(async (tx) => {
+      // Approval entry
       await tx.landConversionApproval.upsert({
-        where: {
-          applicationId: application.id,
-        },
+        where: { applicationId },
         update: {
           approverName: user?.name ?? "Approver",
           designation: "Approving Authority",
@@ -696,7 +713,7 @@ export async function approveApplication(
           comments,
         },
         create: {
-          applicationId: application.id,
+          applicationId,
           approverName: user?.name ?? "Approver",
           designation: "Approving Authority",
           approvalDate: new Date(),
@@ -705,22 +722,20 @@ export async function approveApplication(
         },
       })
 
+      // Status is updated below; certificate is created only when NOC is issued
+
+      // Update status
       await tx.landConversionApplication.update({
-        where: { id: application.id },
-        data: {
-          status: nextStatus,
-        },
+        where: { id: applicationId },
+        data: { status: nextStatus },
       })
     })
-
-    revalidatePath("/admindashboard/manage-land-conversion/approve")
 
     return {
       success: true,
       message: approve ? "Application approved." : "Application rejected.",
     }
   } catch (error) {
-    console.error("Error approving land conversion application:", error)
     return {
       success: false,
       error: "Failed to process approval",
@@ -898,14 +913,26 @@ export async function issueNOC(
       }
     }
 
-    const certificateNo = await generateCertificateNo()
+    const [certificateNo, memoNumber] = await Promise.all([
+      generateCertificateNo(),
+      generateMemoNumber(),
+    ])
 
     await db.$transaction(async (tx) => {
-      await tx.landConversionCertificate.create({
-        data: {
+      await tx.landConversionCertificate.upsert({
+        where: { applicationId },
+        create: {
           applicationId,
           certificateNo,
-          memoNumber: `NOC/${new Date().getFullYear()}/${application.applicationNo.split("-").pop()}`,
+          memoNumber,
+          issueDate: new Date(),
+          expiryDate: expiryDate,
+          signatoryName: user?.name ?? "Authorized Signatory",
+          signatoryDesignation: "Pradhan",
+        },
+        update: {
+          certificateNo,
+          memoNumber,
           issueDate: new Date(),
           expiryDate: expiryDate,
           signatoryName: user?.name ?? "Authorized Signatory",
@@ -1256,7 +1283,7 @@ export async function getCertificateForPrint(certificateId: string) {
         plotNo: app.plotNo,
         mouza: app.mouza,
         jlNo: app.jlNo,
-       
+
         landAreaDec: app.landAreaDec,
         presentLandUse: app.presentLandUse,
         proposedLandUse: app.proposedLandUse,
@@ -1266,7 +1293,7 @@ export async function getCertificateForPrint(certificateId: string) {
         plotNo: l.plotNo,
         mouza: l.mouza,
         jlNo: l.jlNo,
-        
+
         landAreaDec: l.landAreaDec,
         presentLandUse: l.presentLandUse,
         proposedLandUse: l.proposedLandUse,
@@ -1397,5 +1424,64 @@ export async function generateAndStoreCertificatePdf(
       success: false,
       error: "Failed to generate and store certificate PDF",
     }
+  }
+}
+
+// ─── PUBLIC VERIFY ──────────────────────────────────────────────────────────
+// Used by the public /verify page — no auth required (read-only).
+export async function getIssuedNOCByNo(certificateNo: string): Promise<
+  ActionResult<{
+    certificateNo: string
+    memoNumber: string
+    issueDate: Date
+    expiryDate: Date | null
+    signatoryName: string | null
+    signatoryDesignation: string | null
+    applicationNo: string
+    applicantName: string
+    applicantAddress: string
+    mouza: string
+    jlNo: string
+    khatianNo: string
+    plotNo: string
+    landAreaDec: string
+    presentLandUse: string
+    proposedLandUse: string
+  }>
+> {
+  try {
+    const cert = await db.landConversionCertificate.findUnique({
+      where: { certificateNo },
+      include: { application: true },
+    })
+
+    if (!cert) {
+      return { success: false, error: "Certificate not found" }
+    }
+
+    return {
+      success: true,
+      data: {
+        certificateNo: cert.certificateNo,
+        memoNumber: cert.memoNumber,
+        issueDate: cert.issueDate,
+        expiryDate: cert.expiryDate,
+        signatoryName: cert.signatoryName,
+        signatoryDesignation: cert.signatoryDesignation,
+        applicationNo: cert.application.applicationNo,
+        applicantName: cert.application.applicantName,
+        applicantAddress: cert.application.applicantAddress,
+        mouza: cert.application.mouza,
+        jlNo: cert.application.jlNo,
+        khatianNo: cert.application.khatianNo,
+        plotNo: cert.application.plotNo,
+        landAreaDec: cert.application.landAreaDec,
+        presentLandUse: cert.application.presentLandUse,
+        proposedLandUse: cert.application.proposedLandUse,
+      },
+    }
+  } catch (error) {
+    console.error("Error verifying NOC:", error)
+    return { success: false, error: "Failed to verify certificate" }
   }
 }
