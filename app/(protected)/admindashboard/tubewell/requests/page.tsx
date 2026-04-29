@@ -30,8 +30,6 @@ export default async function RequestsPage() {
     }),
   ]);
 
-  console.log("DATA:", requests); // 🔥 debug
-
   const statsMap = stats.reduce(
     (acc, curr) => {
       acc[curr.status] = curr._count.id;
@@ -73,12 +71,10 @@ export default async function RequestsPage() {
 
         {/* HEADER */}
         <div className="flex justify-between items-center bg-white p-6 rounded-2xl border shadow-sm">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Wrench className="h-6 w-6 text-primary" />
-              Repair Requests
-            </h1>
-          </div>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            <Wrench className="h-5 w-5 text-primary" />
+            Repair Requests
+          </h1>
 
           <Button asChild>
             <Link href="/admindashboard/tubewell/requests/add">
