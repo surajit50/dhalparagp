@@ -452,32 +452,35 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-48">
-                            <DropdownMenuItem asChild>
-                              <div className="cursor-pointer">
-                                <LeaseAgreementPrint lease={lease} />
-                              </div>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <div className="cursor-pointer">
-                                <AddPaymentDialog lease={lease} />
-                              </div>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
-                              <div className="cursor-pointer">
-                                <ExtendLeaseDialog lease={lease} />
-                              </div>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <div className="cursor-pointer">
-                                <EditLeaseDialog lease={lease} />
-                              </div>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                              <div className="cursor-pointer">
-                                <NoticeGenerateDialog lease={lease} />
-                              </div>
-                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
+  <div className="cursor-pointer">
+    <AddPaymentDialog lease={lease} />
+  </div>
+</DropdownMenuItem>
+
+<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
+  <div className="cursor-pointer">
+    <ExtendLeaseDialog lease={lease} />
+  </div>
+</DropdownMenuItem>
+
+<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
+  <div className="cursor-pointer">
+    <EditLeaseDialog lease={lease} />
+  </div>
+</DropdownMenuItem>
+
+<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
+  <div className="cursor-pointer">
+    <NoticeGenerateDialog lease={lease} />
+  </div>
+</DropdownMenuItem>
+
+<DropdownMenuItem onSelect={(e) => e.preventDefault()} asChild>
+  <div className="cursor-pointer">
+    <LeaseAgreementPrint lease={lease} />
+  </div>
+</DropdownMenuItem>
                             <DropdownMenuSeparator />
                             {lease.status === "ACTIVE" && (
                               <>
