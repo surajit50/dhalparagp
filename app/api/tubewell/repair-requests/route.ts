@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Revalidate paths to reflect updates instantly
     revalidatePath("/admindashboard/tubewell/requests","page");
-    revalidateTag("repair-requests","max");
+    revalidateTag("/admindashboard/tubewell/requests/repair-requests","max");
 
     return NextResponse.json(requestData, { status: 201, headers: corsHeaders });
   } catch (error: any) {
