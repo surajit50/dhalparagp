@@ -4,13 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useReactToPrint, UseReactToPrintOptions } from "react-to-print";
 import React from "react";
 import { gpname } from "@/constants/gpinfor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { ClipboardList, Eye } from "lucide-react";
+import { ClipboardList, Eye, Save } from "lucide-react";
+import { generatePujaNOC } from "@/action/puja-noc-actions";
+import { toast } from "sonner";
 
 function NocCertificate({
   values,
@@ -43,7 +45,7 @@ function NocCertificate({
           <span className="font-semibold">Ref. No:</span> {values.refNo || "_______"} /GP
         </p>
         <p>
-          <span className="font-semibold">Date:</span> {values.date || "__ / __ / 20__"}
+          <span className="font-semibold">Date:</span> {values.date ? values.date.split('-').reverse().join('-') : "__ / __ / 20__"}
         </p>
       </div>
       <p className="mb-3 text-justify">
@@ -80,9 +82,9 @@ function NocCertificate({
 export default function ClientPage() {
   const [values, setValues] = useState({
     gpName: gpname || "[Name of Gram Panchayat]",
-    postOffice: "",
-    policeStation: "",
-    district: "",
+    postOffice: "Trimohini",
+    policeStation: "Hili",
+    district: "Dakshin Dinajpur",
     refNo: "",
     date: "",
     pujaName: "",
@@ -98,6 +100,38 @@ export default function ClientPage() {
     documentTitle: `Puja_NOC_${values.pujaName || "certificate"}`,
   } as UseReactToPrintOptions);
 
+  const [isPending, startTransition] = useTransition();
+
+  const handleGenerate = () => {
+    if (!values.pujaName || !values.location || !values.organizer || !values.startDate || !values.endDate) {
+      toast.error("Please fill in all required fields (Puja Name, Location, Organizer, Start Date, End Date).");
+      return;
+    }
+
+    startTransition(async () => {
+      const res = await generatePujaNOC({
+        pujaName: values.pujaName,
+        location: values.location,
+        organizer: values.organizer,
+        startDate: values.startDate,
+        endDate: values.endDate,
+      });
+
+      if (res.success && res.refNo && res.date) {
+        // Date from server is yyyy-mm-dd format, format it to dd-mm-yyyy for display if needed
+        // but input type="date" expects yyyy-mm-dd
+        setValues((prev) => ({
+          ...prev,
+          refNo: res.refNo!,
+          date: res.date!,
+        }));
+        toast.success("NOC generated and saved successfully!");
+      } else {
+        toast.error(res.message || "Something went wrong");
+      }
+    });
+  };
+
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="flex items-center justify-between">
@@ -105,7 +139,12 @@ export default function ClientPage() {
           <h1 className="text-2xl font-bold">NOC for Puja/Festival</h1>
           <p className="text-muted-foreground">Fill details, preview, and print the certificate</p>
         </div>
-        <Button onClick={() => handlePrint && handlePrint()}>Print</Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={handleGenerate} disabled={isPending}>
+            {isPending ? "Generating..." : <><Save className="mr-2 h-4 w-4" /> Approve & Save</>}
+          </Button>
+          <Button onClick={() => handlePrint && handlePrint()} disabled={!values.refNo}>Print</Button>
+        </div>
       </div>
 
       <Tabs defaultValue="form" className="w-full">
@@ -128,27 +167,27 @@ export default function ClientPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label>Gram Panchayat Name</Label>
-                  <Input value={values.gpName} onChange={(e) => setValues({ ...values, gpName: e.target.value })} />
+                  <Input value={values.gpName} disabled />
                 </div>
                 <div>
                   <Label>Ref. No</Label>
-                  <Input value={values.refNo} onChange={(e) => setValues({ ...values, refNo: e.target.value })} />
+                  <Input value={values.refNo} disabled placeholder="Auto-generated on save" />
                 </div>
                 <div>
                   <Label>Date</Label>
-                  <Input type="date" value={values.date} onChange={(e) => setValues({ ...values, date: e.target.value })} />
+                  <Input type="date" value={values.date} disabled />
                 </div>
                 <div>
                   <Label>Police Station</Label>
-                  <Input value={values.policeStation} onChange={(e) => setValues({ ...values, policeStation: e.target.value })} />
+                  <Input value={values.policeStation} disabled />
                 </div>
                 <div>
                   <Label>Post Office</Label>
-                  <Input value={values.postOffice} onChange={(e) => setValues({ ...values, postOffice: e.target.value })} />
+                  <Input value={values.postOffice} disabled />
                 </div>
                 <div>
                   <Label>District</Label>
-                  <Input value={values.district} onChange={(e) => setValues({ ...values, district: e.target.value })} />
+                  <Input value={values.district} disabled />
                 </div>
               </div>
               <Separator />
