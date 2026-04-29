@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { submitRepairRequest, getRepairRequests } from "@/action/tubewell";
-import { revalidateTag } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +18,7 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     const requests = await getRepairRequests();
+
     return NextResponse.json(requests, { headers: corsHeaders });
   } catch (error: unknown) {
     const message =
@@ -35,9 +35,6 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const requestData = await submitRepairRequest(body);
-
-    // 🔥 Only this is needed
-    revalidateTag("repair-requests");
 
     return NextResponse.json(requestData, {
       status: 201,
