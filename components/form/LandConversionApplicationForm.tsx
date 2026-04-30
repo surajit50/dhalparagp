@@ -53,6 +53,8 @@ export default function LandConversionApplicationForm() {
   const [uploadingDoc, setUploadingDoc] = useState<
     "ID_PROOF" | "LAND_DOCUMENT" | null
   >(null);
+  const [idProofFile, setIdProofFile] = useState<File | null>(null);
+  const [landDocFile, setLandDocFile] = useState<File | null>(null);
 
   const form = useForm<LandConversionApplicationInput>({
     resolver: zodResolver(landConversionApplicationSchema),
@@ -68,6 +70,17 @@ export default function LandConversionApplicationForm() {
     values: LandConversionApplicationInput,
     mode: "DRAFT" | "SUBMIT",
   ) => {
+    // Check if files are selected for SUBMIT mode
+    if (mode === "SUBMIT" && (!idProofFile || !landDocFile)) {
+      toast({
+        title: "Missing Documents",
+        description:
+          "Please upload both ID Proof and Land Documents before submitting.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     startTransition(async () => {
       try {
@@ -84,7 +97,20 @@ export default function LandConversionApplicationForm() {
         }
 
         const appData = result.data?.application;
-        setCreatedApplicationId(appData?.id ?? null);
+        const appId = appData?.id;
+        setCreatedApplicationId(appId ?? null);
+
+        // Upload documents if they exist
+        if (appId) {
+          if (idProofFile) {
+            await uploadDocumentHelper(appId, "ID_PROOF", idProofFile);
+            setIdProofFile(null); // Clear after upload
+          }
+          if (landDocFile) {
+            await uploadDocumentHelper(appId, "LAND_DOCUMENT", landDocFile);
+            setLandDocFile(null); // Clear after upload
+          }
+        }
 
         toast({
           title:
@@ -94,11 +120,13 @@ export default function LandConversionApplicationForm() {
           description:
             mode === "DRAFT"
               ? "Your progress has been saved. You can complete it later."
-              : `Application registered. Ref No: ${appData?.applicationNo}. Please upload required documents.`,
+              : `Application registered. Ref No: ${appData?.applicationNo}.`,
         });
 
         if (mode === "SUBMIT") {
           reset(defaultValues);
+          setIdProofFile(null);
+          setLandDocFile(null);
         }
       } catch (error) {
         console.error("Land Conversion Submission Error:", error);
@@ -113,48 +141,47 @@ export default function LandConversionApplicationForm() {
     });
   };
 
-  const handleDocumentUpload = async (
+  const uploadDocumentHelper = async (
+    applicationId: string,
     type: "ID_PROOF" | "LAND_DOCUMENT",
     file: File,
   ) => {
-    if (!createdApplicationId) {
-      toast({
-        title: "Application ID missing",
-        description:
-          "Please save or submit the form first before uploading documents.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setUploadingDoc(type);
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("applicationId", createdApplicationId);
+      formData.append("applicationId", applicationId);
       formData.append("documentType", type);
 
       const result = await uploadLandConversionDocument(formData);
-
-      if (result.success) {
-        toast({
-          title: "Document Uploaded",
-          description: `${type.replace("_", " ")} has been successfully attached to your application.`,
-        });
-      } else {
-        throw new Error(result.error ?? "Failed to upload document.");
+      if (!result.success) {
+        throw new Error(result.error ?? `Failed to upload ${type}`);
       }
     } catch (error: any) {
-      console.error("Document Upload Error:", error);
+      console.error(`Error uploading ${type}:`, error);
       toast({
         title: "Upload Failed",
-        description:
-          error.message || "An unexpected error occurred during upload.",
+        description: error.message || `Failed to upload ${type}.`,
         variant: "destructive",
       });
     } finally {
       setUploadingDoc(null);
     }
+  };
+
+  const handleDocumentUpload = async (
+    type: "ID_PROOF" | "LAND_DOCUMENT",
+    file: File,
+  ) => {
+    // This function is now mostly used for immediate upload if an ID exists
+    if (!createdApplicationId) {
+      // If no ID yet, just store in state (this shouldn't be called directly anymore by UI)
+      if (type === "ID_PROOF") setIdProofFile(file);
+      else setLandDocFile(file);
+      return;
+    }
+
+    await uploadDocumentHelper(createdApplicationId, type, file);
   };
 
   // --- UI Components ---
@@ -217,9 +244,11 @@ export default function LandConversionApplicationForm() {
           <AdditionalLandsSection />
 
           <DocumentUploadSection
-            createdApplicationId={createdApplicationId || ""}
+            idProofFile={idProofFile}
+            landDocFile={landDocFile}
+            setIdProofFile={setIdProofFile}
+            setLandDocFile={setLandDocFile}
             uploadingDoc={uploadingDoc}
-            handleDocumentUpload={handleDocumentUpload}
           />
 
           <FormFooter />

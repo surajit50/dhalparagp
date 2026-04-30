@@ -9,16 +9,21 @@ export async function createTubewellLaborRate(data: {
     effectiveFrom?: Date;
     resolutionNumber?: string;
 }) {
-    const rate = await db.tubewellLaborRate.create({
-        data: {
-            ...data,
-            effectiveFrom: data.effectiveFrom || new Date(),
-        }
-    });
-    
-    revalidateTag("tubewell-labor-rates", 'max');
-    revalidatePath("/admindashboard/tubewell/labor-rate", 'page');
-    return rate;
+    try {
+        const rate = await db.tubewellLaborRate.create({
+            data: {
+                ...data,
+                effectiveFrom: data.effectiveFrom || new Date(),
+            }
+        });
+        
+        revalidateTag("tubewell-labor-rates", "max");
+        revalidatePath("/admindashboard/tubewell/labor-rate");
+        return rate;
+    } catch (error) {
+        console.error("Error creating labor rate:", error);
+        throw new Error("Failed to create labor rate");
+    }
 }
 
 export async function updateTubewellLaborRate(
@@ -30,17 +35,27 @@ export async function updateTubewellLaborRate(
         resolutionNumber?: string;
     }
 ) {
-    const updated = await db.tubewellLaborRate.update({ where: { id }, data });
-    revalidateTag("tubewell-labor-rates", 'max');
-    revalidatePath("/admindashboard/tubewell/labor-rate", 'page');
-    return updated;
+    try {
+        const updated = await db.tubewellLaborRate.update({ where: { id }, data });
+        revalidateTag("tubewell-labor-rates", "max");
+        revalidatePath("/admindashboard/tubewell/labor-rate");
+        return updated;
+    } catch (error) {
+        console.error("Error updating labor rate:", error);
+        throw new Error("Failed to update labor rate");
+    }
 }
 
 export async function deleteTubewellLaborRate(id: string) {
-    const deleted = await db.tubewellLaborRate.delete({ where: { id } });
-    revalidateTag("tubewell-labor-rates", 'max');
-    revalidatePath("/admindashboard/tubewell/labor-rate", 'page');
-    return deleted;
+    try {
+        const deleted = await db.tubewellLaborRate.delete({ where: { id } });
+        revalidateTag("tubewell-labor-rates", "max");
+        revalidatePath("/admindashboard/tubewell/labor-rate");
+        return deleted;
+    } catch (error) {
+        console.error("Error deleting labor rate:", error);
+        throw new Error("Failed to delete labor rate");
+    }
 }
 
 export const getTubewellLaborRates = unstable_cache(

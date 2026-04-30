@@ -74,10 +74,17 @@ export const publicUserMenuItems: MenuItemProps[] = [
       createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/warish/apply`, FaChevronCircleRight, COLORS.yellow),
       createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/warish/status`, FaChevronCircleRight, COLORS.blue),
     ]),
-    createMenuItem("Land Conversion NOC", ["user", "citizen"], `${BASE_URLS.user}/land-conversion/application`, FaRegFileAlt, COLORS.green),
+    createMenuItem("Land Conversion NOC", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.green, [
+      createMenuItem("Apply for NOC", ["user", "citizen"], `${BASE_URLS.user}/land-conversion/apply`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/land-conversion/status`, FaChevronCircleRight, COLORS.blue),
+    ]),
     createMenuItem("Linkage Certificate", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.blue, [
       createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/linkage/apply`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/linkage/status`, FaChevronCircleRight, COLORS.teal),
+    ]),
+    createMenuItem("Puja NOC", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.orange, [
+      createMenuItem("Apply for NOC", ["user", "citizen"], `${BASE_URLS.user}/puja-noc/apply`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/puja-noc/status`, FaChevronCircleRight, COLORS.blue),
     ]),
     createMenuItem("Bulk Processing", ["user", "citizen"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
     createMenuItem("Issuance Reports", ["user", "citizen"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
@@ -186,6 +193,13 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Type-wise Distribution", ["admin"], `${baseUrl}/analytics/certificates/types`, FaChevronCircleRight, COLORS.purple),
     createMenuItem("Revenue Analysis", ["admin"], `${baseUrl}/analytics/certificates/revenue`, FaChevronCircleRight, COLORS.orange),
   ]),
+  createMenuItem("Puja/Festival NOC", ["admin"], undefined, FaRegFileAlt, COLORS.orange, [
+    createMenuItem("Verify & Approve", ["admin"], `${baseUrl}/verify/puja-noc`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("NOC Dashboard", ["admin"], `${baseUrl}/generate/puja-noc?tab=dashboard`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Generate New NOC", ["admin"], `${baseUrl}/generate/puja-noc?tab=form`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Issued NOC Records", ["admin"], `${baseUrl}/generate/puja-noc?tab=history`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Settings", ["admin"], `${baseUrl}/generate/puja-noc?tab=settings`, FaChevronCircleRight, COLORS.purple),
+  ]),
 ];
 
 // Extract APA reports structure
@@ -247,7 +261,6 @@ const documentGenerationItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Award of Contract", ["admin"], `${baseUrl}/generate/generateAOC`, FaChevronCircleRight, COLORS.orange),
   ]),
   createMenuItem("Document Covers", ["admin"], `${baseUrl}/generate/cover-page`, FaRegFileAlt, COLORS.red),
-  createMenuItem("Puja/Festival NOC", ["admin"], `${baseUrl}/generate/puja-noc`, FaRegFileAlt, COLORS.green),
 ];
 
 export const adminMenuItems: MenuItemProps[] = [

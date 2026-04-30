@@ -1321,6 +1321,13 @@ model NocApplication {
   eventCategory NocEventCategory @default(PUJA)
   eventLocation String
 
+  // Geographic details
+  villageId     String?      @db.ObjectId
+  village       VillageInfo? @relation(fields: [villageId], references: [id])
+  policeStation String?
+  postOffice    String?
+  district      String?
+
   startDate          DateTime
   endDate            DateTime
   expectedAttendance Int?
@@ -1334,6 +1341,10 @@ model NocApplication {
   // Reference details when issued
   refNo   String?
   refDate DateTime?
+
+  // Management flags
+  isPrinted Boolean @default(false)
+  remarks   String?
 
   // Relations
   verification NocVerification?
@@ -1490,6 +1501,7 @@ model VillageInfo {
   publicPlaceId                String?             @db.ObjectId
   IndustryInfo                 IndustryInfo?       @relation(fields: [industryInfoId], references: [id])
   industryInfoId               String?             @db.ObjectId
+  nocApplications              NocApplication[]
 
   // Composite unique constraint for lgdcode + year combination
   @@unique([lgdcode, yeardatasId])
@@ -2397,7 +2409,7 @@ model LandConversionCertificate {
   applicationId String                    @unique @db.ObjectId
   application   LandConversionApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
 
-  certificateNo        String   @unique
+  certificateNo        String    @unique
   memoNumber           String
   issueDate            DateTime
   expiryDate           DateTime?
@@ -3694,8 +3706,6 @@ model LinkageApplicationBeneficiary {
   @@index([applicationId])
 }
 
-
-
 model Holiday {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -3705,6 +3715,7 @@ model Holiday {
   @@unique([date, name]) // ✅ allows multiple holidays per day
   @@map("holidays")
 }
+
 model SamabyathiApplication {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   applicationNumber String?  @unique

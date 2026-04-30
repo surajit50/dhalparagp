@@ -1,4 +1,10 @@
-import { CheckCircle, FileText, XCircle, Layers, AlertTriangle } from "lucide-react";
+import {
+  CheckCircle,
+  FileText,
+  XCircle,
+  Layers,
+  AlertTriangle,
+} from "lucide-react";
 import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
 
@@ -24,9 +30,17 @@ export default async function Dashboard() {
   }
 
   try {
-    const statusGroups = await db.warishApplication.groupBy({
+    // Fetch Warish stats
+    const warishGroups = await db.warishApplication.groupBy({
       where: { userId: cuser.id },
       by: ["warishApplicationStatus"],
+      _count: { _all: true },
+    });
+
+    // Fetch Land Conversion stats
+    const lcGroups = await db.landConversionApplication.groupBy({
+      where: { createdById: cuser.id },
+      by: ["status"],
       _count: { _all: true },
     });
 
@@ -36,19 +50,33 @@ export default async function Dashboard() {
       REJECTED: 0,
     };
 
-    statusGroups.forEach(({ warishApplicationStatus, _count }) => {
+    // Aggregate Warish stats
+    warishGroups.forEach(({ warishApplicationStatus, _count }) => {
       const status =
         warishApplicationStatus.toUpperCase() as keyof typeof statusCounts;
-
       if (status in statusCounts) {
-        statusCounts[status] = _count._all;
+        statusCounts[status] += _count._all;
+      }
+    });
+
+    // Aggregate Land Conversion stats
+    lcGroups.forEach(({ status, _count }) => {
+      const s = status.toUpperCase();
+      if (s === "ISSUED" || s === "APPROVED") {
+        statusCounts.APPROVED += _count._all;
+      } else if (
+        s === "REJECTED" ||
+        s === "VERIFICATION_REJECTED" ||
+        s === "INSPECTION_REJECTED"
+      ) {
+        statusCounts.REJECTED += _count._all;
+      } else if (s !== "DRAFT" && s !== "CANCELLED") {
+        statusCounts.SUBMITTED += _count._all;
       }
     });
 
     const totalApplications =
-      statusCounts.APPROVED +
-      statusCounts.SUBMITTED +
-      statusCounts.REJECTED;
+      statusCounts.APPROVED + statusCounts.SUBMITTED + statusCounts.REJECTED;
 
     // Integrated "Total" into the stats array for a cleaner grid layout
     const stats = [
@@ -89,7 +117,6 @@ export default async function Dashboard() {
     return (
       <main className="flex flex-1 flex-col bg-gray-50/50 p-6 sm:p-8">
         <div className="mx-auto w-full max-w-7xl space-y-8">
-          
           {/* Header Section */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -97,7 +124,7 @@ export default async function Dashboard() {
                 Dashboard
               </h1>
               <p className="mt-1 text-sm text-gray-500">
-                Manage and track your Warish applications.
+                Manage and track your service applications.
               </p>
             </div>
 
@@ -137,7 +164,10 @@ export default async function Dashboard() {
                       </p>
                     </div>
                     <div className={`rounded-full p-3 ${stat.iconBg}`}>
-                      <stat.icon className={`h-6 w-6 ${stat.iconColor}`} strokeWidth={2.5} />
+                      <stat.icon
+                        className={`h-6 w-6 ${stat.iconColor}`}
+                        strokeWidth={2.5}
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -151,7 +181,6 @@ export default async function Dashboard() {
               Recent applications list can go here...
             </p>
           </div>
-
         </div>
       </main>
     );
@@ -164,7 +193,9 @@ export default async function Dashboard() {
         <div className="rounded-full bg-red-50 p-4">
           <AlertTriangle className="h-8 w-8 text-red-600" />
         </div>
-        <h2 className="text-xl font-semibold text-gray-800">Something went wrong</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          Something went wrong
+        </h2>
         <p className="text-sm text-gray-500">
           We could not load your dashboard data. Please try refreshing the page.
         </p>

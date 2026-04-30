@@ -34,10 +34,15 @@ export async function createMistri(data: {
   accountNumber?: string;
   ifscCode?: string;
 }) {
-  const newMistri = await db.mistri.create({ data });
-  revalidateTag("mistris", 'max');
-  revalidatePath("/admindashboard/tubewell/mistri", 'page');
-  return newMistri;
+  try {
+    const newMistri = await db.mistri.create({ data });
+    revalidateTag("mistris", "max");
+    revalidatePath("/admindashboard/tubewell/mistri");
+    return newMistri;
+  } catch (error) {
+    console.error("Error creating mistri:", error);
+    throw new Error("Failed to create mistri");
+  }
 }
 
 export async function updateMistri(
@@ -52,10 +57,15 @@ export async function updateMistri(
     ifscCode?: string;
   }
 ) {
-  const updated = await db.mistri.update({ where: { id }, data });
-  revalidateTag("mistris", 'max');
-  revalidatePath("/admindashboard/tubewell/mistri", 'page');
-  return updated;
+  try {
+    const updated = await db.mistri.update({ where: { id }, data });
+    revalidateTag("mistris", "max");
+    revalidatePath("/admindashboard/tubewell/mistri");
+    return updated;
+  } catch (error) {
+    console.error("Error updating mistri:", error);
+    throw new Error("Failed to update mistri");
+  }
 }
 
 export const getMistris = unstable_cache(
@@ -79,34 +89,44 @@ export async function createTubewellMaterial(data: {
   rate: number;
   stock?: number;
 }) {
-  const material = await db.tubewellMaterial.create({
-    data: {
-      ...data,
-      stockLogs: data.stock
-        ? {
-            create: {
-              transactionType: "IN",
-              quantity: data.stock,
-              rate: data.rate,
-              remarks: "Initial Stock",
-            },
-          }
-        : undefined,
-    },
-  });
-  revalidateTag("materials", 'max');
-  revalidatePath("/admindashboard/tubewell/materials", 'page');
-  return material;
+  try {
+    const material = await db.tubewellMaterial.create({
+      data: {
+        ...data,
+        stockLogs: data.stock
+          ? {
+              create: {
+                transactionType: "IN",
+                quantity: data.stock,
+                rate: data.rate,
+                remarks: "Initial Stock",
+              },
+            }
+          : undefined,
+      },
+    });
+    revalidateTag("materials", "max");
+    revalidatePath("/admindashboard/tubewell/materials");
+    return material;
+  } catch (error) {
+    console.error("Error creating material:", error);
+    throw new Error("Failed to create material");
+  }
 }
 
 export async function updateTubewellMaterial(
   id: string,
   data: { name: string; bengaliName?: string; unit: string; rate: number; isActive?: boolean }
 ) {
-  const updated = await db.tubewellMaterial.update({ where: { id }, data });
-  revalidateTag("materials", 'max');
-  revalidatePath("/admindashboard/tubewell/materials", 'page');
-  return updated;
+  try {
+    const updated = await db.tubewellMaterial.update({ where: { id }, data });
+    revalidateTag("materials", "max");
+    revalidatePath("/admindashboard/tubewell/materials");
+    return updated;
+  } catch (error) {
+    console.error("Error updating material:", error);
+    throw new Error("Failed to update material");
+  }
 }
 
 export async function addStockToMaterial(
@@ -115,19 +135,23 @@ export async function addStockToMaterial(
   rate: number,
   remarks: string
 ) {
-  // Single update merges stock increment + log creation — one round-trip
-  const updatedMaterial = await db.tubewellMaterial.update({
-    where: { id: materialId },
-    data: {
-      stock: { increment: quantity },
-      stockLogs: {
-        create: { transactionType: "IN", quantity, rate, remarks },
+  try {
+    const updatedMaterial = await db.tubewellMaterial.update({
+      where: { id: materialId },
+      data: {
+        stock: { increment: quantity },
+        stockLogs: {
+          create: { transactionType: "IN", quantity, rate, remarks },
+        },
       },
-    },
-  });
-  revalidateTag("materials", 'max');
-  revalidatePath("/admindashboard/tubewell/materials", 'page');
-  return updatedMaterial;
+    });
+    revalidateTag("materials", "max");
+    revalidatePath("/admindashboard/tubewell/materials");
+    return updatedMaterial;
+  } catch (error) {
+    console.error("Error adding stock:", error);
+    throw new Error("Failed to add stock");
+  }
 }
 
 export async function getTubewellMaterials() {
@@ -149,10 +173,6 @@ export async function getStockLogs(materialId?: string) {
 // REPAIR REQUEST ACTIONS
 // ==========================================
 
-// ==========================================
-// REPAIR REQUEST ACTIONS (FIXED)
-// ==========================================
-
 export async function submitRepairRequest(data: {
   citizenName: string;
   mobileNumber?: string;
@@ -160,43 +180,52 @@ export async function submitRepairRequest(data: {
   problemDetails?: string;
   mouza: string;
 }) {
-  const request = await db.tubewellRepairRequest.create({ data });
-
-  // ✅ Correct revalidation
-  revalidateTag("repair-requests", 'max');
-  revalidatePath("/admindashboard/tubewell/requests");
-
-  return request;
+  try {
+    const request = await db.tubewellRepairRequest.create({ data });
+    revalidateTag("repair-requests", "max");
+    revalidatePath("/admindashboard/tubewell/requests");
+    return request;
+  } catch (error) {
+    console.error("Error submitting repair request:", error);
+    throw new Error("Failed to submit request");
+  }
 }
 
 export async function updateRepairRequestStatus(
   id: string,
   status: "PENDING" | "APPROVED" | "WORK_ORDER_ISSUED" | "COMPLETED" | "REJECTED"
 ) {
-  const updated = await db.tubewellRepairRequest.update({
-    where: { id },
-    data: { status },
-  });
-
-  // ✅ Correct revalidation
-  revalidateTag("repair-requests", 'max' );
-  revalidatePath("/admindashboard/tubewell/requests");
-
-  return updated;
+  try {
+    const updated = await db.tubewellRepairRequest.update({
+      where: { id },
+      data: { status },
+    });
+    revalidateTag("repair-requests", "max");
+    revalidatePath("/admindashboard/tubewell/requests");
+    return updated;
+  } catch (error) {
+    console.error("Error updating request status:", error);
+    throw new Error("Failed to update status");
+  }
 }
 
-// ✅ FIXED: removed wrong filter (THIS WAS YOUR MAIN BUG)
 export const getRepairRequests = unstable_cache(
   async () =>
     db.tubewellRepairRequest.findMany({
-      where: {
-        status: "APPROVED",
-      },
       orderBy: { createdAt: "desc" },
     }),
   ["repair-requests"],
   { tags: ["repair-requests"] }
 );
+
+export async function getApprovedRepairRequests() {
+  return db.tubewellRepairRequest.findMany({
+    where: {
+      status: "APPROVED",
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
 
 
 // ==========================================
@@ -287,11 +316,10 @@ export async function createWorkOrder(data: {
   );
 
   // Revalidate outside transaction
-  revalidateTag("materials", 'max');
-  revalidateTag("repair-requests", 'max');
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  revalidatePath("/admindashboard/tubewell/work-orders/create", 'page');
-  revalidatePath("/admindashboard/tubewell/requests", 'page');
+  revalidateTag("materials", "max");
+  revalidateTag("repair-requests", "max");
+  revalidatePath("/admindashboard/tubewell/work-orders");
+  revalidatePath("/admindashboard/tubewell/requests");
 
   return order;
 }
@@ -301,137 +329,150 @@ export async function addMaterialToWorkOrder(
   materialId: string,
   quantity: number
 ) {
-  // Fetch material + work order in parallel — one fewer sequential round-trip
-  const [material, order] = await Promise.all([
-    db.tubewellMaterial.findUnique({ where: { id: materialId } }),
-    db.tubewellWorkOrder.findUnique({ where: { id: workOrderId }, select: { id: true, orderNumber: true } }),
-  ]);
+  try {
+    const [material, order] = await Promise.all([
+      db.tubewellMaterial.findUnique({ where: { id: materialId } }),
+      db.tubewellWorkOrder.findUnique({ where: { id: workOrderId }, select: { id: true, orderNumber: true } }),
+    ]);
 
-  if (!material) throw new Error("Material not found");
-  if (!order) throw new Error("Work order not found");
-  if (material.stock < quantity) throw new Error(`Not enough stock. Only ${material.stock} left.`);
+    if (!material) throw new Error("Material not found");
+    if (!order) throw new Error("Work order not found");
+    if (material.stock < quantity) throw new Error(`Not enough stock. Only ${material.stock} left.`);
 
-  const result = await db.$transaction(async (tx) => {
-    const orderMaterial = await tx.tubewellOrderMaterial.create({
-      data: { workOrderId, materialId, quantity, rate: material.rate },
-    });
+    const result = await db.$transaction(async (tx) => {
+      const orderMaterial = await tx.tubewellOrderMaterial.create({
+        data: { workOrderId, materialId, quantity, rate: material.rate },
+      });
 
-    // Merge stock decrement + log into a single update
-    await tx.tubewellMaterial.update({
-      where: { id: materialId },
-      data: {
-        stock: { decrement: quantity },
-        stockLogs: {
-          create: {
-            transactionType: "OUT",
-            quantity,
-            rate: material.rate,
-            remarks: `Issued for Work Order ${order.orderNumber}`,
-            referenceId: order.id,
-          },
-        },
-      },
-    });
-
-    return orderMaterial;
-  });
-
-  revalidateTag("materials", 'max');
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  revalidatePath("/admindashboard/tubewell/materials", 'page');
-  return result;
-}
-
-export async function removeMaterialFromWorkOrder(orderMaterialId: string) {
-  const orderMaterial = await db.tubewellOrderMaterial.findUnique({
-    where: { id: orderMaterialId },
-    include: { workOrder: { select: { id: true, orderNumber: true } } },
-  });
-
-  if (!orderMaterial) throw new Error("Order material not found");
-
-  await db.$transaction(
-    async (tx) => {
-      // Merge stock restore + log into a single update, then delete
       await tx.tubewellMaterial.update({
-        where: { id: orderMaterial.materialId },
+        where: { id: materialId },
         data: {
-          stock: { increment: orderMaterial.quantity },
+          stock: { decrement: quantity },
           stockLogs: {
             create: {
-              transactionType: "IN",
-              quantity: orderMaterial.quantity,
-              rate: orderMaterial.rate,
-              remarks: `Restored from Work Order ${orderMaterial.workOrder.orderNumber}`,
-              referenceId: orderMaterial.workOrderId,
+              transactionType: "OUT",
+              quantity,
+              rate: material.rate,
+              remarks: `Issued for Work Order ${order.orderNumber}`,
+              referenceId: order.id,
             },
           },
         },
       });
 
-      await tx.tubewellOrderMaterial.delete({ where: { id: orderMaterialId } });
-    },
-    { timeout: 15000 }
-  );
+      return orderMaterial;
+    });
 
-  revalidateTag("materials", 'max');
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  return true;
+    revalidateTag("materials", "max");
+    revalidatePath("/admindashboard/tubewell/work-orders");
+    revalidatePath("/admindashboard/tubewell/materials");
+    return result;
+  } catch (error: any) {
+    console.error("Error adding material to work order:", error);
+    throw new Error(error.message || "Failed to add material");
+  }
+}
+
+export async function removeMaterialFromWorkOrder(orderMaterialId: string) {
+  try {
+    const orderMaterial = await db.tubewellOrderMaterial.findUnique({
+      where: { id: orderMaterialId },
+      include: { workOrder: { select: { id: true, orderNumber: true } } },
+    });
+
+    if (!orderMaterial) throw new Error("Order material not found");
+
+    await db.$transaction(
+      async (tx) => {
+        await tx.tubewellMaterial.update({
+          where: { id: orderMaterial.materialId },
+          data: {
+            stock: { increment: orderMaterial.quantity },
+            stockLogs: {
+              create: {
+                transactionType: "IN",
+                quantity: orderMaterial.quantity,
+                rate: orderMaterial.rate,
+                remarks: `Restored from Work Order ${orderMaterial.workOrder.orderNumber}`,
+                referenceId: orderMaterial.workOrderId,
+              },
+            },
+          },
+        });
+
+        await tx.tubewellOrderMaterial.delete({ where: { id: orderMaterialId } });
+      },
+      { timeout: 15000 }
+    );
+
+    revalidateTag("materials", "max");
+    revalidateTag("work-orders", "max");
+    revalidateTag("repair-requests", "max");
+    revalidatePath("/admindashboard/tubewell/work-orders");
+    return true;
+  } catch (error: any) {
+    console.error("Error removing material from work order:", error);
+    throw new Error(error.message || "Failed to remove material");
+  }
 }
 
 export async function deleteWorkOrder(id: string) {
-  const workOrder = await db.tubewellWorkOrder.findUnique({
-    where: { id },
-    include: { materials: true },
-  });
+  try {
+    const workOrder = await db.tubewellWorkOrder.findUnique({
+      where: { id },
+      include: { materials: true },
+    });
 
-  if (!workOrder) throw new Error("Work order not found");
+    if (!workOrder) throw new Error("Work order not found");
 
-  await db.$transaction(
-    async (tx) => {
-      // Parallel: restore stock + create logs for all materials simultaneously
-      await Promise.all(
-        workOrder.materials.map((m) =>
-          tx.tubewellMaterial.update({
-            where: { id: m.materialId },
-            data: {
-              stock: { increment: m.quantity },
-              stockLogs: {
-                create: {
-                  transactionType: "IN",
-                  quantity: m.quantity,
-                  rate: m.rate,
-                  remarks: `Stock restored from deleted Work Order ${workOrder.orderNumber}`,
-                  referenceId: workOrder.id,
+    await db.$transaction(
+      async (tx) => {
+        await Promise.all(
+          workOrder.materials.map((m) =>
+            tx.tubewellMaterial.update({
+              where: { id: m.materialId },
+              data: {
+                stock: { increment: m.quantity },
+                stockLogs: {
+                  create: {
+                    transactionType: "IN",
+                    quantity: m.quantity,
+                    rate: m.rate,
+                    remarks: `Stock restored from deleted Work Order ${workOrder.orderNumber}`,
+                    referenceId: workOrder.id,
+                  },
                 },
               },
-            },
-          })
-        )
-      );
-
-      // Delete order materials + optionally reset request status in parallel
-      await Promise.all([
-        tx.tubewellOrderMaterial.deleteMany({ where: { workOrderId: id } }),
-        workOrder.requestId
-          ? tx.tubewellRepairRequest.update({
-              where: { id: workOrder.requestId },
-              data: { status: "APPROVED" },
             })
-          : Promise.resolve(),
-      ]);
+          )
+        );
 
-      await tx.tubewellWorkOrder.delete({ where: { id } });
-    },
-    { timeout: 20000 }
-  );
+        await Promise.all([
+          tx.tubewellOrderMaterial.deleteMany({ where: { workOrderId: id } }),
+          workOrder.requestId
+            ? tx.tubewellRepairRequest.update({
+                where: { id: workOrder.requestId },
+                data: { status: "APPROVED" },
+              })
+            : Promise.resolve(),
+        ]);
 
-  revalidateTag("materials", 'max');
-  revalidateTag("work-orders", 'max');
-  revalidateTag("repair-requests", 'max');
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  revalidatePath("/admindashboard/tubewell/requests", 'page');
+        await tx.tubewellWorkOrder.delete({ where: { id } });
+      },
+      { timeout: 20000 }
+    );
+
+    revalidateTag("materials", "max");
+  revalidateTag("work-orders", "max");
+  revalidateTag("repair-requests", "max");
+  revalidatePath("/admindashboard/tubewell/work-orders");
+  revalidatePath("/admindashboard/tubewell/materials");
+  revalidatePath("/admindashboard/tubewell/requests");
   return true;
+  } catch (error: any) {
+    console.error("Error deleting work order:", error);
+    throw new Error(error.message || "Failed to delete work order");
+  }
 }
 
 export async function updateWorkOrderStatus(
@@ -443,47 +484,50 @@ export async function updateWorkOrderStatus(
     items: { workType: string; quantity: number }[];
   }
 ) {
-  const data: Record<string, unknown> = { status };
+  try {
+    const data: Record<string, unknown> = { status };
 
-  if (status === "COMPLETED") {
-    data.completionDate = new Date();
+    if (status === "COMPLETED") {
+      data.completionDate = new Date();
 
-    if (masterRollData) {
-      // Fetch rates first, then create master roll entry + update status in parallel
-      const activeRates = await getActiveTubewellLaborRates();
+      if (masterRollData) {
+        const activeRates = await getActiveTubewellLaborRates();
 
-      let total = 0;
-      const itemsToCreate = masterRollData.items.map((item) => {
-        const rate = activeRates[item.workType] ?? 0;
-        const itemTotal = item.quantity * rate;
-        total += itemTotal;
-        return { workType: item.workType, quantity: item.quantity, rate, total: itemTotal };
-      });
+        let total = 0;
+        const itemsToCreate = masterRollData.items.map((item) => {
+          const rate = activeRates[item.workType] ?? 0;
+          const itemTotal = item.quantity * rate;
+          total += itemTotal;
+          return { workType: item.workType, quantity: item.quantity, rate, total: itemTotal };
+        });
 
-      // Run master roll creation + work order status update in parallel
-      const [, updated] = await Promise.all([
-        db.tubewellMasterRollEntry.create({
-          data: {
-            workOrderId: id,
-            nameOfPlace: masterRollData.nameOfPlace,
-            villageSansad: masterRollData.villageSansad,
-            total,
-            items: { create: itemsToCreate },
-          },
-        }),
-        db.tubewellWorkOrder.update({ where: { id }, data }),
-      ]);
+        const [, updated] = await Promise.all([
+          db.tubewellMasterRollEntry.create({
+            data: {
+              workOrderId: id,
+              nameOfPlace: masterRollData.nameOfPlace,
+              villageSansad: masterRollData.villageSansad,
+              total,
+              items: { create: itemsToCreate },
+            },
+          }),
+          db.tubewellWorkOrder.update({ where: { id }, data }),
+        ]);
 
-      revalidateTag("work-orders", 'max');
-      revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-      return updated;
+        revalidateTag("work-orders", "max");
+        revalidatePath("/admindashboard/tubewell/work-orders");
+        return updated;
+      }
     }
-  }
 
-  const updated = await db.tubewellWorkOrder.update({ where: { id }, data });
-  revalidateTag("work-orders", 'max');
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  return updated;
+    const updated = await db.tubewellWorkOrder.update({ where: { id }, data });
+    revalidateTag("work-orders", "max");
+    revalidatePath("/admindashboard/tubewell/work-orders");
+    return updated;
+  } catch (error: any) {
+    console.error("Error updating work order status:", error);
+    throw new Error(error.message || "Failed to update status");
+  }
 }
 
 export const getWorkOrders = unstable_cache(
@@ -544,9 +588,8 @@ export async function generateBill(workOrderIds: string | string[]) {
     },
   });
 
-  revalidateTag("bills", 'max');
-  revalidatePath("/admindashboard/tubewell/bills", 'page');
-  revalidatePath("/admindashboard/tubewell/bills/create", 'page');
+  revalidateTag("bills", "max");
+  revalidatePath("/admindashboard/tubewell/bills");
   return result;
 }
 
@@ -600,15 +643,15 @@ export async function addMasterRollEntry(
     },
   });
 
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  revalidatePath(`/admindashboard/tubewell/work-orders/${workOrderId}`, 'page');
+  revalidatePath("/admindashboard/tubewell/work-orders");
+  revalidatePath(`/admindashboard/tubewell/work-orders/${workOrderId}`);
   return entry;
 }
 
 export async function removeMasterRollEntry(id: string, workOrderId: string) {
   await db.tubewellMasterRollEntry.delete({ where: { id } });
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  revalidatePath(`/admindashboard/tubewell/work-orders/${workOrderId}`, 'page');
+  revalidatePath("/admindashboard/tubewell/work-orders");
+  revalidatePath(`/admindashboard/tubewell/work-orders/${workOrderId}`);
   return true;
 }
 
@@ -757,9 +800,9 @@ export async function adjustWorkOrderStock(
     { timeout: 20000 }
   );
 
-  revalidateTag("materials", 'max');
-  revalidateTag("work-orders", 'max');
-  revalidatePath("/admindashboard/tubewell/work-orders", 'page');
-  revalidatePath("/admindashboard/tubewell/materials", 'page');
+  revalidateTag("materials", "work-orders");
+  revalidateTag("work-orders", "materials");
+  revalidatePath("/admindashboard/tubewell/work-orders");
+  revalidatePath("/admindashboard/tubewell/materials");
   return true;
 }

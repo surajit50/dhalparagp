@@ -1,6 +1,6 @@
 // app/(protected)/admindashboard/tubewell/work-orders/create/page.tsx
 import {
-  getRepairRequests,
+  getApprovedRepairRequests,
   getMistris,
   getTubewellMaterials,
 } from "@/action/tubewell";
@@ -16,7 +16,7 @@ const Page = async ({ searchParams }: PageProps) => {
 
   // Fetch all necessary data in parallel
   const [requests, mistris, materials] = await Promise.all([
-    getRepairRequests(),
+    getApprovedRepairRequests(),
     getMistris(),
     getTubewellMaterials(),
   ]);

@@ -220,6 +220,33 @@ export async function createLandConversionApplication(
   }
 }
 
+export async function getUserLandConversionApplications(userId: string): Promise<ActionResult<LandConversionApplication[]>> {
+  try {
+    const applications = await db.landConversionApplication.findMany({
+      where: {
+        createdById: userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        certificate: true,
+      }
+    })
+
+    return {
+      success: true,
+      data: applications,
+    }
+  } catch (error) {
+    console.error("Error fetching user land conversion applications:", error)
+    return {
+      success: false,
+      error: "Failed to fetch applications",
+    }
+  }
+}
+
 export async function uploadLandConversionDocument(
   formData: FormData,
 ): Promise<ActionResult> {
