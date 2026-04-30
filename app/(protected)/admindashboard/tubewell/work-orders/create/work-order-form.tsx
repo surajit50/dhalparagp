@@ -15,6 +15,7 @@ import {
 import { ArrowLeft, Trash2, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "../../_components/page-header";
+import FullPageLoader from "@/components/FullPageLoader";
 
 type MaterialItem = {
   materialId: string;
@@ -37,6 +38,7 @@ export default function WorkOrderForm({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [progress, setProgress] = useState(0);
 
   const [reqId, setReqId] = useState(initialReqId || "");
   const [mistriId, setMistriId] = useState("");
@@ -95,8 +97,10 @@ export default function WorkOrderForm({
     if (!mistriId) return toast.error("Select mistri");
     if (items.length === 0) return toast.error("Select materials");
 
+    setProgress(0);
     startTransition(async () => {
       try {
+        setProgress(30);
         await createWorkOrder({
           requestId: reqId || undefined,
           mistriId,
@@ -106,17 +110,26 @@ export default function WorkOrderForm({
             rate: i.rate,
           })),
         });
+        setProgress(100);
 
         toast.success("Work Order Issued Successfully");
         router.push("/admindashboard/tubewell/work-orders");
       } catch (e: any) {
         toast.error(e.message);
+      } finally {
+        setProgress(0);
       }
     });
   };
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
+      <FullPageLoader
+        isLoading={isPending}
+        progress={progress}
+        title="Issuing Work Order"
+        description="Please wait while we issue the work order and update inventory."
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-24">
         <PageHeader
           title="Issue Work Order"

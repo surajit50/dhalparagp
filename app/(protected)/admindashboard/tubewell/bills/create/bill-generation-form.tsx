@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition, useMemo } from "react";
+import { useTransition, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { generateBill } from "@/action/tubewell";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { PageHeader } from "../../_components/page-header";
+import FullPageLoader from "@/components/FullPageLoader";
 
 const billSchema = z.object({
   mistriId: z.string().min(1, "Please select a mistri"),
@@ -56,6 +57,7 @@ export default function BillGenerationForm({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [progress, setProgress] = useState(0);
 
   const initialMistriId = useMemo(() => {
     if (!initialOrderId) return "";
@@ -84,9 +86,12 @@ export default function BillGenerationForm({
   }, [selectedOrderIds, workOrders]);
 
   const onSubmit = (data: BillFormValues) => {
+    setProgress(0);
     startTransition(async () => {
       try {
+        setProgress(30);
         await generateBill(data.orderIds);
+        setProgress(100);
 
         toast.success(
           `${data.orderIds.length} Work Order(s) billed successfully!`,
@@ -94,6 +99,8 @@ export default function BillGenerationForm({
         router.push("/admindashboard/tubewell/bills");
       } catch (error: any) {
         toast.error(error.message || "Failed to generate bill.");
+      } finally {
+        setProgress(0);
       }
     });
   };
@@ -136,6 +143,12 @@ export default function BillGenerationForm({
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
+      <FullPageLoader
+        isLoading={isPending}
+        progress={progress}
+        title="Generating Bills"
+        description="Please wait while we generate the bills for the selected work orders."
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-24">
         <PageHeader
           title="Batch Generate Bills"
