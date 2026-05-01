@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
+
 import {
   Form,
   FormControl,
@@ -13,31 +14,64 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
 import { applyPujaNOC } from "@/action/puja-noc-actions";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+
 import ErrorForm from "@/components/ErrorForm";
 import SuccessForm from "@/components/SuccessForm";
+import { User, Calendar, Settings } from "lucide-react";
 
-const formSchema = z.z.object({
-  applicantName: z.string().min(2, "Applicant name is required"),
-  applicantPhone: z.string().min(10, "Valid phone number is required"),
+
+// ✅ Updated Schema
+const formSchema = z.object({
+  applicantName: z.string().min(2),
+  applicantPhone: z.string().min(10),
   applicantEmail: z.string().email().optional().or(z.literal("")),
-  applicantAddress: z.string().min(5, "Address is required"),
-  organizerName: z.string().min(2, "Organizer/Club name is required"),
-  organizerType: z.string().optional(),
-  eventName: z.string().min(2, "Event/Puja name is required"),
-  eventLocation: z.string().min(5, "Event location is required"),
-  startDate: z.string().min(1, "Start date is required"),
-  endDate: z.string().min(1, "End date is required"),
+  applicantAddress: z.string().min(5),
+
+  organizerName: z.string().min(2),
+
+  eventName: z.enum([
+    "Durga Puja",
+    "Kali Puja",
+    "Saraswati Puja",
+    "Jagaddhatri Puja",
+    "Ganesh Puja",
+    "Other",
+  ]),
+
+  customEventName: z.string().optional(),
+
+  eventLocation: z.string().min(5),
+  startDate: z.string().min(1),
+  endDate: z.string().min(1),
+
   expectedAttendance: z.coerce.number().optional(),
+
   loudspeakerRequired: z.boolean().default(false),
   electricityRequired: z.boolean().default(false),
   roadClosureRequired: z.boolean().default(false),
+
   additionalRequirements: z.string().optional(),
 });
 
@@ -49,11 +83,10 @@ export default function PujaNocForm({ userId }: { userId: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      applicantEmail: "",
       loudspeakerRequired: false,
       electricityRequired: false,
       roadClosureRequired: false,
-      applicantEmail: "",
-      organizerType: "Club",
     },
   });
 
@@ -61,9 +94,16 @@ export default function PujaNocForm({ userId }: { userId: string }) {
     setError("");
     setSuccess("");
 
+    // 👉 Handle "Other" case
+    const finalEventName =
+      values.eventName === "Other"
+        ? values.customEventName
+        : values.eventName;
+
     startTransition(async () => {
       const result = await applyPujaNOC({
         ...values,
+        eventName: finalEventName,
         userId,
       });
 
@@ -79,125 +119,185 @@ export default function PujaNocForm({ userId }: { userId: string }) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <Card className="border-none shadow-none">
-          <CardContent className="p-0 space-y-6">
-            <ErrorForm message={error} />
-            <SuccessForm message={success} />
-            <div>
-              <h3 className="text-lg font-medium mb-4">
-                Applicant Information
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="min-h-screen bg-muted/40 p-4">
+      <div className="max-w-5xl mx-auto space-y-6">
+
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-semibold">Puja NOC Application</h1>
+          <p className="text-muted-foreground text-sm">
+            Submit your request for organizing a puja/event
+          </p>
+        </div>
+
+        <ErrorForm message={error} />
+        <SuccessForm message={success} />
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+
+            {/* Applicant Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User size={18} /> Applicant Information
+                </CardTitle>
+                <CardDescription>Enter applicant details</CardDescription>
+              </CardHeader>
+
+              <CardContent className="grid md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="applicantName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Applicant Name</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter full name" {...field} />
+                        <Input className="rounded-lg" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="applicantPhone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter mobile number" {...field} />
+                        <Input className="rounded-lg" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="applicantEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email (Optional)</FormLabel>
+                      <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter email address" {...field} />
+                        <Input className="rounded-lg" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="applicantAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Applicant Address</FormLabel>
+                      <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter permanent address"
-                          {...field}
-                        />
+                        <Input className="rounded-lg" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            <Separator />
+            {/* Event Details */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar size={18} /> Event Details
+                </CardTitle>
+                <CardDescription>Provide event information</CardDescription>
+              </CardHeader>
 
-            <div>
-              <h3 className="text-lg font-medium mb-4">Event Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent className="grid md:grid-cols-2 gap-4">
+
+                {/* ✅ Event Select */}
                 <FormField
                   control={form.control}
                   name="eventName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Puja / Event Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g. Durga Puja 2024" {...field} />
-                      </FormControl>
+                      <FormLabel>Select Puja/Event</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="rounded-lg">
+                            <SelectValue placeholder="Choose event" />
+                          </SelectTrigger>
+                        </FormControl>
+
+                        <SelectContent>
+                          <SelectItem value="Durga Puja">Durga Puja</SelectItem>
+                          <SelectItem value="Kali Puja">Kali Puja</SelectItem>
+                          <SelectItem value="Saraswati Puja">
+                            Saraswati Puja
+                          </SelectItem>
+                          <SelectItem value="Jagaddhatri Puja">
+                            Jagaddhatri Puja
+                          </SelectItem>
+                          <SelectItem value="Ganesh Puja">
+                            Ganesh Puja
+                          </SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* Organizer */}
                 <FormField
                   control={form.control}
                   name="organizerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Organizer / Club Name</FormLabel>
+                      <FormLabel>Organizer</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter organization name"
-                          {...field}
-                        />
+                        <Input className="rounded-lg" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                {/* Show when Other */}
+                {form.watch("eventName") === "Other" && (
+                  <FormField
+                    control={form.control}
+                    name="customEventName"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-2">
+                        <FormLabel>Enter Event Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Type event name"
+                            className="rounded-lg"
+                            {...field}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                )}
+
                 <FormField
                   control={form.control}
                   name="eventLocation"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel>Event Location</FormLabel>
+                      <FormLabel>Location</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Enter full address of the venue"
-                          {...field}
-                        />
+                        <Input className="rounded-lg" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="startDate"
@@ -207,10 +307,10 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="endDate"
@@ -220,114 +320,72 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                       <FormControl>
                         <Input type="date" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
+              </CardContent>
+            </Card>
+
+            {/* Requirements */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings size={18} /> Requirements
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  {[
+                    { name: "loudspeakerRequired", label: "Loudspeaker" },
+                    { name: "electricityRequired", label: "Electricity" },
+                    { name: "roadClosureRequired", label: "Road Closure" },
+                  ].map((item) => (
+                    <FormField
+                      key={item.name}
+                      control={form.control}
+                      name={item.name as any}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center gap-3 border rounded-xl p-4 hover:bg-muted transition">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel>{item.label}</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="expectedAttendance"
+                  name="additionalRequirements"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Expected Daily Attendance</FormLabel>
+                      <FormLabel>Additional Notes</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Approximate number"
-                          {...field}
-                        />
+                        <Textarea className="rounded-lg" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            <Separator />
-
-            <div>
-              <h3 className="text-lg font-medium mb-4">
-                Facilities & Requirements
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <FormField
-                  control={form.control}
-                  name="loudspeakerRequired"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Loudspeaker Permission</FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="electricityRequired"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Temporary Electricity</FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="roadClosureRequired"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Road Closure / Diversion</FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="additionalRequirements"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Additional Requirements / Remarks</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Any other specific requirements or information..."
-                        className="resize-none"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isPending}>
+            {/* Submit */}
+            <Button
+              type="submit"
+              className="w-full h-11 rounded-xl"
+              disabled={isPending}
+            >
               {isPending ? "Submitting..." : "Submit Application"}
             </Button>
-          </CardContent>
-        </Card>
-      </form>
-    </Form>
+          </form>
+        </Form>
+      </div>
+    </div>
   );
 }
