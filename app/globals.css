@@ -14,7 +14,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 /* ---------------- BODY ---------------- */
@@ -32,7 +32,7 @@ body {
   aspect-ratio: 1;
   border-radius: 50%;
   padding: 1px;
-  background: conic-gradient(#0000 10%, hsl(var(--primary))) content-box;
+  background: conic-gradient(#0000 10%, #003366) content-box;
   -webkit-mask:
     repeating-conic-gradient(#0000 0deg, #000 1deg 20deg, #0000 21deg 36deg),
     radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
@@ -51,137 +51,136 @@ body {
 
 /* ---------------- SCROLLBAR ---------------- */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: hsl(var(--secondary));
+  background: hsl(210 30% 94%);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground));
-  border-radius: 999px;
+  background: hsl(214 20% 65%);
+  border-radius: 50px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary));
+  background: hsl(214 20% 45%);
 }
 
 /* ---------------- THEME VARIABLES ---------------- */
 @layer utilities {
   :root {
     --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --foreground: 215 25% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 215 25% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 215 25% 15%;
 
-    /* 🔥 Modern Indigo */
-    --primary: 222 89% 55%;
+    /* NIC BLUE */
+    --primary: 214 100% 32%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 222 30% 20%;
+    --secondary: 210 30% 94%;
+    --secondary-foreground: 215 20% 20%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 10% 40%;
 
-    --accent: 222 89% 96%;
-    --accent-foreground: 222 89% 45%;
+    --accent: 214 60% 90%;
+    --accent-foreground: 214 100% 22%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 89% 55%;
+    --border: 214 25% 88%;
+    --input: 214 25% 88%;
+    --ring: 214 100% 32%;
 
-    --radius: 0.5rem;
+    --radius: 0.4rem;
 
-    --chart-1: 222 89% 55%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 280 65% 60%;
-    --chart-4: 340 70% 55%;
-    --chart-5: 30 90% 55%;
+    --chart-1: 214 100% 32%;
+    --chart-2: 200 70% 45%;
+    --chart-3: 260 60% 55%;
+    --chart-4: 340 65% 50%;
+    --chart-5: 30 85% 55%;
   }
 
   .dark {
-    --background: 222 47% 6%;
+    --background: 215 40% 8%;
     --foreground: 210 40% 96%;
 
-    --card: 222 47% 10%;
+    --card: 215 35% 12%;
     --card-foreground: 210 40% 96%;
 
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 96%;
+    --primary: 210 100% 60%;
+    --primary-foreground: 215 40% 10%;
 
-    --primary: 222 89% 65%;
-    --primary-foreground: 222 47% 10%;
-
-    --secondary: 217 33% 17%;
+    --secondary: 215 25% 18%;
     --secondary-foreground: 210 40% 96%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 215 25% 18%;
+    --muted-foreground: 210 20% 70%;
 
-    --accent: 222 50% 20%;
+    --accent: 210 60% 25%;
     --accent-foreground: 210 40% 96%;
 
-    --border: 217 33% 20%;
-    --input: 217 33% 20%;
-    --ring: 222 89% 65%;
+    --border: 215 25% 22%;
+    --input: 215 25% 22%;
+    --ring: 210 100% 60%;
   }
 
   /* ---------------- COMPONENT UTILITIES ---------------- */
   .input-class {
-    @apply rounded-md border bg-white px-3 py-2 text-sm
-           focus:border-primary focus:ring-2 focus:ring-primary/20
-           outline-none transition-all;
+    @apply rounded-md border bg-white px-3 py-2
+           focus:border-primary focus:ring-2 focus:ring-primary/20;
   }
 
   .form-btn {
-    @apply bg-primary text-white rounded-md px-4 py-2 text-sm font-medium
-           hover:bg-primary/90 active:scale-[0.98]
-           shadow-md hover:shadow-lg transition-all;
+    @apply bg-primary text-white rounded-md px-4 py-2
+           hover:opacity-90 shadow-sm transition-all;
   }
 
   .glassmorphism {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-md;
+    @apply bg-white/70 backdrop-blur-md border border-gray-200;
   }
 
   .table-cell {
-    @apply px-4 py-3 text-sm border-b border-border;
+    @apply px-4 py-3 text-sm border-b;
   }
 
   .hover-scale {
-    @apply transition-transform hover:scale-[1.02];
-  }
-
-  .card-ui {
-    @apply bg-white rounded-lg shadow-sm border border-border p-4;
+    @apply transition-transform hover:scale-[1.01];
   }
 }
 
 /* ---------------- TYPOGRAPHY ---------------- */
-h1 { @apply text-2xl font-semibold tracking-tight; }
-h2 { @apply text-xl font-semibold tracking-tight; }
-h3 { @apply text-lg font-medium; }
+h1, h2, h3 {
+  @apply font-semibold tracking-tight;
+}
 
 /* ---------------- DATE PICKER ---------------- */
 .react-datepicker {
-  @apply border border-border rounded-md shadow-lg;
+  @apply border rounded-md shadow-lg;
 }
 
 .react-datepicker__header {
-  @apply bg-secondary border-b border-border rounded-t-md;
+  @apply bg-gray-50 border-b rounded-t-md;
 }
 
 .react-datepicker-popper {
   z-index: 50 !important;
+}
+
+.react-datepicker__time-container {
+  width: 120px;
+}
+
+.react-datepicker__time-box {
+  width: 100% !important;
 }
 
 /* ---------------- PHONE INPUT ---------------- */
@@ -207,7 +206,6 @@ h3 { @apply text-lg font-medium; }
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
-
 .animate-marquee {
   animation: marquee 40s linear infinite;
   padding-right: 100%;
@@ -219,8 +217,8 @@ h3 { @apply text-lg font-medium; }
   66% { transform: translate(-20px,20px) scale(0.9); }
   100% { transform: translate(0,0) scale(1); }
 }
-
 .animate-blob { animation: blob 7s infinite; }
+
 .animation-delay-2000 { animation-delay: 2s; }
 .animation-delay-4000 { animation-delay: 4s; }
 
@@ -228,16 +226,14 @@ h3 { @apply text-lg font-medium; }
   0%,100% { opacity: 1; }
   50% { opacity: 0.7; }
 }
-
 .animate-pulse-subtle {
-  animation: pulse-subtle 2s ease-in-out infinite;
+  animation: pulse-subtle 2s cubic-bezier(0.4,0,0.6,1) infinite;
 }
 
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-
 .animate-spin-slow {
   animation: spin-slow 3s linear infinite;
 }
