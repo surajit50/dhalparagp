@@ -42,38 +42,47 @@ import SuccessForm from "@/components/SuccessForm";
 import { User, Calendar, Settings } from "lucide-react";
 
 
-// ✅ Updated Schema
-const formSchema = z.object({
-  applicantName: z.string().min(2),
-  applicantPhone: z.string().min(10),
-  applicantEmail: z.string().email().optional().or(z.literal("")),
-  applicantAddress: z.string().min(5),
+// ✅ FINAL SCHEMA WITH VALIDATION
+const formSchema = z
+  .object({
+    applicantName: z.string().min(2),
+    applicantPhone: z.string().min(10),
+    applicantEmail: z.string().email().optional().or(z.literal("")),
+    applicantAddress: z.string().min(5),
 
-  organizerName: z.string().min(2),
+    organizerName: z.string().min(2),
 
-  eventName: z.enum([
-    "Durga Puja",
-    "Kali Puja",
-    "Saraswati Puja",
-    "Jagaddhatri Puja",
-    "Ganesh Puja",
-    "Other",
-  ]),
+    eventName: z.enum([
+      "Durga Puja",
+      "Kali Puja",
+      "Saraswati Puja",
+      "Jagaddhatri Puja",
+      "Ganesh Puja",
+      "Other",
+    ]),
 
-  customEventName: z.string().optional(),
+    customEventName: z.string().optional(),
 
-  eventLocation: z.string().min(5),
-  startDate: z.string().min(1),
-  endDate: z.string().min(1),
+    eventLocation: z.string().min(5),
+    startDate: z.string().min(1),
+    endDate: z.string().min(1),
 
-  expectedAttendance: z.coerce.number().optional(),
+    expectedAttendance: z.coerce.number().optional(),
 
-  loudspeakerRequired: z.boolean().default(false),
-  electricityRequired: z.boolean().default(false),
-  roadClosureRequired: z.boolean().default(false),
+    loudspeakerRequired: z.boolean().default(false),
+    electricityRequired: z.boolean().default(false),
+    roadClosureRequired: z.boolean().default(false),
 
-  additionalRequirements: z.string().optional(),
-});
+    additionalRequirements: z.string().optional(),
+  })
+  .refine(
+    (data) =>
+      data.eventName !== "Other" || !!data.customEventName?.trim(),
+    {
+      message: "Please enter event name",
+      path: ["customEventName"],
+    }
+  );
 
 export default function PujaNocForm({ userId }: { userId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -94,10 +103,10 @@ export default function PujaNocForm({ userId }: { userId: string }) {
     setError("");
     setSuccess("");
 
-    // 👉 Handle "Other" case
+    // ✅ SAFE (no TS error)
     const finalEventName =
       values.eventName === "Other"
-        ? values.customEventName
+        ? values.customEventName!
         : values.eventName;
 
     startTransition(async () => {
@@ -214,7 +223,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
 
               <CardContent className="grid md:grid-cols-2 gap-4">
 
-                {/* ✅ Event Select */}
+                {/* Event Select */}
                 <FormField
                   control={form.control}
                   name="eventName"
@@ -251,7 +260,6 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                   )}
                 />
 
-                {/* Organizer */}
                 <FormField
                   control={form.control}
                   name="organizerName"
@@ -265,7 +273,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                   )}
                 />
 
-                {/* Show when Other */}
+                {/* Custom Event */}
                 {form.watch("eventName") === "Other" && (
                   <FormField
                     control={form.control}
@@ -280,6 +288,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                             {...field}
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
