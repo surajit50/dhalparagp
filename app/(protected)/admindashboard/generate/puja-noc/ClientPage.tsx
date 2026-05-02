@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { useState, useTransition, useEffect, useMemo } from "react";
+import { useState, useTransition, useEffect, useMemo, useCallback } from "react";
 import React from "react";
 import { useSearchParams } from "next/navigation";
 import { gpname } from "@/constants/gpinfor";
@@ -45,6 +45,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // --- Helper Functions ---
 
@@ -353,6 +360,13 @@ export default function ClientPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // ---------- new state for the Select dropdown ----------
+  const [pujaType, setPujaType] = useState<string>(""); 
+  const [customPujaName, setCustomPujaName] = useState("");
+
+  // derived final puja name: if "Other" is selected, use custom name; otherwise use the selected option
+  const effectivePujaName = pujaType === "Other" ? customPujaName : pujaType;
+
   const [values, setValues] = useState({
     gpName: gpname || "[Name of Gram Panchayat]",
     postOffice: "Trimohini",
@@ -360,38 +374,72 @@ export default function ClientPage() {
     district: "Dakshin Dinajpur",
     refNo: "",
     date: "",
-    pujaName: "",
+    pujaName: "", // will be updated via effect
     location: "",
     organizer: "",
     startDate: "",
     endDate: "",
   });
 
+  // keep form's pujaName in sync with derived name
+  useEffect(() => {
+    setValues((prev) => ({ ...prev, pujaName: effectivePujaName }));
+  }, [effectivePujaName]);
+
+  // when loading history record into form, we need to set pujaType & customName accordingly
+  const loadHistoryIntoForm = useCallback(
+    (item: any) => {
+      const presetList = [
+        "Durga Puja", "Kali Puja", "Saraswati Puja", "Jagaddhatri Puja",
+        "Ganesh Puja", "Eid-ul-Fitr", "Muharram", "Christmas"
+      ];
+      const eventName = item.eventName;
+      if (presetList.includes(eventName)) {
+        setPujaType(eventName);
+        setCustomPujaName("");
+      } else {
+        setPujaType("Other");
+        setCustomPujaName(eventName);
+      }
+
+      setValues((prev) => ({
+        ...prev,
+        refNo: item.refNo,
+        date: new Date(item.refDate).toISOString().split("T")[0],
+        location: item.eventLocation,
+        organizer: item.organizerName,
+        startDate: new Date(item.startDate).toISOString().split("T")[0],
+        endDate: new Date(item.endDate).toISOString().split("T")[0],
+      }));
+    },
+    []
+  );
+
   const [isPending, startTransition] = useTransition();
 
-  const handleDownload = () => {
+  const handleDownload = useCallback(() => {
     generatePujaNocPdf(values);
-  };
+  }, [values]);
 
   // Load history
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     setIsLoadingHistory(true);
     const res = await getPujaNOCs();
     if (res.success) {
       setHistory(res.data || []);
     }
     setIsLoadingHistory(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (activeTab === "history" || activeTab === "dashboard") {
       fetchHistory();
     }
-  }, [activeTab]);
+  }, [activeTab, fetchHistory]);
 
-  const handleGenerate = () => {
+  const handleGenerate = useCallback(() => {
     if (
-      !values.pujaName ||
+      !effectivePujaName ||
       !values.location ||
       !values.organizer ||
       !values.startDate ||
@@ -403,7 +451,7 @@ export default function ClientPage() {
 
     startTransition(async () => {
       const res = await generatePujaNOC({
-        pujaName: values.pujaName,
+        pujaName: effectivePujaName,
         location: values.location,
         organizer: values.organizer,
         startDate: values.startDate,
@@ -422,7 +470,7 @@ export default function ClientPage() {
         toast.error(res.message || "Something went wrong");
       }
     });
-  };
+  }, [effectivePujaName, values.location, values.organizer, values.startDate, values.endDate]);
 
   const filteredHistory = useMemo(() => {
     return history.filter(
@@ -712,20 +760,54 @@ export default function ClientPage() {
                     <Users className="h-4 w-4" /> Organizer & Event
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* ---------- Select - Dropdown for Puja Name ---------- */}
                     <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="pujaName">
+                      <Label htmlFor="pujaSelect">
                         Name of Puja/Festival{" "}
                         <span className="text-red-500">*</span>
                       </Label>
-                      <Input
-                        id="pujaName"
-                        value={values.pujaName}
-                        onChange={(e) =>
-                          setValues({ ...values, pujaName: e.target.value })
-                        }
-                        placeholder="e.g., Durga Puja / Eid-ul-Fitr"
-                      />
+                      <Select
+                        value={pujaType}
+                        onValueChange={(value) => {
+                          setPujaType(value);
+                          if (value !== "Other") {
+                            setCustomPujaName(""); // clear custom when choosing a preset
+                          }
+                        }}
+                      >
+                        <SelectTrigger id="pujaSelect">
+                          <SelectValue placeholder="Select Puja/Festival" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Durga Puja">Durga Puja</SelectItem>
+                          <SelectItem value="Kali Puja">Kali Puja</SelectItem>
+                          <SelectItem value="Saraswati Puja">Saraswati Puja</SelectItem>
+                          <SelectItem value="Jagaddhatri Puja">Jagaddhatri Puja</SelectItem>
+                          <SelectItem value="Ganesh Puja">Ganesh Puja</SelectItem>
+                          <SelectItem value="Eid-ul-Fitr">Eid-ul-Fitr</SelectItem>
+                          <SelectItem value="Muharram">Muharram</SelectItem>
+                          <SelectItem value="Christmas">Christmas</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
+
+                    {/* Show custom input only when "Other" is selected */}
+                    {pujaType === "Other" && (
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="customPujaName">
+                          Specify Puja/Festival Name{" "}
+                          <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                          id="customPujaName"
+                          value={customPujaName}
+                          onChange={(e) => setCustomPujaName(e.target.value)}
+                          placeholder="e.g., Vishwakarma Puja"
+                        />
+                      </div>
+                    )}
+
                     <div className="space-y-2 md:col-span-2">
                       <Label htmlFor="organizer">
                         Organizer (Committee/Club){" "}
@@ -866,25 +948,7 @@ export default function ClientPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                onClick={() => {
-                                  setValues({
-                                    ...values,
-                                    refNo: item.refNo,
-                                    date: new Date(item.refDate)
-                                      .toISOString()
-                                      .split("T")[0],
-                                    pujaName: item.eventName,
-                                    location: item.eventLocation,
-                                    organizer: item.organizerName,
-                                    startDate: new Date(item.startDate)
-                                      .toISOString()
-                                      .split("T")[0],
-                                    endDate: new Date(item.endDate)
-                                      .toISOString()
-                                      .split("T")[0],
-                                  });
-                                  setActiveTab("preview");
-                                }}
+                                onClick={() => loadHistoryIntoForm(item)}
                               >
                                 <Eye className="h-4 w-4 mr-1" /> View
                               </Button>
