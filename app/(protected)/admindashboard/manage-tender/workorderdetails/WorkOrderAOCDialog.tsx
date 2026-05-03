@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, memo, useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,10 +13,9 @@ import { useRouter } from "next/navigation";
 import { addAoCdetails } from "./aocServerAction";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { format } from "date-fns";
-
 import {
   Form,
   FormControl,
@@ -25,59 +24,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { gpcode } from "@/constants/gpinfor";
-
-/* ===============================
-   TYPES
-=================================*/
-
-interface AgencyDetails {
-  name: string;
-}
-
-interface Bid {
-  id: string;
-  biddingAmount: number | null;
-  agencydetails: AgencyDetails;
-}
-
-interface WorkDetails {
-  nitDetails?: {
-    memoNumber: string;
-    memoDate: string;
-  };
-  ApprovedActionPlanDetails?: {
-    activityDescription: string;
-    activityCode: string;
-    estimatedCost: number;
-  };
-}
-
-interface LastAoc {
-  workodermenonumber: string;
-  workordeermemodate: string;
-  WorksDetail: {
-    workslno: number;
-    ApprovedActionPlanDetails: {
-      activityDescription: string;
-    };
-  }[];
-}
-
-interface AOCFormProps {
-  worksDetail: WorkDetails;
-  acceptbi: Bid[];
-  workId: string;
-  lastAoc?: LastAoc;
-  onOpenChange: (open: boolean) => void;
-}
-
-interface WorkOrderAOCDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  workId: string | null;
-}
 
 /* ===============================
    VALIDATION
@@ -99,7 +46,11 @@ export default function WorkOrderAOCDialog({
   open,
   onOpenChange,
   workId,
-}: WorkOrderAOCDialogProps) {
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  workId: string | null;
+}) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["workOrderAOC", workId],
     enabled: open && !!workId,
@@ -130,7 +81,11 @@ export default function WorkOrderAOCDialog({
           {error && <p className="text-red-500">Failed to load data</p>}
 
           {data && (
-            <AOCForm {...data} workId={workId!} onOpenChange={onOpenChange} />
+            <AOCForm
+              {...data}
+              workId={workId!}
+              onOpenChange={onOpenChange}
+            />
           )}
         </div>
       </DialogContent>
@@ -148,21 +103,19 @@ function AOCForm({
   workId,
   lastAoc,
   onOpenChange,
-}: AOCFormProps) {
+}: any) {
   const router = useRouter();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [loading, setLoading] = useState(false);
 
   const sortedBids = useMemo(() => {
     if (!acceptbi?.length) return [];
-
     return acceptbi
-      .filter((b) => b.biddingAmount != null)
-      .sort((a, b) => a.biddingAmount! - b.biddingAmount!);
+      .filter((b: any) => b.biddingAmount != null)
+      .sort((a: any, b: any) => a.biddingAmount - b.biddingAmount);
   }, [acceptbi]);
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
@@ -172,52 +125,32 @@ function AOCForm({
     },
   });
 
-  const selectedBidderId = form.watch("acceptbidderId");
-
   useEffect(() => {
     if (sortedBids.length) {
       form.setValue("acceptbidderId", sortedBids[0].id);
     }
-  }, [form, sortedBids]);
+  }, [sortedBids, form]);
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (loading) return;
+  /* ===============================
+     MUTATION (FIXED)
+  =================================*/
 
-    if (!sortedBids.length) {
-      toast({
-        title: "Validation Error",
-        description: "No bidders available",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const selectedBid = sortedBids.find((b) => b.id === values.acceptbidderId);
-
-    if (!selectedBid) return;
-
-    if (selectedBid.id !== sortedBids[0]?.id) {
-      if (!confirm("Selected bidder is NOT L1. Continue?")) return;
-    }
-
-    if (!confirm("Please confirm before finalizing AOC")) return;
-
-    try {
-      setLoading(true);
-
+  const mutation = useMutation({
+    mutationFn: async (values: any) => {
       const formData = new FormData();
-
       formData.append("workId", workId);
       formData.append("acceptbidderId", values.acceptbidderId);
       formData.append("memono", values.memono);
       formData.append("memodate", values.memodate);
 
-      const result = await addAoCdetails(formData);
+      return addAoCdetails(formData);
+    },
 
-      if (result?.error) {
+    onSuccess: (result) => {
+      if (!result || result.error) {
         toast({
           title: "Error",
-          description: result.error,
+          description: result?.error || "Something went wrong",
           variant: "destructive",
         });
         return;
@@ -228,39 +161,76 @@ function AOCForm({
         description: "AOC Finalized Successfully",
       });
 
-      queryClient.invalidateQueries({
-        queryKey: ["workOrderAOC", workId],
-      });
-
-      router.refresh();
-
+      // ✅ CLOSE FIRST (IMPORTANT FIX)
       onOpenChange(false);
-    } catch {
+
+      // ✅ DELAY REFRESH (PREVENT REOPEN BUG)
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["workOrderAOC", workId],
+        });
+        router.refresh();
+      }, 150);
+    },
+
+    onError: () => {
       toast({
-        title: "Unexpected Error",
-        description: "Please try again",
+        title: "Error",
+        description: "Unexpected error occurred",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+    },
+  });
+
+  /* ===============================
+     SUBMIT
+  =================================*/
+
+  const handleSubmit = (values: any) => {
+    if (!sortedBids.length) {
+      toast({
+        title: "Validation Error",
+        description: "No bidders available",
+        variant: "destructive",
+      });
+      return;
     }
+
+    const selectedBid = sortedBids.find(
+      (b: any) => b.id === values.acceptbidderId
+    );
+
+    if (!selectedBid) return;
+
+    if (selectedBid.id !== sortedBids[0]?.id) {
+      if (!confirm("Selected bidder is NOT L1. Continue?")) return;
+    }
+
+    if (!confirm("Please confirm before finalizing AOC")) return;
+
+    mutation.mutate(values);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(handleSubmit)}
+        className="space-y-8"
+      >
         <WorkDetailsCard worksDetail={worksDetail} />
 
         <Separator />
 
         <div className="space-y-4">
-          {sortedBids.map((bid, index) => (
+          {sortedBids.map((bid: any, index: number) => (
             <BidItem
               key={bid.id}
               item={bid}
               rank={index + 1}
-              isSelected={selectedBidderId === bid.id}
-              onSelect={() => form.setValue("acceptbidderId", bid.id)}
+              isSelected={form.watch("acceptbidderId") === bid.id}
+              onSelect={() =>
+                form.setValue("acceptbidderId", bid.id)
+              }
             />
           ))}
         </div>
@@ -274,10 +244,10 @@ function AOCForm({
 
           <Button
             type="submit"
-            disabled={!form.formState.isValid || loading}
+            disabled={!form.formState.isValid || mutation.isPending}
             className="bg-blue-700 text-white"
           >
-            {loading ? "Processing..." : "Finalize AOC"}
+            {mutation.isPending ? "Processing..." : "Finalize AOC"}
           </Button>
         </div>
       </form>
@@ -289,39 +259,21 @@ function AOCForm({
    MEMO DETAILS
 =================================*/
 
-function MemoDetailsCard({
-  form,
-  lastAoc,
-}: {
-  form: UseFormReturn<z.infer<typeof formSchema>>;
-  lastAoc?: LastAoc;
-}) {
+function MemoDetailsCard({ form, lastAoc }: any) {
   return (
     <Card>
       <CardContent className="p-6 space-y-6">
         {lastAoc && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
-            <div className="flex items-center justify-between border-b border-blue-100 pb-2">
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">
-                  Last Saved Work Order
-                </span>
-
-                <span className="text-sm font-bold text-blue-900">
-                  Memo No: {lastAoc.workodermenonumber}
-                </span>
-              </div>
-
-              <div className="text-right">
-                <span className="text-[10px] text-blue-400 font-medium block uppercase tracking-widest">
-                  Memo Date
-                </span>
-
-                <span className="text-xs font-semibold text-blue-700">
-                  {format(new Date(lastAoc.workordeermemodate), "dd/MM/yyyy")}
-                </span>
-              </div>
-            </div>
+          <div className="bg-blue-50 border rounded-lg p-4">
+            <p className="font-bold">
+              Memo No: {lastAoc.workodermenonumber}
+            </p>
+            <p className="text-sm">
+              {format(
+                new Date(lastAoc.workordeermemodate),
+                "dd/MM/yyyy"
+              )}
+            </p>
           </div>
         )}
 
@@ -363,21 +315,19 @@ function MemoDetailsCard({
    WORK DETAILS
 =================================*/
 
-function WorkDetailsCard({ worksDetail }: { worksDetail: WorkDetails }) {
-  const nitMemoNumber = worksDetail?.nitDetails?.memoNumber || "-";
-
-  const nitMemoYear = worksDetail?.nitDetails?.memoDate
+function WorkDetailsCard({ worksDetail }: any) {
+  const memoNo = worksDetail?.nitDetails?.memoNumber || "-";
+  const year = worksDetail?.nitDetails?.memoDate
     ? new Date(worksDetail.nitDetails.memoDate).getFullYear()
     : "";
 
   return (
     <Card>
-      <CardContent className="p-6 space-y-4">
+      <CardContent className="p-6 space-y-2">
         <Badge>
-          NIT No: {nitMemoNumber}/{gpcode}/{nitMemoYear}
+          NIT No: {memoNo}/{gpcode}/{year}
         </Badge>
-
-        <p className="font-semibold text-lg">
+        <p className="font-semibold">
           {worksDetail?.ApprovedActionPlanDetails?.activityDescription}
         </p>
       </CardContent>
@@ -394,59 +344,23 @@ const BidItem = memo(function BidItem({
   rank,
   isSelected,
   onSelect,
-}: {
-  item: Bid;
-  rank: number;
-  isSelected: boolean;
-  onSelect: () => void;
-}) {
+}: any) {
   return (
     <Card
       onClick={onSelect}
-      className={`cursor-pointer border rounded-xl p-4 transition
-      ${isSelected ? "border-blue-600 bg-blue-50" : "border-gray-200"}`}
+      className={`cursor-pointer p-4 ${
+        isSelected ? "border-blue-600 bg-blue-50" : ""
+      }`}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between">
         <div>
           <p className="font-semibold">{item.agencydetails.name}</p>
-
-          <p className="text-sm text-gray-500">Rank: L{rank}</p>
+          <p className="text-sm">Rank: L{rank}</p>
         </div>
-
-        <p className="font-semibold text-lg">
+        <p className="font-semibold">
           ₹ {item.biddingAmount?.toLocaleString("en-IN")}
         </p>
       </div>
     </Card>
   );
 });
-
-/* ===============================
-   FINAL REVIEW
-=================================*/
-
-function FinalReviewCard({ form, sortedBids }: any) {
-  const selected = sortedBids.find(
-    (b: Bid) => b.id === form.watch("acceptbidderId"),
-  );
-
-  return (
-    <Card className="border-green-300 bg-green-50">
-      <CardContent className="p-4 text-sm space-y-2">
-        <p className="font-semibold text-green-700">
-          Final Review Before Submission
-        </p>
-
-        <p>Selected Bidder: {selected?.agencydetails.name || "-"}</p>
-
-        <p>Memo No: {form.watch("memono") || "-"}</p>
-
-        <p>Memo Date: {form.watch("memodate") || "-"}</p>
-
-        <p className="text-red-600 text-xs">
-          After finalization editing will be disabled.
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
