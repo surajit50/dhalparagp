@@ -80,8 +80,8 @@ body {
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 15%;
 
-    /* NIC BLUE */
-    --primary: 214 100% 32%;
+    /* ORANGE PRIMARY */
+    --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 30% 94%;
@@ -90,19 +90,19 @@ body {
     --muted: 210 30% 94%;
     --muted-foreground: 215 10% 40%;
 
-    --accent: 214 60% 90%;
-    --accent-foreground: 214 100% 22%;
+    --accent: 25 80% 92%;
+    --accent-foreground: 25 70% 25%;
 
     --destructive: 0 72% 45%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 214 25% 88%;
     --input: 214 25% 88%;
-    --ring: 214 100% 32%;
+    --ring: 25 95% 53%;
 
     --radius: 0.4rem;
 
-    --chart-1: 214 100% 32%;
+    --chart-1: 25 95% 53%;
     --chart-2: 200 70% 45%;
     --chart-3: 260 60% 55%;
     --chart-4: 340 65% 50%;
@@ -116,7 +116,7 @@ body {
     --card: 215 35% 12%;
     --card-foreground: 210 40% 96%;
 
-    --primary: 210 100% 60%;
+    --primary: 25 90% 60%;
     --primary-foreground: 215 40% 10%;
 
     --secondary: 215 25% 18%;
@@ -125,12 +125,12 @@ body {
     --muted: 215 25% 18%;
     --muted-foreground: 210 20% 70%;
 
-    --accent: 210 60% 25%;
+    --accent: 25 30% 20%;
     --accent-foreground: 210 40% 96%;
 
     --border: 215 25% 22%;
     --input: 215 25% 22%;
-    --ring: 210 100% 60%;
+    --ring: 25 90% 60%;
   }
 
   /* ---------------- COMPONENT UTILITIES ---------------- */
