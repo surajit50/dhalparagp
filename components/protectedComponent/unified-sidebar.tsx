@@ -217,7 +217,7 @@ function SidebarContent({
       <div className="p-4 border-t border-slate-100 bg-slate-50/50">
         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-white transition-colors cursor-pointer group border border-transparent hover:border-slate-200 hover:shadow-sm">
           <Avatar className="w-10 h-10 border-2 border-white shadow-sm ring-1 ring-slate-100">
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold">
+            <AvatarFallback className="bg-gradient-to-br from-orange-500 to-amber-600 text-white text-xs font-bold">
               <User className="w-5 h-5" />
             </AvatarFallback>
           </Avatar>

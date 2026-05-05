@@ -16,16 +16,16 @@ export default function ComingSoonRoute({ title, path }: ComingSoonRouteProps) {
               This page is not implemented yet.
             </p>
           </div>
-          <div className="rounded-md bg-gray-50 px-3 py-1 text-sm font-medium text-gray-700">
+          <div className="rounded-md bg-orange-50 px-3 py-1 text-sm font-medium text-orange-700">
             Coming soon
           </div>
         </div>
 
-        <div className="mt-6 rounded-md border bg-gray-50 px-4 py-3">
-          <div className="text-xs font-semibold tracking-wide text-gray-500">
+        <div className="mt-6 rounded-md border bg-orange-50 px-4 py-3">
+          <div className="text-xs font-semibold tracking-wide text-orange-500">
             Route
           </div>
-          <div className="mt-1 break-all font-mono text-sm text-gray-800">
+          <div className="mt-1 break-all font-mono text-sm text-orange-800">
             {path}
           </div>
         </div>

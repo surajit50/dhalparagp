@@ -34,7 +34,7 @@ export default function Adminhomelayoutprops({
   livecharts,
 }: adminhomelayoutprops) {
   return (
-    <div className="flex flex-col p-3 sm:p-4 md:p-5 lg:p-6 space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen w-full max-w-full overflow-x-hidden">
+    <div className="flex flex-col p-3 sm:p-4 md:p-5 lg:p-6 space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6 bg-gradient-to-br from-gray-50 to-orange-50 min-h-screen w-full max-w-full overflow-x-hidden">
       {/* Notice Popup Slot */}
       {noticepopup}
 

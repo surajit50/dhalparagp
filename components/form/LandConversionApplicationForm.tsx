@@ -43,7 +43,13 @@ const defaultValues: LandConversionApplicationInput = {
   additionalLands: [],
 };
 
-export default function LandConversionApplicationForm() {
+interface LandConversionApplicationFormProps {
+  isAdminOrSuperAdmin?: boolean;
+}
+
+export default function LandConversionApplicationForm({
+  isAdminOrSuperAdmin = false,
+}: LandConversionApplicationFormProps) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,8 +76,12 @@ export default function LandConversionApplicationForm() {
     values: LandConversionApplicationInput,
     mode: "DRAFT" | "SUBMIT",
   ) => {
-    // Check if files are selected for SUBMIT mode
-    if (mode === "SUBMIT" && (!idProofFile || !landDocFile)) {
+    // Check if files are selected for SUBMIT mode - only for non-admin users
+    if (
+      mode === "SUBMIT" &&
+      !isAdminOrSuperAdmin &&
+      (!idProofFile || !landDocFile)
+    ) {
       toast({
         title: "Missing Documents",
         description:
@@ -249,6 +259,7 @@ export default function LandConversionApplicationForm() {
             setIdProofFile={setIdProofFile}
             setLandDocFile={setLandDocFile}
             uploadingDoc={uploadingDoc}
+            isAdminOrSuperAdmin={isAdminOrSuperAdmin}
           />
 
           <FormFooter />

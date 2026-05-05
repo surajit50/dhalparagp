@@ -39,8 +39,7 @@ import {
 
 import ErrorForm from "@/components/ErrorForm";
 import SuccessForm from "@/components/SuccessForm";
-import { User, Calendar, Settings } from "lucide-react";
-
+import { User, Calendar, Settings, Upload, FileText } from "lucide-react";
 
 // ✅ FINAL SCHEMA WITH VALIDATION
 const formSchema = z
@@ -76,18 +75,19 @@ const formSchema = z
     additionalRequirements: z.string().optional(),
   })
   .refine(
-    (data) =>
-      data.eventName !== "Other" || !!data.customEventName?.trim(),
+    (data) => data.eventName !== "Other" || !!data.customEventName?.trim(),
     {
       message: "Please enter event name",
       path: ["customEventName"],
-    }
+    },
   );
 
 export default function PujaNocForm({ userId }: { userId: string }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -99,30 +99,65 @@ export default function PujaNocForm({ userId }: { userId: string }) {
     },
   });
 
+  async function uploadFileToCloudinary(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to upload file");
+    }
+
+    return response.json();
+  }
+
   function onSubmit(values: z.infer<typeof formSchema>) {
     setError("");
     setSuccess("");
 
     // ✅ SAFE (no TS error)
     const finalEventName =
-      values.eventName === "Other"
-        ? values.customEventName!
-        : values.eventName;
+      values.eventName === "Other" ? values.customEventName! : values.eventName;
 
     startTransition(async () => {
-      const result = await applyPujaNOC({
-        ...values,
-        eventName: finalEventName,
-        userId,
-      });
+      try {
+        setIsUploading(true);
 
-      if (result.success) {
-        setSuccess("Application submitted successfully!");
-        toast.success("Application submitted successfully!");
-        form.reset();
-      } else {
-        setError(result.message || "Something went wrong");
-        toast.error(result.message || "Something went wrong");
+        let fileUrl: string | null = null;
+        let fileKey: string | null = null;
+
+        if (uploadedFile) {
+          const uploadResult = await uploadFileToCloudinary(uploadedFile);
+          fileUrl = uploadResult.fileUrl;
+          fileKey = uploadResult.publicId;
+        }
+
+        const result = await applyPujaNOC({
+          ...values,
+          eventName: finalEventName,
+          userId,
+          fileUrl,
+          fileKey,
+        });
+
+        if (result.success) {
+          setSuccess("Application submitted successfully!");
+          toast.success("Application submitted successfully!");
+          form.reset();
+          setUploadedFile(null);
+        } else {
+          setError(result.message || "Something went wrong");
+          toast.error(result.message || "Something went wrong");
+        }
+      } catch (err) {
+        setError("Failed to upload file. Please try again.");
+        toast.error("Failed to upload file. Please try again.");
+      } finally {
+        setIsUploading(false);
       }
     });
   }
@@ -130,7 +165,6 @@ export default function PujaNocForm({ userId }: { userId: string }) {
   return (
     <div className="min-h-screen bg-muted/40 p-4">
       <div className="max-w-5xl mx-auto space-y-6">
-
         {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold">Puja NOC Application</h1>
@@ -144,7 +178,6 @@ export default function PujaNocForm({ userId }: { userId: string }) {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-
             {/* Applicant Info */}
             <Card>
               <CardHeader>
@@ -222,7 +255,6 @@ export default function PujaNocForm({ userId }: { userId: string }) {
               </CardHeader>
 
               <CardContent className="grid md:grid-cols-2 gap-4">
-
                 {/* Event Select */}
                 <FormField
                   control={form.control}
@@ -384,13 +416,92 @@ export default function PujaNocForm({ userId }: { userId: string }) {
               </CardContent>
             </Card>
 
+            {/* Document Upload */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText size={18} /> Application Document (Optional)
+                </CardTitle>
+                <CardDescription>
+                  Upload your application document (PDF only, max 200KB)
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent>
+                <div className="space-y-4">
+                  {!uploadedFile ? (
+                    <div className="flex flex-col items-center gap-4">
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        className="hidden"
+                        id="file-upload"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (file.size > 200 * 1024) {
+                              toast.error("File size must be less than 200KB");
+                              return;
+                            }
+                            if (
+                              !file.type.includes("pdf") &&
+                              !file.name.toLowerCase().endsWith(".pdf")
+                            ) {
+                              toast.error("Only PDF files are allowed");
+                              return;
+                            }
+                            setUploadedFile(file);
+                          }
+                        }}
+                      />
+                      <label htmlFor="file-upload">
+                        <Button variant="secondary" className="gap-2">
+                          <Upload className="h-4 w-4" />
+                          Upload Document
+                        </Button>
+                      </label>
+                      <div className="text-sm text-muted-foreground">
+                        PDF only (max 200KB)
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between p-4 border rounded-xl bg-muted/50">
+                      <div className="flex items-center gap-3">
+                        <FileText className="h-8 w-8 text-primary" />
+                        <div>
+                          <div className="font-medium">{uploadedFile.name}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {(uploadedFile.size / 1024).toFixed(2)} KB
+                          </div>
+                        </div>
+                      </div>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setUploadedFile(null)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Submit */}
             <Button
               type="submit"
               className="w-full h-11 rounded-xl"
-              disabled={isPending}
+              disabled={isPending || isUploading}
             >
-              {isPending ? "Submitting..." : "Submit Application"}
+              {isPending || isUploading ? (
+                <>
+                  <Upload className="mr-2 h-4 w-4 animate-spin" />
+                  {isUploading ? "Uploading..." : "Submitting..."}
+                </>
+              ) : (
+                "Submit Application"
+              )}
             </Button>
           </form>
         </Form>

@@ -9,6 +9,8 @@ const LandConversionApplyPage = async () => {
     return null;
   }
 
+  const isAdminOrSuperAdmin = ["admin", "superadmin"].includes(user.role as string);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-4 px-4 sm:px-4 lg:px-4">
       <div className="mx-auto max-w-5xl">
@@ -25,7 +27,7 @@ const LandConversionApplyPage = async () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-lg p-2 sm:p-4 border border-blue-100 transition-all hover:shadow-xl">
-          <LandConversionApplicationForm />
+          <LandConversionApplicationForm isAdminOrSuperAdmin={isAdminOrSuperAdmin} />
         </div>
 
         <footer className="mt-8 text-center text-sm text-muted-foreground">

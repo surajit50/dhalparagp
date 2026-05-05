@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
         <div className="flex items-center gap-3">
           <Link href="/admindashboard/manage-warish/application">
-            <button className="group flex items-center gap-2 bg-white hover:bg-blue-600 text-slate-700 hover:text-white px-5 py-2.5 rounded-xl border border-slate-200 hover:border-blue-600 shadow-sm transition-all duration-200 font-semibold">
+            <button className="group flex items-center gap-2 bg-white hover:bg-orange-600 text-slate-700 hover:text-white px-5 py-2.5 rounded-xl border border-slate-200 hover:border-orange-600 shadow-sm transition-all duration-200 font-semibold">
               <FilePlus
                 size={18}
                 className="text-blue-600 group-hover:text-white transition-colors"

@@ -124,7 +124,7 @@ export default async function Dashboard() {
 
             <div className="flex items-center gap-4">
               {/* ➕ Action Button */}
-              <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition">
+              <button className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-700 transition">
                 <Plus className="h-4 w-4" />
                 New Application
               </button>
@@ -155,7 +155,7 @@ export default async function Dashboard() {
                 key={i}
                 className={`
                   group transition-all duration-300 hover:scale-[1.02] hover:shadow-lg
-                  ${i === 0 ? "lg:col-span-2 bg-gradient-to-br from-indigo-50 to-white" : ""}
+                  ${i === 0 ? "lg:col-span-2 bg-gradient-to-br from-orange-50 to-white" : ""}
                 `}
               >
                 <CardContent className="p-6 flex items-center justify-between">

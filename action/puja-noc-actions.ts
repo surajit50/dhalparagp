@@ -80,6 +80,8 @@ export async function applyPujaNOC(data: {
   roadClosureRequired: boolean;
   additionalRequirements?: string;
   userId: string;
+  fileUrl?: string | null;
+  fileKey?: string | null;
 }) {
   try {
     const applicationNo = `APP/PUJA/${Date.now()}`;
@@ -107,6 +109,18 @@ export async function applyPujaNOC(data: {
         createdById: data.userId,
       },
     });
+
+    if (data.fileUrl && data.fileKey) {
+      await db.nocDocument.create({
+        data: {
+          applicationId: noc.id,
+          documentType: "APPLICATION_LETTER",
+          fileUrl: data.fileUrl,
+          fileKey: data.fileKey,
+          uploadedBy: data.userId,
+        },
+      });
+    }
 
     revalidatePath("/dashboard/puja-noc/status");
 
