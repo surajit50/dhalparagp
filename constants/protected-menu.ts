@@ -266,6 +266,11 @@ const documentGenerationItems = (baseUrl: string): MenuItemProps[] => [
 export const adminMenuItems: MenuItemProps[] = [
   createMenuItem("Admin Dashboard", ["admin", "superadmin"], `${BASE_URLS.admin}/home`, MdDashboard, COLORS.blue),
 
+  createMenuItem("Profile & Account", ["admin", "superadmin"], undefined, MdAccountCircle, COLORS.purple, [
+    createMenuItem("View Profile", ["admin", "superadmin"], `${BASE_URLS.admin}/profile`, FaChevronCircleRight, COLORS.indigo),
+    createMenuItem("Change Password", ["admin", "superadmin"], `${BASE_URLS.admin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
+  ]),
+
   // Project & Works Management
   // Project & Works Management
   createMenuItem("Project Management", ["admin"], undefined, MdWork, COLORS.blue, [
@@ -476,6 +481,11 @@ export const adminMenuItems: MenuItemProps[] = [
 export const employeeMenuItems: MenuItemProps[] = [
   createMenuItem("Staff Dashboard", ["staff"], `${BASE_URLS.staff}/home`, MdDashboard, COLORS.blue),
 
+  createMenuItem("Profile & Account", ["staff"], undefined, MdAccountCircle, COLORS.purple, [
+    createMenuItem("View Profile", ["staff"], `${BASE_URLS.staff}/profile`, FaChevronCircleRight, COLORS.indigo),
+    createMenuItem("Change Password", ["staff"], `${BASE_URLS.staff}/profile/change-password`, FaChevronCircleRight, COLORS.red),
+  ]),
+
   // Certificate Processing (expanded)
   createMenuItem("Certificate Processing", ["staff"], undefined, MdAssignment, COLORS.red, [
     createMenuItem("Inheritance Certificate", ["staff"], undefined, FaRegFileAlt, COLORS.yellow, [
@@ -628,12 +638,20 @@ export const agencyMenuItems: MenuItemProps[] = [
     createMenuItem("Meeting Schedule", ["agency"], `${BASE_URLS.agency}/meetings`, MdCalendarToday, COLORS.green),
   ]),
 
-  createMenuItem("Profile", ["agency"], `${BASE_URLS.agency}/profile`, MdAccountCircle, COLORS.purple),
+  createMenuItem("Profile & Account", ["agency"], undefined, MdAccountCircle, COLORS.purple, [
+    createMenuItem("View Profile", ["agency"], `${BASE_URLS.agency}/profile`, FaChevronCircleRight, COLORS.indigo),
+    createMenuItem("Change Password", ["agency"], `${BASE_URLS.agency}/profile/change-password`, FaChevronCircleRight, COLORS.red),
+  ]),
 ];
 
 // =============== SUPER ADMIN MENU ===============
 export const superAdminMenuItems: MenuItemProps[] = [
   createMenuItem("Super Admin Dashboard", ["superadmin"], `${BASE_URLS.superadmin}/home`, MdDashboard, COLORS.blue),
+
+  createMenuItem("Profile & Account", ["superadmin"], undefined, MdAccountCircle, COLORS.purple, [
+    createMenuItem("View Profile", ["superadmin"], `${BASE_URLS.superadmin}/profile`, FaChevronCircleRight, COLORS.indigo),
+    createMenuItem("Change Password", ["superadmin"], `${BASE_URLS.superadmin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
+  ]),
 
   createMenuItem("System Management", ["superadmin"], undefined, MdSettingsApplications, COLORS.gray, [
     createMenuItem("API Management", ["superadmin"], undefined, MdApi, COLORS.purple, [

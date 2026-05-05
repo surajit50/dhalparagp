@@ -23,7 +23,7 @@ interface ExtendedUser {
   isOAuth: boolean;
 }
 
-export default async function AdminProfilePage() {
+export default async function SuperAdminProfilePage() {
   const session = await auth();
 
   if (!session || !session.user) {
