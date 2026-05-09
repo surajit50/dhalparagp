@@ -226,114 +226,133 @@ function NocCertificate({
 }) {
   return (
     <div
-      className="max-w-3xl mx-auto bg-white text-black p-12 border shadow-sm print:border-0 print:shadow-none"
-      style={{ fontFamily: "Times New Roman, serif" }}
+      className="w-[210mm] min-h-[297mm] mx-auto bg-white text-black p-8 border shadow-md print:border-0 print:shadow-none print:w-full print:h-auto print:min-h-0 print:p-0"
+      style={{ fontFamily: "'Times New Roman', Times, serif" }}
     >
-      <div className="text-center space-y-1">
-        <p className="text-lg font-medium">Office of the Prodhan</p>
-        <h1 className="text-3xl font-bold uppercase">{values.gpName}</h1>
-        <p className="text-sm">
-          P.O.: {values.postOffice} • P.S.: {values.policeStation} • Dist.:{" "}
-          {values.district}, West Bengal
-        </p>
-      </div>
-
-      <div className="my-6 border-t-2 border-black" />
-
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold underline decoration-1 underline-offset-4">
-          NO OBJECTION CERTIFICATE (NOC)
-        </h2>
-      </div>
-
-      <div className="flex justify-between mb-8 text-base">
-        <p>
-          <span className="font-bold">Ref. No:</span>{" "}
-          {values.refNo || "_______"} /GP
-        </p>
-        <p>
-          <span className="font-bold">Date:</span>{" "}
-          {values.date
-            ? values.date.split("-").reverse().join("-")
-            : "__ / __ / 20__"}
-        </p>
-      </div>
-
-      <div className="space-y-6 text-lg leading-relaxed text-justify">
-        <p>
-          This is to certify that this Gram Panchayat has{" "}
-          <strong>no objection</strong> to the organization of{" "}
-          <strong>{values.pujaName}</strong> at{" "}
-          <strong>{values.location}</strong> by{" "}
-          <strong>{values.organizer}</strong>.
-        </p>
-
-        <p>
-          The aforementioned Puja / Festival is scheduled to take place from{" "}
-          <strong>
-            {values.startDate
-              ? values.startDate.split("-").reverse().join("-")
-              : "________"}
-          </strong>{" "}
-          to{" "}
-          <strong>
-            {values.endDate
-              ? values.endDate.split("-").reverse().join("-")
-              : "________"}
-          </strong>
-          .
-        </p>
-
-        <div>
-          <p className="font-bold mb-3 underline">
-            This NOC is granted subject to the following conditions:
-          </p>
-          <ol className="list-decimal pl-6 space-y-2">
-            <li>
-              The organizers must ensure peaceful conduct of the Puja without
-              causing any public inconvenience or obstruction to traffic.
-            </li>
-            <li>
-              Proper cleanliness, hygiene, and sanitation must be maintained at
-              the venue at all times.
-            </li>
-            <li>
-              Use of loudspeakers must strictly comply with the permissible time
-              and volume limits as prescribed by the Law/Pollution Control
-              Board.
-            </li>
-            <li>
-              No unlawful, objectionable, or communal activities are to be
-              carried out within the premises.
-            </li>
-            <li>
-              The organizers shall remain fully responsible for maintaining law
-              and order, fire safety, and the overall security of the
-              participants and public.
-            </li>
-            <li>
-              Necessary permissions from the Police Department and Electricity
-              Board must be obtained separately.
-            </li>
-          </ol>
-        </div>
-
-        <p className="pt-4">
-          This certificate is issued on the request of the organizers for
-          official and administrative purposes.
-        </p>
-      </div>
-
-      <div className="mt-20 grid grid-cols-2 gap-20">
-        <div className="text-center">
-          <div className="mx-auto w-36 h-36 border-2 border-black flex items-center justify-center text-black font-bold text-sm uppercase">
-            Office Seal
+      <div className="border-[1.5px] border-black p-8 min-h-[1020px] flex flex-col relative">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="w-24">
+            <img 
+              src="/images/logo.png" 
+              alt="GP Logo" 
+              className="w-20 h-20 object-contain"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
           </div>
+          <div className="text-center flex-1">
+            <p className="text-lg font-medium">Office of the Prodhan</p>
+            <h1 className="text-3xl font-bold uppercase">{values.gpName}</h1>
+            <p className="text-sm mt-1">
+              P.O.: {values.postOffice} • P.S.: {values.policeStation} • Dist.:{" "}
+              {values.district}, West Bengal
+            </p>
+          </div>
+          <div className="w-24"></div> {/* Spacer for centering */}
         </div>
-        <div className="text-center flex flex-col items-center justify-end">
-          <div className="w-64 border-t border-black pt-2 space-y-1">
-            <p className="font-bold text-lg">Prodhan</p>
-            <p className="text-base font-semibold">{values.gpName}</p>
+
+        <div className="mb-6 border-t-[1.5px] border-black" />
+
+        <div className="text-center mb-8">
+          <h2 className="text-xl font-bold underline decoration-1 underline-offset-4">
+            NO OBJECTION CERTIFICATE (NOC)
+          </h2>
+        </div>
+
+        <div className="flex justify-between mb-8 text-base">
+          <p>
+            <span className="font-bold">Ref. No:</span>{" "}
+            {values.refNo || "_______"} /GP
+          </p>
+          <p>
+            <span className="font-bold">Date:</span>{" "}
+            {values.date
+              ? values.date.split("-").reverse().join("-")
+              : "__ / __ / 20__"}
+          </p>
+        </div>
+
+        <div className="space-y-6 text-lg leading-relaxed text-justify flex-1">
+          <p>
+            This is to certify that this Gram Panchayat has{" "}
+            <strong>no objection</strong> to the organization of{" "}
+            <strong>{values.pujaName || "_________________"}</strong> at{" "}
+            <strong>{values.location || "_________________"}</strong> by{" "}
+            <strong>{values.organizer || "_________________"}</strong>.
+          </p>
+
+          <p>
+            The aforementioned Puja / Festival is scheduled to take place from{" "}
+            <strong>
+              {values.startDate
+                ? values.startDate.split("-").reverse().join("-")
+                : "________"}
+            </strong>{" "}
+            to{" "}
+            <strong>
+              {values.endDate
+                ? values.endDate.split("-").reverse().join("-")
+                : "________"}
+            </strong>
+            .
+          </p>
+
+          <div className="mt-8">
+            <p className="font-bold mb-3">
+              This NOC is granted subject to the following conditions:
+            </p>
+            <ol className="list-decimal pl-8 space-y-3">
+              <li>
+                The organizers must ensure peaceful conduct of the Puja without
+                causing any public inconvenience or obstruction to traffic.
+              </li>
+              <li>
+                Proper cleanliness, hygiene, and sanitation must be maintained at
+                the venue at all times.
+              </li>
+              <li>
+                Use of loudspeakers must strictly comply with the permissible time
+                and volume limits as prescribed by the Law/Pollution Control
+                Board.
+              </li>
+              <li>
+                No unlawful, objectionable, or communal activities are to be
+                carried out within the premises.
+              </li>
+              <li>
+                The organizers shall remain fully responsible for maintaining law
+                and order, fire safety, and the overall security of the
+                participants and public.
+              </li>
+              <li>
+                Necessary permissions from the Police Department and Electricity
+                Board must be obtained separately.
+              </li>
+            </ol>
+          </div>
+
+          <p className="pt-6">
+            This certificate is issued on the request of the organizers for
+            official and administrative purposes.
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-auto pt-16 flex justify-between items-end pb-2 px-2">
+          <div className="text-center">
+            <div className="w-32 h-32 border-[1.5px] border-black flex items-center justify-center text-black font-bold text-sm uppercase">
+              Office Seal
+            </div>
+          </div>
+          <div className="text-center flex flex-col items-center">
+            <div className="w-56 border-t-[1.5px] border-black pt-2 space-y-1">
+              <p className="font-bold text-lg">Prodhan</p>
+              <p className="text-base font-semibold max-w-[200px] whitespace-normal leading-tight mx-auto">
+                {values.gpName}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -386,7 +405,6 @@ export default function ClientPage() {
     setValues((prev) => ({ ...prev, pujaName: effectivePujaName }));
   }, [effectivePujaName]);
 
-  // when loading history record into form, we need to set pujaType & customName accordingly
   const loadHistoryIntoForm = useCallback(
     (item: any) => {
       const presetList = [
@@ -411,6 +429,8 @@ export default function ClientPage() {
         startDate: new Date(item.startDate).toISOString().split("T")[0],
         endDate: new Date(item.endDate).toISOString().split("T")[0],
       }));
+      
+      setActiveTab("preview");
     },
     []
   );
@@ -982,10 +1002,8 @@ export default function ClientPage() {
                 </Button>
               </div>
 
-              <div className="bg-slate-100 p-8 rounded-xl border-2 border-dashed border-slate-300 overflow-x-auto">
-                <div className="min-w-[800px]">
-                  <NocCertificate values={values} />
-                </div>
+              <div className="bg-slate-100 p-4 md:p-8 rounded-xl border-2 border-dashed border-slate-300 overflow-x-auto flex justify-center">
+                <NocCertificate values={values} />
               </div>
             </div>
           )}
