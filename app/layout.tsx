@@ -205,7 +205,7 @@ export default async function RootLayout({ children }: Props) {
     >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
-
+<meta name="google-adsense-account" content="ca-pub-8852774290896525">
         <meta
           name="google-site-verification"
           content="7OCsme-YSWMmcZIhfBJl6a6746gMNRm0oRYQN1RCnhs"
