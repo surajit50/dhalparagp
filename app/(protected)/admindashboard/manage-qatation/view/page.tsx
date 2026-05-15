@@ -62,7 +62,7 @@ const ViewQuotationsPage = () => {
       case "Closed":
         return "bg-gray-100 text-gray-800"
       default:
-        return "bg-blue-100 text-blue-800"
+        return "bg-orange-100 text-orange-800"
     }
   }
 
@@ -133,7 +133,7 @@ const ViewQuotationsPage = () => {
                         <Badge
                           className={
                             quotation.quotationType === "WORK"
-                              ? "bg-blue-100 text-blue-800"
+                              ? "bg-orange-100 text-orange-800"
                               : quotation.quotationType === "SUPPLY"
                                 ? "bg-green-100 text-green-800"
                                 : "bg-orange-100 text-orange-800"

@@ -48,7 +48,7 @@ export default async function NoticesPage() {
       {/* Agency Specific Notices */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-blue-600">
+          <CardTitle className="flex items-center gap-2 text-orange-600">
             <Bell className="h-5 w-5" />
             Agency Communications
           </CardTitle>
@@ -88,7 +88,7 @@ export default async function NoticesPage() {
                     <TableCell>{notice.department}</TableCell>
                     <TableCell>
                       {notice.status === "OPEN" ? (
-                        <Badge variant="outline" className="text-blue-600 border-blue-200 bg-blue-50 gap-1">
+                        <Badge variant="outline" className="text-orange-600 border-orange-200 bg-orange-50 gap-1">
                           <Clock className="h-3 w-3" />
                           Open
                         </Badge>

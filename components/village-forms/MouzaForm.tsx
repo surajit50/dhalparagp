@@ -70,7 +70,7 @@ export function MouzaForm({
                 <Input
                   {...field}
                   placeholder="e.g., Chandanagar"
-                  className="bg-white border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 rounded-xl"
+                  className="bg-white border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 rounded-xl"
                 />
               </FormControl>
               <FormMessage />
@@ -90,7 +90,7 @@ export function MouzaForm({
                 <Input
                   {...field}
                   placeholder="e.g., 45"
-                  className="bg-white border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 rounded-xl"
+                  className="bg-white border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 rounded-xl"
                 />
               </FormControl>
               <FormMessage />
@@ -111,7 +111,7 @@ export function MouzaForm({
                   type="number"
                   {...field}
                   placeholder="e.g., 250"
-                  className="bg-white border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-200 rounded-xl"
+                  className="bg-white border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 rounded-xl"
                 />
               </FormControl>
               <FormMessage />
@@ -122,7 +122,7 @@ export function MouzaForm({
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-blue-100 transition-all duration-200 active:scale-[0.98]"
+          className="w-full h-12 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-bold rounded-xl shadow-lg shadow-orange-100 transition-all duration-200 active:scale-[0.98]"
         >
           {isSubmitting ? (
             <div className="flex items-center justify-center space-x-2">

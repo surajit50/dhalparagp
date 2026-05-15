@@ -31,7 +31,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       LinkExtension.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: "text-blue-500 hover:underline",
+          class: "text-orange-500 hover:underline",
         },
       }),
     ],

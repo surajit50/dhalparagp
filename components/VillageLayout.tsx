@@ -12,14 +12,14 @@ interface VillageLayoutProps {
 
 export function VillageLayout({ title, subtitle, filters, children }: VillageLayoutProps) {
   return (
-    <div className="min-h-screen bg-[#f2f6fb]">
+    <div className="min-h-screen bg-background">
       {/* Top information bar */}
-      <div className="w-full bg-[#003366] text-white shadow-sm">
+      <div className="w-full bg-secondary text-white shadow-sm">
         <div className="mx-auto max-w-6xl px-4 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
           <div>
             <h1 className="text-xl md:text-2xl font-semibold tracking-tight">{title}</h1>
             {subtitle && (
-              <p className="text-xs md:text-sm text-blue-100 mt-1">
+              <p className="text-xs md:text-sm text-orange-100 mt-1">
                 {subtitle}
               </p>
             )}
@@ -45,4 +45,5 @@ export function VillageLayout({ title, subtitle, filters, children }: VillageLay
     </div>
   );
 }
+
 

@@ -18,7 +18,7 @@ const quotationTemplates = [
     description:
       "For construction, maintenance, repair, and other service work",
     icon: Wrench,
-    color: "bg-blue-500",
+    color: "bg-orange-500",
     examples: [
       "Building maintenance and repair",
       "Electrical installation work",
@@ -124,7 +124,7 @@ export default function QuotationTemplatesPage() {
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <h3 className="font-semibold text-blue-600 mb-2">
+                <h3 className="font-semibold text-orange-600 mb-2">
                   Work/Services
                 </h3>
                 <ul className="text-sm space-y-1">

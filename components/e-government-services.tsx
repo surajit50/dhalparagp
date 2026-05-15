@@ -89,11 +89,11 @@ export default function EGovernmentServices() {
   return (
     <section className="my-12">
       <Card className="overflow-hidden shadow-lg">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-8">
+        <div className="bg-gradient-to-r from-orange-600 to-purple-600 p-8">
           <h2 className="text-3xl font-bold text-white">
             Bengal Government E-Services
           </h2>
-          <p className="mt-2 text-sm text-indigo-100">
+          <p className="mt-2 text-sm text-orange-100">
             Access various government services online with ease.
           </p>
         </div>
@@ -101,7 +101,7 @@ export default function EGovernmentServices() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((category, index) => (
               <div key={index}>
-                <h3 className="font-semibold mb-6 text-xl text-indigo-800">
+                <h3 className="font-semibold mb-6 text-xl text-orange-800">
                   {category.category}
                 </h3>
                 <ul className="space-y-4">
@@ -113,9 +113,9 @@ export default function EGovernmentServices() {
                         rel="noopener noreferrer" // Security best practice
                         className="flex items-center space-x-4 bg-white p-4 rounded-lg shadow-sm transition-all duration-300 hover:shadow-md hover:transform hover:-translate-y-1"
                       >
-                        <div className="flex items-center justify-center w-10 h-10 bg-indigo-50 rounded-lg">
+                        <div className="flex items-center justify-center w-10 h-10 bg-orange-50 rounded-lg">
                           <item.icon
-                            className="h-5 w-5 text-indigo-600"
+                            className="h-5 w-5 text-orange-600"
                             aria-hidden="true"
                           />
                         </div>

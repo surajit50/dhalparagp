@@ -81,14 +81,14 @@ const EmailLayout = ({ children }: { children: React.ReactNode }) => {
       <aside className="w-64 bg-white border-r flex flex-col py-6 px-4 shadow-sm justify-between">
         <div>
           <button
-            className="w-full mb-6 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition-colors text-base flex items-center justify-center"
+            className="w-full mb-6 py-2 px-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg shadow transition-colors text-base flex items-center justify-center"
             onClick={() =>
               (window.location.href = "/admindashboard/manage-email/sent-email")
             }
           >
             + Compose
           </button>
-          <h2 className="text-lg font-bold mb-6 text-blue-700">Mail Folders</h2>
+          <h2 className="text-lg font-bold mb-6 text-orange-700">Mail Folders</h2>
           <nav className="flex flex-col gap-2">
             {folders.map((folder) => {
               const active = pathname.startsWith(folder.href);
@@ -104,14 +104,14 @@ const EmailLayout = ({ children }: { children: React.ReactNode }) => {
                 <Link
                   key={folder.name}
                   href={folder.href}
-                  className={`flex items-center px-3 py-2 rounded-lg transition-colors font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-700 ${
-                    active ? "bg-blue-100 text-blue-800 font-semibold" : ""
+                  className={`flex items-center px-3 py-2 rounded-lg transition-colors font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 ${
+                    active ? "bg-orange-100 text-orange-800 font-semibold" : ""
                   }`}
                 >
                   {folder.icon}
                   <span className="flex-1">{folder.name}</span>
                   {badge > 0 && (
-                    <span className="ml-2 bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    <span className="ml-2 bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                       {badge}
                     </span>
                   )}
@@ -122,7 +122,7 @@ const EmailLayout = ({ children }: { children: React.ReactNode }) => {
         </div>
         {/* User avatar/email at bottom */}
         <div className="mt-8 flex flex-col items-center border-t pt-6">
-          <div className="w-12 h-12 rounded-full bg-blue-200 flex items-center justify-center text-xl font-bold text-blue-700 mb-2">
+          <div className="w-12 h-12 rounded-full bg-orange-200 flex items-center justify-center text-xl font-bold text-orange-700 mb-2">
             {user?.name ? user.name[0] : "U"}
           </div>
           <div className="text-sm font-semibold text-gray-800">

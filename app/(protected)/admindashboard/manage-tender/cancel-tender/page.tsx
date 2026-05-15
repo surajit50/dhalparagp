@@ -88,9 +88,9 @@ const CancelTenderPage = async ({ searchParams }: CancelTenderPageProps) => {
 
       {/* ===== DASHBOARD SUMMARY ===== */}
       <div className="grid md:grid-cols-3 gap-4">
-        <Card className="border-l-4 border-blue-600">
+        <Card className="border-l-4 border-orange-600">
           <CardContent className="flex items-center gap-4 p-5">
-            <TrendingUp className="text-blue-600" />
+            <TrendingUp className="text-orange-600" />
             <div>
               <p className="text-sm text-muted-foreground">Active Tenders</p>
               <h2 className="text-2xl font-bold">{activeTenders.length}</h2>

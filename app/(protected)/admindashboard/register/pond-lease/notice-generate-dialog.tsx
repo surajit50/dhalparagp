@@ -112,8 +112,8 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
               </RadioGroup>
             </div>
 
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-              <p className="text-xs text-blue-700 leading-relaxed">
+            <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+              <p className="text-xs text-orange-700 leading-relaxed">
                 Choose the notice type and preview the content on the right.
               </p>
             </div>

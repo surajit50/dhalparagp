@@ -77,7 +77,7 @@ export const actionplancolumns: ColumnDef<ActionPlanWithWorks>[] = [
       return (
         <div className="flex gap-2">
           {hasEstimate ? (
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200" title="Estimate Saved">
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200" title="Estimate Saved">
               <Calculator className="h-3 w-3 mr-1" />
               Est
             </Badge>

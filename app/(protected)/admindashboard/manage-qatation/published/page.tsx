@@ -64,7 +64,7 @@ export default async function PublishedQuotationsPage() {
               </Card>
               <Card>
                 <CardContent className="pt-6">
-                  <div className="text-2xl font-bold text-blue-600"></div>
+                  <div className="text-2xl font-bold text-orange-600"></div>
                   <p className="text-sm text-muted-foreground">Total Bidders</p>
                 </CardContent>
               </Card>
@@ -108,7 +108,7 @@ export default async function PublishedQuotationsPage() {
                         <Badge
                           className={
                             quotation.quotationType === "WORK"
-                              ? "bg-blue-100 text-blue-800"
+                              ? "bg-orange-100 text-orange-800"
                               : quotation.quotationType === "SUPPLY"
                               ? "bg-green-100 text-green-800"
                               : "bg-orange-100 text-orange-800"

@@ -86,7 +86,7 @@ export default function AdminPujaNocVerifyPage() {
     switch (status) {
       case "SUBMITTED":
         return (
-          <Badge variant="secondary" className="bg-blue-100 text-blue-700">
+          <Badge variant="secondary" className="bg-orange-100 text-orange-700">
             Pending
           </Badge>
         );

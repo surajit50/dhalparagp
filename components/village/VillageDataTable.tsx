@@ -65,7 +65,7 @@ export function VillageDataTable({
                       {columns.map((column, colIndex) => (
                         <TableCell 
                           key={colIndex} 
-                          className={`py-4 group-hover:text-indigo-900 transition-colors ${column.className}`}
+                          className={`py-4 group-hover:text-orange-900 transition-colors ${column.className}`}
                         >
                           {typeof column.accessor === "function"
                             ? column.accessor(item)

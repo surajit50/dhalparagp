@@ -210,7 +210,7 @@ export default function TankerBookingForm() {
     {
       type: "WATER_TANKER" as ServiceType,
       label: "Water Tanker",
-      icon: <Truck className="h-4 w-4 text-blue-600" />,
+      icon: <Truck className="h-4 w-4 text-orange-600" />,
       fee: waterTankerFee,
       slots: waterTankerSlots,
     },

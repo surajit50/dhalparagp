@@ -103,7 +103,7 @@ export default function NotificationMessage() {
                     <div className="shrink-0 pt-1">
                       {item.type === "success" && <CheckCircle className="h-5 w-5 text-green-500" />}
                       {item.type === "warning" && <AlertTriangle className="h-5 w-5 text-yellow-500" />}
-                      {item.type === "info" && <Info className="h-5 w-5 text-blue-500" />}
+                      {item.type === "info" && <Info className="h-5 w-5 text-orange-500" />}
                     </div>
                     
                     <div className="flex-1">

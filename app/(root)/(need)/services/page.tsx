@@ -25,7 +25,7 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-20">
+      <section className="bg-gradient-to-r from-green-600 to-orange-600 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Citizen Services
@@ -47,7 +47,7 @@ export default function ServicesPage() {
           {/* Certificate Services */}
           <div className="mb-16">
             <h3 className="text-2xl font-semibold text-gray-900 mb-8 flex items-center">
-              <FileText className="mr-3 h-6 w-6 text-blue-600" />
+              <FileText className="mr-3 h-6 w-6 text-orange-600" />
               Certificate Services
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -244,7 +244,7 @@ export default function ServicesPage() {
 
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <Badge className="w-fit mb-2 bg-blue-100 text-blue-800">
+                  <Badge className="w-fit mb-2 bg-orange-100 text-orange-800">
                     Health
                   </Badge>
                   <CardTitle className="text-lg">Ayushman Bharat</CardTitle>
@@ -275,7 +275,7 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="text-center hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <Droplets className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+                  <Droplets className="h-12 w-12 text-orange-600 mx-auto mb-4" />
                   <h4 className="font-semibold mb-2">Water Supply</h4>
                   <p className="text-sm text-gray-600 mb-4">
                     24/7 clean water supply to all households
@@ -338,8 +338,8 @@ export default function ServicesPage() {
           <div className="max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="text-center">
-                <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl font-bold text-blue-600">1</span>
+                <div className="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-orange-600">1</span>
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Apply Online</h3>
                 <p className="text-gray-600">
@@ -373,7 +373,7 @@ export default function ServicesPage() {
       </section>
 
       {/* Contact for Services */}
-      <section className="py-16 bg-blue-600 text-white">
+      <section className="py-16 bg-orange-600 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-6">Need Help with Services?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
@@ -388,7 +388,7 @@ export default function ServicesPage() {
             <Button
               size="lg"
               variant="outline"
-              className="text-white border-white hover:bg-white hover:text-blue-600"
+              className="text-white border-white hover:bg-white hover:text-orange-600"
             >
               Visit Office
             </Button>

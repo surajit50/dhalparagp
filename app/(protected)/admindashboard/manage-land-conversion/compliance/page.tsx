@@ -242,7 +242,7 @@ export default function ComplianceCheckPage() {
                         key={item.id}
                         className={`cursor-pointer transition-colors ${
                           selected?.id === item.id
-                            ? "bg-blue-50 hover:bg-blue-50"
+                            ? "bg-orange-50 hover:bg-orange-50"
                             : "hover:bg-gray-50"
                         }`}
                         onClick={() =>
@@ -252,7 +252,7 @@ export default function ComplianceCheckPage() {
                         <TableCell className="text-gray-500 text-sm">
                           {idx + 1}
                         </TableCell>
-                        <TableCell className="font-mono font-semibold text-blue-800 text-sm">
+                        <TableCell className="font-mono font-semibold text-orange-800 text-sm">
                           {item.applicationNo}
                         </TableCell>
                         <TableCell className="font-medium text-gray-800 text-sm">
@@ -269,7 +269,7 @@ export default function ComplianceCheckPage() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-7 text-xs"
+                              className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 h-7 text-xs"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setSelected(

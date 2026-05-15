@@ -67,12 +67,12 @@ export default async function PondLeasePage() {
       <div className="w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* HEADER */}
 
-        <div className="rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-6 text-white shadow-lg">
+        <div className="rounded-xl bg-gradient-to-r from-orange-600 via-orange-600 to-purple-600 p-6 text-white shadow-lg">
           <h1 className="text-2xl font-bold tracking-tight">
             Pond Lease Register
           </h1>
 
-          <p className="text-blue-100 text-sm mt-1">
+          <p className="text-orange-100 text-sm mt-1">
             Manage pond leases, track payments and monitor lease expiry.
           </p>
         </div>

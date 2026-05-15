@@ -31,7 +31,7 @@ export default async function VendorParticipationReportPage({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* HEADER */}
-      <section className="bg-gradient-to-r from-indigo-800 to-purple-600 text-white py-10">
+      <section className="bg-gradient-to-r from-orange-800 to-purple-600 text-white py-10">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-3xl font-bold">{gpcode} Gram Panchayat</h1>
           <p className="mt-2">Vendor Participation Report</p>
@@ -53,7 +53,7 @@ export default async function VendorParticipationReportPage({
           <div className="grid md:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-xl font-bold text-blue-700">
+                <div className="text-xl font-bold text-orange-700">
                   {vendorData.summary.totalVendors}
                 </div>
                 <div className="text-sm text-gray-600">Total Vendors</div>

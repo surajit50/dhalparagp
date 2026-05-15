@@ -49,7 +49,7 @@ export default function LinkageActionCell({ certificateId }: LinkageActionCellPr
     <>
       <Button
         size="sm"
-        className="bg-blue-700 hover:bg-blue-800 text-white"
+        className="bg-orange-700 hover:bg-orange-800 text-white"
         onClick={handleOpen}
       >
         <Eye className="h-4 w-4 mr-1" />
@@ -63,7 +63,7 @@ export default function LinkageActionCell({ certificateId }: LinkageActionCellPr
           <div className="p-6 pt-2">
             {loading ? (
               <div className="flex flex-col items-center justify-center p-12 gap-4">
-                <Loader2 className="h-10 w-10 animate-spin text-blue-700" />
+                <Loader2 className="h-10 w-10 animate-spin text-orange-700" />
                 <p className="text-muted-foreground animate-pulse font-medium">Loading certificate details...</p>
               </div>
             ) : details ? (

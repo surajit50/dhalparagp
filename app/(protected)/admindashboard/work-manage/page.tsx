@@ -34,8 +34,8 @@ const quickActions = [
     description: "Create detailed work estimates with measurements",
     href: "/admindashboard/work-manage/(estimate_bii)/estimate-preparation",
     icon: Calculator,
-    color: "from-blue-500 to-cyan-500",
-    bgColor: "bg-blue-50",
+    color: "from-orange-500 to-orange-500",
+    bgColor: "bg-orange-50",
     badge: "Start Here",
   },
   {
@@ -116,11 +116,11 @@ export default function WorkManageDashboard() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-slate-100 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-orange-600 to-orange-600 bg-clip-text text-transparent">
               Work Management Dashboard
             </h1>
             <p className="text-gray-600 mt-2 text-lg">
@@ -134,7 +134,7 @@ export default function WorkManageDashboard() {
                 View All Works
               </Link>
             </Button>
-            <Button asChild className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 shadow-md hover:shadow-lg">
+            <Button asChild className="gap-2 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 shadow-md hover:shadow-lg">
               <Link href="/admindashboard/work-manage/add">
                 <PlusCircle className="h-4 w-4" />
                 Add New Work
@@ -144,7 +144,7 @@ export default function WorkManageDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <Card className="border-l-4 border-l-blue-500 shadow-md hover:shadow-lg transition-shadow">
+          <Card className="border-l-4 border-l-orange-500 shadow-md hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3">
               <CardDescription className="text-xs font-medium text-gray-500 uppercase">
                 Total Works
@@ -213,10 +213,10 @@ export default function WorkManageDashboard() {
           </Card>
         </div>
 
-        <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 shadow-md">
+        <Card className="bg-gradient-to-r from-orange-50 to-orange-50 border-orange-200 shadow-md">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-blue-600" />
+              <Clock className="h-5 w-5 text-orange-600" />
               Overall Progress
             </CardTitle>
             <CardDescription>
@@ -226,7 +226,7 @@ export default function WorkManageDashboard() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Workflow Completion</span>
-              <span className="text-2xl font-bold text-blue-600">{completionPercentage}%</span>
+              <span className="text-2xl font-bold text-orange-600">{completionPercentage}%</span>
             </div>
             <Progress value={completionPercentage} className="h-3 bg-gray-200" />
             <div className="flex justify-between text-xs text-gray-500">
@@ -239,7 +239,7 @@ export default function WorkManageDashboard() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Quick Actions</h2>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+            <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">
               Recommended Workflow
             </Badge>
           </div>
@@ -260,7 +260,7 @@ export default function WorkManageDashboard() {
                           </Badge>
                         )}
                       </div>
-                      <CardTitle className="text-lg mt-4 group-hover:text-blue-600 transition-colors">
+                      <CardTitle className="text-lg mt-4 group-hover:text-orange-600 transition-colors">
                         {action.title}
                       </CardTitle>
                       <CardDescription className="text-sm">
@@ -298,8 +298,8 @@ export default function WorkManageDashboard() {
                 return (
                   <div key={item.step} className="flex items-center gap-4">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 font-bold">
+                      <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-dashed border-gray-200 hover:border-orange-300 transition-colors">
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-orange-100 text-orange-600 font-bold">
                           {item.step}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -321,16 +321,16 @@ export default function WorkManageDashboard() {
         </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+          <Card className="bg-gradient-to-br from-orange-50 to-orange-50 border-orange-200">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-blue-800">
+              <CardTitle className="flex items-center gap-2 text-orange-800">
                 <AlertCircle className="h-5 w-5" />
                 Getting Started
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-sm font-bold flex-shrink-0">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-200 text-orange-700 text-sm font-bold flex-shrink-0">
                   1
                 </div>
                 <p className="text-sm text-gray-700">
@@ -338,7 +338,7 @@ export default function WorkManageDashboard() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-sm font-bold flex-shrink-0">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-200 text-orange-700 text-sm font-bold flex-shrink-0">
                   2
                 </div>
                 <p className="text-sm text-gray-700">
@@ -346,7 +346,7 @@ export default function WorkManageDashboard() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-sm font-bold flex-shrink-0">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-200 text-orange-700 text-sm font-bold flex-shrink-0">
                   3
                 </div>
                 <p className="text-sm text-gray-700">
@@ -354,7 +354,7 @@ export default function WorkManageDashboard() {
                 </p>
               </div>
               <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-sm font-bold flex-shrink-0">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-orange-200 text-orange-700 text-sm font-bold flex-shrink-0">
                   4
                 </div>
                 <p className="text-sm text-gray-700">

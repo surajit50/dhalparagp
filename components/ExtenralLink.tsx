@@ -16,7 +16,7 @@ const notices = [
 
 const Notice: React.FC<{ text: string }> = ({ text }) => (
   <li className="flex items-center mb-2">
-    <span className="text-blue-500 mr-2">➤</span>
+    <span className="text-orange-500 mr-2">➤</span>
     <span>{text}</span>
   </li>
 );

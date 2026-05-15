@@ -282,7 +282,7 @@ export function AddBidsDialog({ quotation, onBidsAdded }: AddBidsDialogProps) {
                   <div className="flex items-center gap-2">
                     <span className="font-semibold">Bid #{index + 1}</span>
                     {rank && (
-                      <Badge className="bg-indigo-100 text-indigo-700">
+                      <Badge className="bg-orange-100 text-orange-700">
                         {rank}
                       </Badge>
                     )}

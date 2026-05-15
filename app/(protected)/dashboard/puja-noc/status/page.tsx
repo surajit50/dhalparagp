@@ -28,7 +28,7 @@ const PujaNocStatusPage = async () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "SUBMITTED":
-        return <Badge variant="secondary" className="bg-blue-100 text-blue-700 hover:bg-blue-100"><Clock className="w-3 h-3 mr-1" /> Submitted</Badge>;
+        return <Badge variant="secondary" className="bg-orange-100 text-orange-700 hover:bg-orange-100"><Clock className="w-3 h-3 mr-1" /> Submitted</Badge>;
       case "APPROVED":
         return <Badge variant="default" className="bg-green-100 text-green-700 hover:bg-green-100"><CheckCircle2 className="w-3 h-3 mr-1" /> Approved</Badge>;
       case "REJECTED":

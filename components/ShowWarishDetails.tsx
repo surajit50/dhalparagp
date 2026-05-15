@@ -102,7 +102,7 @@ export const ShowWarishDetails = ({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <button className="text-blue-600 hover:text-blue-800 font-medium">
+        <button className="text-orange-600 hover:text-orange-800 font-medium">
           View Legal Heirs
         </button>
       </DialogTrigger>
@@ -115,7 +115,7 @@ export const ShowWarishDetails = ({
         <ScrollArea className="h-[calc(80vh-100px)] pr-4">
           {isLoading ? (
             <div className="p-4 text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto"></div>
               <p className="mt-2 text-gray-600">
                 Loading application details...
               </p>

@@ -51,7 +51,7 @@ export const MBMetadata: React.FC<MBMetadataProps> = ({
             <CardHeader className="pb-4 border-b border-slate-50">
               <CardTitle className="flex items-center gap-3">
                 <div
-                  className={`p-2.5 rounded-xl ${isConfirmed ? "bg-green-100/80 text-green-600" : "bg-blue-50 text-blue-600"}`}
+                  className={`p-2.5 rounded-xl ${isConfirmed ? "bg-green-100/80 text-green-600" : "bg-orange-50 text-orange-600"}`}
                 >
                   {isConfirmed ? (
                     <CheckCircle className="h-5 w-5" />
@@ -98,7 +98,7 @@ export const MBMetadata: React.FC<MBMetadataProps> = ({
                         })
                       }
                       placeholder="MB-001"
-                      className="bg-white focus-visible:ring-blue-500 transition-shadow h-10 shadow-sm"
+                      className="bg-white focus-visible:ring-orange-500 transition-shadow h-10 shadow-sm"
                       disabled={isConfirmed}
                     />
                   </div>
@@ -117,7 +117,7 @@ export const MBMetadata: React.FC<MBMetadataProps> = ({
                         })
                       }
                       placeholder="P-01"
-                      className="bg-white focus-visible:ring-blue-500 transition-shadow h-10 shadow-sm"
+                      className="bg-white focus-visible:ring-orange-500 transition-shadow h-10 shadow-sm"
                       disabled={isConfirmed}
                     />
                   </div>
@@ -137,7 +137,7 @@ export const MBMetadata: React.FC<MBMetadataProps> = ({
                         measuredDate: e.target.value,
                       })
                     }
-                    className="bg-white focus-visible:ring-blue-500 transition-shadow h-10 shadow-sm"
+                    className="bg-white focus-visible:ring-orange-500 transition-shadow h-10 shadow-sm"
                     disabled={isConfirmed}
                   />
                 </div>
@@ -157,7 +157,7 @@ export const MBMetadata: React.FC<MBMetadataProps> = ({
                       })
                     }
                     placeholder="Enter name"
-                    className="bg-white focus-visible:ring-blue-500 transition-shadow h-10 shadow-sm"
+                    className="bg-white focus-visible:ring-orange-500 transition-shadow h-10 shadow-sm"
                     disabled={isConfirmed}
                   />
                 </div>
@@ -176,14 +176,14 @@ export const MBMetadata: React.FC<MBMetadataProps> = ({
                       })
                     }
                     placeholder="Enter name"
-                    className="bg-white focus-visible:ring-blue-500 transition-shadow h-10 shadow-sm"
+                    className="bg-white focus-visible:ring-orange-500 transition-shadow h-10 shadow-sm"
                     disabled={isConfirmed}
                   />
                 </div>
 
                 {!isConfirmed && (
                   <Button
-                    className="w-full mt-6 h-11 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all font-semibold"
+                    className="w-full mt-6 h-11 bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg transition-all font-semibold"
                     onClick={onConfirm}
                   >
                     <Save className="h-4 w-4 mr-2" />

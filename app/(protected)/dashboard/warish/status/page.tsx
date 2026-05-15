@@ -90,7 +90,7 @@ const WarishApplicationsPage = async () => {
 
         <Card>
           <CardContent className="flex items-center gap-4 p-4">
-            <FileText className="text-blue-600" />
+            <FileText className="text-orange-600" />
             <div>
               <p className="text-sm text-muted-foreground">Total</p>
               <p className="text-xl font-bold">

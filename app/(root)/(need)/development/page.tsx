@@ -9,7 +9,7 @@ export default function DevelopmentPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-green-600 to-blue-600 text-white py-20">
+      <section className="bg-gradient-to-r from-green-600 to-orange-600 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Development Projects</h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto">
@@ -27,7 +27,7 @@ export default function DevelopmentPage() {
               <div className="text-gray-600">Total Projects</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">32</div>
+              <div className="text-4xl font-bold text-orange-600 mb-2">32</div>
               <div className="text-gray-600">Completed</div>
             </div>
             <div className="text-center">
@@ -55,7 +55,7 @@ export default function DevelopmentPage() {
                   fill
                   className="object-cover"
                 />
-                <Badge className="absolute top-4 left-4 bg-blue-600">Infrastructure</Badge>
+                <Badge className="absolute top-4 left-4 bg-orange-600">Infrastructure</Badge>
               </div>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
@@ -371,7 +371,7 @@ export default function DevelopmentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Integrated Sports Complex
-                  <Badge variant="outline" className="text-blue-600 border-blue-600">
+                  <Badge variant="outline" className="text-orange-600 border-orange-600">
                     <AlertCircle className="mr-1 h-3 w-3" />
                     Planning Phase
                   </Badge>
@@ -415,7 +415,7 @@ export default function DevelopmentPage() {
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
                   Renewable Energy Initiative
-                  <Badge variant="outline" className="text-blue-600 border-blue-600">
+                  <Badge variant="outline" className="text-orange-600 border-orange-600">
                     <AlertCircle className="mr-1 h-3 w-3" />
                     Planning Phase
                   </Badge>
@@ -459,25 +459,25 @@ export default function DevelopmentPage() {
       </section>
 
       {/* Project Impact */}
-      <section className="py-16 bg-blue-600 text-white">
+      <section className="py-16 bg-orange-600 text-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-12 text-center">Development Impact</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">15,000+</div>
-              <div className="text-blue-200">People Benefited</div>
+              <div className="text-orange-200">People Benefited</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">₹2.5Cr</div>
-              <div className="text-blue-200">Investment Made</div>
+              <div className="text-orange-200">Investment Made</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">85%</div>
-              <div className="text-blue-200">Project Success Rate</div>
+              <div className="text-orange-200">Project Success Rate</div>
             </div>
             <div className="text-center">
               <div className="text-4xl font-bold mb-2">12</div>
-              <div className="text-blue-200">Villages Covered</div>
+              <div className="text-orange-200">Villages Covered</div>
             </div>
           </div>
         </div>

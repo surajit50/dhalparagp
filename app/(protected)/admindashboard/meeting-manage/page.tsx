@@ -38,7 +38,7 @@ const meetingTypes = [
   {
     value: "UPASAMITY",
     label: "Upasamity",
-    color: "bg-blue-100 text-blue-800",
+    color: "bg-orange-100 text-orange-800",
   },
   { value: "GENERAL", label: "General", color: "bg-green-100 text-green-800" },
   { value: "ARTHO", label: "Artho", color: "bg-purple-100 text-purple-800" },
@@ -58,7 +58,7 @@ const meetingStatuses = [
   {
     value: "SCHEDULED",
     label: "Scheduled",
-    color: "bg-blue-100 text-blue-800",
+    color: "bg-orange-100 text-orange-800",
     icon: Calendar,
   },
   {
@@ -187,7 +187,7 @@ export default function MeetingManagementPage() {
           </p>
         </div>
         <Link href="/admindashboard/meeting-manage/add-meeting">
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-orange-600 hover:bg-orange-700">
             <Plus className="mr-2 h-4 w-4" />
             Add New Meeting
           </Button>
@@ -207,7 +207,7 @@ export default function MeetingManagementPage() {
                   {totalMeetings}
                 </p>
               </div>
-              <Calendar className="h-8 w-8 text-blue-600" />
+              <Calendar className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
@@ -217,11 +217,11 @@ export default function MeetingManagementPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Scheduled</p>
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-orange-600">
                   {scheduledCount}
                 </p>
               </div>
-              <Calendar className="h-8 w-8 text-blue-600" />
+              <Calendar className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
@@ -419,7 +419,7 @@ export default function MeetingManagementPage() {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-gray-600">
                           <div className="flex items-center">
-                            <Calendar className="mr-2 h-4 w-4 text-blue-600" />
+                            <Calendar className="mr-2 h-4 w-4 text-orange-600" />
                             <span>{formatDate(meeting.meetingDate)}</span>
                           </div>
                           <div className="flex items-center">

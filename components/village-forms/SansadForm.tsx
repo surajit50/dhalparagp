@@ -69,7 +69,7 @@ export function SansadForm({
                 <Input
                   {...field}
                   placeholder="e.g., Sansad I"
-                  className="bg-white border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 rounded-xl"
+                  className="bg-white border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 rounded-xl"
                 />
               </FormControl>
               <FormMessage />
@@ -89,7 +89,7 @@ export function SansadForm({
                 <Input
                   {...field}
                   placeholder="e.g., 01"
-                  className="bg-white border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 rounded-xl"
+                  className="bg-white border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200 rounded-xl"
                 />
               </FormControl>
               <FormMessage />
@@ -100,7 +100,7 @@ export function SansadForm({
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full h-12 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-100 transition-all duration-200 active:scale-[0.98]"
+          className="w-full h-12 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-bold rounded-xl shadow-lg shadow-orange-100 transition-all duration-200 active:scale-[0.98]"
         >
           {isSubmitting ? (
             <div className="flex items-center space-x-2">

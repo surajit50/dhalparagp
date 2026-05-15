@@ -44,7 +44,7 @@ const page = async () => {
             value: visitor?.totalVisitors || 0,
             icon: FaUsers,
             change: "+10%",
-            color: "text-blue-500",
+            color: "text-orange-500",
         },
         {
             title: "NIT Count",

@@ -363,10 +363,10 @@ export function MBPrintPreview({
         <div className="px-6 py-4 border-b border-slate-200/80 bg-white/60 sticky top-0 z-10 flex justify-between items-center shadow-sm backdrop-blur-md">
           <div className="flex items-baseline space-x-4">
             <h2 className="text-xl font-semibold text-slate-800 tracking-tight flex items-center">
-              <Printer className="w-5 h-5 mr-3 text-blue-600" />
+              <Printer className="w-5 h-5 mr-3 text-orange-600" />
               Measurement Book Preview
             </h2>
-            <span className="hidden sm:inline-flex bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-100">
+            <span className="hidden sm:inline-flex bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-xs font-semibold border border-orange-100">
               {allPages.length} Pages · {sheets.length} Sheets (A4, 2‑up)
             </span>
           </div>
@@ -382,7 +382,7 @@ export function MBPrintPreview({
             </Button>
             <Button
               onClick={handlePrint}
-              className="bg-blue-600 text-white hover:bg-blue-700 shadow-md transition-all hover:shadow-lg"
+              className="bg-orange-600 text-white hover:bg-orange-700 shadow-md transition-all hover:shadow-lg"
             >
               <Printer className="w-4 h-4 mr-2" />
               Print Book

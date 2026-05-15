@@ -39,14 +39,14 @@ export default function WarishApplicationDetailsClient({
 
   return (
     <div className="w-full space-y-6">
-      <Card className="shadow-xl border-t-4 border-t-blue-500">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b px-6">
+      <Card className="shadow-xl border-t-4 border-t-orange-500">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-100/50 border-b px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <FileText className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <FileText className="h-6 w-6 text-orange-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-blue-900">
+              <CardTitle className="text-2xl font-bold text-orange-900">
                 Warish Application Details
               </CardTitle>
             </div>
@@ -89,7 +89,7 @@ function ApplicationOverview({
   return (
     <div className="space-y-8">
       <SectionWrapper
-        icon={<Calendar className="h-5 w-5 text-blue-600" />}
+        icon={<Calendar className="h-5 w-5 text-orange-600" />}
         title="Reporting Information / প্রতিবেদন তথ্য"
         titleNumber="1"
       >
@@ -267,7 +267,7 @@ function FieldReport({
 function WarishDocuments({ documents }: { documents: any[] }) {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-blue-700">
+      <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-orange-700">
         <FileText className="h-6 w-6" />
         4. Upload Document / ডকুমেন্ট আপলোড
       </h2>
@@ -275,14 +275,14 @@ function WarishDocuments({ documents }: { documents: any[] }) {
         {documents.map((doc) => (
           <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg bg-gray-50">
             <div className="flex items-center gap-3">
-              <File className="h-5 w-5 text-blue-500" />
+              <File className="h-5 w-5 text-orange-500" />
               <span className="font-medium">{doc.documentType}</span>
             </div>
             <a 
               href={doc.cloudinaryUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline flex items-center gap-1"
+              className="text-orange-600 hover:underline flex items-center gap-1"
             >
               <FileText className="h-4 w-4" />
               View
@@ -315,7 +315,7 @@ function SectionWrapper({
       <div className="p-4 border-b bg-gray-50">
         <div className="flex items-center gap-3">
           {titleNumber && (
-            <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-medium">
+            <div className="h-8 w-8 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center font-medium">
               {titleNumber}
             </div>
           )}

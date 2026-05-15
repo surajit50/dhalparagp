@@ -11,7 +11,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#1e3a8a] text-white py-10 border-t border-blue-800">
+    <footer className="bg-[#1e3a8a] text-white py-10 border-t border-orange-800">
       <div className="container mx-auto px-4">
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
@@ -64,7 +64,7 @@ const Footer = () => {
 
         </div>
 
-        <div className="mt-8 text-center text-xs border-t border-blue-800 pt-6">
+        <div className="mt-8 text-center text-xs border-t border-orange-800 pt-6">
           © {currentYear} Dhalpara Gram Panchayat, Government of West Bengal
         </div>
       </div>

@@ -85,7 +85,7 @@ export default function VisionMission() {
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {coreValues.map((value, index) => (
               <li key={index} className="flex items-center">
-                <CheckCircle2 className="mr-2 h-5 w-5 text-blue-500" />
+                <CheckCircle2 className="mr-2 h-5 w-5 text-orange-500" />
                 <span>{value}</span>
               </li>
             ))}

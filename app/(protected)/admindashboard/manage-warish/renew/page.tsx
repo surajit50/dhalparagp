@@ -51,7 +51,7 @@ const WarishRenewPage = async () => {
   ).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 py-8">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="mb-8">
@@ -65,7 +65,7 @@ const WarishRenewPage = async () => {
               </p>
             </div>
             <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-              <RefreshCw className="h-5 w-5 text-blue-500" />
+              <RefreshCw className="h-5 w-5 text-orange-500" />
               <span className="text-sm font-medium text-gray-700">
                 Last updated: {new Date().toLocaleTimeString()}
               </span>
@@ -78,8 +78,8 @@ const WarishRenewPage = async () => {
           <Card className="bg-white shadow-lg border-0">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-3 bg-blue-100 rounded-full">
-                  <AlertTriangle className="h-6 w-6 text-blue-600" />
+                <div className="p-3 bg-orange-100 rounded-full">
+                  <AlertTriangle className="h-6 w-6 text-orange-600" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Applications</p>
@@ -120,13 +120,13 @@ const WarishRenewPage = async () => {
 
         {/* Main Content */}
         <Card className="bg-white shadow-xl border-0 overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+          <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-600 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-semibold">
                   Applications Requiring Renewal
                 </CardTitle>
-                <p className="text-blue-100 text-sm mt-1">
+                <p className="text-orange-100 text-sm mt-1">
                   Applications sorted by nearest renewal date
                 </p>
               </div>
@@ -168,11 +168,11 @@ const WarishRenewPage = async () => {
 
         {/* Help Section */}
         <div className="mt-8">
-          <Card className="bg-gradient-to-r from-gray-50 to-blue-50 border-0">
+          <Card className="bg-gradient-to-r from-gray-50 to-orange-50 border-0">
             <CardContent className="p-6">
               <div className="flex items-start space-x-4">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Info className="h-5 w-5 text-blue-600" />
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Info className="h-5 w-5 text-orange-600" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">How Renewal Works</h4>

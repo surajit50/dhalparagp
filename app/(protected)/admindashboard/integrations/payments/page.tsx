@@ -12,7 +12,7 @@ export default function PaymentsIntegrationsPage() {
             <span className="text-lg font-semibold text-gray-600 mb-2">
               Razorpay
             </span>
-            <span className="text-3xl font-bold text-blue-700">
+            <span className="text-3xl font-bold text-orange-700">
               Coming Soon
             </span>
           </div>

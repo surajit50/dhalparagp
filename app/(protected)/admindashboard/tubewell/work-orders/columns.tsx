@@ -38,7 +38,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
     case "ISSUED":
       return (
-        <Badge variant="secondary" className="bg-sky-50 text-sky-700 border-sky-200/50 px-3 py-1 rounded-full font-medium">
+        <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200/50 px-3 py-1 rounded-full font-medium">
           Issued
         </Badge>
       );
@@ -137,7 +137,7 @@ const CellAction = ({ order, allMaterials }: CellActionProps) => {
 
               <DropdownMenuItem
                 onClick={() => setIsAdjustOpen(true)}
-                className="cursor-pointer text-blue-600"
+                className="cursor-pointer text-orange-600"
               >
                 <PackagePlus className="h-4 w-4 mr-2" /> Adjust Stock
               </DropdownMenuItem>
@@ -149,7 +149,7 @@ const CellAction = ({ order, allMaterials }: CellActionProps) => {
             <DropdownMenuItem asChild>
               <Link
                 href={`/admindashboard/tubewell/bills/create?orderId=${order.id}`}
-                className="cursor-pointer text-blue-600"
+                className="cursor-pointer text-orange-600"
               >
                 <FileText className="h-4 w-4 mr-2" /> Generate Bill
               </Link>

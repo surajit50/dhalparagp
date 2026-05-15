@@ -32,14 +32,14 @@ export default function WarishApplicationDetailsEdit({
 }: WarishApplicationDetailsProps) {
   return (
     <div className="w-full p-6 space-y-6">
-      <Card className="shadow-xl border-t-4 border-t-blue-500">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100/50 border-b px-6">
+      <Card className="shadow-xl border-t-4 border-t-orange-500">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-100/50 border-b px-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <FileText className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-orange-100 rounded-lg">
+                <FileText className="h-6 w-6 text-orange-600" />
               </div>
-              <CardTitle className="text-2xl font-bold text-blue-900">
+              <CardTitle className="text-2xl font-bold text-orange-900">
                 Warish Application Details
               </CardTitle>
             </div>
@@ -80,7 +80,7 @@ function ApplicationOverview({
     <div className="space-y-8">
       {/* Reporting Information */}
       <SectionWrapper
-        icon={<Calendar className="h-5 w-5 text-blue-600" />}
+        icon={<Calendar className="h-5 w-5 text-orange-600" />}
         title="Reporting Information / প্রতিবেদন তথ্য"
         titleNumber="1"
       >
@@ -278,7 +278,7 @@ function SectionWrapper({
       <div className="p-4 border-b bg-gray-50">
         <div className="flex items-center gap-3">
           {titleNumber && (
-            <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-medium">
+            <div className="h-8 w-8 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center font-medium">
               {titleNumber}
             </div>
           )}

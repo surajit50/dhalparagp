@@ -64,7 +64,7 @@ export default function WorkOrderAOCDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-full max-w-6xl max-h-[92vh] overflow-y-auto p-0 rounded-2xl">
-        <div className="bg-blue-900 text-white px-6 py-4 rounded-t-2xl">
+        <div className="bg-orange-900 text-white px-6 py-4 rounded-t-2xl">
           <h2 className="text-xl font-semibold flex items-center gap-2">
             <CheckCircleIcon className="w-5 h-5" />
             Acceptance of Contract (AOC)
@@ -245,7 +245,7 @@ function AOCForm({
           <Button
             type="submit"
             disabled={!form.formState.isValid || mutation.isPending}
-            className="bg-blue-700 text-white"
+            className="bg-orange-700 text-white"
           >
             {mutation.isPending ? "Processing..." : "Finalize AOC"}
           </Button>
@@ -264,7 +264,7 @@ function MemoDetailsCard({ form, lastAoc }: any) {
     <Card>
       <CardContent className="p-6 space-y-6">
         {lastAoc && (
-          <div className="bg-blue-50 border rounded-lg p-4">
+          <div className="bg-orange-50 border rounded-lg p-4">
             <p className="font-bold">
               Memo No: {lastAoc.workodermenonumber}
             </p>
@@ -349,7 +349,7 @@ const BidItem = memo(function BidItem({
     <Card
       onClick={onSelect}
       className={`cursor-pointer p-4 ${
-        isSelected ? "border-blue-600 bg-blue-50" : ""
+        isSelected ? "border-orange-600 bg-orange-50" : ""
       }`}
     >
       <div className="flex justify-between">

@@ -46,7 +46,7 @@ export default function StaffWarishApplicationDetailsClient({
     <div className="space-y-8">
       {/* MAIN APPLICATION CARD */}
       <Card className="shadow-xl border rounded-2xl overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
+        <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-600 text-white">
           <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-3 text-2xl font-bold">
               <FileText className="h-7 w-7" />
@@ -69,7 +69,7 @@ export default function StaffWarishApplicationDetailsClient({
           {/* Reporting Info */}
           <Section
             title="Reporting Information"
-            icon={<Calendar className="h-5 w-5 text-blue-600" />}
+            icon={<Calendar className="h-5 w-5 text-orange-600" />}
           >
             <Info
               label="Reporting Date"
@@ -138,7 +138,7 @@ export default function StaffWarishApplicationDetailsClient({
           {/* Documents */}
           <Section
             title="Uploaded Documents"
-            icon={<FileText className="h-5 w-5 text-indigo-600" />}
+            icon={<FileText className="h-5 w-5 text-orange-600" />}
           >
             {documents.length === 0 ? (
               <p className="text-gray-500 text-sm italic">
@@ -152,7 +152,7 @@ export default function StaffWarishApplicationDetailsClient({
                     className="border rounded-xl p-4 flex items-center justify-between hover:bg-gray-50 transition"
                   >
                     <div className="flex items-center gap-3">
-                      <File className="h-5 w-5 text-indigo-600" />
+                      <File className="h-5 w-5 text-orange-600" />
                       <span className="text-sm font-medium">
                         {document.documentType}
                       </span>
@@ -207,7 +207,7 @@ function Section({
 }) {
   return (
     <div className="space-y-4 w-full">
-      <h2 className="text-xl font-semibold flex items-center gap-2 text-blue-700">
+      <h2 className="text-xl font-semibold flex items-center gap-2 text-orange-700">
         {icon}
         {title}
       </h2>

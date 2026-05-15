@@ -156,7 +156,7 @@ export default function WorkOrderForm({
             <Card className="rounded-3xl border shadow-sm overflow-hidden">
               <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
                 <CardTitle className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                  <div className="w-1.5 h-8 bg-indigo-500 rounded-full"></div>
+                  <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
                   Assignment Details
                 </CardTitle>
               </CardHeader>
@@ -203,7 +203,7 @@ export default function WorkOrderForm({
             <Card className="rounded-3xl border shadow-sm overflow-hidden">
               <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
                 <CardTitle className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                  <div className="w-1.5 h-8 bg-sky-500 rounded-full"></div>
+                  <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
                   Select Materials
                 </CardTitle>
               </CardHeader>
@@ -221,18 +221,18 @@ export default function WorkOrderForm({
                           m.stock === 0
                             ? "bg-slate-50 border-slate-200 cursor-not-allowed opacity-60"
                             : selected
-                              ? "bg-indigo-50 border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg shadow-indigo-100/50"
+                              ? "bg-orange-50 border-orange-500 ring-2 ring-orange-500/20 shadow-lg shadow-orange-100/50"
                               : "bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 cursor-pointer hover:shadow-md"
                         }`}
                       >
                         <div className="flex justify-between items-start mb-3 relative z-10">
                           <span
-                            className={`font-bold text-lg tracking-tight ${selected ? "text-indigo-900" : "text-slate-800"}`}
+                            className={`font-bold text-lg tracking-tight ${selected ? "text-orange-900" : "text-slate-800"}`}
                           >
                             {m.name}
                           </span>
                           <div
-                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selected ? "bg-indigo-600 border-indigo-600" : "bg-white border-slate-200"}`}
+                            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${selected ? "bg-orange-600 border-orange-600" : "bg-white border-slate-200"}`}
                           >
                             {selected && (
                               <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -243,7 +243,7 @@ export default function WorkOrderForm({
                         <div className="flex items-center justify-between mt-6 relative z-10">
                           <div className="flex flex-col">
                             <span
-                              className={`text-[10px] font-bold uppercase tracking-widest ${selected ? "text-indigo-600" : "text-slate-400"}`}
+                              className={`text-[10px] font-bold uppercase tracking-widest ${selected ? "text-orange-600" : "text-slate-400"}`}
                             >
                               Stock
                             </span>
@@ -264,7 +264,7 @@ export default function WorkOrderForm({
                         </div>
 
                         {selected && (
-                          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-indigo-100/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+                          <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-orange-100/30 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
                         )}
                       </div>
                     );
@@ -344,7 +344,7 @@ export default function WorkOrderForm({
                   <Button
                     onClick={submit}
                     disabled={isPending || items.length === 0}
-                    className="w-full rounded-2xl h-16 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-lg shadow-lg shadow-indigo-100 transition-all active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-300 disabled:shadow-none"
+                    className="w-full rounded-2xl h-16 bg-orange-600 hover:bg-orange-700 text-white font-black text-lg shadow-lg shadow-orange-100 transition-all active:scale-[0.98] disabled:opacity-50 disabled:bg-slate-300 disabled:shadow-none"
                   >
                     {isPending ? "Issuing..." : "Confirm & Issue Order"}
                   </Button>

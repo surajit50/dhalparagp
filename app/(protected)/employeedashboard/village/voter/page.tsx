@@ -150,11 +150,11 @@ export default function VoterSummaryPage() {
       header: "Aggregated Voters",
       accessor: (item: any) => (
         <div className="flex items-center space-x-4">
-          <div className="flex flex-col items-center px-4 py-1 bg-blue-50 rounded-lg border border-blue-100">
-            <span className="text-[10px] uppercase font-black text-blue-400">
+          <div className="flex flex-col items-center px-4 py-1 bg-orange-50 rounded-lg border border-orange-100">
+            <span className="text-[10px] uppercase font-black text-orange-400">
               Male
             </span>
-            <span className="text-sm font-bold text-blue-700">
+            <span className="text-sm font-bold text-orange-700">
               {item.totalMaleVoter}
             </span>
           </div>
@@ -213,7 +213,7 @@ export default function VoterSummaryPage() {
             variant="ghost"
             size="icon"
             onClick={() => handleEditClick(item)}
-            className="hover:bg-blue-100 hover:text-blue-600 transition-colors"
+            className="hover:bg-orange-100 hover:text-orange-600 transition-colors"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -237,8 +237,8 @@ export default function VoterSummaryPage() {
         title="Electoral Audit"
         description="Monitor and record voter demographics and electoral statistics across village administrative areas."
         icon={Fingerprint}
-        gradientFrom="from-blue-600"
-        gradientTo="to-indigo-600"
+        gradientFrom="from-orange-600"
+        gradientTo="to-orange-600"
       />
 
       <div className="space-y-10">
@@ -249,8 +249,8 @@ export default function VoterSummaryPage() {
           <Card className="shadow-2xl shadow-gray-200/50 border-none rounded-3xl bg-white overflow-hidden">
             <CardHeader className="border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white py-6 px-8">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 text-blue-600">
-                  <div className="p-2 bg-blue-50 rounded-lg">
+                <div className="flex items-center space-x-3 text-orange-600">
+                  <div className="p-2 bg-orange-50 rounded-lg">
                     <Plus className="h-5 w-5" />
                   </div>
                   <CardTitle className="text-xl font-bold tracking-tight text-gray-800">
@@ -258,7 +258,7 @@ export default function VoterSummaryPage() {
                   </CardTitle>
                 </div>
                 {previousYearData && (
-                  <div className="text-[10px] font-black text-blue-400 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full animate-pulse border border-blue-100">
+                  <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest bg-orange-50 px-3 py-1 rounded-full animate-pulse border border-orange-100">
                     Syncing Historical Data
                   </div>
                 )}
@@ -272,7 +272,7 @@ export default function VoterSummaryPage() {
                 </p>
                 <Button
                   onClick={() => setIsCreateDialogOpen(true)}
-                  className="h-11 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md shadow-blue-100 flex items-center gap-2"
+                  className="h-11 px-6 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl shadow-md shadow-orange-100 flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
                   New Electoral Audit
@@ -323,7 +323,7 @@ export default function VoterSummaryPage() {
                 {
                   header: "Male Voters (Roll)",
                   accessor: (item: any) => (
-                    <span className="font-semibold text-blue-700">
+                    <span className="font-semibold text-orange-700">
                       {item.malevoter}
                     </span>
                   ),
@@ -357,8 +357,8 @@ export default function VoterSummaryPage() {
         <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto rounded-3xl border-none shadow-2xl">
           <DialogHeader className="space-y-3 pb-4 border-b">
             <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center space-x-2">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Plus className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Plus className="h-5 w-5 text-orange-600" />
               </div>
               <span>New Electoral Audit Profile</span>
             </DialogTitle>
@@ -379,8 +379,8 @@ export default function VoterSummaryPage() {
         <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto rounded-3xl border-none shadow-2xl">
           <DialogHeader className="space-y-3 pb-4 border-b">
             <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center space-x-2">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Pencil className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Pencil className="h-5 w-5 text-orange-600" />
               </div>
               <span>Edit Electoral Support Profile</span>
             </DialogTitle>

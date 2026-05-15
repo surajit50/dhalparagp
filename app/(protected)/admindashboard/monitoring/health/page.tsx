@@ -8,7 +8,7 @@ export default async function HealthMonitoringPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-green-700 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-r from-green-700 to-orange-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: System Health Monitoring
@@ -91,11 +91,11 @@ export default async function HealthMonitoringPage() {
             <CardContent>
               {healthResult.success && healthData?.userStats ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="p-4 border rounded-lg bg-blue-50">
+                  <div className="p-4 border rounded-lg bg-orange-50">
                     <div className="text-sm font-medium text-gray-600">
                       Total Users
                     </div>
-                    <div className="text-2xl font-bold text-blue-600">
+                    <div className="text-2xl font-bold text-orange-600">
                       {healthData.userStats.totalUsers}
                     </div>
                   </div>

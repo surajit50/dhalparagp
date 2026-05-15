@@ -7,7 +7,7 @@ export default function AdminDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-600 rounded-xl shadow-lg shadow-blue-200">
+            <div className="p-2 bg-orange-600 rounded-xl shadow-lg shadow-orange-200">
               <LayoutDashboard className="w-6 h-6 text-white" />
             </div>
             <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
             <button className="group flex items-center gap-2 bg-white hover:bg-orange-600 text-slate-700 hover:text-white px-5 py-2.5 rounded-xl border border-slate-200 hover:border-orange-600 shadow-sm transition-all duration-200 font-semibold">
               <FilePlus
                 size={18}
-                className="text-blue-600 group-hover:text-white transition-colors"
+                className="text-orange-600 group-hover:text-white transition-colors"
               />
               New Application
             </button>

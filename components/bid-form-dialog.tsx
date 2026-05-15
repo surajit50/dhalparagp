@@ -265,7 +265,7 @@ UI
                         className={rank?.rank === "L1" ? "bg-green-50" : ""}
                       >
                         <TableCell className="flex items-center gap-2">
-                          <Building className="h-4 w-4 text-indigo-600" />
+                          <Building className="h-4 w-4 text-orange-600" />
 
                           {agency.agencydetails.name}
 
@@ -277,7 +277,7 @@ ${
   rank.rank === "L1"
     ? "bg-green-200 text-green-800"
     : rank.rank === "L2"
-      ? "bg-blue-200 text-blue-800"
+      ? "bg-orange-200 text-orange-800"
       : "bg-gray-200 text-gray-700"
 }
 
@@ -352,7 +352,7 @@ ${
   bid.rank === "L1"
     ? "bg-green-50 border-green-300"
     : bid.rank === "L2"
-      ? "bg-blue-50 border-blue-200"
+      ? "bg-orange-50 border-orange-200"
       : "bg-gray-50"
 }
 
@@ -366,7 +366,7 @@ ${
   bid.rank === "L1"
     ? "bg-green-600 text-white"
     : bid.rank === "L2"
-      ? "bg-blue-600 text-white"
+      ? "bg-orange-600 text-white"
       : "bg-gray-500 text-white"
 }
 

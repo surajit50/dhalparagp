@@ -195,7 +195,7 @@ export default function WorkSearchAndSelect({
                     {showCountBadges && (
                       <div className="flex flex-wrap gap-2 mt-1">
                         {count(work, "workEstimateItems") > 0 && (
-                          <Badge className="bg-blue-50 text-blue-600 border border-blue-200 text-[10px]">
+                          <Badge className="bg-orange-50 text-orange-600 border border-orange-200 text-[10px]">
                             <Briefcase className="h-3 w-3 mr-1" />
                             {count(work, "workEstimateItems")}
                           </Badge>

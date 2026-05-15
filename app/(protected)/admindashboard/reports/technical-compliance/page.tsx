@@ -25,7 +25,7 @@ export default async function TechnicalComplianceReportPage({
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-indigo-700 to-purple-700 text-white py-16">
+      <section className="bg-gradient-to-r from-orange-700 to-purple-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Technical Compliance Report
@@ -45,12 +45,12 @@ export default async function TechnicalComplianceReportPage({
           {/* Compliance Overview */}
           {complianceData?.complianceBreakdown && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="bg-blue-50 border-blue-200">
+              <Card className="bg-orange-50 border-orange-200">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-blue-700">
+                  <div className="text-3xl font-bold text-orange-700">
                     {complianceData.complianceBreakdown.total}
                   </div>
-                  <div className="text-sm text-blue-600">Total Evaluations</div>
+                  <div className="text-sm text-orange-600">Total Evaluations</div>
                 </CardContent>
               </Card>
 
@@ -98,9 +98,9 @@ export default async function TechnicalComplianceReportPage({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                       <span className="font-medium">60% Amount Put</span>
-                      <span className="text-2xl font-bold text-blue-700">
+                      <span className="text-2xl font-bold text-orange-700">
                         {complianceData.documentCompliance.sixtyPerAmtPut}
                       </span>
                     </div>
@@ -137,15 +137,15 @@ export default async function TechnicalComplianceReportPage({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                       <span className="font-medium">IT Return</span>
-                      <span className="text-2xl font-bold text-indigo-700">
+                      <span className="text-2xl font-bold text-orange-700">
                         {complianceData.documentCompliance.itReturn}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                       <span className="font-medium">GST</span>
-                      <span className="text-2xl font-bold text-teal-700">
+                      <span className="text-2xl font-bold text-orange-700">
                         {complianceData.documentCompliance.gst}
                       </span>
                     </div>

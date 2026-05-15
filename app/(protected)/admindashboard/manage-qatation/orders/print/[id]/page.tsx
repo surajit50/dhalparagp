@@ -114,7 +114,7 @@ export default async function PrintOrderPage({ params }: PageProps) {
               <p className="mt-2 font-semibold">
                 Subject: Work Order for execution of work against the scheme
               </p>
-              <p className="font-semibold text-blue-800">
+              <p className="font-semibold text-orange-800">
                 {order.quotation.workName}
               </p>
             </div>

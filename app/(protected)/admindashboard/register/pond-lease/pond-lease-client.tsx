@@ -155,12 +155,12 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
   return (
     <div className="space-y-8 p-4 md:p-6 bg-gradient-to-b from-background to-muted/20 min-h-screen">
       {/* Header Section with Gradient Accent */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl" />
         <div className="relative flex flex-col md:flex-row justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-bold flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-              <FileCheck className="h-8 w-8 text-blue-600" />
+            <h1 className="text-4xl font-bold flex items-center gap-3 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
+              <FileCheck className="h-8 w-8 text-orange-600" />
               Pond Lease Management
             </h1>
             <p className="text-muted-foreground mt-2 max-w-2xl">
@@ -184,8 +184,8 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
                 <p className="text-sm font-medium text-muted-foreground">Total Leases</p>
                 <h3 className="text-3xl font-bold mt-2">{totalLeases}</h3>
               </div>
-              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Layers className="h-6 w-6 text-blue-600" />
+              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Layers className="h-6 w-6 text-orange-600" />
               </div>
             </div>
           </CardContent>

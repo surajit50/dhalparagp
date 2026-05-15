@@ -76,7 +76,7 @@ export default function ModifyQuotationsPage() {
       case "Closed":
         return "bg-gray-100 text-gray-800";
       default:
-        return "bg-blue-100 text-blue-800";
+        return "bg-orange-100 text-orange-800";
     }
   };
 
@@ -173,11 +173,11 @@ export default function ModifyQuotationsPage() {
               </div>
             )}
 
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-semibold text-blue-900 mb-2">
+            <div className="mt-6 p-4 bg-orange-50 rounded-lg">
+              <h3 className="font-semibold text-orange-900 mb-2">
                 Modification Guidelines:
               </h3>
-              <ul className="text-sm text-blue-800 space-y-1">
+              <ul className="text-sm text-orange-800 space-y-1">
                 <li>• Draft quotations can be freely modified</li>
                 <li>
                   • Published quotations require approval for major changes

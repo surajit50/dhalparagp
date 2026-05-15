@@ -269,7 +269,7 @@ export default function CorrectionRequestForm({
 
         <DialogHeader className="border-b pb-3">
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Info className="w-5 h-5 text-blue-600" />
+            <Info className="w-5 h-5 text-orange-600" />
             Correction Request
           </DialogTitle>
 
@@ -394,17 +394,17 @@ export default function CorrectionRequestForm({
                 {modifications.map((mod, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 bg-blue-50/50 dark:bg-blue-950/10 border border-blue-100 dark:border-blue-900/30 rounded-lg group animate-in slide-in-from-left-2 duration-200"
+                    className="flex items-center justify-between p-3 bg-orange-50/50 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/30 rounded-lg group animate-in slide-in-from-left-2 duration-200"
                   >
                     <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2 items-center text-sm">
-                      <span className="font-semibold text-blue-700 dark:text-blue-400">
+                      <span className="font-semibold text-orange-700 dark:text-orange-400">
                         {mod.label}
                       </span>
                       <div className="flex items-center gap-2 text-muted-foreground line-through decoration-muted-foreground/40 text-xs">
                         {formatLabel(mod.oldValue || "Empty")}
                       </div>
                       <div className="flex items-center gap-2 font-medium">
-                        <ArrowRight className="w-3 h-3 text-blue-500" />
+                        <ArrowRight className="w-3 h-3 text-orange-500" />
                         {formatLabel(mod.newValue)}
                       </div>
                     </div>
@@ -460,7 +460,7 @@ export default function CorrectionRequestForm({
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="min-w-[160px] bg-blue-600 hover:bg-blue-700 shadow-md"
+              className="min-w-[160px] bg-orange-600 hover:bg-orange-700 shadow-md"
             >
               {isSubmitting ? (
                 <>

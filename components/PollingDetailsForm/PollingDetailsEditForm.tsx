@@ -118,14 +118,14 @@ export default function PollingDetailsEditForm({ params }: { params: { id: strin
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-teal-600">Edit Polling Details</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-orange-600">Edit Polling Details</DialogTitle>
           <DialogDescription>
             Update the details for this polling station. Click update when you are done.
           </DialogDescription>
         </DialogHeader>
         {isLoading ? (
           <div className="flex justify-center items-center h-48">
-            <Loader2 className="h-8 w-8 animate-spin text-teal-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-orange-600" />
           </div>
         ) : (
           <Form {...form}>

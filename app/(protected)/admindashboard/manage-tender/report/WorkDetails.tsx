@@ -52,12 +52,12 @@ export async function WorkDetails({ nitNo }: WorkDetailsProps) {
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           {!nitNo ? (
-            <Alert className="border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20">
-              <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-              <AlertTitle className="text-blue-800 dark:text-blue-200">
+            <Alert className="border-orange-200 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/20">
+              <Info className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+              <AlertTitle className="text-orange-800 dark:text-orange-200">
                 Search Required
               </AlertTitle>
-              <AlertDescription className="text-blue-700 dark:text-blue-300">
+              <AlertDescription className="text-orange-700 dark:text-orange-300">
                 Please enter a NIT number to view work details
               </AlertDescription>
             </Alert>
@@ -77,11 +77,11 @@ export async function WorkDetails({ nitNo }: WorkDetailsProps) {
                         ₹{estimatedTotal.toLocaleString("en-IN")}
                       </div>
                     </div>
-                    <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-                      <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                    <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
+                      <div className="text-sm font-medium text-orange-600 dark:text-orange-400">
                         Total Awarded
                       </div>
-                      <div className="text-lg font-semibold text-blue-700 dark:text-blue-300">
+                      <div className="text-lg font-semibold text-orange-700 dark:text-orange-300">
                         ₹{awardedTotal.toLocaleString("en-IN")}
                       </div>
                     </div>

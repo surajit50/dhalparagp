@@ -76,7 +76,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="Applicant Name / আবেদনকারীর নাম"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -96,7 +96,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="Enter Mobile Number / মোবাইল নম্বর দিন"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -119,7 +119,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   field.onChange(value)
                 }}
               >
-                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Select Relation with Deceased / মৃত ব্যক্তির সাথে সম্পর্ক নির্বাচন করুন" />
                 </SelectTrigger>
                 <SelectContent>
@@ -156,7 +156,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   placeholder="Specify other relation / অন্যান্য সম্পর্ক উল্লেখ করুন"
                   value={field.value === "other" ? "" : field.value}
                   onChange={(e) => field.onChange(e.target.value)}
-                  className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                 />
               </FormControl>
               <FormMessage className="text-xs text-red-500" />
@@ -177,7 +177,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="Name of Deceased / মৃত ব্যক্তির নাম"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -248,7 +248,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
                 <FormItem className="flex items-center space-x-2">
                   <FormControl>
-                    <RadioGroupItem value="male" id="gender-male" className="text-blue-500" />
+                    <RadioGroupItem value="male" id="gender-male" className="text-orange-500" />
                   </FormControl>
                   <FormLabel htmlFor="gender-male" className="text-sm font-normal text-gray-700">
                     Male / পুরুষ
@@ -256,7 +256,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 </FormItem>
                 <FormItem className="flex items-center space-x-2">
                   <FormControl>
-                    <RadioGroupItem value="female" id="gender-female" className="text-blue-500" />
+                    <RadioGroupItem value="female" id="gender-female" className="text-orange-500" />
                   </FormControl>
                   <FormLabel htmlFor="gender-female" className="text-sm font-normal text-gray-700">
                     Female / মহিলা
@@ -281,7 +281,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-4">
                 <FormItem className="flex items-center space-x-2">
                   <FormControl>
-                    <RadioGroupItem value="married" id="marital-status-married" className="text-blue-500" />
+                    <RadioGroupItem value="married" id="marital-status-married" className="text-orange-500" />
                   </FormControl>
                   <FormLabel htmlFor="marital-status-married" className="text-sm font-normal text-gray-700">
                     Married / বিবাহিত
@@ -289,7 +289,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 </FormItem>
                 <FormItem className="flex items-center space-x-2">
                   <FormControl>
-                    <RadioGroupItem value="unmarried" id="marital-status-unmarried" className="text-blue-500" />
+                    <RadioGroupItem value="unmarried" id="marital-status-unmarried" className="text-orange-500" />
                   </FormControl>
                   <FormLabel htmlFor="marital-status-unmarried" className="text-sm font-normal text-gray-700">
                     Unmarried / অবিবাহিত
@@ -314,7 +314,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="Enter Fathers Name / পিতার নাম লিখুন"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -335,7 +335,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 <Input
                   placeholder="Enter Spouses Name / স্বামী/স্ত্রীর নাম লিখুন"
                   {...field}
-                  className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                 />
               </FormControl>
               <FormMessage className="text-xs text-red-500" />
@@ -354,7 +354,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
             </FormLabel>
             <FormControl>
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Enter Village / গ্রামের নাম লিখুন" />
                 </SelectTrigger>
                 <SelectContent>
@@ -381,7 +381,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
             </FormLabel>
             <FormControl>
               <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Enter Post Office / ডাকঘরের নাম লিখুন" />
                 </SelectTrigger>
                 <SelectContent>

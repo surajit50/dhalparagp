@@ -351,7 +351,7 @@ export const TubewelBill = ({ bill, gpProfile }: Props) => {
     <Button
       onClick={handleGeneratePDF}
       disabled={isGenerating}
-      className="gap-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-shadow"
+      className="gap-2 bg-orange-600 hover:bg-orange-700 text-white shadow-sm hover:shadow-md transition-shadow"
       aria-busy={isGenerating}
     >
       {isGenerating ? (

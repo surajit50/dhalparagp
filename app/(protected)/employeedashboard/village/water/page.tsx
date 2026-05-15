@@ -128,35 +128,35 @@ export default function WaterSummaryPage() {
       header: "Water Source Distribution",
       accessor: (item: any) => (
         <div className="flex items-center space-x-4">
-          <div className="flex flex-col items-center px-3 py-1 bg-sky-50 rounded-lg border border-sky-100">
-            <span className="text-[10px] uppercase font-black text-sky-400">
+          <div className="flex flex-col items-center px-3 py-1 bg-orange-50 rounded-lg border border-orange-100">
+            <span className="text-[10px] uppercase font-black text-orange-400">
               Tap
             </span>
-            <span className="text-sm font-bold text-sky-700">
+            <span className="text-sm font-bold text-orange-700">
               {item.tapWater}
             </span>
           </div>
-          <div className="flex flex-col items-center px-3 py-1 bg-blue-50 rounded-lg border border-blue-100">
-            <span className="text-[10px] uppercase font-black text-blue-400">
+          <div className="flex flex-col items-center px-3 py-1 bg-orange-50 rounded-lg border border-orange-100">
+            <span className="text-[10px] uppercase font-black text-orange-400">
               Pump
             </span>
-            <span className="text-sm font-bold text-blue-700">
+            <span className="text-sm font-bold text-orange-700">
               {item.handPump}
             </span>
           </div>
-          <div className="flex flex-col items-center px-3 py-1 bg-indigo-50 rounded-lg border border-indigo-100">
-            <span className="text-[10px] uppercase font-black text-indigo-400">
+          <div className="flex flex-col items-center px-3 py-1 bg-orange-50 rounded-lg border border-orange-100">
+            <span className="text-[10px] uppercase font-black text-orange-400">
               Well
             </span>
-            <span className="text-sm font-bold text-indigo-700">
+            <span className="text-sm font-bold text-orange-700">
               {item.well}
             </span>
           </div>
-          <div className="flex flex-col items-center px-3 py-1 bg-cyan-50 rounded-lg border border-cyan-100">
-            <span className="text-[10px] uppercase font-black text-cyan-400">
+          <div className="flex flex-col items-center px-3 py-1 bg-orange-50 rounded-lg border border-orange-100">
+            <span className="text-[10px] uppercase font-black text-orange-400">
               Natural
             </span>
-            <span className="text-sm font-bold text-cyan-700">{item.pond}</span>
+            <span className="text-sm font-bold text-orange-700">{item.pond}</span>
           </div>
         </div>
       ),
@@ -169,7 +169,7 @@ export default function WaterSummaryPage() {
             variant="ghost"
             size="icon"
             onClick={() => handleEditClick(item)}
-            className="hover:bg-sky-100 hover:text-sky-600 transition-colors"
+            className="hover:bg-orange-100 hover:text-orange-600 transition-colors"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -193,8 +193,8 @@ export default function WaterSummaryPage() {
         title="Hydraulic Audit"
         description="Monitor and record drinking water source availability and distribution across household clusters."
         icon={Waves}
-        gradientFrom="from-sky-600"
-        gradientTo="to-blue-600"
+        gradientFrom="from-orange-600"
+        gradientTo="to-orange-600"
       />
 
       <div className="space-y-10">
@@ -205,8 +205,8 @@ export default function WaterSummaryPage() {
           <Card className="shadow-2xl shadow-gray-200/50 border-none rounded-3xl bg-white overflow-hidden">
             <CardHeader className="border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white py-6 px-8">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3 text-sky-600">
-                  <div className="p-2 bg-sky-50 rounded-lg">
+                <div className="flex items-center space-x-3 text-orange-600">
+                  <div className="p-2 bg-orange-50 rounded-lg">
                     <Plus className="h-5 w-5" />
                   </div>
                   <CardTitle className="text-xl font-bold tracking-tight text-gray-800">
@@ -214,7 +214,7 @@ export default function WaterSummaryPage() {
                   </CardTitle>
                 </div>
                 {previousYearData && (
-                  <div className="text-[10px] font-black text-sky-400 uppercase tracking-widest bg-sky-50 px-3 py-1 rounded-full animate-pulse border border-sky-100">
+                  <div className="text-[10px] font-black text-orange-400 uppercase tracking-widest bg-orange-50 px-3 py-1 rounded-full animate-pulse border border-orange-100">
                     Syncing Historical Data
                   </div>
                 )}
@@ -257,8 +257,8 @@ export default function WaterSummaryPage() {
         <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto rounded-3xl border-none shadow-2xl">
           <DialogHeader className="space-y-3 pb-4 border-b">
             <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center space-x-2">
-              <div className="p-2 bg-sky-50 rounded-lg">
-                <Pencil className="h-5 w-5 text-sky-600" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Pencil className="h-5 w-5 text-orange-600" />
               </div>
               <span>Edit Hydraulic Support Profile</span>
             </DialogTitle>

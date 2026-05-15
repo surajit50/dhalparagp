@@ -159,7 +159,7 @@ const NewPasswordForm = () => {
           <Button
             type="submit"
             disabled={isPending || !token}
-            className="w-full h-11 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white"
+            className="w-full h-11 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white"
           >
             {isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -173,7 +173,7 @@ const NewPasswordForm = () => {
         Remember your password?{' '}
         <a
           href="/auth/login"
-          className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+          className="font-medium text-orange-600 hover:text-orange-500 dark:text-orange-400 dark:hover:text-orange-300"
         >
           Sign in
         </a>

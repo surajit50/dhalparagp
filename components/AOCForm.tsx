@@ -172,7 +172,7 @@ export default function AOCForm({ works }: AOCFormProps) {
             </Select>
 
             {selectedWork && (
-              <div className="bg-blue-50 border rounded-lg p-4 text-sm">
+              <div className="bg-orange-50 border rounded-lg p-4 text-sm">
                 <div>
                   <strong>Memo:</strong> {selectedWork.nitDetails?.memoNumber}
                 </div>
@@ -212,7 +212,7 @@ export default function AOCForm({ works }: AOCFormProps) {
                       className={cn(
                         "flex justify-between items-center border-2 rounded-lg p-4 cursor-pointer",
                         selectedBidId === bid.id
-                          ? "border-blue-500 bg-blue-50"
+                          ? "border-orange-500 bg-orange-50"
                           : "border-gray-200 hover:bg-gray-50",
                         isLowest && "ring-2 ring-green-100",
                       )}

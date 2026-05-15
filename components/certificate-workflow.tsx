@@ -83,7 +83,7 @@ const getStatusColor = (status: string) => {
     case "FIELD_ENQUIRY_PENDING":
       return "bg-yellow-100 text-yellow-800"
     case "FIELD_ENQUIRY_COMPLETED":
-      return "bg-blue-100 text-blue-800"
+      return "bg-orange-100 text-orange-800"
     case "APPROVAL_PENDING":
       return "bg-orange-100 text-orange-800"
     case "APPROVED":
@@ -231,7 +231,7 @@ export default function CertificateWorkflow() {
                 <div
                   key={cert.id}
                   className={`p-3 border rounded-lg cursor-pointer transition-colors ${
-                    selectedCertificate?.id === cert.id ? "border-blue-500 bg-blue-50" : "hover:bg-gray-50"
+                    selectedCertificate?.id === cert.id ? "border-orange-500 bg-orange-50" : "hover:bg-gray-50"
                   }`}
                   onClick={() => setSelectedCertificate(cert)}
                 >

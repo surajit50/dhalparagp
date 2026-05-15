@@ -14,7 +14,7 @@ export default function OnlineApplications() {
           <div key={index} className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold mb-2">{service.name}</h3>
             <p className="text-gray-600">{service.description}</p>
-            <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+            <button className="mt-4 px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors">
               Apply Now
             </button>
           </div>

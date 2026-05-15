@@ -20,13 +20,13 @@ export default async function MusterPage() {
     <div className="p-6 space-y-8 max-w-7xl mx-auto">
 
       {/* 🔷 HERO HEADER */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 p-6 text-white shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-600 via-orange-600 to-violet-600 p-6 text-white shadow-lg">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               Muster Roll Dashboard
             </h1>
-            <p className="text-blue-100 text-sm">
+            <p className="text-orange-100 text-sm">
               Samabyathi Assistance Distribution System
             </p>
           </div>
@@ -61,7 +61,7 @@ export default async function MusterPage() {
 /* 🔥 PREMIUM STAT CARD */
 function StatCard({ title, value, icon, color = "blue" }: any) {
   const colors: any = {
-    blue: "from-blue-500 to-indigo-500",
+    blue: "from-orange-500 to-orange-500",
     green: "from-emerald-500 to-green-500",
     yellow: "from-amber-500 to-orange-500",
   };

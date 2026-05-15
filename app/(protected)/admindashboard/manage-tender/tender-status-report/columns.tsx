@@ -199,7 +199,7 @@ export const columns: CustomColumnDef<TenderStatusReportItem>[] = [
                 className={index > 0 ? "pt-2 border-t" : ""}
               >
                 {nitLabel && (
-                  <div className="text-xs font-semibold text-blue-600 mb-1">
+                  <div className="text-xs font-semibold text-orange-600 mb-1">
                     {nitLabel}
                   </div>
                 )}
@@ -259,7 +259,7 @@ export const columns: CustomColumnDef<TenderStatusReportItem>[] = [
                 className={index > 0 ? "pt-2 border-t" : ""}
               >
                 {nitLabel && (
-                  <div className="text-xs font-semibold text-blue-600 mb-1">
+                  <div className="text-xs font-semibold text-orange-600 mb-1">
                     {nitLabel}
                   </div>
                 )}
@@ -304,7 +304,7 @@ export const columns: CustomColumnDef<TenderStatusReportItem>[] = [
                   className={index > 0 ? "pt-2 border-t" : ""}
                 >
                   {nitLabel && (
-                    <div className="text-xs font-semibold text-blue-600 mb-1">
+                    <div className="text-xs font-semibold text-orange-600 mb-1">
                       {nitLabel}
                     </div>
                   )}
@@ -319,7 +319,7 @@ export const columns: CustomColumnDef<TenderStatusReportItem>[] = [
                 className={index > 0 ? "pt-2 border-t" : ""}
               >
                 {nitLabel && (
-                  <div className="text-xs font-semibold text-blue-600 mb-1">
+                  <div className="text-xs font-semibold text-orange-600 mb-1">
                     {nitLabel}
                   </div>
                 )}

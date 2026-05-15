@@ -16,7 +16,7 @@ function ViewQrCell({ ack }: { ack: string }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button
-          className="p-2 rounded hover:bg-blue-100 text-blue-700"
+          className="p-2 rounded hover:bg-orange-100 text-orange-700"
           title="View QR Code"
           onClick={() => setOpen(true)}
         >
@@ -44,7 +44,7 @@ export const warishColumns: ColumnDef<any>[] = [
     header: "Acknowledgement No",
     accessorKey: "acknowlegment",
     cell: ({ getValue }) => (
-      <span className="font-mono text-blue-800">{getValue() as string}</span>
+      <span className="font-mono text-orange-800">{getValue() as string}</span>
     ),
   },
   {

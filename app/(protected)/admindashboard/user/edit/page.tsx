@@ -38,7 +38,7 @@ export default function EditUserPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-blue-700 to-green-700 text-white py-16">
+      <section className="bg-gradient-to-r from-orange-700 to-green-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Edit User

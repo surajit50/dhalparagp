@@ -50,7 +50,7 @@ export default function ImprovedFooter() {
             >
               <Avatar className="h-9 w-9 ring-2 ring-primary/20">
                 <AvatarImage src={image || undefined} alt={name || "User"} />
-                <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-semibold">
+                <AvatarFallback className="bg-gradient-to-br from-orange-500 to-purple-600 text-white font-semibold">
                   {name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>

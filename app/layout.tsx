@@ -158,7 +158,7 @@ export const metadata: Metadata = {
     "twitter:site": "@DhalparaGP",
     "DC.title": "Dhalpara Gram Panchayat Portal",
     "apple-mobile-web-app-status-bar-style": "black-translucent",
-    "msapplication-TileColor": "#2b5797",
+    "msapplication-TileColor": "#F97316",
     "msapplication-config": "/browserconfig.xml",
   },
 };

@@ -91,7 +91,7 @@ export function MemoInformation({
             name="memono"
             placeholder="Enter memo number"
             required
-            className="focus-visible:ring-blue-500"
+            className="focus-visible:ring-orange-500"
           />
           <p className="text-xs text-gray-500 mt-1">
             Official memo reference number
@@ -107,7 +107,7 @@ export function MemoInformation({
             name="memodate" 
             type="date" 
             required
-            className="focus-visible:ring-blue-500"
+            className="focus-visible:ring-orange-500"
           />
           <p className="text-xs text-gray-500 mt-1">
             Date when memo was issued

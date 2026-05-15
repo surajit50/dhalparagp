@@ -40,10 +40,10 @@ const iconMap = {
 
 const colorMap = {
   blue: {
-    text: "text-blue-600",
-    bg: "bg-blue-50",
-    border: "border-blue-100",
-    iconBg: "bg-blue-100",
+    text: "text-orange-600",
+    bg: "bg-orange-50",
+    border: "border-orange-100",
+    iconBg: "bg-orange-100",
   },
   emerald: {
     text: "text-emerald-600",
@@ -64,10 +64,10 @@ const colorMap = {
     iconBg: "bg-amber-100",
   },
   indigo: {
-    text: "text-indigo-600",
-    bg: "bg-indigo-50",
-    border: "border-indigo-100",
-    iconBg: "bg-indigo-100",
+    text: "text-orange-600",
+    bg: "bg-orange-50",
+    border: "border-orange-100",
+    iconBg: "bg-orange-100",
   },
   slate: {
     text: "text-slate-600",

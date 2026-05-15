@@ -172,7 +172,7 @@ export default async function ViewQuotationPage({
                 {quotation.description && (
                   <div>
                     <h3 className="font-semibold text-lg mb-2">Description:</h3>
-                    <p className="text-justify leading-relaxed border-l-4 border-blue-500 pl-4 bg-blue-50 p-3">
+                    <p className="text-justify leading-relaxed border-l-4 border-orange-500 pl-4 bg-orange-50 p-3">
                       {quotation.description}
                     </p>
                   </div>

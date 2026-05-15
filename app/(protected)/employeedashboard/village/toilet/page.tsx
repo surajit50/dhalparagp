@@ -74,7 +74,7 @@ export default function ToiletSummaryPage() {
     const percentage = totalHH > 0 ? Math.round((totalAvail / totalHH) * 100) : 0;
     
     return [
-      { label: "Total Households", value: totalHH.toLocaleString(), icon: Home, color: "text-blue-600", bg: "bg-blue-50" },
+      { label: "Total Households", value: totalHH.toLocaleString(), icon: Home, color: "text-orange-600", bg: "bg-orange-50" },
       { label: "IHHL Coverage", value: `${percentage}%`, icon: ShieldCheck, color: "text-emerald-600", bg: "bg-emerald-50" },
       { label: "Active Audits", value: summaries.length, icon: Activity, color: "text-rose-600", bg: "bg-rose-50" },
     ];

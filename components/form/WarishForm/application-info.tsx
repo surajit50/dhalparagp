@@ -113,7 +113,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Applicant Name / আবেদনকারীর নাম"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -133,7 +133,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="Enter Mobile Number / মোবাইল নম্বর দিন"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -159,7 +159,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   field.onChange(value);
                 }}
               >
-                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Select Relation with Deceased / মৃত ব্যক্তির সাথে সম্পর্ক নির্বাচন করুন" />
                 </SelectTrigger>
                 <SelectContent>
@@ -203,7 +203,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   onChange={(e) =>
                     field.onChange(capitalizeWords(e.target.value))
                   }
-                  className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                 />
               </FormControl>
               <FormMessage className="text-xs text-red-500" />
@@ -228,7 +228,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Name of Deceased / মৃত ব্যক্তির নাম"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -323,7 +323,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                     <RadioGroupItem
                       value="male"
                       id="gender-male"
-                      className="text-blue-500"
+                      className="text-orange-500"
                     />
                   </FormControl>
                   <FormLabel
@@ -338,7 +338,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                     <RadioGroupItem
                       value="female"
                       id="gender-female"
-                      className="text-blue-500"
+                      className="text-orange-500"
                     />
                   </FormControl>
                   <FormLabel
@@ -377,7 +377,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                     <RadioGroupItem
                       value="married"
                       id="marital-status-married"
-                      className="text-blue-500"
+                      className="text-orange-500"
                     />
                   </FormControl>
                   <FormLabel
@@ -392,7 +392,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                     <RadioGroupItem
                       value="unmarried"
                       id="marital-status-unmarried"
-                      className="text-blue-500"
+                      className="text-orange-500"
                     />
                   </FormControl>
                   <FormLabel
@@ -422,7 +422,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Enter Fathers Name / পিতার নাম লিখুন"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -449,7 +449,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   onChange={(e) =>
                     field.onChange(capitalizeWords(e.target.value))
                   }
-                  className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                 />
               </FormControl>
               <FormMessage className="text-xs text-red-500" />
@@ -479,7 +479,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   }
                 }}
               >
-                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Enter Village / গ্রামের নাম লিখুন" />
                 </SelectTrigger>
                 <SelectContent>

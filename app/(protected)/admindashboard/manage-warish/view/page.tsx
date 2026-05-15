@@ -298,7 +298,7 @@ export default function WarishApplicationSearch() {
                               variant="outline"
                               size="sm"
                               onClick={() => handleView(app.id)}
-                              className="h-8 px-3 text-blue-600 border-blue-200 hover:bg-blue-50"
+                              className="h-8 px-3 text-orange-600 border-orange-200 hover:bg-orange-50"
                             >
                               <Eye className="h-3.5 w-3.5 mr-1" />
                               View

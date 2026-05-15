@@ -161,7 +161,7 @@ export default function MemberPage() {
             item.mouzaIds.map((id: string) => {
               const mouza = mouzas.find((m) => m.id === id);
               return (
-                <Badge key={id} variant="secondary" className="text-[10px] py-0 px-1 bg-blue-50 text-blue-700 border-blue-100">
+                <Badge key={id} variant="secondary" className="text-[10px] py-0 px-1 bg-orange-50 text-orange-700 border-orange-100">
                   {mouza?.name || "Unknown"}
                 </Badge>
               );
@@ -213,7 +213,7 @@ export default function MemberPage() {
         description="Register and manage Gram Panchayat executive members and administrative personnel records."
         icon={UserPlus}
         gradientFrom="from-purple-600"
-        gradientTo="to-indigo-600"
+        gradientTo="to-orange-600"
       />
 
       <div className="space-y-10">

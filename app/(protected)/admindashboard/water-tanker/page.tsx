@@ -90,8 +90,8 @@ export default async function WaterTankerDashboard() {
       description: "View and manage all bookings",
       icon: Calendar,
       href: "/admindashboard/water-tanker/schedule",
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
     },
     {
       title: "Service Requests",
@@ -124,8 +124,8 @@ export default async function WaterTankerDashboard() {
       title: "Total Bookings",
       value: totalBookings,
       icon: Truck,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
     },
     {
       title: "Confirmed",
@@ -145,8 +145,8 @@ export default async function WaterTankerDashboard() {
       title: "Completed",
       value: completedBookings,
       icon: CheckCircle2,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-orange-600",
+      bgColor: "bg-orange-50",
     },
     {
       title: "Upcoming (7 days)",
@@ -272,7 +272,7 @@ export default async function WaterTankerDashboard() {
                       <p
                         className={`text-xs ${
                           booking.status === "COMPLETED"
-                            ? "text-blue-600"
+                            ? "text-orange-600"
                             : booking.status === "CONFIRMED"
                             ? "text-green-600"
                             : booking.status === "PENDING"

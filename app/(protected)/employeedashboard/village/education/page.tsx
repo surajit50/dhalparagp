@@ -20,9 +20,9 @@ export default function Dashboard() {
       value: "45", 
       description: "Awaiting action",
       icon: FileText, 
-      color: "text-blue-600", 
-      bgColor: "bg-blue-50",
-      borderColor: "border-blue-100"
+      color: "text-orange-600", 
+      bgColor: "bg-orange-50",
+      borderColor: "border-orange-100"
     },
     { 
       title: "Rejected", 

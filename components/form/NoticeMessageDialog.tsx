@@ -77,7 +77,7 @@ export function NoticeMessageDialog({ notice }: NoticeMessageDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="ghost" size="icon" title="Send Email Notification">
-          <Mail className="h-4 w-4 text-indigo-600" />
+          <Mail className="h-4 w-4 text-orange-600" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">

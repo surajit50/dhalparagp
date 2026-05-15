@@ -13,7 +13,7 @@ export default function ErrorBoundary({
       <p className="mb-4">Digest: {error.digest}</p>
       <button
         onClick={reset}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
+        className="bg-orange-500 text-white px-4 py-2 rounded"
       >
         Try Again
       </button>

@@ -213,8 +213,8 @@ export function MemberForm({
           
           >
             <div className="flex items-center space-x-3 mb-2">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Fingerprint className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Fingerprint className="h-5 w-5 text-orange-600" />
               </div>
               <h3 className="font-bold text-gray-800 text-lg uppercase tracking-tight">
                 KYC & Communication
@@ -228,7 +228,7 @@ export function MemberForm({
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
                     <FormLabel className="text-xs font-bold text-gray-500 flex items-center gap-2 uppercase tracking-wider">
-                      <CreditCard className="h-4 w-4 text-blue-400" />
+                      <CreditCard className="h-4 w-4 text-orange-400" />
                       Aadhar Document Number
                     </FormLabel>
                     <FormControl>
@@ -244,7 +244,7 @@ export function MemberForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold text-gray-500 flex items-center gap-2 uppercase tracking-wider">
-                      <Mail className="h-4 w-4 text-blue-400" />
+                      <Mail className="h-4 w-4 text-orange-400" />
                       Email Identity
                     </FormLabel>
                     <FormControl>
@@ -260,7 +260,7 @@ export function MemberForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold text-gray-500 flex items-center gap-2 uppercase tracking-wider">
-                      <Phone className="h-4 w-4 text-blue-400" />
+                      <Phone className="h-4 w-4 text-orange-400" />
                       Phone Connection
                     </FormLabel>
                     <FormControl>
@@ -276,7 +276,7 @@ export function MemberForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold text-gray-500 flex items-center gap-2 uppercase tracking-wider">
-                      <BookOpen className="h-4 w-4 text-blue-400" />
+                      <BookOpen className="h-4 w-4 text-orange-400" />
                       Academic Background
                     </FormLabel>
                     <FormControl>
@@ -292,7 +292,7 @@ export function MemberForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-xs font-bold text-gray-500 flex items-center gap-2 uppercase tracking-wider">
-                      <Briefcase className="h-4 w-4 text-blue-400" />
+                      <Briefcase className="h-4 w-4 text-orange-400" />
                       Current Profession
                     </FormLabel>
                     <FormControl>
@@ -455,7 +455,7 @@ export function MemberForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full md:w-[250px] h-14 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl shadow-purple-100 transition-all duration-200 active:scale-[0.98] text-lg"
+            className="w-full md:w-[250px] h-14 bg-gradient-to-r from-purple-600 to-orange-600 hover:from-purple-700 hover:to-orange-700 text-white font-bold rounded-2xl shadow-xl shadow-purple-100 transition-all duration-200 active:scale-[0.98] text-lg"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">

@@ -71,22 +71,22 @@ export default async function NITDetailsPage({
         </div>
         <p className="text-gray-600 flex items-center gap-2">
           <FileText className="w-4 h-4" />
-          Memo Number: <span className="font-semibold text-blue-600">{nit.memoNumber}</span>
+          Memo Number: <span className="font-semibold text-orange-600">{nit.memoNumber}</span>
         </p>
       </div>
 
       {/* Stats Summary */}
       {nit.WorksDetail.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+          <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-blue-700 font-medium mb-1">Total Works</p>
-                  <p className="text-2xl font-bold text-blue-900">{nit.WorksDetail.length}</p>
+                  <p className="text-sm text-orange-700 font-medium mb-1">Total Works</p>
+                  <p className="text-2xl font-bold text-orange-900">{nit.WorksDetail.length}</p>
                 </div>
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Building className="w-6 h-6 text-blue-600" />
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <Building className="w-6 h-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -177,8 +177,8 @@ export default async function NITDetailsPage({
                 value={formatDateTime(nit.documentDownloadFrom)}
               />
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 p-3 rounded-lg">
-                  <p className="text-sm text-blue-600 font-medium mb-1">Start Time</p>
+                <div className="bg-orange-50 p-3 rounded-lg">
+                  <p className="text-sm text-orange-600 font-medium mb-1">Start Time</p>
                   <p className="font-semibold">
                     {new Date(nit.startTime).toLocaleTimeString([], {
                       hour: "2-digit",
@@ -296,8 +296,8 @@ export default async function NITDetailsPage({
                         {/* Left: Index and Status */}
                         <div className="flex items-start gap-4">
                           <div className="flex flex-col items-center">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                              <span className="font-bold text-blue-700">{idx + 1}</span>
+                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                              <span className="font-bold text-orange-700">{idx + 1}</span>
                             </div>
                             <Badge 
                               variant={actionPlan?.isPublish ? "default" : "secondary"}
@@ -371,7 +371,7 @@ export default async function NITDetailsPage({
                         <div className="lg:w-48 flex flex-col gap-2">
                           <div className="text-right">
                             <p className="text-sm text-gray-500">Estimate</p>
-                            <p className="text-lg font-bold text-blue-700">
+                            <p className="text-lg font-bold text-orange-700">
                               ₹{work.finalEstimateAmount?.toLocaleString()}
                             </p>
                           </div>
@@ -432,7 +432,7 @@ const TimelineItem = ({
 }) => (
   <div className="flex items-start gap-3">
     <div className="flex flex-col items-center">
-      <div className={`w-2 h-2 rounded-full bg-blue-500 ${isFirst ? 'mt-2' : ''}`}></div>
+      <div className={`w-2 h-2 rounded-full bg-orange-500 ${isFirst ? 'mt-2' : ''}`}></div>
       {!isLast && <div className="w-px h-full bg-gray-300 flex-1"></div>}
     </div>
     <div>
@@ -452,7 +452,7 @@ const StatBox = ({
   color?: string 
 }) => {
   const colorClasses = {
-    blue: "bg-blue-50 text-blue-700 border-blue-200",
+    blue: "bg-orange-50 text-orange-700 border-orange-200",
     green: "bg-green-50 text-green-700 border-green-200",
     purple: "bg-purple-50 text-purple-700 border-purple-200",
     orange: "bg-orange-50 text-orange-700 border-orange-200",

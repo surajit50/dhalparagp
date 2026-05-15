@@ -156,7 +156,7 @@ export function DataTable<TData, TValue>({
                 <Button
                     variant="outline"
                     size="icon"
-                    className="bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-200 disabled:text-gray-500"
+                    className="bg-orange-500 text-white hover:bg-orange-600 disabled:bg-gray-200 disabled:text-gray-500"
                     onClick={() => table.previousPage()}
                     disabled={!table.getCanPreviousPage()}
                 >
@@ -165,7 +165,7 @@ export function DataTable<TData, TValue>({
                 <Button
                     variant="outline"
                     size="icon"
-                    className="bg-blue-500 text-white hover:bg-blue-600 disabled:bg-gray-200 disabled:text-gray-500"
+                    className="bg-orange-500 text-white hover:bg-orange-600 disabled:bg-gray-200 disabled:text-gray-500"
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
                 >

@@ -33,9 +33,9 @@ const StatusBadge = ({ status }: { status: string }) => {
     case "PENDING":
       return <Badge variant="secondary" className="bg-amber-50 text-amber-700 border-amber-200/50 px-3 py-1 rounded-full font-medium">Pending Approval</Badge>;
     case "APPROVED":
-      return <Badge variant="secondary" className="bg-sky-50 text-sky-700 border-sky-200/50 px-3 py-1 rounded-full font-medium">Approved (Ready for WO)</Badge>;
+      return <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200/50 px-3 py-1 rounded-full font-medium">Approved (Ready for WO)</Badge>;
     case "WORK_ORDER_ISSUED":
-      return <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-200/50 px-3 py-1 rounded-full font-medium">Work Order Issued</Badge>;
+      return <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200/50 px-3 py-1 rounded-full font-medium">Work Order Issued</Badge>;
     case "COMPLETED":
       return <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200/50 px-3 py-1 rounded-full font-medium">Completed</Badge>;
     case "REJECTED":
@@ -125,7 +125,7 @@ export const columns: ColumnDef<RepairRequest>[] = [
 
             {request.status === "APPROVED" && (
               <DropdownMenuItem asChild>
-                <Link href={`/admindashboard/tubewell/work-orders/create?reqId=${request.id}`} className="cursor-pointer text-sky-600 focus:text-sky-700 focus:bg-sky-50 rounded-lg p-2.5 transition-colors">
+                <Link href={`/admindashboard/tubewell/work-orders/create?reqId=${request.id}`} className="cursor-pointer text-orange-600 focus:text-orange-700 focus:bg-orange-50 rounded-lg p-2.5 transition-colors">
                   <Settings2 className="h-4 w-4 mr-3" /> <span className="font-medium">Issue Work Order</span>
                 </Link>
               </DropdownMenuItem>

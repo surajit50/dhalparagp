@@ -139,7 +139,7 @@ export default function AddActionPlanForm() {
           <div className="bg-muted/50 p-6 rounded-xl space-y-6">
 
             <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-blue-600" />
+              <Wallet className="h-5 w-5 text-orange-600" />
               Financial Details
             </h2>
 
@@ -455,7 +455,7 @@ export default function AddActionPlanForm() {
               disabled={isLoading}
               className={cn(
                 "rounded-xl px-8 py-6 text-lg font-semibold",
-                "bg-gradient-to-r from-blue-600 to-purple-600",
+                "bg-gradient-to-r from-orange-600 to-purple-600",
                 "text-white shadow-lg hover:shadow-xl flex items-center gap-2"
               )}
             >

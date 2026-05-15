@@ -154,9 +154,9 @@ export default function ApplicationForm({
         <div className={isDialog ? "w-full" : "w-full max-w-md"}>
           <div className="space-y-6 animate-in fade-in zoom-in duration-500">
             {/* Success Card */}
-            <Card className="border-none shadow-lg bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 overflow-hidden relative">
+            <Card className="border-none shadow-lg bg-gradient-to-br from-emerald-50 to-orange-50 dark:from-emerald-950 dark:to-orange-950 overflow-hidden relative">
               <div className="absolute -right-16 -top-16 w-40 h-40 bg-emerald-200/20 dark:bg-emerald-800/20 rounded-full blur-3xl" />
-              <div className="absolute -left-16 -bottom-16 w-40 h-40 bg-teal-200/20 dark:bg-teal-800/20 rounded-full blur-3xl" />
+              <div className="absolute -left-16 -bottom-16 w-40 h-40 bg-orange-200/20 dark:bg-orange-800/20 rounded-full blur-3xl" />
 
               <CardContent className="pt-8 relative z-10">
                 <div className="flex justify-center mb-6">
@@ -233,7 +233,7 @@ export default function ApplicationForm({
         {/* Header Section */}
         {!isDialog && (
           <div className="mb-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 px-4 py-2 rounded-full text-sm font-semibold mb-4">
               <Info className="h-4 w-4" />
               <span>Application Form</span>
             </div>
@@ -250,10 +250,10 @@ export default function ApplicationForm({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Applicant Information Card */}
             <Card className="shadow-lg border-slate-200 dark:border-slate-800 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 border-b border-slate-200 dark:border-slate-800">
+              <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50 dark:from-orange-950 dark:to-orange-950 border-b border-slate-200 dark:border-slate-800">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                    <User className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                    <User className="h-5 w-5 text-orange-600 dark:text-orange-400" />
                   </div>
                   <div>
                     <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white">
@@ -281,7 +281,7 @@ export default function ApplicationForm({
                           <Input
                             placeholder="Enter your full name"
                             {...field}
-                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                            className="border-slate-300 dark:border-slate-700 focus:border-orange-500 dark:focus:border-orange-400"
                           />
                         </FormControl>
                         <FormMessage />
@@ -304,7 +304,7 @@ export default function ApplicationForm({
                             {...field}
                             maxLength={10}
                             inputMode="numeric"
-                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                            className="border-slate-300 dark:border-slate-700 focus:border-orange-500 dark:focus:border-orange-400"
                           />
                         </FormControl>
                         <FormMessage />
@@ -357,7 +357,7 @@ export default function ApplicationForm({
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400">
+                            <SelectTrigger className="border-slate-300 dark:border-slate-700 focus:border-orange-500 dark:focus:border-orange-400">
                               <SelectValue placeholder="Select your village" />
                             </SelectTrigger>
                           </FormControl>
@@ -434,7 +434,7 @@ export default function ApplicationForm({
                           <Input
                             placeholder="Enter your Voter ID"
                             {...field}
-                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                            className="border-slate-300 dark:border-slate-700 focus:border-orange-500 dark:focus:border-orange-400"
                           />
                         </FormControl>
                         <FormMessage />
@@ -463,7 +463,7 @@ export default function ApplicationForm({
                             }}
                             maxLength={14}
                             inputMode="numeric"
-                            className="border-slate-300 dark:border-slate-700 focus:border-blue-500 dark:focus:border-blue-400"
+                            className="border-slate-300 dark:border-slate-700 focus:border-orange-500 dark:focus:border-orange-400"
                           />
                         </FormControl>
                         <FormMessage />
@@ -504,7 +504,7 @@ export default function ApplicationForm({
                 type="submit"
                 disabled={loading}
                 size="lg"
-                className="px-8 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-200 gap-2"
+                className="px-8 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 shadow-lg hover:shadow-xl transition-all duration-200 gap-2"
               >
                 {loading ? (
                   <>

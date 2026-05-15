@@ -83,10 +83,10 @@ export const CreateAgencyUserButton = ({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-lg hover:bg-blue-50"
+          className="h-8 w-8 rounded-lg hover:bg-orange-50"
           title="Create User Account"
         >
-          <UserPlus className="h-4 w-4 text-blue-600" />
+          <UserPlus className="h-4 w-4 text-orange-600" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

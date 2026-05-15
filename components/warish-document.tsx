@@ -35,7 +35,7 @@ export const Warishdocument = async ({
                 href={doc.cloudinaryUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
+                className="text-orange-600 hover:underline"
               >
                 View Document
               </a>

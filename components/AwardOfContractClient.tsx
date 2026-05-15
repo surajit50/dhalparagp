@@ -77,10 +77,10 @@ export default function AwardOfContractClient({
   }
 
   const renderRow = (order: any, index: number, isDelivered: boolean) => (
-    <TableRow key={order.id} className="hover:bg-blue-50">
+    <TableRow key={order.id} className="hover:bg-orange-50">
       <TableCell>{index + 1}</TableCell>
 
-      <TableCell className="text-blue-700 font-medium">
+      <TableCell className="text-orange-700 font-medium">
         <ShowNitDetails
           nitdetails={order.Bidagency?.WorksDetail?.nitDetails?.memoNumber}
           memoDate={order.Bidagency?.WorksDetail?.nitDetails?.memoDate}
@@ -88,7 +88,7 @@ export default function AwardOfContractClient({
         />
       </TableCell>
 
-      <TableCell className="text-blue-700 font-medium">
+      <TableCell className="text-orange-700 font-medium">
         {order.awardofcontractdetails?.workodermenonumber}/{gpcode}/
         {new Date(
           order.awardofcontractdetails?.workordeermemodate,
@@ -118,8 +118,8 @@ export default function AwardOfContractClient({
   );
 
   return (
-    <div className="min-h-screen bg-blue-50">
-      <div className="bg-blue-700 text-white px-6 py-4">
+    <div className="min-h-screen bg-orange-50">
+      <div className="bg-orange-700 text-white px-6 py-4">
         <div className="flex items-center gap-2">
           <FileText />
           <h1 className="text-lg font-semibold">
@@ -136,7 +136,7 @@ export default function AwardOfContractClient({
         {errorMessage && <StatusAlert type="error" message={errorMessage} />}
 
         <Card>
-          <CardHeader className="bg-blue-50 border-b">
+          <CardHeader className="bg-orange-50 border-b">
             <div className="flex justify-between items-center">
               <CardTitle>Work Orders</CardTitle>
 

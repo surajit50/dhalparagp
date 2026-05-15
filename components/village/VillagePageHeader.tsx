@@ -17,8 +17,8 @@ export function VillagePageHeader({
   description,
   icon: Icon,
   iconColor = "text-white",
-  gradientFrom = "from-indigo-600",
-  gradientTo = "to-blue-600",
+  gradientFrom = "from-orange-600",
+  gradientTo = "to-orange-600",
 }: VillagePageHeaderProps) {
   return (
     <motion.div 
@@ -27,7 +27,7 @@ export function VillagePageHeader({
      
     >
       <div className="flex items-center space-x-5">
-        <div className={`p-3 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-2xl shadow-lg shadow-indigo-200 ring-4 ring-white`}>
+        <div className={`p-3 bg-gradient-to-br ${gradientFrom} ${gradientTo} rounded-2xl shadow-lg shadow-orange-200 ring-4 ring-white`}>
           <Icon className={`h-7 w-7 ${iconColor}`} />
         </div>
         <div>
@@ -45,7 +45,7 @@ export function VillagePageHeader({
         <div className="hidden sm:block h-12 w-[1px] bg-gray-200 mx-2" />
         <div className="flex flex-col items-end">
           <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Village Module</span>
-          <span className="text-sm font-semibold text-indigo-600">Enterprise Management</span>
+          <span className="text-sm font-semibold text-orange-600">Enterprise Management</span>
         </div>
       </div>
     </motion.div>

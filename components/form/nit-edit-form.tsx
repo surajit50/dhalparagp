@@ -136,9 +136,9 @@ export default function NitEditForm({
     children: React.ReactNode
   ) => (
     <Card className="mb-6 border border-gray-100 rounded-xl shadow-sm overflow-hidden">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 py-4 border-b">
+      <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50 py-4 border-b">
         <CardTitle className="text-lg font-semibold text-gray-800 flex items-center">
-          <span className="bg-blue-100 p-2 rounded-lg text-blue-600">
+          <span className="bg-orange-100 p-2 rounded-lg text-orange-600">
             {icon}
           </span>
           <span className="ml-3">{title}</span>
@@ -164,7 +164,7 @@ export default function NitEditForm({
       </div>
 
       <Card className="rounded-xl shadow-lg border border-gray-100 overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-5">
+        <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white py-5">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold flex items-center">
               <FileEdit className="h-6 w-6 mr-3" />
@@ -335,7 +335,7 @@ export default function NitEditForm({
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white shadow-md transition-all px-6 py-3"
+                    className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-md transition-all px-6 py-3"
                     disabled={isPending}
                   >
                     {isPending ? (

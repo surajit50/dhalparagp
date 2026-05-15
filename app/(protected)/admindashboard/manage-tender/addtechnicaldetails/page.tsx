@@ -46,7 +46,7 @@ const TechnicalEvaluationPage = async () => {
 
         {/* ================= HEADER ================= */}
         <Card className="shadow-sm border">
-          <CardHeader className="bg-blue-900 text-white rounded-t-lg py-5">
+          <CardHeader className="bg-orange-900 text-white rounded-t-lg py-5">
             <CardTitle className="text-2xl font-semibold text-center tracking-wide">
               Technical Evaluation Dashboard
             </CardTitle>
@@ -59,17 +59,17 @@ const TechnicalEvaluationPage = async () => {
         {/* ================= SUMMARY SECTION ================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <Card className="border-l-4 border-blue-700 shadow-sm">
+          <Card className="border-l-4 border-orange-700 shadow-sm">
             <CardContent className="flex items-center justify-between p-5">
               <div>
                 <p className="text-sm text-gray-600">
                   Total Active Tenders
                 </p>
-                <p className="text-2xl font-bold text-blue-900">
+                <p className="text-2xl font-bold text-orange-900">
                   {totalTenders}
                 </p>
               </div>
-              <ClipboardList className="h-8 w-8 text-blue-700" />
+              <ClipboardList className="h-8 w-8 text-orange-700" />
             </CardContent>
           </Card>
 
@@ -95,7 +95,7 @@ const TechnicalEvaluationPage = async () => {
             <div className="overflow-x-auto">
               <Table>
 
-                <TableHeader className="bg-blue-100">
+                <TableHeader className="bg-orange-100">
                   <TableRow>
                     <TableHead className="text-center w-[60px] font-semibold">
                       Sl
@@ -149,7 +149,7 @@ const TechnicalEvaluationPage = async () => {
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className="bg-blue-100 text-blue-800 border-blue-300"
+                              className="bg-orange-100 text-orange-800 border-orange-300"
                             >
                               {formatDateTime(nit.memoDate).dateOnly}
                             </Badge>
@@ -167,7 +167,7 @@ const TechnicalEvaluationPage = async () => {
                             >
                               <Button
                                 size="sm"
-                                className="bg-blue-700 hover:bg-blue-800 text-white shadow-sm"
+                                className="bg-orange-700 hover:bg-orange-800 text-white shadow-sm"
                               >
                                 <FileText className="mr-2 h-4 w-4" />
                                 Add Details

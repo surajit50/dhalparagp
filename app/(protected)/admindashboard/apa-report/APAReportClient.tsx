@@ -41,7 +41,7 @@ const APAreportClient: React.FC<Props> = ({
               name="fy"
               value={financialYear}
               onChange={handleChange}
-              className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:ring-1 focus:ring-orange-500"
             >
               {financialYears.map((fy) => (
                 <option key={fy} value={fy}>
@@ -62,9 +62,9 @@ const APAreportClient: React.FC<Props> = ({
         </div>
       </div>
 
-      <div className="mb-4 p-3 bg-blue-50 rounded border border-blue-100">
-        <p className="font-semibold text-blue-800">Report Criteria:</p>
-        <ul className="list-disc pl-5 mt-1 text-blue-700">
+      <div className="mb-4 p-3 bg-orange-50 rounded border border-orange-100">
+        <p className="font-semibold text-orange-800">Report Criteria:</p>
+        <ul className="list-disc pl-5 mt-1 text-orange-700">
           <li>Works awarded in {financialYear} (April-March)</li>
           <li>With payments made in April-June quarter</li>
         </ul>

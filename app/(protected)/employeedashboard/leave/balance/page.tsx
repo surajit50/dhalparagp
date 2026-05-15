@@ -98,10 +98,10 @@ const LeaveBalancePage = async () => {
         ))}
       </div>
 
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-orange-50 border-orange-200">
         <CardContent className="p-4 flex gap-3 items-start">
-          <Info className="h-5 w-5 text-blue-600 mt-0.5" />
-          <div className="text-sm text-blue-800">
+          <Info className="h-5 w-5 text-orange-600 mt-0.5" />
+          <div className="text-sm text-orange-800">
             <p className="font-semibold mb-1">Leave Policy Note:</p>
             <ul className="list-disc list-inside space-y-1 opacity-90">
               <li>Leave quotas are refreshed on January 1st every year.</li>

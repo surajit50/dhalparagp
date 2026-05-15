@@ -41,7 +41,7 @@ export function CoverPage() {
     <div className="min-h-screen flex flex-col justify-center items-center bg-white p-8 border-2 border-gray-200">
       {/* Header Section */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-blue-900 mb-2">
+        <h1 className="text-4xl font-bold text-orange-900 mb-2">
           No. 3 Dhalpara Gram Panchayat
         </h1>
         <p className="text-lg text-gray-600">
@@ -74,7 +74,7 @@ export function CoverPage() {
 
         {/* NIT Details */}
         <div className="border-t pt-4">
-          <h3 className="text-xl font-bold text-blue-900 mb-2">NIT Details</h3>
+          <h3 className="text-xl font-bold text-orange-900 mb-2">NIT Details</h3>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-gray-500">Memo Number</p>
@@ -89,7 +89,7 @@ export function CoverPage() {
 
         {/* Work Order Details */}
         <div className="border-t pt-4">
-          <h3 className="text-xl font-bold text-blue-900 mb-2">
+          <h3 className="text-xl font-bold text-orange-900 mb-2">
             Work Order Details
           </h3>
           <div className="grid grid-cols-2 gap-4">
@@ -110,7 +110,7 @@ export function CoverPage() {
 
         {/* Fund Details */}
         <div className="border-t pt-4">
-          <h3 className="text-xl font-bold text-blue-900 mb-2">Fund Details</h3>
+          <h3 className="text-xl font-bold text-orange-900 mb-2">Fund Details</h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-500">Sanctioned Amount</p>
@@ -133,7 +133,7 @@ export function CoverPage() {
 
         {/* Completion and Bill Details */}
         <div className="border-t pt-4">
-          <h3 className="text-xl font-bold text-blue-900 mb-2">
+          <h3 className="text-xl font-bold text-orange-900 mb-2">
             Completion & Bill Details
           </h3>
           <div className="grid grid-cols-2 gap-4">

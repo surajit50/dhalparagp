@@ -377,7 +377,7 @@ export const NITCopy = ({
       <Button
         onClick={handleGeneratePDF}
         disabled={isDisabled}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         aria-busy={isDisabled}
         title={
           isLoading

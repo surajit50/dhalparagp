@@ -8,7 +8,7 @@ const RegisterPage = () => {
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
       {/* Left column - Form */}
-      <div className="flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-blue-50 to-white">
+      <div className="flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-orange-50 to-white">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <Link href="/" className="inline-block">

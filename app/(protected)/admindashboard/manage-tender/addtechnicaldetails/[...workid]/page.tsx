@@ -80,10 +80,10 @@ const Page = async ({ params }: { params: Promise<{ workid: string[] }> }) => {
 
         {/* ================= OFFICIAL HEADER ================= */}
         <Card className="border shadow-sm">
-          <CardHeader className="bg-blue-900 text-white py-4 rounded-t-lg">
+          <CardHeader className="bg-orange-900 text-white py-4 rounded-t-lg">
             <CardTitle className="flex justify-between items-center text-lg font-semibold tracking-wide">
               <span>Technical Evaluation Panel</span>
-              <Badge className="bg-white text-blue-900 px-3 py-1">
+              <Badge className="bg-white text-orange-900 px-3 py-1">
                 Total Bidders: {technical.length}
               </Badge>
             </CardTitle>
@@ -154,7 +154,7 @@ const Page = async ({ params }: { params: Promise<{ workid: string[] }> }) => {
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="bg-blue-100">
+                <TableHeader className="bg-orange-100">
                   <TableRow>
                     <TableHead className="text-center w-16">
                       Sl

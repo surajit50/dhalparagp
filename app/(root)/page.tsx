@@ -60,10 +60,10 @@ export default async function Home() {
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-200 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-orange-200 transition-all duration-300 transform hover:-translate-y-1">
               <PayPropertyTaxButton />
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-blue-200 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-orange-200 transition-all duration-300 transform hover:-translate-y-1">
               <HousingListButton />
             </div>
           </div>
@@ -89,7 +89,7 @@ export default async function Home() {
             ].map((stat, index) => (
               <div
                 key={index}
-                className="bg-slate-50 border border-slate-100 rounded-2xl p-6 text-center hover:bg-blue-50 transition-colors duration-300 group"
+                className="bg-slate-50 border border-slate-100 rounded-2xl p-6 text-center hover:bg-orange-50 transition-colors duration-300 group"
               >
                 <div className="mx-auto w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#1e3a8a] shadow-sm mb-4 group-hover:scale-110 transition-transform">
                   {stat.icon}
@@ -123,7 +123,7 @@ export default async function Home() {
                   />
                 </div>
                 <h3 className="text-xl font-bold text-center z-10">Smt. Bithika Ghosh</h3>
-                <p className="text-blue-200 text-sm text-center z-10 mt-1">
+                <p className="text-orange-200 text-sm text-center z-10 mt-1">
                   Prodhan, {gpnameinshort} GP
                 </p>
               </div>
@@ -181,7 +181,7 @@ export default async function Home() {
                 className="border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col h-full"
               >
                 <CardHeader className="pb-4">
-                  <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
                     {service.icon}
                   </div>
                   <CardTitle className="text-xl text-slate-800">{service.title}</CardTitle>

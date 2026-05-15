@@ -182,7 +182,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
     if (serviceType === ServiceType.WATER_TANKER) {
       if (status.booked >= status.capacity)
         return "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100";
-      return "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100";
+      return "bg-orange-50 text-orange-700 border-orange-200 hover:bg-orange-100";
     } else {
       if (status.booked >= status.capacity)
         return "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100";
@@ -215,7 +215,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
             </Button>
 
             <div className="flex items-center gap-2 mx-2 sm:mx-0">
-              <CalendarIcon className="h-5 w-5 text-blue-600" />
+              <CalendarIcon className="h-5 w-5 text-orange-600" />
               <h2 className="text-lg sm:text-xl font-bold text-gray-800">
                 {format(currentDate, "MMMM yyyy")}
               </h2>
@@ -248,7 +248,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
               <SelectItem value="ALL">All Services</SelectItem>
               <SelectItem value={ServiceType.WATER_TANKER}>
                 <div className="flex items-center gap-2">
-                  <Droplet className="h-4 w-4 text-blue-500" />
+                  <Droplet className="h-4 w-4 text-orange-500" />
                   Water Tanker
                 </div>
               </SelectItem>
@@ -267,7 +267,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
           <h3 className="text-sm font-medium mb-2">Water Tanker Status</h3>
           <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 text-xs sm:text-sm mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-blue-50 border border-blue-200 rounded"></div>
+              <div className="w-3 h-3 bg-orange-50 border border-orange-200 rounded"></div>
               <span className="text-gray-700">Available</span>
             </div>
             <div className="flex items-center gap-2">
@@ -344,7 +344,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
                   key={day.toISOString()}
                   className={`min-h-20 p-1 border-r border-b transition-colors ${
                     isCurrentMonth ? "bg-white" : "bg-gray-50"
-                  } ${isToday ? "ring-1 ring-blue-500 ring-inset" : ""}`}
+                  } ${isToday ? "ring-1 ring-orange-500 ring-inset" : ""}`}
                 >
                   {/* Date Number */}
                   <div className="flex justify-between items-center mb-1">
@@ -353,7 +353,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
                         isCurrentMonth ? "text-gray-900" : "text-gray-400"
                       } ${
                         isToday
-                          ? "bg-blue-500 text-white"
+                          ? "bg-orange-500 text-white"
                           : isCurrentMonth
                           ? "hover:bg-gray-100"
                           : "bg-gray-50"
@@ -364,7 +364,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
                     {isToday && (
                       <Badge
                         variant="outline"
-                        className="text-[10px] sm:text-xs border-blue-200 text-blue-700 bg-blue-50"
+                        className="text-[10px] sm:text-xs border-orange-200 text-orange-700 bg-orange-50"
                       >
                         Today
                       </Badge>
@@ -390,7 +390,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1">
-                          <Droplet className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-blue-500" />
+                          <Droplet className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-orange-500" />
                           <span className="hidden sm:inline">Water</span>
                         </div>
                         {waterTanker.maintenance && (
@@ -455,7 +455,7 @@ const ServiceCalendar = ({ onDayClick }: CalendarProps) => {
         {loading && (
           <div className="text-center mt-4 sm:mt-6 py-3 text-sm text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
             <div className="flex items-center justify-center gap-2">
-              <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+              <div className="animate-spin h-4 w-4 border-2 border-orange-500 border-t-transparent rounded-full"></div>
               <span>Loading availability...</span>
             </div>
           </div>

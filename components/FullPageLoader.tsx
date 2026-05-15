@@ -23,9 +23,9 @@ export default function FullPageLoader({
       <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-6 border border-slate-100">
         <div className="flex justify-center">
           <div className="relative">
-            <Loader2 className="h-16 w-16 animate-spin text-blue-600" />
+            <Loader2 className="h-16 w-16 animate-spin text-orange-600" />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-xs font-bold text-blue-600">
+              <span className="text-xs font-bold text-orange-600">
                 {Math.round(progress)}%
               </span>
             </div>
@@ -44,7 +44,7 @@ export default function FullPageLoader({
         <div className="space-y-3">
           <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
             <span>Processing</span>
-            <span className="text-blue-600">{Math.round(progress)}%</span>
+            <span className="text-orange-600">{Math.round(progress)}%</span>
           </div>
           <Progress value={progress} className="h-2 w-full bg-slate-100" />
         </div>

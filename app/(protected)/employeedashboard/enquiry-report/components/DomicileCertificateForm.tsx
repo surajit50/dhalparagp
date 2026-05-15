@@ -65,13 +65,13 @@ export function DomicileVerificationReport() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <Card className="border-t-4 border-blue-600">
-        <CardHeader className="bg-blue-50">
-          <CardTitle className="flex items-center gap-3 text-blue-800">
+      <Card className="border-t-4 border-orange-600">
+        <CardHeader className="bg-orange-50">
+          <CardTitle className="flex items-center gap-3 text-orange-800">
             <FileText className="h-6 w-6" />
             <div>
               <h1 className="text-xl font-bold">Domicile Certificate Verification Report</h1>
-              <p className="text-sm font-normal text-blue-600 mt-1">
+              <p className="text-sm font-normal text-orange-600 mt-1">
                 Official Verification Report for Block Development Office
               </p>
             </div>
@@ -329,7 +329,7 @@ export function DomicileVerificationReport() {
                                     ? "bg-green-100 text-green-800 px-3 py-1 rounded-full"
                                     : status === "discrepancy"
                                     ? "bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full"
-                                    : "bg-blue-100 text-blue-800 px-3 py-1 rounded-full"
+                                    : "bg-orange-100 text-orange-800 px-3 py-1 rounded-full"
                                 }
                               >
                                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -346,10 +346,10 @@ export function DomicileVerificationReport() {
 
               {/* Submission */}
               <div className="flex gap-4 pt-6 border-t">
-                <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button type="submit" className="flex-1 bg-orange-600 hover:bg-orange-700 text-white">
                   Submit Verification Report
                 </Button>
-                <Button type="reset" variant="outline" className="flex-1 border-blue-300 text-blue-700">
+                <Button type="reset" variant="outline" className="flex-1 border-orange-300 text-orange-700">
                   Clear Form
                 </Button>
               </div>

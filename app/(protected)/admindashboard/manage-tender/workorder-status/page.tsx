@@ -78,7 +78,7 @@ export default async function AwardOfContractPage({
     >
       <TableCell className="font-semibold text-gray-700">{index + 1}</TableCell>
 
-      <TableCell className="font-semibold text-blue-800">
+      <TableCell className="font-semibold text-orange-800">
         <ShowNitDetails
           nitdetails={order.Bidagency?.WorksDetail?.nitDetails.memoNumber || 0}
           memoDate={
@@ -88,7 +88,7 @@ export default async function AwardOfContractPage({
         />
       </TableCell>
 
-      <TableCell className="font-semibold text-indigo-700 tracking-wide">
+      <TableCell className="font-semibold text-orange-700 tracking-wide">
         {order.awardofcontractdetails?.workodermenonumber}/{gpcode}/
         {order.awardofcontractdetails?.workordeermemodate.getFullYear()}
       </TableCell>
@@ -120,7 +120,7 @@ export default async function AwardOfContractPage({
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* WB GOVT HEADER */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-700 text-white shadow-md border-b-4 border-yellow-400">
+      <div className="bg-gradient-to-r from-orange-900 to-orange-700 text-white shadow-md border-b-4 border-yellow-400">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <FileText className="h-7 w-7" />
@@ -128,13 +128,13 @@ export default async function AwardOfContractPage({
               <h1 className="text-xl md:text-2xl font-bold tracking-wide">
                 Award of Contract Management System
               </h1>
-              <p className="text-blue-100 text-sm">
+              <p className="text-orange-100 text-sm">
                 Government of West Bengal – e-Tender Work Order Monitoring
               </p>
             </div>
           </div>
 
-          <div className="text-sm mt-3 md:mt-0 text-blue-100 text-right">
+          <div className="text-sm mt-3 md:mt-0 text-orange-100 text-right">
             <div>
               <strong>Gram Panchayat:</strong> {gpnameinshort} GP
             </div>
@@ -160,10 +160,10 @@ export default async function AwardOfContractPage({
           />
         )}
 
-        <Card className="shadow-xl border border-blue-200 rounded-xl overflow-hidden">
-          <CardHeader className="bg-blue-50 border-b">
+        <Card className="shadow-xl border border-orange-200 rounded-xl overflow-hidden">
+          <CardHeader className="bg-orange-50 border-b">
             <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-              <CardTitle className="text-blue-900 text-lg font-semibold">
+              <CardTitle className="text-orange-900 text-lg font-semibold">
                 Work Order List
               </CardTitle>
 
@@ -171,7 +171,7 @@ export default async function AwardOfContractPage({
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search Work Order..."
-                  className="pl-10 bg-white border-blue-200 focus-visible:ring-blue-600"
+                  className="pl-10 bg-white border-orange-200 focus-visible:ring-orange-600"
                 />
               </div>
             </div>
@@ -182,10 +182,10 @@ export default async function AwardOfContractPage({
               <TabsList className="w-full bg-gray-100 rounded-none border-b border-gray-300">
                 <TabsTrigger
                   value="notdelivered"
-                  className="flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:text-blue-800 data-[state=active]:shadow-sm py-3"
+                  className="flex-1 rounded-none data-[state=active]:bg-white data-[state=active]:text-orange-800 data-[state=active]:shadow-sm py-3"
                 >
                   Pending Delivery
-                  <Badge className="ml-2 bg-blue-700 hover:bg-blue-800 text-white shadow-sm">
+                  <Badge className="ml-2 bg-orange-700 hover:bg-orange-800 text-white shadow-sm">
                     {notDelivered.length}
                   </Badge>
                 </TabsTrigger>
@@ -206,7 +206,7 @@ export default async function AwardOfContractPage({
               <TabsContent value="notdelivered" className="m-0">
                 <div className="overflow-x-auto max-h-[65vh] overflow-y-auto">
                   <Table>
-                    <TableHeader className="bg-blue-100 sticky top-0 z-10">
+                    <TableHeader className="bg-orange-100 sticky top-0 z-10">
                       <TableRow>
                         {[
                           "Sl No",
@@ -220,7 +220,7 @@ export default async function AwardOfContractPage({
                         ].map((header) => (
                           <TableHead
                             key={header}
-                            className="text-blue-900 font-semibold"
+                            className="text-orange-900 font-semibold"
                           >
                             {header}
                           </TableHead>

@@ -369,7 +369,7 @@ export function ComparativeStatementClient({
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 text-blue-600" />
+                        <Clock className="h-4 w-4 text-orange-600" />
                         <Badge variant="outline" className="text-xs">
                           {quotation.daysPublished} days
                         </Badge>
@@ -699,7 +699,7 @@ export function ComparativeStatementClient({
           <div className="mt-6 grid grid-cols-1 md:grid-cols-5 gap-4">
             <Card>
               <CardContent className="pt-6">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-bold text-orange-600">
                   {totalQuotations}
                 </div>
                 <p className="text-sm text-muted-foreground">

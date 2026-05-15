@@ -58,7 +58,7 @@ export const columns: ColumnDef<AgencyDetails>[] = [
           className={`text-xs font-medium ${
             isFarm
               ? "bg-green-100 text-green-700 hover:bg-green-100"
-              : "bg-blue-100 text-blue-700 hover:bg-blue-100"
+              : "bg-orange-100 text-orange-700 hover:bg-orange-100"
           }`}
         >
           {isFarm ? "Farm" : "Individual"}

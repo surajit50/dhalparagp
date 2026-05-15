@@ -81,14 +81,14 @@ export function PondsClient({ data }: PondsClientProps) {
   return (
     <div className="space-y-8">
       {/* HEADER */}
-      <div className="bg-gradient-to-r from-cyan-700 to-blue-800 rounded-2xl p-8 text-white shadow-xl">
+      <div className="bg-gradient-to-r from-orange-700 to-orange-800 rounded-2xl p-8 text-white shadow-xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
-              <Waves className="h-9 w-9 text-cyan-200" />
+              <Waves className="h-9 w-9 text-orange-200" />
               Pond Inventory Management
             </h1>
-            <p className="text-cyan-100/90 mt-2 text-lg">
+            <p className="text-orange-100/90 mt-2 text-lg">
               Manage your Gram Panchayat&apos;s pond records and lease availability.
             </p>
           </div>
@@ -105,7 +105,7 @@ export function PondsClient({ data }: PondsClientProps) {
               <p className="text-sm text-muted-foreground">Total Ponds</p>
               <p className="text-2xl font-bold">{totalPonds}</p>
             </div>
-            <Waves className="h-8 w-8 text-blue-500" />
+            <Waves className="h-8 w-8 text-orange-500" />
           </CardContent>
         </Card>
 

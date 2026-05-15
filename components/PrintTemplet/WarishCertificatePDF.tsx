@@ -261,7 +261,7 @@ export default function WarishCertificatePDF({
               size="icon"
               disabled={isGenerating}
               onClick={() => handleGeneratePDF(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="bg-orange-600 hover:bg-orange-700 text-white"
             >
               {isGenerating ? (
                 <Loader2 className="animate-spin h-5 w-5" />

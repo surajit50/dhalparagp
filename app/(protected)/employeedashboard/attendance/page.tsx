@@ -29,7 +29,7 @@ const AttendancePage = async () => {
       case "LEAVE":
         return "bg-yellow-50 text-yellow-700 ring-1 ring-yellow-200";
       case "HALF_DAY":
-        return "bg-blue-50 text-blue-700 ring-1 ring-blue-200";
+        return "bg-orange-50 text-orange-700 ring-1 ring-orange-200";
       case "WORK_FROM_HOME":
         return "bg-purple-50 text-purple-700 ring-1 ring-purple-200";
       default:
@@ -58,7 +58,7 @@ const AttendancePage = async () => {
             id="date"
             name="date"
             type="date"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
             required
           />
         </div>
@@ -71,7 +71,7 @@ const AttendancePage = async () => {
             id="checkIn"
             name="checkIn"
             type="time"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
           />
         </div>
 
@@ -83,7 +83,7 @@ const AttendancePage = async () => {
             id="checkOut"
             name="checkOut"
             type="time"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
           />
         </div>
 
@@ -94,7 +94,7 @@ const AttendancePage = async () => {
           <select
             id="status"
             name="status"
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
             defaultValue="PRESENT"
           >
             <option value="PRESENT">Present</option>
@@ -113,7 +113,7 @@ const AttendancePage = async () => {
             id="notes"
             name="notes"
             rows={2}
-            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
             placeholder="Optional remarks"
           />
         </div>
@@ -121,7 +121,7 @@ const AttendancePage = async () => {
         <div className="md:col-span-4 flex justify-end">
           <button
             type="submit"
-            className="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
+            className="inline-flex items-center rounded-md bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1"
           >
             Save attendance
           </button>
@@ -129,7 +129,7 @@ const AttendancePage = async () => {
       </form>
 
       {records.length === 0 ? (
-        <div className="rounded-md bg-blue-50 px-4 py-3 text-sm text-blue-800">
+        <div className="rounded-md bg-orange-50 px-4 py-3 text-sm text-orange-800">
           No attendance records found for your account yet.
         </div>
       ) : (

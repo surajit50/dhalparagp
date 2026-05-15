@@ -8,7 +8,7 @@ function RoleBadges({ roles }: { roles: string[] }) {
       {roles.map((role) => (
         <span
           key={role}
-          className="inline-block px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700 font-semibold border border-blue-200"
+          className="inline-block px-2 py-0.5 text-xs rounded bg-orange-100 text-orange-700 font-semibold border border-orange-200"
         >
           {role}
         </span>
@@ -34,7 +34,7 @@ function CollapsibleMenu({ items }: { items: MenuItemProps[] }) {
           className="mb-4 border rounded-lg shadow-sm bg-white"
         >
           <div
-            className="flex items-center justify-between p-4 cursor-pointer hover:bg-blue-50 rounded-t-lg"
+            className="flex items-center justify-between p-4 cursor-pointer hover:bg-orange-50 rounded-t-lg"
             onClick={() =>
               item.submenu && item.subMenuItems.length > 0 && toggle(idx)
             }
@@ -44,7 +44,7 @@ function CollapsibleMenu({ items }: { items: MenuItemProps[] }) {
               {item.menuItemLink && (
                 <a
                   href={item.menuItemLink}
-                  className="ml-2 text-blue-600 text-xs underline hover:text-blue-800"
+                  className="ml-2 text-orange-600 text-xs underline hover:text-orange-800"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
@@ -55,7 +55,7 @@ function CollapsibleMenu({ items }: { items: MenuItemProps[] }) {
               <RoleBadges roles={item.allowedRoles || []} />
             </div>
             {item.submenu && item.subMenuItems.length > 0 && (
-              <span className="ml-4 text-blue-400 text-xl select-none">
+              <span className="ml-4 text-orange-400 text-xl select-none">
                 {openIndexes.includes(idx) ? "−" : "+"}
               </span>
             )}

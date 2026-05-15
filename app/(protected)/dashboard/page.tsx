@@ -6,7 +6,7 @@ export default function Dashboard() {
   // Statistics data
   const stats = [
     { title: "Approved", value: "123", icon: CheckCircle, color: "text-green-500", bgColor: "bg-green-100" },
-    { title: "Apply", value: "123", icon: FileText, color: "text-blue-500", bgColor: "bg-blue-100" },
+    { title: "Apply", value: "123", icon: FileText, color: "text-orange-500", bgColor: "bg-orange-100" },
     { title: "Rejected", value: "5", icon: XCircle, color: "text-red-500", bgColor: "bg-red-100" },
   ]
 

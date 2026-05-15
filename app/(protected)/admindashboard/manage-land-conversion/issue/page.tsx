@@ -226,7 +226,7 @@ export default function NOCIssuancePage() {
                         <TableCell className="text-gray-500 text-sm">
                           {idx + 1}
                         </TableCell>
-                        <TableCell className="font-mono font-semibold text-blue-800 text-sm">
+                        <TableCell className="font-mono font-semibold text-orange-800 text-sm">
                           {it.applicationNo}
                         </TableCell>
                         <TableCell className="font-medium text-gray-800 text-sm">
@@ -244,7 +244,7 @@ export default function NOCIssuancePage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-7 text-xs"
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 h-7 text-xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelected(selected?.id === it.id ? null : it);
@@ -330,7 +330,7 @@ export default function NOCIssuancePage() {
 
               <div className="pt-2 border-t">
                 <Button
-                  className="w-full bg-blue-700 hover:bg-blue-800 h-11 text-sm font-semibold shadow"
+                  className="w-full bg-orange-700 hover:bg-orange-800 h-11 text-sm font-semibold shadow"
                   onClick={handleIssueNOC}
                   disabled={isPending}
                 >

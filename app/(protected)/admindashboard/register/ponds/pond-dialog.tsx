@@ -83,10 +83,10 @@ export function PondDialog({ initialData }: PondDialogProps) {
       <DialogTrigger asChild>
         {initialData ? (
           <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Edit2 className="h-4 w-4 text-blue-600" />
+            <Edit2 className="h-4 w-4 text-orange-600" />
           </Button>
         ) : (
-          <Button className="bg-blue-700 hover:bg-blue-800 text-white">
+          <Button className="bg-orange-700 hover:bg-orange-800 text-white">
             <Plus className="h-4 w-4 mr-2" />
             Add New Pond
           </Button>
@@ -188,7 +188,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
               <Button 
                 type="submit" 
                 disabled={isPending}
-                className="bg-blue-700 hover:bg-blue-800 text-white min-w-[100px]"
+                className="bg-orange-700 hover:bg-orange-800 text-white min-w-[100px]"
               >
                 {isPending ? (
                   <>

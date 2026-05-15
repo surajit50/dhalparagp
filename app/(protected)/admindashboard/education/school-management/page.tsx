@@ -26,13 +26,13 @@ export default function SchoolManagement() {
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-blue-500 mb-6">Gram Panchayat School Management</h1>
+      <h1 className="text-3xl font-bold text-orange-500 mb-6">Gram Panchayat School Management</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <FaSchool className="mr-2 text-blue-500" />
+              <FaSchool className="mr-2 text-orange-500" />
               Total Schools
             </CardTitle>
           </CardHeader>

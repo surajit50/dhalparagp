@@ -134,7 +134,7 @@ export default function EstimateLibraryPage() {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-900 to-indigo-700 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-900 to-orange-700 bg-clip-text text-transparent">
             Estimate Library
           </h1>
           <p className="text-muted-foreground text-sm">
@@ -174,7 +174,7 @@ export default function EstimateLibraryPage() {
                   variant={selectedType === type.id ? "secondary" : "ghost"}
                   className={`justify-start h-11 font-medium transition-all ${
                     selectedType === type.id
-                      ? "bg-blue-50 text-blue-900 hover:bg-blue-100"
+                      ? "bg-orange-50 text-orange-900 hover:bg-orange-100"
                       : ""
                   }`}
                   onClick={() => setSelectedType(type.id)}
@@ -257,7 +257,7 @@ export default function EstimateLibraryPage() {
                               {rate.code}
 
                               {rate.isPattern && (
-                                <span className="text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-800">
+                                <span className="text-xs px-2 py-0.5 rounded bg-orange-100 text-orange-800">
                                   Pattern
                                 </span>
                               )}

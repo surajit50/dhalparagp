@@ -244,13 +244,13 @@ export default function SchemeInspectionForm() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 md:p-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 md:p-6 bg-gradient-to-br from-gray-50 to-orange-50 min-h-screen">
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Scheme Inspection Report</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           Complete the inspection details for government schemes with accuracy and efficiency
         </p>
-        <div className="w-24 h-1 bg-blue-500 mx-auto mt-4 rounded-full"></div>
+        <div className="w-24 h-1 bg-orange-500 mx-auto mt-4 rounded-full"></div>
       </div>
 
       <div className="mb-8 bg-white rounded-xl shadow-md p-6">
@@ -275,7 +275,7 @@ export default function SchemeInspectionForm() {
             <Button 
               variant="outline" 
               onClick={() => form.reset()}
-              className="flex-1 border-blue-300 text-blue-700 hover:bg-blue-50"
+              className="flex-1 border-orange-300 text-orange-700 hover:bg-orange-50"
             >
               Reset Form
             </Button>
@@ -288,8 +288,8 @@ export default function SchemeInspectionForm() {
             </Button>
           </div>
           
-          <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
-            <p className="text-sm text-blue-700 flex items-center">
+          <div className="bg-orange-50 p-3 rounded-lg border border-orange-100">
+            <p className="text-sm text-orange-700 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -303,7 +303,7 @@ export default function SchemeInspectionForm() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {/* Scheme Details Card */}
           <Card className="border border-gray-200 shadow-lg rounded-xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
               <CardTitle className="text-xl flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
@@ -525,7 +525,7 @@ export default function SchemeInspectionForm() {
 
           {/* Inspection Parameters Card */}
           <Card className="border border-gray-200 shadow-lg rounded-xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
               <CardTitle className="text-xl flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
@@ -1134,7 +1134,7 @@ export default function SchemeInspectionForm() {
 
           {/* Overall Observation Card */}
           <Card className="border border-gray-200 shadow-lg rounded-xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
               <CardTitle className="text-xl flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M9.707 7.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L13 8.586V5a1 1 0 10-2 0v3.586l-1.293-1.293z" />
@@ -1267,7 +1267,7 @@ export default function SchemeInspectionForm() {
 
           {/* Personnel Card */}
           <Card className="border border-gray-200 shadow-lg rounded-xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+            <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-xl flex items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -1280,7 +1280,7 @@ export default function SchemeInspectionForm() {
                   variant="secondary"
                   size="sm"
                   onClick={() => append({ name: "", designation: "", signature: "" })}
-                  className="bg-white text-blue-700 hover:bg-blue-50"
+                  className="bg-white text-orange-700 hover:bg-orange-50"
                 >
                   <PlusIcon className="h-4 w-4 mr-1" />
                   Add Personnel
@@ -1362,7 +1362,7 @@ export default function SchemeInspectionForm() {
             <Button 
               type="submit" 
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 shadow-md"
+              className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 shadow-md"
             >
               {isSubmitting ? (
                 <>

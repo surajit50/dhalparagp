@@ -74,13 +74,13 @@ export default function PollingDetailsForm() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 text-white hover:bg-blue-600">
+        <Button className="bg-orange-500 text-white hover:bg-orange-600">
           Add Polling Details
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-teal-600">Add Polling Details</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-orange-600">Add Polling Details</DialogTitle>
           <DialogDescription>
             Enter the details for the new polling station. Click save when youre done.
           </DialogDescription>

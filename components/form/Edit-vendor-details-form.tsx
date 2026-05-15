@@ -76,7 +76,7 @@ export default function Editvendorform({
   return (
     <Card className="w-full max-w-4xl mx-auto shadow-lg rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50/50">
       <CardHeader className="pb-4">
-        <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent text-center">
+        <CardTitle className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent text-center">
           Edit Vendor Details
         </CardTitle>
         <CardDescription className="text-center text-sm sm:text-base text-gray-600">
@@ -93,7 +93,7 @@ export default function Editvendorform({
             <div className="space-y-6 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
               <div className="space-y-1">
                 <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-                  <span className="bg-blue-100 text-blue-800 p-2 rounded-lg">
+                  <span className="bg-orange-100 text-orange-800 p-2 rounded-lg">
                     {/*  <User className="h-5 w-5" />*/}
                   </span>
                   Personal Information
@@ -141,7 +141,7 @@ export default function Editvendorform({
                         <Input
                           placeholder={agencyType === "FARM" ? "Farm Name" : "Enter full name"}
                           {...field}
-                          className="focus:ring-2 focus:ring-blue-500 border-gray-300 h-12"
+                          className="focus:ring-2 focus:ring-orange-500 border-gray-300 h-12"
                         />
                       </FormControl>
                       <FormMessage />
@@ -162,7 +162,7 @@ export default function Editvendorform({
                           <Input
                             placeholder="Proprietor's Full Name"
                             {...field}
-                            className="focus:ring-2 focus:ring-blue-500 border-gray-300 h-12"
+                            className="focus:ring-2 focus:ring-orange-500 border-gray-300 h-12"
                           />
                         </FormControl>
                         <FormMessage />
@@ -303,7 +303,7 @@ export default function Editvendorform({
                     <FormControl>
                       <Textarea
                         placeholder="Enter postal address"
-                        className="min-h-[120px] resize-y border-gray-300 focus:ring-2 focus:ring-blue-500"
+                        className="min-h-[120px] resize-y border-gray-300 focus:ring-2 focus:ring-orange-500"
                         {...field}
                       />
                     </FormControl>
@@ -319,7 +319,7 @@ export default function Editvendorform({
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold h-14 rounded-xl shadow-lg transition-all transform hover:scale-[1.01]"
+              className="w-full bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-semibold h-14 rounded-xl shadow-lg transition-all transform hover:scale-[1.01]"
             >
               {isPending ? (
                 <div className="flex items-center gap-2">

@@ -79,10 +79,10 @@ export const WorkCompletionCertificate: React.FC<
   return (
     <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
       {/* Header with actions */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 flex justify-between items-center">
+      <div className="bg-gradient-to-r from-orange-600 to-orange-800 p-4 flex justify-between items-center">
         <button 
           onClick={() => handleOpenChange(false)}
-          className="text-white hover:bg-blue-700 p-2 rounded-full transition-colors"
+          className="text-white hover:bg-orange-700 p-2 rounded-full transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -115,11 +115,11 @@ export const WorkCompletionCertificate: React.FC<
       <div className="p-6">
         {/* Certificate header */}
         <div className="text-center mb-8 relative">
-          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 text-blue-600 font-bold">
+          <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-white px-4 text-orange-600 font-bold">
             OFFICIAL CERTIFICATE
           </div>
-          <div className="border-2 border-blue-100 rounded-lg p-6 pt-8">
-            <h2 className="text-2xl font-bold text-blue-800 mb-2">Work Completion Certificate</h2>
+          <div className="border-2 border-orange-100 rounded-lg p-6 pt-8">
+            <h2 className="text-2xl font-bold text-orange-800 mb-2">Work Completion Certificate</h2>
             <p className="text-gray-700">No 3 Dhalpra Gram Panchayat</p>
             <p className="text-sm text-gray-500">Trimohini, Hili, Dakshin Dinajpur</p>
           </div>
@@ -129,7 +129,7 @@ export const WorkCompletionCertificate: React.FC<
         <div className="mb-8 p-4 bg-gray-50 rounded-lg">
           <p className="text-sm uppercase text-gray-500 font-medium mb-2">To Whom It May Concern</p>
           <p className="text-gray-700">
-            This is to certify that <span className="font-semibold text-blue-800">
+            This is to certify that <span className="font-semibold text-orange-800">
               {initialPaymentDetails.AwardofContract?.workorderdetails?.[0]?.Bidagency?.agencydetails.name}
             </span>, located at{" "}
             <span className="text-gray-800">
@@ -141,8 +141,8 @@ export const WorkCompletionCertificate: React.FC<
         {/* Work details */}
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <h3 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <h3 className="font-semibold text-orange-700 mb-3 flex items-center gap-2">
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
               Work Information
             </h3>
             <dl className="space-y-3">
@@ -178,14 +178,14 @@ export const WorkCompletionCertificate: React.FC<
           </div>
 
           <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-            <h3 className="font-semibold text-blue-700 mb-3 flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <h3 className="font-semibold text-orange-700 mb-3 flex items-center gap-2">
+              <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
               Financial Details
             </h3>
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-500 mb-1">Sanctioned Amount</p>
-                <p className="text-xl font-bold text-blue-800">₹{getSanctionedAmount()}</p>
+                <p className="text-xl font-bold text-orange-800">₹{getSanctionedAmount()}</p>
               </div>
               <div className="border-t border-gray-200 pt-3">
                 <p className="text-sm text-gray-500 mb-1">Gross Bill Amount</p>
@@ -200,8 +200,8 @@ export const WorkCompletionCertificate: React.FC<
         </div>
 
         {/* NIT Details */}
-        <div className="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
-          <h3 className="font-semibold text-blue-700 mb-2">NIT Details</h3>
+        <div className="mb-8 p-4 bg-orange-50 rounded-lg border border-orange-100">
+          <h3 className="font-semibold text-orange-700 mb-2">NIT Details</h3>
           <p className="text-sm text-gray-700">
             {`${initialPaymentDetails.nitDetails.memoNumber}/${gpcode}/${initialPaymentDetails.nitDetails.memoDate.getFullYear()} Date: ${formatDate(
               initialPaymentDetails.nitDetails.memoDate

@@ -217,7 +217,7 @@ export default function SiteInspectionPage() {
                         key={it.id}
                         className={`cursor-pointer transition-colors ${
                           selected?.id === it.id
-                            ? "bg-blue-50 hover:bg-blue-50"
+                            ? "bg-orange-50 hover:bg-orange-50"
                             : "hover:bg-gray-50"
                         }`}
                         onClick={() =>
@@ -227,7 +227,7 @@ export default function SiteInspectionPage() {
                         <TableCell className="text-gray-500 text-sm">
                           {idx + 1}
                         </TableCell>
-                        <TableCell className="font-mono font-semibold text-blue-800 text-sm">
+                        <TableCell className="font-mono font-semibold text-orange-800 text-sm">
                           {it.applicationId}
                         </TableCell>
                         <TableCell className="text-gray-700 text-sm max-w-[200px] truncate">
@@ -245,7 +245,7 @@ export default function SiteInspectionPage() {
                         <TableCell className="text-center">
                           <Badge
                             variant="outline"
-                            className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                            className="bg-orange-50 text-orange-700 border-orange-200 text-xs"
                           >
                             {it.status}
                           </Badge>
@@ -254,7 +254,7 @@ export default function SiteInspectionPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-7 text-xs"
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 h-7 text-xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelected(selected?.id === it.id ? null : it);
@@ -275,15 +275,15 @@ export default function SiteInspectionPage() {
 
         {/* ─── REPORT PANEL ─── */}
         {selected && (
-          <Card className="border-blue-200 shadow-sm">
-            <CardHeader className="bg-blue-50 border-b">
+          <Card className="border-orange-200 shadow-sm">
+            <CardHeader className="bg-orange-50 border-b">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base text-blue-900">
+                  <CardTitle className="text-base text-orange-900">
                     Inspection Report —{" "}
                     <span className="font-mono">{selected.applicationId}</span>
                   </CardTitle>
-                  <CardDescription className="text-blue-700">
+                  <CardDescription className="text-orange-700">
                     Inspector: {selected.inspectorName} · Scheduled:{" "}
                     {selected.scheduledDate}
                   </CardDescription>
@@ -300,9 +300,9 @@ export default function SiteInspectionPage() {
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               {/* Summary row */}
-              <div className="grid grid-cols-3 gap-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100 text-sm">
+              <div className="grid grid-cols-3 gap-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100 text-sm">
                 <div>
-                  <Label className="text-blue-700 font-semibold text-[10px] uppercase block mb-1">
+                  <Label className="text-orange-700 font-semibold text-[10px] uppercase block mb-1">
                     Application No
                   </Label>
                   <span className="font-mono font-bold text-slate-800">
@@ -310,7 +310,7 @@ export default function SiteInspectionPage() {
                   </span>
                 </div>
                 <div>
-                  <Label className="text-blue-700 font-semibold text-[10px] uppercase block mb-1">
+                  <Label className="text-orange-700 font-semibold text-[10px] uppercase block mb-1">
                     Scheduled Date
                   </Label>
                   <span className="font-medium text-slate-800">
@@ -318,7 +318,7 @@ export default function SiteInspectionPage() {
                   </span>
                 </div>
                 <div>
-                  <Label className="text-blue-700 font-semibold text-[10px] uppercase block mb-1">
+                  <Label className="text-orange-700 font-semibold text-[10px] uppercase block mb-1">
                     Inspector
                   </Label>
                   <span className="font-medium text-slate-800">
@@ -328,7 +328,7 @@ export default function SiteInspectionPage() {
               </div>
 
               <div>
-                <Label className="text-blue-700 font-semibold text-[10px] uppercase block mb-1">
+                <Label className="text-orange-700 font-semibold text-[10px] uppercase block mb-1">
                   Site Address
                 </Label>
                 <p className="text-sm text-gray-700 p-2 bg-gray-50 rounded border border-gray-200">
@@ -350,7 +350,7 @@ export default function SiteInspectionPage() {
                   value={report}
                   onChange={(e) => setReport(e.target.value)}
                   placeholder="Describe observations, setbacks, access, surrounding land use, and any issues found during inspection..."
-                  className="focus:ring-blue-500 border-gray-300 text-sm"
+                  className="focus:ring-orange-500 border-gray-300 text-sm"
                 />
               </div>
 

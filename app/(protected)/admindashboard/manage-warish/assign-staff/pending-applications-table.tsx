@@ -19,7 +19,7 @@ import { Users } from "lucide-react";
 
 const statusVariant: Record<string, string> = {
   submitted: "bg-yellow-100 text-yellow-800",
-  process: "bg-blue-100 text-blue-800",
+  process: "bg-orange-100 text-orange-800",
   approved: "bg-green-100 text-green-800",
   rejected: "bg-red-100 text-red-800",
 };
@@ -86,7 +86,7 @@ export default function PendingApplicationsTable({
         {selectedIds.length > 0 && (
           <Button
             onClick={() => setShowBulkAssign(true)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-orange-600 hover:bg-orange-700"
           >
             <Users className="mr-2 h-4 w-4" />
             Bulk Assign ({selectedIds.length})

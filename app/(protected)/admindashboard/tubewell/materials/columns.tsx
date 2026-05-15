@@ -82,7 +82,7 @@ export const columns: ColumnDef<Material>[] = [
       return (
         <Badge variant="secondary" className={`${
           isActive
-            ? "bg-indigo-50 text-indigo-700 border-indigo-200"
+            ? "bg-orange-50 text-orange-700 border-orange-200"
             : "bg-slate-50 text-slate-600 border-slate-200"
         } px-3 py-1 rounded-full font-medium`}>
           {isActive ? "Active" : "Inactive"}
@@ -109,7 +109,7 @@ export const columns: ColumnDef<Material>[] = [
 
             <DropdownMenuItem asChild>
               <Link href={`/admindashboard/tubewell/materials/${material.id}/edit`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
-                <Edit className="h-4 w-4 mr-3 text-sky-600" /> <span className="font-medium">Edit Details</span>
+                <Edit className="h-4 w-4 mr-3 text-orange-600" /> <span className="font-medium">Edit Details</span>
               </Link>
             </DropdownMenuItem>
 
@@ -121,7 +121,7 @@ export const columns: ColumnDef<Material>[] = [
 
             <DropdownMenuItem asChild>
               <Link href={`/admindashboard/tubewell/materials/${material.id}/logs`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
-                <History className="h-4 w-4 mr-3 text-indigo-600" /> <span className="font-medium">Stock History</span>
+                <History className="h-4 w-4 mr-3 text-orange-600" /> <span className="font-medium">Stock History</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

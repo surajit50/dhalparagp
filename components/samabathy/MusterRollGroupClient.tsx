@@ -140,7 +140,7 @@ export default function MusterRollGroupClient({
             placeholder="Search by MR No, Name or Village..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-slate-50 border-none focus-visible:ring-blue-500 rounded-xl"
+            className="pl-10 bg-slate-50 border-none focus-visible:ring-orange-500 rounded-xl"
           />
         </div>
 
@@ -181,7 +181,7 @@ export default function MusterRollGroupClient({
                 setSearchQuery("");
                 setActiveTab("ALL");
               }}
-              className="mt-4 text-blue-600 font-semibold"
+              className="mt-4 text-orange-600 font-semibold"
             >
               Clear all filters
             </Button>
@@ -239,7 +239,7 @@ export default function MusterRollGroupClient({
                               className={`h-full rounded-full transition-all duration-500 ${
                                 isFullyCompleted
                                   ? "bg-emerald-500"
-                                  : "bg-blue-500"
+                                  : "bg-orange-500"
                               }`}
                               style={{ width: `${percent}%` }}
                             />
@@ -264,7 +264,7 @@ export default function MusterRollGroupClient({
                               handleComplete(musterRollNo);
                             }}
                             disabled={loading === musterRollNo}
-                            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all"
+                            className="bg-gradient-to-r from-orange-600 to-orange-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all"
                           >
                             {loading === musterRollNo ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -302,7 +302,7 @@ export default function MusterRollGroupClient({
                               return (
                                 <TableRow
                                   key={item.id}
-                                  className="hover:bg-blue-50/40 transition-colors"
+                                  className="hover:bg-orange-50/40 transition-colors"
                                 >
                                   <TableCell className="font-medium text-slate-400">
                                     {i + 1}

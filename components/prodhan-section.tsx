@@ -5,8 +5,8 @@ import { gpnameinshort } from "@/constants/gpinfor";
 
 export default function ProdhanSection() {
   return (
-    <section className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl shadow-lg overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1">
-      <div className="bg-gradient-to-r from-indigo-700 to-purple-700 p-8">
+    <section className="bg-gradient-to-r from-orange-50 to-purple-50 rounded-2xl shadow-lg overflow-hidden transform transition-all hover:shadow-xl hover:-translate-y-1">
+      <div className="bg-gradient-to-r from-orange-700 to-purple-700 p-8">
         <h2 className="text-3xl font-bold text-white text-center">
           Message from the Prodhan
         </h2>
@@ -31,7 +31,7 @@ export default function ProdhanSection() {
             <Link href="/prodhan-speech">
               <Button
                 variant="outline"
-                className="text-indigo-700 border-indigo-700 hover:bg-indigo-700 hover:text-white transition-colors duration-300 font-semibold"
+                className="text-orange-700 border-orange-700 hover:bg-orange-700 hover:text-white transition-colors duration-300 font-semibold"
               >
                 Read Full Message
               </Button>

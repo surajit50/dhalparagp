@@ -58,7 +58,7 @@ export const columns: ColumnDef<Mistri>[] = [
         <div className="flex flex-col bg-slate-50/50 p-2 rounded-lg border border-slate-100 max-w-[180px]">
           <span className="font-bold text-slate-700 text-[11px] truncate">{mistri.bankName || "Unknown Bank"}</span>
           <span className="text-slate-600 text-[11px] font-mono tracking-tighter">{mistri.accountNumber || "N/A"}</span>
-          <span className="text-[9px] text-indigo-500 font-bold uppercase tracking-widest mt-0.5">{mistri.ifscCode || "N/A"}</span>
+          <span className="text-[9px] text-orange-500 font-bold uppercase tracking-widest mt-0.5">{mistri.ifscCode || "N/A"}</span>
         </div>
       );
     }
@@ -97,7 +97,7 @@ export const columns: ColumnDef<Mistri>[] = [
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem asChild>
               <Link href={`/admindashboard/tubewell/mistri/${mistri.id}/edit`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
-                <Edit className="h-4 w-4 mr-3 text-sky-600" /> <span className="font-medium">Edit Details</span>
+                <Edit className="h-4 w-4 mr-3 text-orange-600" /> <span className="font-medium">Edit Details</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

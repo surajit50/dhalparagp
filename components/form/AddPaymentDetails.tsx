@@ -252,8 +252,8 @@ export function AddPaymentDetailsForm({
             {/* Bill Information Section */}
             <div className="space-y-4">
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-lg">
-                  <Receipt className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center justify-center w-8 h-8 bg-orange-100 rounded-lg">
+                  <Receipt className="w-4 h-4 text-orange-600" />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900">
@@ -729,7 +729,7 @@ export function AddPaymentDetailsForm({
                     className={cn(
                       "px-4 py-2",
                       securityDepositPercentage === percentage &&
-                        "bg-gradient-to-r from-blue-600 to-indigo-600 text-white",
+                        "bg-gradient-to-r from-orange-600 to-orange-600 text-white",
                     )}
                   >
                     {percentage}%
@@ -769,14 +769,14 @@ export function AddPaymentDetailsForm({
                   </div>
                 </div>
 
-                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-blue-600">
+                    <span className="text-xs font-medium text-orange-600">
                       Security Deposit
                     </span>
-                    <Shield className="w-4 h-4 text-blue-500" />
+                    <Shield className="w-4 h-4 text-orange-500" />
                   </div>
-                  <div className="text-lg font-bold text-blue-700">
+                  <div className="text-lg font-bold text-orange-700">
                     {formatCurrency(securityDeposit)}
                   </div>
                 </div>
@@ -798,7 +798,7 @@ export function AddPaymentDetailsForm({
             <CardFooter className="px-0 pb-0 pt-4">
               <Button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold"
+                className="w-full bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-semibold"
                 disabled={isSubmitting || grossAmountExceedsAwarded}
               >
                 {isSubmitting ? (

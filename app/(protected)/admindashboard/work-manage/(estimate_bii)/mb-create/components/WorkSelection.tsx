@@ -30,7 +30,7 @@ export const WorkSelection: React.FC<WorkSelectionProps> = ({
       <Card className="border-slate-200 shadow-sm hover:shadow-md transition-all bg-white rounded-xl">
         <CardHeader className="pb-4 border-b border-slate-50">
           <CardTitle className="flex items-center gap-3">
-            <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+            <div className="p-2.5 bg-orange-50 text-orange-600 rounded-xl">
               <BookOpen className="h-5 w-5" />
             </div>
             <div>

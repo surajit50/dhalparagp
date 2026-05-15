@@ -359,8 +359,8 @@ export default function WorksTabs({
           </TabsList>
 
           <div className="p-8 text-center">
-            <div className="inline-flex items-center justify-center bg-blue-100 rounded-full p-4 mb-4">
-              <IndianRupee className="h-8 w-8 text-blue-600" />
+            <div className="inline-flex items-center justify-center bg-orange-100 rounded-full p-4 mb-4">
+              <IndianRupee className="h-8 w-8 text-orange-600" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
               No Works Found

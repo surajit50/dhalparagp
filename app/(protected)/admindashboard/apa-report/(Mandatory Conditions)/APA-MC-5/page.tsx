@@ -153,9 +153,9 @@ const FamilyLinkageCertificate = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6">
-      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden border-4 border-blue-900 relative">
+      <div className="max-w-6xl mx-auto bg-white shadow-2xl rounded-xl overflow-hidden border-4 border-orange-900 relative">
         {/* Certificate Header */}
-        <div className="bg-blue-900 text-white py-6 text-center relative">
+        <div className="bg-orange-900 text-white py-6 text-center relative">
           <div className="absolute top-2 left-4">
             <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
           </div>
@@ -174,7 +174,7 @@ const FamilyLinkageCertificate = () => {
         </div>
 
         {/* Certificate Body */}
-        <div className="p-6 md:p-10 bg-gradient-to-b from-blue-50 to-white">
+        <div className="p-6 md:p-10 bg-gradient-to-b from-orange-50 to-white">
           <div className="text-center mb-8">
             <p className="text-gray-600 text-sm">
               সার্টিফিকেট নং: {familyData.certificateNumber} | 
@@ -188,7 +188,7 @@ const FamilyLinkageCertificate = () => {
 
           {/* Applicant Information */}
           <div className="mb-10">
-            <h3 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
+            <h3 className="text-xl font-bold mb-4 text-orange-900 border-b pb-2">
               আবেদনকারীর তথ্য | Applicant Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -209,7 +209,7 @@ const FamilyLinkageCertificate = () => {
 
           {/* Family Tree Visualization */}
           <div className="mb-10">
-            <h3 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
+            <h3 className="text-xl font-bold mb-4 text-orange-900 border-b pb-2">
               পরিবার গাছ | Family Tree
             </h3>
             
@@ -221,7 +221,7 @@ const FamilyLinkageCertificate = () => {
                 </p>
                 <div className="flex flex-wrap justify-center gap-4">
                   {(familyData?.familyTree?.grandparents || []).map((gp, idx) => (
-                    <div key={idx} className="bg-blue-100 p-4 rounded-lg border border-blue-300 w-64">
+                    <div key={idx} className="bg-orange-100 p-4 rounded-lg border border-orange-300 w-64">
                       <p className="font-bold">{gp?.name} / {gp?.nameEn}</p>
                       <p className="text-sm text-gray-600">{gp?.relation} | {gp?.relationEn}</p>
                       <p className="text-sm">{gp?.dob} / {gp?.dobEn}</p>
@@ -295,7 +295,7 @@ const FamilyLinkageCertificate = () => {
 
           {/* Family Details */}
           <div className="mb-10">
-            <h3 className="text-xl font-bold mb-4 text-blue-900 border-b pb-2">
+            <h3 className="text-xl font-bold mb-4 text-orange-900 border-b pb-2">
               পরিবারের বিবরণ | Family Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -319,7 +319,7 @@ const FamilyLinkageCertificate = () => {
           </div>
 
           {/* Verification Section */}
-          <div className="border-t-2 border-blue-200 pt-6">
+          <div className="border-t-2 border-orange-200 pt-6">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="mb-4 md:mb-0">
                 <p className="text-gray-600 mb-2">আবেদনকারীর স্বাক্ষর | Applicants Signature</p>
@@ -342,11 +342,11 @@ const FamilyLinkageCertificate = () => {
 
         {/* Watermark */}
         <div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-5 pointer-events-none">
-          <div className="text-[120px] font-bold text-blue-400">দাপ্তরিক | OFFICIAL</div>
+          <div className="text-[120px] font-bold text-orange-400">দাপ্তরিক | OFFICIAL</div>
         </div>
 
         {/* Footer */}
-        <div className="bg-blue-900 text-white text-center py-3 text-sm">
+        <div className="bg-orange-900 text-white text-center py-3 text-sm">
           এই নথিটি ডিজিটালভাবে যাচাই করা হয়েছে | This document is digitally verified
         </div>
       </div>

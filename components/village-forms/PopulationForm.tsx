@@ -160,8 +160,8 @@ export function PopulationForm({
             
           >
             <div className="flex items-center space-x-3 mb-2">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Shield className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <Shield className="h-5 w-5 text-orange-600" />
               </div>
               <h3 className="font-bold text-gray-800">Caste Category</h3>
             </div>
@@ -226,7 +226,7 @@ export function PopulationForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-14 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-xl shadow-emerald-100 transition-all duration-200 active:scale-[0.98]"
+            className="w-full h-14 bg-gradient-to-r from-emerald-600 to-orange-600 hover:from-emerald-700 hover:to-orange-700 text-white font-bold rounded-2xl shadow-xl shadow-emerald-100 transition-all duration-200 active:scale-[0.98]"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">

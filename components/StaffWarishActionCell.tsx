@@ -46,7 +46,7 @@ export default function StaffWarishActionCell({ applicationId }: StaffWarishActi
       <Button
         variant="outline"
         size="sm"
-        className="hover:bg-indigo-50 hover:text-indigo-600 transition-all border-indigo-100"
+        className="hover:bg-orange-50 hover:text-orange-600 transition-all border-orange-100"
         onClick={handleOpen}
       >
         <Eye className="h-4 w-4 mr-1" />
@@ -60,7 +60,7 @@ export default function StaffWarishActionCell({ applicationId }: StaffWarishActi
           <div className="p-6">
             {loading ? (
               <div className="flex flex-col items-center justify-center p-12 gap-4">
-                <Loader2 className="h-10 w-10 animate-spin text-indigo-600" />
+                <Loader2 className="h-10 w-10 animate-spin text-orange-600" />
                 <p className="text-muted-foreground animate-pulse">Loading application details...</p>
               </div>
             ) : details ? (

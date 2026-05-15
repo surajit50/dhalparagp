@@ -65,9 +65,9 @@ export default async function EarnestMoneyReportPage({
       <section className="container mx-auto px-4 pb-12 space-y-10">
         {/* ================= KPI SUMMARY ================= */}
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          <Card className="border-l-4 border-blue-600">
+          <Card className="border-l-4 border-orange-600">
             <CardContent className="p-6 text-center">
-              <div className="text-xl font-bold text-blue-700">
+              <div className="text-xl font-bold text-orange-700">
                 ₹{data.summary.totalAmount.toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">Total EMD</div>

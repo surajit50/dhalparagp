@@ -8,7 +8,7 @@ export default async function AuditLogsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-gray-800 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-r from-gray-800 to-orange-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Audit Logs Monitoring
@@ -77,7 +77,7 @@ export default async function AuditLogsPage() {
                             </div>
                           </td>
                           <td className="px-4 py-3 border">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                               {log.action}
                             </span>
                           </td>

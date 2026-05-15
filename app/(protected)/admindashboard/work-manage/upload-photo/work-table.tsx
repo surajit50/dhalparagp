@@ -133,7 +133,7 @@ export const columns: ColumnDef<WorkTableData>[] = [
             status.toLowerCase().includes("complete") &&
               "bg-emerald-50 text-emerald-700 border-emerald-200",
             status.toLowerCase().includes("progress") &&
-              "bg-blue-50 text-blue-700 border-blue-200",
+              "bg-orange-50 text-orange-700 border-orange-200",
             status.toLowerCase().includes("pending") &&
               "bg-amber-50 text-amber-700 border-amber-200"
           )}
@@ -153,7 +153,7 @@ export const columns: ColumnDef<WorkTableData>[] = [
         progress >= 80
           ? "bg-emerald-500"
           : progress >= 50
-          ? "bg-blue-500"
+          ? "bg-orange-500"
           : progress >= 20
           ? "bg-amber-500"
           : "bg-slate-400";

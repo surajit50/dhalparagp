@@ -161,7 +161,7 @@ export default function NotificationBell() {
                   className={cn(
                     "flex gap-3 px-4 py-3 border-l-4 transition cursor-pointer",
                     !n.read
-                      ? "bg-blue-50 border-blue-600"
+                      ? "bg-orange-50 border-orange-600"
                       : "border-transparent hover:bg-muted"
                   )}
                 >
@@ -170,7 +170,7 @@ export default function NotificationBell() {
                   <div className="flex-1">
                     <p className={cn(
                       "text-sm",
-                      !n.read && "font-semibold text-blue-700"
+                      !n.read && "font-semibold text-orange-700"
                     )}>
                       {n.message}
                     </p>

@@ -952,7 +952,7 @@ export function WorkListByScheme({ works = [] }: WorkListBySchemeProps) {
               {(scheme.tied.sanitation.length > 0 ||
                 scheme.tied.drinkingWater.length > 0) && (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4 text-blue-700">
+                  <h3 className="text-lg font-semibold mb-4 text-orange-700">
                     Tied Works (
                     {scheme.tied.sanitation.length +
                       scheme.tied.drinkingWater.length}
@@ -982,7 +982,7 @@ export function WorkListByScheme({ works = [] }: WorkListBySchemeProps) {
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className="bg-blue-50 text-blue-700"
+                                className="bg-orange-50 text-orange-700"
                               >
                                 {work.sector}
                               </Badge>

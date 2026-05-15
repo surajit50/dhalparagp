@@ -418,7 +418,7 @@ function StageCard({
             <a
               href={`https://maps.google.com?q=${photo.latitude},${photo.longitude}`}
               target="_blank"
-              className="text-blue-500 hover:text-blue-600 transition-colors"
+              className="text-orange-500 hover:text-orange-600 transition-colors"
               title="View on Map"
             >
               <MapPin className="h-3 w-3" />

@@ -24,7 +24,7 @@ export function DashboardCard({
               {title}
             </div>
 
-            <div className="text-2xl font-semibold text-blue-700 mt-1">
+            <div className="text-2xl font-semibold text-orange-700 mt-1">
               {value}
             </div>
           </div>

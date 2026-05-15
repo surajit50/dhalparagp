@@ -491,7 +491,7 @@ export default function NOCPrintPage() {
                         key={it.id}
                         className={`cursor-pointer transition-colors ${
                           selected?.id === it.id
-                            ? "bg-blue-50 hover:bg-blue-50"
+                            ? "bg-orange-50 hover:bg-orange-50"
                             : "hover:bg-gray-50"
                         }`}
                         onClick={() =>
@@ -499,10 +499,10 @@ export default function NOCPrintPage() {
                         }
                       >
                         <TableCell className="text-gray-500 text-sm">{idx + 1}</TableCell>
-                        <TableCell className="font-mono font-bold text-blue-900 text-sm">
+                        <TableCell className="font-mono font-bold text-orange-900 text-sm">
                           {it.nocNo}
                         </TableCell>
-                        <TableCell className="font-mono text-blue-700 text-sm">
+                        <TableCell className="font-mono text-orange-700 text-sm">
                           {it.applicationNo}
                         </TableCell>
                         <TableCell className="font-medium text-gray-800 text-sm">
@@ -529,7 +529,7 @@ export default function NOCPrintPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-7 text-xs"
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 h-7 text-xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelected(selected?.id === it.id ? null : it);
@@ -550,15 +550,15 @@ export default function NOCPrintPage() {
 
         {/* ─── DETAIL & PRINT PANEL ─── */}
         {selected && (
-          <Card className="border-blue-200 shadow-sm">
-            <CardHeader className="bg-blue-50 border-b">
+          <Card className="border-orange-200 shadow-sm">
+            <CardHeader className="bg-orange-50 border-b">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <CardTitle className="text-base text-blue-900">
+                  <CardTitle className="text-base text-orange-900">
                     Certificate Preview —{" "}
                     <span className="font-mono">{selected.nocNo}</span>
                   </CardTitle>
-                  <CardDescription className="text-blue-700">
+                  <CardDescription className="text-orange-700">
                     {selected.applicantName} · App: {selected.applicationNo}
                   </CardDescription>
                 </div>
@@ -568,7 +568,7 @@ export default function NOCPrintPage() {
                     variant="outline"
                     onClick={handlePrint}
                     disabled={pdfLoading}
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                    className="border-orange-300 text-orange-700 hover:bg-orange-100"
                   >
                     {pdfLoading ? (
                       <Loader2 className="h-4 w-4 mr-1 animate-spin" />
@@ -581,7 +581,7 @@ export default function NOCPrintPage() {
                     size="sm"
                     onClick={handleDownload}
                     disabled={pdfLoading}
-                    className="bg-blue-700 hover:bg-blue-800"
+                    className="bg-orange-700 hover:bg-orange-800"
                   >
                     {pdfLoading ? (
                       <Loader2 className="h-4 w-4 mr-1 animate-spin" />
@@ -603,21 +603,21 @@ export default function NOCPrintPage() {
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               {/* Certificate details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100 text-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100 text-sm">
                 <div>
-                  <span className="text-blue-700 font-semibold block uppercase text-[10px] mb-1">NOC No</span>
+                  <span className="text-orange-700 font-semibold block uppercase text-[10px] mb-1">NOC No</span>
                   <span className="font-mono font-bold text-slate-800">{selected.nocNo}</span>
                 </div>
                 <div>
-                  <span className="text-blue-700 font-semibold block uppercase text-[10px] mb-1">Memo No</span>
+                  <span className="text-orange-700 font-semibold block uppercase text-[10px] mb-1">Memo No</span>
                   <span className="font-mono text-slate-700 text-xs">{selected.memoNumber || "—"}</span>
                 </div>
                 <div>
-                  <span className="text-blue-700 font-semibold block uppercase text-[10px] mb-1">Issue Date</span>
+                  <span className="text-orange-700 font-semibold block uppercase text-[10px] mb-1">Issue Date</span>
                   <span className="font-medium text-slate-800">{selected.issueDate}</span>
                 </div>
                 <div>
-                  <span className="text-blue-700 font-semibold block uppercase text-[10px] mb-1">Signatory</span>
+                  <span className="text-orange-700 font-semibold block uppercase text-[10px] mb-1">Signatory</span>
                   <span className="font-medium text-slate-800">{selected.signatoryName}</span>
                 </div>
               </div>

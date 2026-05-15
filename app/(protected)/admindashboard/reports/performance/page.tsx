@@ -28,7 +28,7 @@ export default async function PerformanceReportPage({
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-indigo-700 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-r from-orange-700 to-orange-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Performance Report
@@ -48,14 +48,14 @@ export default async function PerformanceReportPage({
           {/* Performance Metrics */}
           {performanceData?.metrics && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Card className="bg-blue-50 border-blue-200">
+              <Card className="bg-orange-50 border-orange-200">
                 <CardHeader>
-                  <CardTitle className="text-blue-800">
+                  <CardTitle className="text-orange-800">
                     Warish Approval Rate
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-blue-700 mb-2">
+                  <div className="text-3xl font-bold text-orange-700 mb-2">
                     {performanceData.metrics.warishApprovalRate}
                   </div>
                   <div className="text-gray-600">
@@ -112,12 +112,12 @@ export default async function PerformanceReportPage({
                 </CardContent>
               </Card>
 
-              <Card className="bg-teal-50 border-teal-200">
+              <Card className="bg-orange-50 border-orange-200">
                 <CardHeader>
-                  <CardTitle className="text-teal-800">Total Users</CardTitle>
+                  <CardTitle className="text-orange-800">Total Users</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-teal-700 mb-2">
+                  <div className="text-3xl font-bold text-orange-700 mb-2">
                     {performanceData.metrics.totalUsers}
                   </div>
                   <div className="text-gray-600">Total registered users</div>
@@ -149,11 +149,11 @@ export default async function PerformanceReportPage({
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                       <span className="font-medium">
                         Total Warish Applications
                       </span>
-                      <span className="text-2xl font-bold text-blue-700">
+                      <span className="text-2xl font-bold text-orange-700">
                         {performanceData.statistics.totalWarishApplications}
                       </span>
                     </div>
@@ -186,9 +186,9 @@ export default async function PerformanceReportPage({
                         {performanceData.statistics.totalBookings}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                       <span className="font-medium">Completed Bookings</span>
-                      <span className="text-2xl font-bold text-teal-700">
+                      <span className="text-2xl font-bold text-orange-700">
                         {performanceData.statistics.completedBookings}
                       </span>
                     </div>
@@ -198,9 +198,9 @@ export default async function PerformanceReportPage({
                         {performanceData.statistics.totalWorks}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
+                    <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                       <span className="font-medium">Completed Works</span>
-                      <span className="text-2xl font-bold text-indigo-700">
+                      <span className="text-2xl font-bold text-orange-700">
                         {performanceData.statistics.completedWorks}
                       </span>
                     </div>

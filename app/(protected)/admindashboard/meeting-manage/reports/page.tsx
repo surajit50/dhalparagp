@@ -29,7 +29,7 @@ const meetingTypes = [
   {
     value: "UPASAMITY",
     label: "Upasamity",
-    color: "bg-blue-100 text-blue-800",
+    color: "bg-orange-100 text-orange-800",
   },
   { value: "GENERAL", label: "General", color: "bg-green-100 text-green-800" },
   { value: "ARTHO", label: "Artho", color: "bg-purple-100 text-purple-800" },
@@ -136,7 +136,7 @@ export default function MeetingReportsPage() {
                   {mockStats.totalMeetings}
                 </p>
               </div>
-              <Calendar className="h-8 w-8 text-blue-600" />
+              <Calendar className="h-8 w-8 text-orange-600" />
             </div>
           </CardContent>
         </Card>
@@ -192,7 +192,7 @@ export default function MeetingReportsPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <TrendingUp className="mr-2 h-5 w-5 text-blue-600" />
+              <TrendingUp className="mr-2 h-5 w-5 text-orange-600" />
               Monthly Trends
             </CardTitle>
           </CardHeader>
@@ -204,8 +204,8 @@ export default function MeetingReportsPage() {
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                      <span className="text-sm font-semibold text-blue-600">
+                    <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold text-orange-600">
                         {index + 1}
                       </span>
                     </div>
@@ -317,10 +317,10 @@ export default function MeetingReportsPage() {
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-600" />
+                  <Clock className="h-4 w-4 text-orange-600" />
                   <span className="text-sm">Scheduled</span>
                 </div>
-                <Badge className="bg-blue-100 text-blue-800">
+                <Badge className="bg-orange-100 text-orange-800">
                   {mockStats.scheduledMeetings}
                 </Badge>
               </div>
@@ -391,9 +391,9 @@ export default function MeetingReportsPage() {
               <Badge className="bg-green-100 text-green-800">Completed</Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
               <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-blue-600" />
+                <Clock className="h-5 w-5 text-orange-600" />
                 <div>
                   <p className="font-semibold">Special Budget Review Meeting</p>
                   <p className="text-sm text-gray-600">
@@ -401,7 +401,7 @@ export default function MeetingReportsPage() {
                   </p>
                 </div>
               </div>
-              <Badge className="bg-blue-100 text-blue-800">Scheduled</Badge>
+              <Badge className="bg-orange-100 text-orange-800">Scheduled</Badge>
             </div>
 
             <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">

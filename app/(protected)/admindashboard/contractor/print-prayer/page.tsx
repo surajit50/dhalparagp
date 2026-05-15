@@ -59,7 +59,7 @@ const page = async () => {
         <Button 
           asChild 
           variant="outline" 
-          className="group border-2 border-slate-300 hover:border-indigo-500 bg-white/80 backdrop-blur-sm hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
+          className="group border-2 border-slate-300 hover:border-orange-500 bg-white/80 backdrop-blur-sm hover:bg-gradient-to-r hover:from-orange-50 hover:to-orange-50 transition-all duration-300 rounded-xl shadow-sm hover:shadow-md"
         >
           <Link href="/admindashboard/contractor" className="flex items-center gap-2 font-medium">
             <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />

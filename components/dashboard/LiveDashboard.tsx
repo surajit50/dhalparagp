@@ -68,7 +68,7 @@ export default function LiveDashboard() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-3xl border border-slate-100 shadow-sm">
-        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <div className="w-12 h-12 border-4 border-orange-600 border-t-transparent rounded-full animate-spin mb-4"></div>
         <p className="text-slate-500 font-medium animate-pulse">
           Syncing live data...
         </p>
@@ -94,8 +94,8 @@ export default function LiveDashboard() {
       label: "Total Applications",
       value: data.totalWarish,
       icon: FileText,
-      color: "bg-blue-50 text-blue-600",
-      border: "border-blue-100",
+      color: "bg-orange-50 text-orange-600",
+      border: "border-orange-100",
     },
     {
       label: "Active Works",
@@ -242,7 +242,7 @@ export default function LiveDashboard() {
                 onClick={() => setSelectedYear(year)}
                 className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   selectedYear === year
-                    ? "bg-white text-blue-600 shadow-sm border border-slate-200"
+                    ? "bg-white text-orange-600 shadow-sm border border-slate-200"
                     : "text-slate-500 hover:text-slate-700 hover:bg-slate-100"
                 }`}
               >
@@ -309,7 +309,7 @@ export default function LiveDashboard() {
                           <tr key={staff.id} className="hover:bg-slate-50/80 transition-all group">
                             <td className="px-8 py-5">
                               <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-100">
+                                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-100">
                                   {staff.name?.charAt(0).toUpperCase()}
                                 </div>
                                 <div>
@@ -339,7 +339,7 @@ export default function LiveDashboard() {
                             <td className="px-8 py-5">
                               {staff.attendance?.checkIn ? (
                                 <div className="flex items-center gap-2.5 text-slate-700 font-bold text-sm bg-slate-50 px-3 py-1.5 rounded-xl w-fit">
-                                  <Clock className="w-4 h-4 text-blue-500" />
+                                  <Clock className="w-4 h-4 text-orange-500" />
                                   {new Date(staff.attendance.checkIn).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
                                 </div>
                               ) : (
@@ -358,7 +358,7 @@ export default function LiveDashboard() {
                             </td>
                             <td className="px-8 py-5 text-right">
                               <Link href={`/admindashboard/gram-sabha/attendance`}>
-                                <button className="p-3 bg-white hover:bg-blue-600 rounded-2xl border border-slate-200 hover:border-blue-600 shadow-sm hover:shadow-blue-200 transition-all text-slate-400 hover:text-white group/btn">
+                                <button className="p-3 bg-white hover:bg-orange-600 rounded-2xl border border-slate-200 hover:border-orange-600 shadow-sm hover:shadow-orange-200 transition-all text-slate-400 hover:text-white group/btn">
                                   <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                                 </button>
                               </Link>
@@ -390,7 +390,7 @@ export default function LiveDashboard() {
                 >
                   <Icon className="w-6 h-6" />
                 </div>
-                <div className="h-1.5 w-1.5 rounded-full bg-slate-200 group-hover:bg-blue-500 transition-colors"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-slate-200 group-hover:bg-orange-500 transition-colors"></div>
               </div>
               <div>
                 <p className="text-sm font-medium text-slate-500 mb-1">
@@ -520,7 +520,7 @@ export default function LiveDashboard() {
         {dashboardSections.map((section, idx) => (
           <div key={idx}>
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-8 w-1 bg-blue-600 rounded-full"></div>
+              <div className="h-8 w-1 bg-orange-600 rounded-full"></div>
               <h2 className="text-xl font-bold text-slate-900">
                 {section.title}
               </h2>
@@ -531,12 +531,12 @@ export default function LiveDashboard() {
                 const Icon = card.icon;
                 return (
                   <Link key={i} href={card.link} className="group">
-                    <div className="h-full bg-white p-6 rounded-2xl border border-slate-100 shadow-sm group-hover:shadow-md group-hover:border-blue-100 transition-all duration-300">
+                    <div className="h-full bg-white p-6 rounded-2xl border border-slate-100 shadow-sm group-hover:shadow-md group-hover:border-orange-100 transition-all duration-300">
                       <div className="flex justify-between items-start mb-4">
-                        <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-blue-50 transition-colors">
-                          <Icon className="w-5 h-5 text-slate-600 group-hover:text-blue-600 transition-colors" />
+                        <div className="p-2 bg-slate-50 rounded-lg group-hover:bg-orange-50 transition-colors">
+                          <Icon className="w-5 h-5 text-slate-600 group-hover:text-orange-600 transition-colors" />
                         </div>
-                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" />
+                        <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
                       </div>
                       <div>
                         <p className="text-3xl font-bold text-slate-900 mb-1">
@@ -558,7 +558,7 @@ export default function LiveDashboard() {
       {/* LAST UPDATED */}
       <div className="flex items-center justify-between pt-8 border-t border-slate-100">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-blue-500" />
+          <Activity className="w-4 h-4 text-orange-500" />
           <span className="text-sm font-medium text-slate-600">
             System Monitoring Active
           </span>

@@ -239,11 +239,11 @@ const TemplatesPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-orange-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
               Tender Term Templates
             </h1>
             <p className="text-gray-600 text-lg font-medium">
@@ -281,7 +281,7 @@ const TemplatesPage = () => {
             <Button 
               asChild 
               disabled={createFromCurrentMutation.isPending}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+              className="bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
             >
               <Link href="/admindashboard/manage-tender/add-template">
                 <Plus className="h-4 w-4 mr-2" />
@@ -339,9 +339,9 @@ const TemplatesPage = () => {
         </Card>
 
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="pb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 rounded-t-lg">
+          <CardHeader className="pb-4 bg-gradient-to-r from-orange-50 to-orange-50 border-b border-orange-100/50 rounded-t-lg">
             <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <div className="h-1 w-1 rounded-full bg-blue-600"></div>
+              <div className="h-1 w-1 rounded-full bg-orange-600"></div>
               Templates
             </CardTitle>
             <CardDescription className="text-gray-600 font-medium">
@@ -387,7 +387,7 @@ const TemplatesPage = () => {
                       };
 
                       return (
-                        <TableRow key={template.id} className="group hover:bg-blue-50/50 transition-colors duration-150">
+                        <TableRow key={template.id} className="group hover:bg-orange-50/50 transition-colors duration-150">
                           <TableCell>
                             <div className="flex flex-col">
                               <span className="font-semibold text-gray-900">
@@ -405,7 +405,7 @@ const TemplatesPage = () => {
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             <div className="flex flex-wrap gap-2 text-xs text-gray-600">
-                              <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
+                              <Badge variant="outline" className="bg-orange-50 text-orange-700 hover:bg-orange-50">
                                 Eligible: {sectionCounts.eligible}
                               </Badge>
                               <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">
@@ -515,7 +515,7 @@ const TemplatesPage = () => {
         <DialogContent className="max-w-3xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <ListChecks className="h-5 w-5 text-blue-600" />
+              <ListChecks className="h-5 w-5 text-orange-600" />
               {previewTemplate?.name ?? "Template Preview"}
             </DialogTitle>
             {previewTemplate?.description ? (

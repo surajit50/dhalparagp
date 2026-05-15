@@ -60,7 +60,7 @@ export default function PdfDownloadButton({ elementId, filename = "document.pdf"
     <button
       onClick={generatePDF}
       disabled={isGenerating}
-      className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-sans font-medium flex items-center gap-2 ${
+      className={`bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-md font-sans font-medium flex items-center gap-2 ${
         isGenerating ? "opacity-70 cursor-not-allowed" : ""
       }`}
     >

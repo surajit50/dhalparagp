@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         code: "building",
         description: "Building and structural construction projects",
         icon: "🏢",
-        color: "bg-blue-100 text-blue-800",
+        color: "bg-orange-100 text-orange-800",
         dimensionFields: {
           required: ["length", "width", "depth"],
           optional: [],
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
         code: "water-chiller",
         description: "HVAC and cooling system installations",
         icon: "❄️",
-        color: "bg-cyan-100 text-cyan-800",
+        color: "bg-orange-100 text-orange-800",
         dimensionFields: {
           required: ["capacity"],
           optional: [],

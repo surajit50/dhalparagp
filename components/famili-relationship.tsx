@@ -50,7 +50,7 @@ export default function Component() {
       <Button
         variant="outline"
         size="sm"
-        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-colors duration-300"
+        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 transition-colors duration-300"
         onClick={() => handleCopy(index, relationship.English)}
         aria-label={`Copy ${relationship.English} relationship`}
       >
@@ -83,7 +83,7 @@ export default function Component() {
               placeholder="Search relationships..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full bg-white text-gray-800 placeholder-gray-400 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              className="pl-10 w-full bg-white text-gray-800 placeholder-gray-400 border-gray-300 focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
               aria-label="Search relationships"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} aria-hidden="true" />

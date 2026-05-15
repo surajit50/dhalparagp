@@ -93,7 +93,7 @@ const formatLabel = (label: string): string => {
 =========================================================== */
 
 const nicInputStyle =
-  "w-full h-10 rounded-md border border-gray-400 bg-white px-3 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 disabled:bg-gray-100 disabled:cursor-not-allowed"
+  "w-full h-10 rounded-md border border-gray-400 bg-white px-3 text-sm focus:outline-none focus:border-orange-700 focus:ring-1 focus:ring-orange-700 disabled:bg-gray-100 disabled:cursor-not-allowed"
 
 /* ===========================================================
    INPUT RENDERER
@@ -134,7 +134,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             {...field}
             disabled={props.disabled}
             placeholder={props.placeholder}
-            className="min-h-[90px] rounded-md border border-gray-400 bg-white px-3 py-2 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
+            className="min-h-[90px] rounded-md border border-gray-400 bg-white px-3 py-2 text-sm focus:outline-none focus:border-orange-700 focus:ring-1 focus:ring-orange-700"
           />
         </FormControl>
       )
@@ -211,7 +211,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
               checked={field.value}
               onCheckedChange={field.onChange}
               id={props.name}
-              className="border border-gray-500 data-[state=checked]:bg-blue-700 data-[state=checked]:border-blue-700"
+              className="border border-gray-500 data-[state=checked]:bg-orange-700 data-[state=checked]:border-orange-700"
             />
             <label
               htmlFor={props.name}
@@ -237,7 +237,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
                   value={option.value}
                   checked={field.value === option.value}
                   onChange={() => field.onChange(option.value)}
-                  className="accent-blue-700"
+                  className="accent-orange-700"
                 />
                 {option.label}
               </label>
@@ -259,7 +259,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
                     <InputOTPSlot
                       {...slot}
                       index={index}
-                      className="w-9 h-9 border border-gray-400 rounded-md focus:border-blue-700"
+                      className="w-9 h-9 border border-gray-400 rounded-md focus:border-orange-700"
                     />
                     {index !== slots.length - 1 && (
                       <InputOTPSeparator />

@@ -57,7 +57,7 @@ export function DeliveryTable({ bookings }: DeliveryTableProps) {
       COMPLETED: "bg-green-100 text-green-800 hover:bg-green-200",
       CANCELLED: "bg-red-100 text-red-800 hover:bg-red-200",
       PENDING: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
-      CONFIRMED: "bg-blue-100 text-blue-800 hover:bg-blue-200",
+      CONFIRMED: "bg-orange-100 text-orange-800 hover:bg-orange-200",
       REJECTED: "bg-red-100 text-red-800 hover:bg-red-200",
     }
     return colors[status] || "bg-gray-100 text-gray-800 hover:bg-gray-200"
@@ -228,7 +228,7 @@ export function DeliveryTable({ bookings }: DeliveryTableProps) {
                     <TableRow 
                       key={booking.id} 
                       className={booking.isToday ? "bg-yellow-50 hover:bg-yellow-100" : 
-                        booking.daysDiff === 1 ? "bg-blue-50 hover:bg-blue-100" : ""}
+                        booking.daysDiff === 1 ? "bg-orange-50 hover:bg-orange-100" : ""}
                     >
                       <TableCell className="font-medium">{index + 1}</TableCell>
                       <TableCell>

@@ -76,7 +76,7 @@ export function Step3_Dimensions({
               variant={estimateType === "drain" ? "default" : "outline"}
               className={`gap-2 flex-1 h-12 ${
                 estimateType === "drain"
-                  ? "bg-teal-600 hover:bg-teal-700 text-white"
+                  ? "bg-orange-600 hover:bg-orange-700 text-white"
                   : "border-slate-300 hover:bg-slate-50"
               }`}
               onClick={() => setEstimateType("drain")}
@@ -163,7 +163,7 @@ export function Step3_Dimensions({
       )}
 
       {(!estimateExists || isEditing) && estimateType === "drain" && (
-        <Card className="p-6 shadow-sm border border-teal-200/80 bg-gradient-to-r from-teal-50/80 to-cyan-50/80">
+        <Card className="p-6 shadow-sm border border-orange-200/80 bg-gradient-to-r from-orange-50/80 to-orange-50/80">
           <h3 className="text-base font-semibold text-slate-700 mb-1">
             Drain Estimate Parameters
           </h3>
@@ -207,7 +207,7 @@ export function Step3_Dimensions({
               type="button"
               onClick={applyGlobalDimensionsToAllItems}
               disabled={items.length === 0}
-              className="gap-2 bg-teal-600 hover:bg-teal-700 text-white"
+              className="gap-2 bg-orange-600 hover:bg-orange-700 text-white"
             >
               <RefreshCw className="h-4 w-4" />
               Apply to All (cum/sqm)

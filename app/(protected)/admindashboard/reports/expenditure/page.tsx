@@ -69,7 +69,7 @@ export default async function AdminExpenditureReportPage({
 
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-xl font-bold text-blue-700">
+                <div className="text-xl font-bold text-orange-700">
                   ₹ {netExpenditure.toLocaleString()}
                 </div>
                 <div className="text-sm text-gray-600">Net Expenditure</div>

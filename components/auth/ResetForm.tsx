@@ -48,7 +48,7 @@ const ResetForm = () => {
   return (
     <div className="w-full max-w-md space-y-8 px-4 sm:px-0">
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-indigo-600 mb-2">
+        <h1 className="text-3xl font-bold text-orange-600 mb-2">
           Password Reset
         </h1>
         <p className="text-gray-500">
@@ -72,7 +72,7 @@ const ResetForm = () => {
                       placeholder="name@example.com"
                       type="email"
                       disabled={isPending}
-                      className="py-5 rounded-lg focus-visible:ring-indigo-500"
+                      className="py-5 rounded-lg focus-visible:ring-orange-500"
                       {...field}
                     />
                   </FormControl>
@@ -98,7 +98,7 @@ const ResetForm = () => {
             <Button
               type="submit"
               disabled={isPending}
-              className="w-full py-5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all"
+              className="w-full py-5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-semibold transition-all"
             >
               {isPending ? (
                 <div className="flex items-center gap-2">
@@ -113,7 +113,7 @@ const ResetForm = () => {
             <div className="text-center mt-4">
               <Link
                 href="/auth/login"
-                className="text-indigo-600 hover:text-indigo-700 font-medium inline-flex items-center gap-1 group"
+                className="text-orange-600 hover:text-orange-700 font-medium inline-flex items-center gap-1 group"
               >
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
                 <span>Back to login</span>

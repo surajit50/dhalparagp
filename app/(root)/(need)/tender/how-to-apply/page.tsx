@@ -173,7 +173,7 @@ export default function HowToApply() {
         For more detailed information, please visit the official{" "}
         <Link
           href="https://wbtenders.gov.in"
-          className="text-blue-600 hover:underline font-semibold"
+          className="text-orange-600 hover:underline font-semibold"
         >
           West Bengal e-Tender portal
         </Link>

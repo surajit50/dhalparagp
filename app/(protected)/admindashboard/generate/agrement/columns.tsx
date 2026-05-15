@@ -48,7 +48,7 @@ export const columns: ColumnDef<Agreement>[] = [
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center gap-2 group">
-              <span className="font-semibold text-blue-600 group-hover:text-blue-800 transition-colors">
+              <span className="font-semibold text-orange-600 group-hover:text-orange-800 transition-colors">
                 {row.original.aggrementno}
               </span>
               <Info className="h-4 w-4 text-gray-400 hover:text-gray-600" />

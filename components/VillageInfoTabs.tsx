@@ -276,7 +276,7 @@ export function VillageInfoTabs({
       <Card className="m-6">
         <CardContent className="flex items-center justify-center py-12">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+            <Loader2 className="h-8 w-8 animate-spin text-orange-600 mx-auto mb-4" />
             <p className="text-gray-600">Loading village information...</p>
           </div>
         </CardContent>
@@ -370,14 +370,14 @@ export function VillageInfoTabs({
   return (
     <div className="p-4 md:p-6">
       <Card className="shadow-lg rounded-xl">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-xl">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50 rounded-t-xl">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <CardTitle className="text-2xl font-bold text-gray-800">
                 {village.name} Village Information
               </CardTitle>
               <div className="flex flex-wrap items-center gap-3 mt-2">
-                <Badge variant="outline" className="border-blue-200 bg-blue-50">
+                <Badge variant="outline" className="border-orange-200 bg-orange-50">
                   <span className="font-medium">Year:</span> {year}
                 </Badge>
                 <Badge
@@ -415,7 +415,7 @@ export function VillageInfoTabs({
                   <span className="text-xs font-medium text-gray-600">
                     Form Progress
                   </span>
-                  <span className="text-xs font-medium text-blue-600">
+                  <span className="text-xs font-medium text-orange-600">
                     {progress}%
                   </span>
                 </div>
@@ -448,12 +448,12 @@ export function VillageInfoTabs({
                         value={key}
                         className={`flex flex-col items-center px-3 py-2 rounded-md transition-all ${
                           tab === key
-                            ? "bg-white shadow-sm border border-blue-100"
+                            ? "bg-white shadow-sm border border-orange-100"
                             : "hover:bg-gray-100"
                         }`}
                       >
                         <div className="flex items-center gap-1.5 mb-1">
-                          <Icon className="h-4 w-4 text-blue-600" />
+                          <Icon className="h-4 w-4 text-orange-600" />
                           <span className="text-xs font-medium">{label}</span>
                         </div>
                         {isComplete ? (
@@ -475,8 +475,8 @@ export function VillageInfoTabs({
                     className="space-y-4 bg-white rounded-xl border border-gray-100 p-5 shadow-sm"
                   >
                     <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                      <div className="p-2 rounded-lg bg-blue-50">
-                        <Icon className="h-6 w-6 text-blue-600" />
+                      <div className="p-2 rounded-lg bg-orange-50">
+                        <Icon className="h-6 w-6 text-orange-600" />
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-800">
@@ -496,7 +496,7 @@ export function VillageInfoTabs({
                           control={form.control}
                           name={`${key}.${field}` as any}
                           render={({ field: f }) => (
-                            <FormItem className="bg-gray-50 p-3 rounded-lg hover:bg-blue-50 transition-colors">
+                            <FormItem className="bg-gray-50 p-3 rounded-lg hover:bg-orange-50 transition-colors">
                               <FormLabel className="block text-sm font-medium text-gray-700 mb-1">
                                 {formatFieldLabel(field)}
                               </FormLabel>
@@ -508,7 +508,7 @@ export function VillageInfoTabs({
                                       onCheckedChange={(checked) => {
                                         f.onChange(checked === true);
                                       }}
-                                      className="h-5 w-5 data-[state=checked]:bg-blue-600"
+                                      className="h-5 w-5 data-[state=checked]:bg-orange-600"
                                     />
                                     <span className="text-sm">
                                       {f.value ? "Yes" : "No"}
@@ -533,7 +533,7 @@ export function VillageInfoTabs({
                                         f.onChange(value);
                                       }
                                     }}
-                                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-300 focus:border-blue-500"
+                                    className="bg-white border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-300 focus:border-orange-500"
                                   />
                                 )}
                               </FormControl>
@@ -588,7 +588,7 @@ export function VillageInfoTabs({
                     <Button
                       type="button"
                       onClick={goToNextTab}
-                      className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700"
+                      className="flex items-center gap-2 px-5 py-2 bg-orange-600 hover:bg-orange-700"
                     >
                       <span>Next Section</span> →
                     </Button>

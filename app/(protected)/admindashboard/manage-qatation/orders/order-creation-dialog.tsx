@@ -192,7 +192,7 @@ export default function OrderCreationDialog({
                   "font-semibold",
                   quotation.quotationType === QuotationType.SALE
                     ? "text-green-600"
-                    : "text-blue-600"
+                    : "text-orange-600"
                 )}
               >
                 {quotation.quotationType}

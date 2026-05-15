@@ -230,7 +230,7 @@ export default function FinancialBidDetails({
                             className={
                               rank === "L1"
                                 ? "text-green-600 font-bold"
-                                : "text-blue-600 font-bold"
+                                : "text-orange-600 font-bold"
                             }
                           >
                             {rank}

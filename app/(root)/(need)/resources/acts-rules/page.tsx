@@ -69,7 +69,7 @@ export default function ActsRules() {
       <div className="mt-8">
         <Link
           href="/resources"
-          className="text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out"
+          className="text-orange-600 hover:text-orange-800 transition duration-150 ease-in-out"
         >
           ← Back to Resources
         </Link>

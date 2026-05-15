@@ -38,14 +38,14 @@ const FinancialReport = () => {
           </p>
         </div>
 
-        <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg">
+        <div className="flex items-center space-x-2 bg-orange-50 px-4 py-2 rounded-lg">
           <span className="text-sm text-gray-600 font-medium">
             Financial Year:
           </span>
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(e.target.value)}
-            className="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="bg-white border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-orange-500"
           >
             {financialYears.map((year) => (
               <option key={year} value={year}>
@@ -170,7 +170,7 @@ const ReportItem = ({
       </h3>
     </div>
     <div className="sm:w-1/3 sm:text-right">
-      <span className="inline-block bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+      <span className="inline-block bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
         {value}
       </span>
     </div>
@@ -216,7 +216,7 @@ const DocumentItem = ({
           {statusText}
         </span>
         {(status === "Approved" || status === "Received") && (
-          <button className="block mt-1 text-sm text-blue-600 hover:underline">
+          <button className="block mt-1 text-sm text-orange-600 hover:underline">
             Download {year} Document
           </button>
         )}

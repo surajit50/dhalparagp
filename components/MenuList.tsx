@@ -46,7 +46,7 @@ const MenuList = () => {
 
       <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
         <div className="flex flex-col h-full">
-          <div className="p-4 bg-blue-600 text-white">
+          <div className="p-4 bg-orange-600 text-white">
             <h2 className="text-xl font-bold">
               {gpnameinshort} Gram Panchayat
             </h2>
@@ -64,7 +64,7 @@ const MenuList = () => {
                         <li key={itemIndex}>
                           <Link
                             href="#"
-                            className="flex items-center text-sm text-gray-600 hover:text-blue-600 transition-colors"
+                            className="flex items-center text-sm text-gray-600 hover:text-orange-600 transition-colors"
                             onClick={() => setOpen(false)}
                           >
                             <ChevronRight className="mr-2 h-4 w-4" />

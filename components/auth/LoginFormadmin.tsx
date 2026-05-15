@@ -98,7 +98,7 @@ export default function LoginFormAdmin() {
     <Card className="w-full max-w-md mx-auto shadow-lg rounded-2xl border-0 bg-gradient-to-b from-background to-muted/10">
       <CardHeader className="space-y-2 text-center">
         <Lock className="mx-auto h-8 w-8 text-primary" />
-        <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+        <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
           Admin Portal
         </CardTitle>
         <p className="text-muted-foreground">Enter your credentials to continue</p>
@@ -247,7 +247,7 @@ export default function LoginFormAdmin() {
 
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 transition-all"
+              className="w-full bg-gradient-to-r from-primary to-orange-600 hover:from-primary/90 hover:to-orange-600/90 transition-all"
               disabled={isPending}
             >
               {isPending ? (

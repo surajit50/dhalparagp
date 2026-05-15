@@ -93,9 +93,9 @@ export function PendingByYear({ leases }: PendingByYearProps) {
 
         <CardContent>
           <div className="flex items-center gap-3">
-            <History className="h-6 w-6 text-blue-600" />
+            <History className="h-6 w-6 text-orange-600" />
 
-            <span className="text-2xl font-bold text-blue-600">
+            <span className="text-2xl font-bold text-orange-600">
               {currency.format(previousYearPending)}
             </span>
           </div>

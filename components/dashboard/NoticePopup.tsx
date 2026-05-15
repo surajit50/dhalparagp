@@ -79,7 +79,7 @@ export function NoticePopup() {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <div className="flex items-center gap-2 text-blue-600 mb-2">
+          <div className="flex items-center gap-2 text-orange-600 mb-2">
             <Bell className="h-5 w-5 animate-bounce" />
             <span className="text-sm font-bold uppercase tracking-wider">
               New Official Notice

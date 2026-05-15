@@ -51,13 +51,13 @@ export const ShowWorkDetails = async ({
   /* ---------------------------------- */
 
   const statusStyles: Record<TenderStatus, string> = {
-    publish: "bg-blue-50 text-blue-700 border-blue-200",
+    publish: "bg-orange-50 text-orange-700 border-orange-200",
     published: "bg-emerald-50 text-emerald-700 border-emerald-200",
     ToBeOpened: "bg-yellow-50 text-yellow-700 border-yellow-200",
-    TechnicalBidOpening: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    TechnicalBidOpening: "bg-orange-50 text-orange-700 border-orange-200",
     TechnicalEvaluation: "bg-purple-50 text-purple-700 border-purple-200",
-    FinancialBidOpening: "bg-cyan-50 text-cyan-700 border-cyan-200",
-    FinancialEvaluation: "bg-teal-50 text-teal-700 border-teal-200",
+    FinancialBidOpening: "bg-orange-50 text-orange-700 border-orange-200",
+    FinancialEvaluation: "bg-orange-50 text-orange-700 border-orange-200",
     AOC: "bg-emerald-100 text-emerald-800 border-emerald-300",
     Retender: "bg-orange-50 text-orange-700 border-orange-200",
     Cancelled: "bg-red-50 text-red-700 border-red-200",
@@ -82,7 +82,7 @@ export const ShowWorkDetails = async ({
   return (
     <Card className="w-full shadow-md border overflow-hidden">
       {/* Header */}
-      <CardHeader className="bg-gradient-to-r from-blue-700 to-indigo-600 text-white py-4 px-6">
+      <CardHeader className="bg-gradient-to-r from-orange-700 to-orange-600 text-white py-4 px-6">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Building2 className="h-5 w-5" />
@@ -100,8 +100,8 @@ export const ShowWorkDetails = async ({
         <div className="grid md:grid-cols-2 gap-6">
           {/* NIT Info */}
           <div className="flex gap-4">
-            <div className="p-3 bg-blue-100 rounded-xl">
-              <FileTextIcon className="h-5 w-5 text-blue-600" />
+            <div className="p-3 bg-orange-100 rounded-xl">
+              <FileTextIcon className="h-5 w-5 text-orange-600" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">NIT Number</p>

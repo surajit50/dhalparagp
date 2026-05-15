@@ -219,7 +219,7 @@ role: "staff",
                         {format(application.updatedAt, "dd MMM yyyy")}
                       </TableCell>
                       <TableCell>
-                        <Badge className="bg-blue-100 text-blue-800">
+                        <Badge className="bg-orange-100 text-orange-800">
                           In Process
                         </Badge>
                       </TableCell>

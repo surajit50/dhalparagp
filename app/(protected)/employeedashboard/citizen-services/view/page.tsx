@@ -48,7 +48,7 @@ export default function ViewCitizenRequests() {
 
   const statusColor = {
     'Pending': 'bg-yellow-500',
-    'In Progress': 'bg-blue-500',
+    'In Progress': 'bg-orange-500',
     'Completed': 'bg-green-500',
     'Rejected': 'bg-red-500'
   }

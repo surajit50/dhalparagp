@@ -102,7 +102,7 @@ const WorkOrderConfirmation = ({
                   <Column className="text-gray-600 w-1/3">
                     Completion Period:
                   </Column>
-                  <Column className="font-semibold text-blue-600">
+                  <Column className="font-semibold text-orange-600">
                     {completionPeriod}
                   </Column>
                 </Row>
@@ -142,7 +142,7 @@ const WorkOrderConfirmation = ({
               Contact us:
               <Link
                 href={`mailto:dhalparagp@rediffmail.com`}
-                className="text-blue-600 ml-1 hover:underline"
+                className="text-orange-600 ml-1 hover:underline"
               >
                 dhalparagp@rediffmail.com
               </Link>

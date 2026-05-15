@@ -132,10 +132,10 @@ export default function WorkOrderModificationDialog({
 
     <Dialog open={open} onOpenChange={onOpenChange}>
 
-      <DialogContent className="max-w-lg border-blue-200">
+      <DialogContent className="max-w-lg border-orange-200">
 
         {/* Header */}
-        <DialogHeader className="bg-blue-700 text-white px-4 py-3 -mx-6 -mt-6 mb-4">
+        <DialogHeader className="bg-orange-700 text-white px-4 py-3 -mx-6 -mt-6 mb-4">
 
           <DialogTitle>
             Modify Work Order Details
@@ -160,10 +160,10 @@ export default function WorkOrderModificationDialog({
           <div className="space-y-4">
 
             {/* Memo */}
-            <Card className="border-blue-200">
+            <Card className="border-orange-200">
 
-              <CardHeader className="bg-blue-50">
-                <CardTitle className="text-blue-800">
+              <CardHeader className="bg-orange-50">
+                <CardTitle className="text-orange-800">
                   Memo Information
                 </CardTitle>
               </CardHeader>
@@ -193,10 +193,10 @@ export default function WorkOrderModificationDialog({
 
 
             {/* Delivery */}
-            <Card className="border-blue-200">
+            <Card className="border-orange-200">
 
-              <CardHeader className="bg-blue-50">
-                <CardTitle className="text-blue-800">
+              <CardHeader className="bg-orange-50">
+                <CardTitle className="text-orange-800">
                   Delivery Information
                 </CardTitle>
               </CardHeader>
@@ -252,7 +252,7 @@ export default function WorkOrderModificationDialog({
 
               <Button
                 onClick={onSubmit}
-                className="bg-blue-700 hover:bg-blue-800 text-white"
+                className="bg-orange-700 hover:bg-orange-800 text-white"
               >
                 Save Changes
               </Button>

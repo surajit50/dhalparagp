@@ -541,7 +541,7 @@ export default function ClientPage() {
           {activeTab === "preview" && (
             <Button
               onClick={handleDownload}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-orange-600 hover:bg-orange-700"
             >
               <Printer className="mr-2 h-4 w-4" /> Generate & Print
             </Button>
@@ -728,10 +728,10 @@ export default function ClientPage() {
           )}
 
           {activeTab === "form" && (
-            <Card className="border-t-4 border-t-blue-600">
+            <Card className="border-t-4 border-t-orange-600">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <ClipboardList className="h-5 w-5 text-blue-600" />
+                  <ClipboardList className="h-5 w-5 text-orange-600" />
                   Certificate Details
                 </CardTitle>
                 <CardDescription>
@@ -985,14 +985,14 @@ export default function ClientPage() {
 
           {activeTab === "preview" && (
             <div className="space-y-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+              <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <Eye className="h-5 w-5 text-blue-600" />
+                  <Eye className="h-5 w-5 text-orange-600" />
                   <div>
-                    <p className="text-sm font-semibold text-blue-900">
+                    <p className="text-sm font-semibold text-orange-900">
                       Certificate Preview Mode
                     </p>
-                    <p className="text-xs text-blue-700">
+                    <p className="text-xs text-orange-700">
                       Review the official document before printing.
                     </p>
                   </div>

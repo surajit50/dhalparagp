@@ -271,7 +271,7 @@ export const EmailForm = () => {
                     value={state.cc}
                     onChange={handleInputChange("cc")}
                     placeholder="CC email address"
-                    className={`w-full border-gray-300 focus:ring-blue-500 ${
+                    className={`w-full border-gray-300 focus:ring-orange-500 ${
                       errors.cc ? "border-red-500" : ""
                     }`}
                   />
@@ -292,7 +292,7 @@ export const EmailForm = () => {
                     value={state.bcc}
                     onChange={handleInputChange("bcc")}
                     placeholder="BCC email address"
-                    className={`w-full border-gray-300 focus:ring-blue-500 ${
+                    className={`w-full border-gray-300 focus:ring-orange-500 ${
                       errors.bcc ? "border-red-500" : ""
                     }`}
                   />
@@ -317,7 +317,7 @@ export const EmailForm = () => {
                 value={state.subject}
                 onChange={handleInputChange("subject")}
                 placeholder="Email subject"
-                className="w-full border-gray-300 focus:ring-blue-500"
+                className="w-full border-gray-300 focus:ring-orange-500"
               />
             </div>
 
@@ -436,7 +436,7 @@ export const EmailForm = () => {
           <Button
             type="submit"
             disabled={state.isSending}
-            className="px-6 bg-blue-600 hover:bg-blue-700 text-white"
+            className="px-6 bg-orange-600 hover:bg-orange-700 text-white"
           >
             {state.isSending ? (
               <div className="flex items-center space-x-2">

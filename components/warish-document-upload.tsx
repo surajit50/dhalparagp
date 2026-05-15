@@ -14,7 +14,7 @@ const warishdocumentupload = async ({
   });
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-blue-700">
+      <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-orange-700">
         <FileText className="h-6 w-6" />
         4. Upload Document / ডকুমেন্ট আপলোড
       </h2>

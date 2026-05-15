@@ -84,7 +84,7 @@ export default function BulkAssignStaff({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600" />
+            <Users className="h-5 w-5 text-orange-600" />
             Bulk Assign to Staff
           </DialogTitle>
           <DialogDescription>
@@ -116,8 +116,8 @@ export default function BulkAssignStaff({
               </Select>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-center gap-2 text-sm text-blue-800">
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+              <div className="flex items-center gap-2 text-sm text-orange-800">
                 <CheckCircle2 className="h-4 w-4" />
                 <span>
                   {selectedIds.length} application(s) will be assigned
@@ -138,7 +138,7 @@ export default function BulkAssignStaff({
           <Button
             onClick={handleBulkAssignment}
             disabled={isSubmitting || !selectedStaffId}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-orange-600 hover:bg-orange-700"
           >
             {isSubmitting ? "Assigning..." : "Assign to Staff"}
           </Button>

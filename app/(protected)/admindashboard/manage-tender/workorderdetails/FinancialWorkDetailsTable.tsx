@@ -89,21 +89,21 @@ export default function FinancialWorkDetailsTable({
   }
 
   return (
-    <div className="w-full bg-white border border-blue-200 rounded-lg shadow-sm">
+    <div className="w-full bg-white border border-orange-200 rounded-lg shadow-sm">
 
       {/* Header */}
-      <div className="bg-blue-700 text-white px-4 py-3 flex justify-between items-center">
+      <div className="bg-orange-700 text-white px-4 py-3 flex justify-between items-center">
 
         <div>
           <h2 className="font-semibold text-lg">
             Financial Evaluation Works
           </h2>
-          <p className="text-blue-100 text-sm">
+          <p className="text-orange-100 text-sm">
             Pending Acceptance of Contract (AOC)
           </p>
         </div>
 
-        <Badge className="bg-white text-blue-700 font-semibold px-3 py-1">
+        <Badge className="bg-white text-orange-700 font-semibold px-3 py-1">
           Total: {totalCount}
         </Badge>
 
@@ -156,7 +156,7 @@ export default function FinancialWorkDetailsTable({
         <div className="overflow-x-auto">
           <Table>
 
-            <TableHeader className="bg-blue-50">
+            <TableHeader className="bg-orange-50">
               <TableRow>
                 <TableHead className="w-12">Sl</TableHead>
                 <TableHead>NIT Details</TableHead>
@@ -185,7 +185,7 @@ export default function FinancialWorkDetailsTable({
                 return (
                   <Fragment key={item.id}>
 
-                    <TableRow className="hover:bg-blue-50">
+                    <TableRow className="hover:bg-orange-50">
 
                       <TableCell>{index + 1}</TableCell>
 
@@ -259,7 +259,7 @@ export default function FinancialWorkDetailsTable({
                           </Badge>
                         ) : (
                           <Button
-                            className="bg-blue-700 hover:bg-blue-800 text-white"
+                            className="bg-orange-700 hover:bg-orange-800 text-white"
                             size="sm"
                             onClick={() => {
                               setSelectedWorkId(item.id)
@@ -276,7 +276,7 @@ export default function FinancialWorkDetailsTable({
                     </TableRow>
 
                     {expanded && (
-                      <TableRow className="bg-blue-50">
+                      <TableRow className="bg-orange-50">
                         <TableCell colSpan={7}>
                           <div className="p-3 text-sm text-gray-700 space-y-1">
 

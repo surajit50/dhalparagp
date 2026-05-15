@@ -101,7 +101,7 @@ export default function ReassignStaff({
         variant="outline"
         size="sm"
         onClick={() => setShowDialog(true)}
-        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
       >
         <UserCog className="mr-2 h-4 w-4" />
         Reassign
@@ -111,7 +111,7 @@ export default function ReassignStaff({
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserCog className="h-5 w-5 text-blue-600" />
+              <UserCog className="h-5 w-5 text-orange-600" />
               Reassign Staff
             </DialogTitle>
             <DialogDescription>
@@ -178,7 +178,7 @@ export default function ReassignStaff({
             <Button
               onClick={handleReassignment}
               disabled={isSubmitting || !selectedStaffId || availableStaff.length === 0}
-              className="bg-blue-600 hover:bg-blue-700"
+              className="bg-orange-600 hover:bg-orange-700"
             >
               {isSubmitting ? "Reassigning..." : "Reassign"}
             </Button>

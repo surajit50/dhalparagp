@@ -90,17 +90,17 @@ export function EducationSummaryForm({
     { name: "anganwadi", label: "Anganwadi Centers", icon: Baby, color: "text-pink-500", bg: "bg-pink-50" },
     { name: "primarySchool", label: "Primary Schools", icon: School, color: "text-amber-500", bg: "bg-amber-50" },
     { name: "upperPrimary", label: "Upper Primary Schools", icon: School, color: "text-orange-500", bg: "bg-orange-50" },
-    { name: "juniorHigh", label: "Junior High Schools", icon: Building2, color: "text-cyan-500", bg: "bg-cyan-50" },
-    { name: "highSchool", label: "High Schools", icon: Library, color: "text-blue-500", bg: "bg-blue-50" },
-    { name: "higherSecondary", label: "Higher Secondary", icon: GraduationCap, color: "text-indigo-500", bg: "bg-indigo-50" },
+    { name: "juniorHigh", label: "Junior High Schools", icon: Building2, color: "text-orange-500", bg: "bg-orange-50" },
+    { name: "highSchool", label: "High Schools", icon: Library, color: "text-orange-500", bg: "bg-orange-50" },
+    { name: "higherSecondary", label: "Higher Secondary", icon: GraduationCap, color: "text-orange-500", bg: "bg-orange-50" },
     { name: "madrasah", label: "Madrasah", icon: BookOpen, color: "text-emerald-500", bg: "bg-emerald-50" },
     { name: "college", label: "Colleges", icon: GraduationCap, color: "text-violet-500", bg: "bg-violet-50" },
     { name: "university", label: "Universities", icon: GraduationCap, color: "text-purple-500", bg: "bg-purple-50" },
     { name: "technicalInstitute", label: "Technical Institutes", icon: Wrench, color: "text-slate-600", bg: "bg-slate-100" },
     { name: "vocationalCenter", label: "Vocational Centers", icon: Wrench, color: "text-gray-600", bg: "bg-gray-100" },
-    { name: "adultEducationCenter", label: "Adult Education Centers", icon: Users, color: "text-teal-600", bg: "bg-teal-50" },
+    { name: "adultEducationCenter", label: "Adult Education Centers", icon: Users, color: "text-orange-600", bg: "bg-orange-50" },
     { name: "libraryCount", label: "Public Libraries", icon: Library, color: "text-fuchsia-500", bg: "bg-fuchsia-50" },
-    { name: "computerCenter", label: "Computer Centers", icon: Laptop, color: "text-sky-500", bg: "bg-sky-50" },
+    { name: "computerCenter", label: "Computer Centers", icon: Laptop, color: "text-orange-500", bg: "bg-orange-50" },
   ];
 
   return (
@@ -116,8 +116,8 @@ export function EducationSummaryForm({
             name="mouzaId"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel className="text-sm font-bold text-indigo-900 flex items-center space-x-2 mb-1">
-                  <MapPin className="h-5 w-5 text-indigo-600" />
+                <FormLabel className="text-sm font-bold text-orange-900 flex items-center space-x-2 mb-1">
+                  <MapPin className="h-5 w-5 text-orange-600" />
                   <span>Administrative Area (Mouza)</span>
                 </FormLabel>
                 <Select
@@ -129,13 +129,13 @@ export function EducationSummaryForm({
                   disabled={isEditing}
                 >
                   <FormControl>
-                    <SelectTrigger className="h-12 bg-white border-gray-200 rounded-xl focus:ring-indigo-500/20 shadow-sm transition-all duration-200">
+                    <SelectTrigger className="h-12 bg-white border-gray-200 rounded-xl focus:ring-orange-500/20 shadow-sm transition-all duration-200">
                       <SelectValue placeholder="Select Mouza for data entry" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="rounded-xl border-gray-100 shadow-xl max-h-[300px]">
                     {mouzas.map((m) => (
-                      <SelectItem key={m.id} value={m.id} className="focus:bg-indigo-50 focus:text-indigo-900 transition-colors">
+                      <SelectItem key={m.id} value={m.id} className="focus:bg-orange-50 focus:text-orange-900 transition-colors">
                         {m.name}
                       </SelectItem>
                     ))}
@@ -173,7 +173,7 @@ export function EducationSummaryForm({
                         type="number"
                         {...inputField}
                         onChange={(e) => inputField.onChange(Number(e.target.value))}
-                        className="h-14 text-2xl font-black bg-gray-50/50 border-none focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all rounded-2xl"
+                        className="h-14 text-2xl font-black bg-gray-50/50 border-none focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all rounded-2xl"
                       />
                     </FormControl>
                     <FormMessage />
@@ -193,7 +193,7 @@ export function EducationSummaryForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-14 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 transition-all duration-200 active:scale-[0.98] text-lg"
+            className="w-full h-14 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-bold rounded-2xl shadow-xl shadow-orange-100 transition-all duration-200 active:scale-[0.98] text-lg"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">

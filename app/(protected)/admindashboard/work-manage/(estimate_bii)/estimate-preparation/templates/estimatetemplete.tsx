@@ -233,7 +233,7 @@ export default function EstimateTemplet() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                        className="text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                         onClick={() => handleEditClick(template)}
                       >
                         <Pencil className="h-4 w-4 mr-2" />

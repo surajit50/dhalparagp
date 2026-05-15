@@ -40,7 +40,7 @@ const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
     case "GENERATED":
       return (
-        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+        <Badge variant="secondary" className="bg-orange-100 text-orange-800">
           Generated
         </Badge>
       );

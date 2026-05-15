@@ -106,9 +106,9 @@ export default function LoginFormstaff() {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-lg rounded-2xl border-0 bg-gradient-to-b from-indigo-50/20 to-white">
+    <Card className="w-full max-w-md shadow-lg rounded-2xl border-0 bg-gradient-to-b from-orange-50/20 to-white">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-3xl font-bold text-indigo-600 text-center mb-4">
+        <CardTitle className="text-3xl font-bold text-orange-600 text-center mb-4">
           Staff Portal
         </CardTitle>
       </CardHeader>
@@ -153,7 +153,7 @@ export default function LoginFormstaff() {
                         <Input
                           placeholder="name@company.com"
                           type="email"
-                          className="py-5 rounded-lg focus-visible:ring-indigo-500"
+                          className="py-5 rounded-lg focus-visible:ring-orange-500"
                           disabled={isPending}
                           {...field}
                         />
@@ -172,7 +172,7 @@ export default function LoginFormstaff() {
                         <Input
                           placeholder="••••••••"
                           type="password"
-                          className="py-5 rounded-lg focus-visible:ring-indigo-500"
+                          className="py-5 rounded-lg focus-visible:ring-orange-500"
                           disabled={isPending}
                           {...field}
                         />
@@ -185,9 +185,9 @@ export default function LoginFormstaff() {
                   <FormLabel className="text-gray-600">CAPTCHA Verification</FormLabel>
                   <div className="flex items-center gap-3">
                     <div className="relative flex-1">
-                      <div className="absolute inset-0 bg-indigo-50/50 rounded-lg blur-sm" />
-                      <div className="relative bg-white border border-indigo-100 rounded-lg p-3 flex items-center justify-between">
-                        <span className="text-2xl font-bold text-indigo-600 select-none skew-x-6">
+                      <div className="absolute inset-0 bg-orange-50/50 rounded-lg blur-sm" />
+                      <div className="relative bg-white border border-orange-100 rounded-lg p-3 flex items-center justify-between">
+                        <span className="text-2xl font-bold text-orange-600 select-none skew-x-6">
                           {captchaCode}
                         </span>
                         <Button
@@ -195,7 +195,7 @@ export default function LoginFormstaff() {
                           variant="ghost"
                           size="sm"
                           onClick={generateCaptcha}
-                          className="text-indigo-500 hover:bg-indigo-50 rounded-lg"
+                          className="text-orange-500 hover:bg-orange-50 rounded-lg"
                         >
                           <RefreshCw className="h-4 w-4" />
                         </Button>
@@ -210,7 +210,7 @@ export default function LoginFormstaff() {
                         <FormControl>
                           <Input
                             placeholder="Type the code above"
-                            className="py-5 rounded-lg focus-visible:ring-indigo-500"
+                            className="py-5 rounded-lg focus-visible:ring-orange-500"
                             disabled={isPending}
                             {...field}
                           />
@@ -229,7 +229,7 @@ export default function LoginFormstaff() {
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="border-gray-300 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                          className="border-gray-300 data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600"
                         />
                       </FormControl>
                       <FormLabel className="text-gray-600 !mt-0">
@@ -254,7 +254,7 @@ export default function LoginFormstaff() {
             )}
             <Button
               type="submit"
-              className="w-full py-5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-all"
+              className="w-full py-5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-semibold transition-all"
               disabled={isPending}
             >
               {isPending ? (
@@ -276,7 +276,7 @@ export default function LoginFormstaff() {
           Not staff?{" "}
           <a
             href="/login"
-            className="text-indigo-600 hover:text-indigo-700 font-medium inline-flex items-center gap-1 group"
+            className="text-orange-600 hover:text-orange-700 font-medium inline-flex items-center gap-1 group"
           >
             User Login
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

@@ -77,7 +77,7 @@ const renderWarishDetails = (
             className={cn(
               "capitalize",
               detail.gender === "male"
-                ? "bg-blue-100 text-blue-700"
+                ? "bg-orange-100 text-orange-700"
                 : "bg-pink-100 text-pink-700"
             )}
           >

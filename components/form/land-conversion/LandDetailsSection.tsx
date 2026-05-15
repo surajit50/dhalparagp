@@ -47,12 +47,12 @@ export default function LandDetailsSection() {
   };
 
   return (
-    <Card className="shadow-sm border-indigo-100">
-      <CardHeader className="bg-gradient-to-r from-indigo-50 to-blue-50/50 border-b border-indigo-100">
-        <CardTitle className="text-indigo-800 text-lg flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+    <Card className="shadow-sm border-orange-100">
+      <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
+        <CardTitle className="text-orange-800 text-lg flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center">
             <svg
-              className="h-4 w-4 text-indigo-600"
+              className="h-4 w-4 text-orange-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -67,14 +67,14 @@ export default function LandDetailsSection() {
           </div>
           Land Details
         </CardTitle>
-        <p className="text-sm text-indigo-600/70 mt-1">
+        <p className="text-sm text-orange-600/70 mt-1">
           Enter the primary land parcel information for conversion
         </p>
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-            <div className="h-1 w-8 rounded-full bg-indigo-200"></div>
+            <div className="h-1 w-8 rounded-full bg-orange-200"></div>
             Primary Parcel Information
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -88,7 +88,7 @@ export default function LandDetailsSection() {
                   </FormLabel>
                   <Select onValueChange={handleMouzaChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 focus:border-indigo-500">
+                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
                         <SelectValue placeholder="Select mouza" />
                       </SelectTrigger>
                     </FormControl>
@@ -128,7 +128,7 @@ export default function LandDetailsSection() {
                               ? "e.g. 5.5"
                               : `Enter ${name}`
                           }
-                          className="h-11 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500"
                         />
                       </FormControl>
                       <FormMessage className="text-xs" />
@@ -141,7 +141,7 @@ export default function LandDetailsSection() {
         </div>
         <div className="space-y-4 pt-2">
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-            <div className="h-1 w-8 rounded-full bg-indigo-200"></div>
+            <div className="h-1 w-8 rounded-full bg-orange-200"></div>
             Land Use Classification
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -155,7 +155,7 @@ export default function LandDetailsSection() {
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 focus:border-indigo-500">
+                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
                         <SelectValue placeholder="Select present land use" />
                       </SelectTrigger>
                     </FormControl>
@@ -181,7 +181,7 @@ export default function LandDetailsSection() {
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-indigo-500 focus:border-indigo-500">
+                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
                         <SelectValue placeholder="Select proposed land use" />
                       </SelectTrigger>
                     </FormControl>

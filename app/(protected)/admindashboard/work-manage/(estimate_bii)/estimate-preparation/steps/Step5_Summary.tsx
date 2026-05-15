@@ -65,7 +65,7 @@ export function Step5_Summary({
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
       <StepHeader
         step={5}
-        icon={<Calculator className="h-5 w-5 text-blue-600" />}
+        icon={<Calculator className="h-5 w-5 text-orange-600" />}
         title="Summary & Save"
         description="Review cost summary and save or export your estimate"
       />
@@ -238,7 +238,7 @@ export function Step5_Summary({
                       <p className="text-xs text-slate-500 mb-0.5">
                         Your Estimate
                       </p>
-                      <p className="text-xl font-bold text-blue-700">
+                      <p className="text-xl font-bold text-orange-700">
                         ₹{finalCost.toLocaleString()}
                       </p>
                     </div>

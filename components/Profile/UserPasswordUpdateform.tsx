@@ -56,7 +56,7 @@ const UserPasswordUpdateform = () => {
 
   return (
     <div className="w-96 shadow-lg bg-white rounded-lg">
-      <h4 className="text-center text-2xl p-2 text-teal-500">
+      <h4 className="text-center text-2xl p-2 text-orange-500">
         Update your password
       </h4>
       <Form {...form}>

@@ -30,7 +30,7 @@ export default async function ApplicationsReportPage({
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-blue-700 to-indigo-700 text-white py-16">
+      <section className="bg-gradient-to-r from-orange-700 to-orange-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Applications Report
@@ -50,12 +50,12 @@ export default async function ApplicationsReportPage({
           {/* Statistics Overview */}
           {applicationsData?.statistics && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="bg-blue-50 border-blue-200">
+              <Card className="bg-orange-50 border-orange-200">
                 <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-blue-700">
+                  <div className="text-3xl font-bold text-orange-700">
                     {applicationsData.statistics.total}
                   </div>
-                  <div className="text-sm text-blue-600">
+                  <div className="text-sm text-orange-600">
                     Total Applications
                   </div>
                 </CardContent>

@@ -391,8 +391,8 @@ export const TubewelWorkOrder = ({
       }
       className={`gap-2 ${
         workOrders
-          ? "bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-          : "bg-blue-600 hover:bg-blue-700 text-white"
+          ? "bg-orange-600 hover:bg-orange-700 text-white rounded-lg"
+          : "bg-orange-600 hover:bg-orange-700 text-white"
       }`}
     >
       {isGenerating ? (

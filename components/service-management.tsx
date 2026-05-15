@@ -309,7 +309,7 @@ const { toast } = useToast()
 
   const getServiceIcon = (serviceType: ServiceType) => {
     if (serviceType === ServiceType.WATER_TANKER) {
-      return <Droplet className="h-5 w-5 text-blue-500" />;
+      return <Droplet className="h-5 w-5 text-orange-500" />;
     }
     return <Trash className="h-5 w-5 text-green-500" />;
   };
@@ -366,7 +366,7 @@ const { toast } = useToast()
 
         <TabsContent value="availability">
           <Card className="border-0 shadow-lg overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-orange-600 text-white">
               <CardTitle className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5" />
                 {editingId ? "Edit" : "Add"} Service Availability
@@ -425,7 +425,7 @@ const { toast } = useToast()
                       <SelectContent>
                         <SelectItem value={ServiceType.WATER_TANKER}>
                           <div className="flex items-center">
-                            <Droplet className="h-4 w-4 mr-2 text-blue-500" />
+                            <Droplet className="h-4 w-4 mr-2 text-orange-500" />
                             Water Tanker
                           </div>
                         </SelectItem>
@@ -545,7 +545,7 @@ const { toast } = useToast()
 
         <TabsContent value="fees">
           <Card className="border-0 shadow-lg overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-orange-600 text-white">
               <CardTitle className="flex items-center gap-2">
                 <Settings className="h-5 w-5" />
                 Service Fees
@@ -556,12 +556,12 @@ const { toast } = useToast()
             </CardHeader>
             <CardContent className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 space-y-4">
+                <div className="bg-orange-50 p-6 rounded-xl border border-orange-100 space-y-4">
                   <div className="flex items-center gap-3">
-                    <div className="bg-blue-100 p-3 rounded-full">
-                      <Droplet className="h-6 w-6 text-blue-600" />
+                    <div className="bg-orange-100 p-3 rounded-full">
+                      <Droplet className="h-6 w-6 text-orange-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-blue-800">
+                    <h3 className="text-lg font-semibold text-orange-800">
                       Water Tanker Fee
                     </h3>
                   </div>
@@ -647,7 +647,7 @@ const { toast } = useToast()
 
         <TabsContent value="list">
           <Card className="border-0 shadow-lg">
-            <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white">
+            <CardHeader className="bg-gradient-to-r from-emerald-500 to-orange-600 text-white">
               <CardTitle className="flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5" />
                 Current Availability
@@ -679,7 +679,7 @@ const { toast } = useToast()
                           className={`p-2 rounded-full ${
                             availability.serviceType ===
                             ServiceType.WATER_TANKER
-                              ? "bg-blue-100"
+                              ? "bg-orange-100"
                               : "bg-green-100"
                           }`}
                         >

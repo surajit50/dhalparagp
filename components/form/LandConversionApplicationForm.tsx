@@ -197,7 +197,7 @@ export default function LandConversionApplicationForm({
   // --- UI Components ---
 
   const FormFooter = () => (
-    <Card className="border-t-4 border-t-blue-600 shadow-lg overflow-hidden">
+    <Card className="border-t-4 border-t-orange-600 shadow-lg overflow-hidden">
       <CardContent className="pt-6 bg-slate-50/50">
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
@@ -209,7 +209,7 @@ export default function LandConversionApplicationForm({
             <Button
               type="button"
               variant="outline"
-              className="flex-1 sm:flex-none border-blue-200 text-blue-700 hover:bg-blue-50 transition-all active:scale-95"
+              className="flex-1 sm:flex-none border-orange-200 text-orange-700 hover:bg-orange-50 transition-all active:scale-95"
               disabled={isSubmitting || isPending}
               onClick={handleSubmit((values) =>
                 handleFormSubmission(values, "DRAFT"),
@@ -221,7 +221,7 @@ export default function LandConversionApplicationForm({
 
             <Button
               type="button"
-              className="flex-1 sm:flex-none bg-blue-700 hover:bg-blue-800 shadow-md transition-all active:scale-95"
+              className="flex-1 sm:flex-none bg-orange-700 hover:bg-orange-800 shadow-md transition-all active:scale-95"
               disabled={isSubmitting || isPending}
               onClick={handleSubmit((values) =>
                 handleFormSubmission(values, "SUBMIT"),

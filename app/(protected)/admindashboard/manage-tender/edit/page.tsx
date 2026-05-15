@@ -79,7 +79,7 @@ export default async function NitTablePage({ searchParams }: PageProps) {
   return (
     <div className="container mx-auto py-8">
       <Card className="rounded-xl shadow-lg overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+        <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50 border-b">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <CardTitle className="text-2xl font-bold text-gray-800">
               NIT Management
@@ -96,7 +96,7 @@ export default async function NitTablePage({ searchParams }: PageProps) {
               </form>
 
               <Link href="/nits/create">
-                <Button className="bg-indigo-600 hover:bg-indigo-700 shadow-md">
+                <Button className="bg-orange-600 hover:bg-orange-700 shadow-md">
                   <Plus className="h-4 w-4 mr-2" />
                   Create NIT
                 </Button>
@@ -146,7 +146,7 @@ export default async function NitTablePage({ searchParams }: PageProps) {
                         <TableCell className="font-semibold">
                           <Link
                             href={`/nits/${nit.id}`}
-                            className="hover:underline text-indigo-600"
+                            className="hover:underline text-orange-600"
                           >
                             {nit.memoNumber ?? "-"}
                           </Link>
@@ -176,7 +176,7 @@ export default async function NitTablePage({ searchParams }: PageProps) {
 
                         <TableCell>
                           {nit.isPublished ? (
-                            <Badge className="bg-blue-100 text-blue-800">
+                            <Badge className="bg-orange-100 text-orange-800">
                               Published
                             </Badge>
                           ) : (
@@ -215,7 +215,7 @@ export default async function NitTablePage({ searchParams }: PageProps) {
                                   <Link
                                     href={`/admindashboard/manage-tender/edit/${nit.id}`}
                                   >
-                                    <Pencil className="mr-2 h-4 w-4 text-indigo-600" />
+                                    <Pencil className="mr-2 h-4 w-4 text-orange-600" />
                                     Edit
                                   </Link>
                                 </DropdownMenuItem>

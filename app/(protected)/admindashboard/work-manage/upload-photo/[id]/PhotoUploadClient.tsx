@@ -364,12 +364,12 @@ export default function PhotoUploadClient({
                 >
                   {isUploading ? (
                     <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+                      <Loader2 className="h-6 w-6 animate-spin text-orange-600" />
                       <span>Uploading... {uploadProgress}%</span>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center gap-2">
-                      <Camera className="h-8 w-8 text-blue-600" />
+                      <Camera className="h-8 w-8 text-orange-600" />
                       <span>Open Camera / Select File</span>
                     </div>
                   )}

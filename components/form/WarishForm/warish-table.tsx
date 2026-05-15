@@ -22,7 +22,7 @@ export const WarishTable: React.FC<WarishTableProps> = ({ form }) => {
     <div className="space-y-4">
       {/* View Relationship Section */}
       <div className="flex justify-end">
-        <div className="flex flex-col items-end gap-2 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="flex flex-col items-end gap-2 p-4 bg-orange-50 rounded-lg border border-orange-200">
           <p className="text-sm text-gray-600">
             Click view icon to show relationship data / সম্পর্কের তথ্য দেখতে আইকনে ক্লিক করুন
           </p>

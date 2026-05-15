@@ -138,8 +138,8 @@ export default function AddRequestPage() {
                 {/* SECTION: CITIZEN INFO */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                    <div className="p-2 bg-indigo-50 rounded-lg">
-                      <Save className="h-4 w-4 text-indigo-600" />
+                    <div className="p-2 bg-orange-50 rounded-lg">
+                      <Save className="h-4 w-4 text-orange-600" />
                     </div>
                     <h2 className="text-lg font-bold text-slate-800 tracking-tight">Citizen Information</h2>
                   </div>
@@ -177,8 +177,8 @@ export default function AddRequestPage() {
                 {/* SECTION: LOCATION */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                    <div className="p-2 bg-sky-50 rounded-lg">
-                      <Save className="h-4 w-4 text-sky-600" />
+                    <div className="p-2 bg-orange-50 rounded-lg">
+                      <Save className="h-4 w-4 text-orange-600" />
                     </div>
                     <h2 className="text-lg font-bold text-slate-800 tracking-tight">Tubewell Location</h2>
                   </div>

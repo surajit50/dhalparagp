@@ -66,7 +66,7 @@ export default function WorkOrderModificationTable({
   return (
     <div className="space-y-4 rounded-lg border bg-white shadow">
       {/* Header */}
-      <div className="bg-blue-700 text-white px-4 py-3 font-semibold">
+      <div className="bg-orange-700 text-white px-4 py-3 font-semibold">
         Work Order Modification
       </div>
 
@@ -85,7 +85,7 @@ export default function WorkOrderModificationTable({
       {/* Table */}
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-blue-50">
+          <TableHeader className="bg-orange-50">
             <TableRow>
               <TableHead>Sl</TableHead>
               <TableHead>NIT Number</TableHead>
@@ -144,7 +144,7 @@ export default function WorkOrderModificationTable({
                   <TableCell className="text-right">
                     <Button
                       size="sm"
-                      className="bg-blue-700 hover:bg-blue-800 text-white"
+                      className="bg-orange-700 hover:bg-orange-800 text-white"
                       onClick={() => {
                         setSelectedId(item.id);
                         setOpen(true);

@@ -35,11 +35,11 @@ const StartWorkNoticeEmail = ({
       <Body className="bg-slate-50 font-sans py-10">
         <Container className="mx-auto max-w-[600px] bg-white rounded-xl shadow-lg overflow-hidden border border-slate-200">
           {/* Header */}
-          <Section className="bg-indigo-700 px-8 py-10 text-center">
+          <Section className="bg-orange-700 px-8 py-10 text-center">
             <Heading className="text-white text-2xl font-bold m-0 mb-2">
               Start Work Notice
             </Heading>
-            <Text className="text-indigo-100 m-0">
+            <Text className="text-orange-100 m-0">
               {gpnameinshort} Gram Panchayat
             </Text>
           </Section>
@@ -82,7 +82,7 @@ const StartWorkNoticeEmail = ({
                   <Column className="text-slate-500 w-1/3 text-sm">
                     Start Date:
                   </Column>
-                  <Column className="font-semibold text-indigo-600">
+                  <Column className="font-semibold text-orange-600">
                     {startDate}
                   </Column>
                 </Row>
@@ -125,7 +125,7 @@ const StartWorkNoticeEmail = ({
             <div className="flex justify-center gap-4">
               <Link
                 href="mailto:dhalparagp@rediffmail.com"
-                className="text-indigo-600 text-xs font-medium hover:underline"
+                className="text-orange-600 text-xs font-medium hover:underline"
               >
                 dhalparagp@rediffmail.com
               </Link>

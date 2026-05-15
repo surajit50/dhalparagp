@@ -55,7 +55,7 @@ export default async function ReportsPage({
             approved: applicationsData.statistics.approved,
           }
         : null,
-      color: "from-blue-600 to-blue-700",
+      color: "from-orange-600 to-orange-700",
     },
     {
       title: "Performance Report",
@@ -99,7 +99,7 @@ export default async function ReportsPage({
       title: "Technical Compliance",
       description: "Technical evaluation and compliance status",
       href: "/admindashboard/reports/technical-compliance",
-      color: "from-indigo-600 to-indigo-700",
+      color: "from-orange-600 to-orange-700",
     },
     {
       title: "Vendor Participation",
@@ -111,7 +111,7 @@ export default async function ReportsPage({
 
   return (
     <div className="min-h-screen bg-white">
-      <section className="bg-gradient-to-r from-gray-800 to-blue-700 text-white py-16">
+      <section className="bg-gradient-to-r from-gray-800 to-orange-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Reports Dashboard
@@ -130,12 +130,12 @@ export default async function ReportsPage({
           </div>
           {/* Quick Stats Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-blue-50 border-blue-200">
+            <Card className="bg-orange-50 border-orange-200">
               <CardContent className="p-6">
-                <div className="text-2xl font-bold text-blue-700">
+                <div className="text-2xl font-bold text-orange-700">
                   {applicationsData?.statistics?.total || 0}
                 </div>
-                <div className="text-sm text-blue-600">Total Applications</div>
+                <div className="text-sm text-orange-600">Total Applications</div>
               </CardContent>
             </Card>
 
@@ -227,7 +227,7 @@ export default async function ReportsPage({
                       </div>
                     )}
 
-                    <div className="mt-4 text-blue-600 text-sm font-medium">
+                    <div className="mt-4 text-orange-600 text-sm font-medium">
                       View Report →
                     </div>
                   </CardContent>

@@ -274,7 +274,7 @@ export default function BookNitForm() {
           <Checkbox
             checked={selected}
             onCheckedChange={() => toggle(t.id)}
-            className="mt-1 h-5 w-5 border-2 data-[state=checked]:bg-teal-600"
+            className="mt-1 h-5 w-5 border-2 data-[state=checked]:bg-orange-600"
             onClick={() => toggle(t.id)}
           />
           {selected && (
@@ -290,13 +290,13 @@ export default function BookNitForm() {
               <FileCheck
                 className={cn(
                   "h-4 w-4",
-                  selected ? "text-teal-600" : "text-gray-400",
+                  selected ? "text-orange-600" : "text-gray-400",
                 )}
               />
               <span
                 className={cn(
                   "font-bold",
-                  selected ? "text-teal-900" : "text-gray-900",
+                  selected ? "text-orange-900" : "text-gray-900",
                 )}
               >
                 {t.name}
@@ -349,13 +349,13 @@ export default function BookNitForm() {
         exit={{ opacity: 0, height: 0 }}
       >
         <div className="flex items-center gap-3 mb-3">
-          <Clock className="h-5 w-5 text-blue-600 animate-spin" />
-          <h3 className="font-semibold text-blue-900">Creating tender...</h3>
+          <Clock className="h-5 w-5 text-orange-600 animate-spin" />
+          <h3 className="font-semibold text-orange-900">Creating tender...</h3>
           <Badge variant="outline" className="ml-auto text-xs">
             Processing
           </Badge>
         </div>
-        <div className="text-sm text-blue-700 space-y-1">
+        <div className="text-sm text-orange-700 space-y-1">
           <p>
             <span className="font-medium">Reference:</span>{" "}
             {optimisticSubmission.tendermemonumber}
@@ -616,7 +616,7 @@ export default function BookNitForm() {
                     animate={{ opacity: 1, y: 0 }}
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-blue-900">
+                      <h4 className="font-semibold text-orange-900">
                         Selected Templates ({selected.length})
                       </h4>
                       <Badge variant="outline" className="bg-white">
@@ -712,9 +712,9 @@ export default function BookNitForm() {
 
   /* ----------------------------- Main JSX ----------------------------- */
   return (
-    <div className=" mx-auto bg-gradient-to-br from-white via-blue-50/20 to-indigo-50/30 shadow-xl rounded-2xl border border-gray-200 my-4 sm:my-8 overflow-hidden">
+    <div className=" mx-auto bg-gradient-to-br from-white via-orange-50/20 to-orange-50/30 shadow-xl rounded-2xl border border-gray-200 my-4 sm:my-8 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-teal-600 px-4 sm:px-8 py-4 sm:py-6">
+      <div className="bg-gradient-to-r from-orange-600 to-orange-600 px-4 sm:px-8 py-4 sm:py-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="p-2 sm:p-3 bg-white/20 rounded-xl backdrop-blur-sm shrink-0">
@@ -724,7 +724,7 @@ export default function BookNitForm() {
               <h1 className="text-xl sm:text-2xl font-bold text-white">
                 Create New Tender
               </h1>
-              <p className="text-sm sm:text-base text-blue-100">
+              <p className="text-sm sm:text-base text-orange-100">
                 Book NIT number and configure details
               </p>
             </div>
@@ -756,9 +756,9 @@ export default function BookNitForm() {
                   className={cn(
                     "flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full transition-all duration-300 shrink-0",
                     isActive
-                      ? "bg-blue-600 text-white ring-4 ring-blue-100"
+                      ? "bg-orange-600 text-white ring-4 ring-orange-100"
                       : isCompleted
-                        ? "bg-teal-500 text-white"
+                        ? "bg-orange-500 text-white"
                         : "bg-gray-200 text-gray-600",
                     isClickable && "hover:scale-105 hover:shadow-md",
                   )}
@@ -776,9 +776,9 @@ export default function BookNitForm() {
                     className={cn(
                       "text-xs font-medium",
                       isActive
-                        ? "text-blue-700"
+                        ? "text-orange-700"
                         : isCompleted
-                          ? "text-teal-700"
+                          ? "text-orange-700"
                           : "text-gray-500",
                     )}
                   >
@@ -788,9 +788,9 @@ export default function BookNitForm() {
                     className={cn(
                       "text-sm font-semibold whitespace-nowrap",
                       isActive
-                        ? "text-blue-900"
+                        ? "text-orange-900"
                         : isCompleted
-                          ? "text-teal-900"
+                          ? "text-orange-900"
                           : "text-gray-600",
                     )}
                   >
@@ -802,7 +802,7 @@ export default function BookNitForm() {
                   <div
                     className={cn(
                       "w-8 sm:w-12 md:w-16 h-1 mx-2 sm:mx-4 rounded-full",
-                      step.id < currentStep ? "bg-teal-500" : "bg-gray-300",
+                      step.id < currentStep ? "bg-orange-500" : "bg-gray-300",
                     )}
                   />
                 )}
@@ -904,7 +904,7 @@ export default function BookNitForm() {
                     type="button"
                     onClick={nextStep}
                     disabled={isPending || optimisticSubmission !== null}
-                    className="flex-1 md:flex-none min-w-[100px] md:min-w-[120px] bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white shadow-lg transition-all duration-300 gap-2"
+                    className="flex-1 md:flex-none min-w-[100px] md:min-w-[120px] bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg transition-all duration-300 gap-2"
                   >
                     Next
                     <ChevronRight className="h-4 w-4" />
@@ -970,7 +970,7 @@ function Section({
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <div className="flex flex-wrap items-center gap-3 sm:gap-4 pb-4 border-b">
         <div className="flex items-center gap-3">
-          <div className="p-2 sm:p-3 bg-gradient-to-br from-blue-500 to-teal-500 text-white rounded-xl">
+          <div className="p-2 sm:p-3 bg-gradient-to-br from-orange-500 to-orange-500 text-white rounded-xl">
             {icon}
           </div>
           <div>
@@ -983,7 +983,7 @@ function Section({
           </div>
         </div>
         {count && (
-          <Badge className="ml-auto bg-blue-100 text-blue-800 hover:bg-blue-100">
+          <Badge className="ml-auto bg-orange-100 text-orange-800 hover:bg-orange-100">
             Step {count}
           </Badge>
         )}

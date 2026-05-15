@@ -111,8 +111,8 @@ const PRAYER_TYPES = [
     label: "Bill Payment Prayer",
     icon: Receipt,
     description: "Generate prayer for bill payment processing",
-    color: "bg-blue-500",
-    badgeColor: "bg-blue-100 text-blue-800 border-blue-200",
+    color: "bg-orange-500",
+    badgeColor: "bg-orange-100 text-orange-800 border-orange-200",
   },
   {
     value: "SECURITY_MONEY_RELEASE",
@@ -245,7 +245,7 @@ export default function PrintPrayerClient({
           <Card className="border shadow-sm">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5 text-blue-600" />
+                <FileText className="h-5 w-5 text-orange-600" />
                 Document Type
               </CardTitle>
               <CardDescription>
@@ -401,11 +401,11 @@ export default function PrintPrayerClient({
                         {totalWorksCount}
                       </p>
                     </div>
-                    <div className="p-3 bg-blue-50 rounded-lg">
-                      <p className="text-xs text-blue-600 font-medium">
+                    <div className="p-3 bg-orange-50 rounded-lg">
+                      <p className="text-xs text-orange-600 font-medium">
                         Eligible
                       </p>
-                      <p className="text-2xl font-bold text-blue-900">
+                      <p className="text-2xl font-bold text-orange-900">
                         {eligibleWorksCount}
                       </p>
                     </div>
@@ -454,8 +454,8 @@ export default function PrintPrayerClient({
           {/* EMPTY STATE */}
           {!selectedAgency && isPrayerTypeAvailable && (
             <Card className="border-2 border-dashed border-slate-200 h-full flex flex-col items-center justify-center py-16">
-              <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-4">
-                <Building className="h-8 w-8 text-blue-500" />
+              <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4">
+                <Building className="h-8 w-8 text-orange-500" />
               </div>
               <h3 className="text-xl font-semibold text-slate-700 mb-2">
                 No Contractor Selected
@@ -618,7 +618,7 @@ export default function PrintPrayerClient({
                               <TableCell>
                                 {woDate ? (
                                   <div className="space-y-1">
-                                    <Badge className="bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100">
+                                    <Badge className="bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-100">
                                       {work.AwardofContract?.workodermenonumber}
                                       /{gpcode}/{woDate.getFullYear()}
                                     </Badge>
@@ -739,8 +739,8 @@ export default function PrintPrayerClient({
                     <Card>
                       <CardContent className="pt-6">
                         <div className="flex items-center gap-3 mb-4">
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <Receipt className="h-5 w-5 text-blue-600" />
+                          <div className="p-2 bg-orange-100 rounded-lg">
+                            <Receipt className="h-5 w-5 text-orange-600" />
                           </div>
                           <div>
                             <p className="text-sm font-medium text-slate-600">

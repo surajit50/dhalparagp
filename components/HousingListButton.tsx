@@ -24,23 +24,23 @@ const HousingListButton = () => {
     <div className="flex flex-col items-center justify-center p-4 max-w-sm mx-auto">
       <div
         className={`
-        relative overflow-hidden rounded-lg border border-blue-200/50
-        bg-gradient-to-r from-blue-50/80 to-blue-100/80
+        relative overflow-hidden rounded-lg border border-orange-200/50
+        bg-gradient-to-r from-orange-50/80 to-orange-100/80
         p-0.5 shadow-md transition-all duration-300
-        ${isAnimating ? "shadow-blue-200/30" : "shadow-blue-300/40"}
+        ${isAnimating ? "shadow-orange-200/30" : "shadow-orange-300/40"}
       `}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-blue-500 opacity-5"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-orange-500 opacity-5"></div>
 
         <button
           onClick={openHousingList}
           className={`
             relative flex items-center justify-between gap-2
-            rounded-md bg-gradient-to-r from-blue-500 to-blue-600
+            rounded-md bg-gradient-to-r from-orange-500 to-orange-600
             px-4 py-2.5 text-white shadow-sm
             transition-all duration-300 ease-out
-            hover:from-blue-600 hover:to-blue-700
-            focus:outline-none focus:ring-1 focus:ring-blue-400 focus:ring-offset-1
+            hover:from-orange-600 hover:to-orange-700
+            focus:outline-none focus:ring-1 focus:ring-orange-400 focus:ring-offset-1
             active:scale-[0.98]
           `}
           aria-label="View housing list"

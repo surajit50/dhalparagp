@@ -251,10 +251,10 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Work Selection Section */}
-        <Card className="border-t-4 border-t-indigo-500 shadow-md">
+        <Card className="border-t-4 border-t-orange-500 shadow-md">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5 text-indigo-500" />
+              <Briefcase className="h-5 w-5 text-orange-500" />
               <CardTitle className="text-xl">Select Work Order</CardTitle>
             </div>
             <CardDescription>
@@ -275,7 +275,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-12 border-indigo-100 focus:ring-indigo-500 bg-indigo-50/20">
+                      <SelectTrigger className="h-12 border-orange-100 focus:ring-orange-500 bg-orange-50/20">
                         <SelectValue placeholder="Select a work order from your list" />
                       </SelectTrigger>
                     </FormControl>
@@ -292,7 +292,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                             <div className="flex items-center gap-2 mt-1">
                               <Badge
                                 variant="outline"
-                                className="text-[10px] py-0 h-4 bg-indigo-50 text-indigo-700 border-indigo-100"
+                                className="text-[10px] py-0 h-4 bg-orange-50 text-orange-700 border-orange-100"
                               >
                                 NIT/{work.nitDetails.memoNumber}
                               </Badge>
@@ -313,30 +313,30 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
             />
 
             {selectedWork && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 bg-indigo-50/40 rounded-xl border border-indigo-100 shadow-sm transition-all animate-in fade-in slide-in-from-top-2 duration-300">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 bg-orange-50/40 rounded-xl border border-orange-100 shadow-sm transition-all animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg shadow-sm">
-                      <Info className="h-4 w-4 text-indigo-600" />
+                      <Info className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-[11px] text-indigo-400 font-bold uppercase tracking-wider">
+                      <p className="text-[11px] text-orange-400 font-bold uppercase tracking-wider">
                         Work Sl No
                       </p>
-                      <p className="text-sm font-semibold text-indigo-900">
+                      <p className="text-sm font-semibold text-orange-900">
                         {selectedWork.workslno}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg shadow-sm">
-                      <FileText className="h-4 w-4 text-indigo-600" />
+                      <FileText className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-[11px] text-indigo-400 font-bold uppercase tracking-wider">
+                      <p className="text-[11px] text-orange-400 font-bold uppercase tracking-wider">
                         Activity Code
                       </p>
-                      <p className="text-sm font-semibold text-indigo-900">
+                      <p className="text-sm font-semibold text-orange-900">
                         {selectedWork.ApprovedActionPlanDetails.activityCode}
                       </p>
                     </div>
@@ -345,26 +345,26 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg shadow-sm">
-                      <Building2 className="h-4 w-4 text-indigo-600" />
+                      <Building2 className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-[11px] text-indigo-400 font-bold uppercase tracking-wider">
+                      <p className="text-[11px] text-orange-400 font-bold uppercase tracking-wider">
                         Agency Name
                       </p>
-                      <p className="text-sm font-semibold text-indigo-900 line-clamp-1">
+                      <p className="text-sm font-semibold text-orange-900 line-clamp-1">
                         {agencyName}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="p-2 bg-white rounded-lg shadow-sm">
-                      <Briefcase className="h-4 w-4 text-indigo-600" />
+                      <Briefcase className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <p className="text-[11px] text-indigo-400 font-bold uppercase tracking-wider">
+                      <p className="text-[11px] text-orange-400 font-bold uppercase tracking-wider">
                         Fund/Scheme
                       </p>
-                      <Badge className="bg-indigo-600 text-white hover:bg-indigo-700">
+                      <Badge className="bg-orange-600 text-white hover:bg-orange-700">
                         {selectedWork.ApprovedActionPlanDetails.schemeName}
                       </Badge>
                     </div>
@@ -379,7 +379,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
         <Card className="shadow-md">
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-indigo-500" />
+              <Calendar className="h-5 w-5 text-orange-500" />
               <CardTitle className="text-xl">Work Start Details</CardTitle>
             </div>
           </CardHeader>
@@ -395,7 +395,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                   <FormControl>
                     <Textarea
                       placeholder="Enter detailed information about the work start notice..."
-                      className="min-h-[120px] resize-none focus:ring-indigo-500 border-slate-200"
+                      className="min-h-[120px] resize-none focus:ring-orange-500 border-slate-200"
                       {...field}
                     />
                   </FormControl>
@@ -417,10 +417,10 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                       <div className="relative">
                         <Input
                           type="date"
-                          className="h-11 pl-10 focus:ring-indigo-500 border-slate-200"
+                          className="h-11 pl-10 focus:ring-orange-500 border-slate-200"
                           {...field}
                         />
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400" />
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-400" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -440,10 +440,10 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                       <div className="relative">
                         <Input
                           type="date"
-                          className="h-11 pl-10 focus:ring-indigo-500 border-slate-200"
+                          className="h-11 pl-10 focus:ring-orange-500 border-slate-200"
                           {...field}
                         />
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-indigo-400" />
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-orange-400" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -458,7 +458,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
         <Card className="shadow-md">
           <CardHeader className="bg-slate-50/50 rounded-t-lg">
             <div className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-indigo-500" />
+              <FileText className="h-5 w-5 text-orange-500" />
               <CardTitle className="text-xl">
                 Work Documentation & Official Letters
               </CardTitle>
@@ -473,7 +473,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
               {/* Work Order Upload */}
               <div className="group space-y-3">
                 <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                  <div className="w-1 h-4 bg-indigo-500 rounded-full" />
+                  <div className="w-1 h-4 bg-orange-500 rounded-full" />
                   Work Order (Final Copy)
                 </label>
                 <div className="relative flex flex-col gap-3">
@@ -487,11 +487,11 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                   />
                   <label
                     htmlFor="work-order-upload"
-                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-indigo-200 rounded-xl bg-indigo-50/30 hover:bg-indigo-50/50 hover:border-indigo-400 transition-all cursor-pointer group"
+                    className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-orange-200 rounded-xl bg-orange-50/30 hover:bg-orange-50/50 hover:border-orange-400 transition-all cursor-pointer group"
                   >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <Upload className="h-8 w-8 text-indigo-400 group-hover:text-indigo-600 mb-2 transition-colors" />
-                      <p className="text-xs text-indigo-600 font-semibold mb-1">
+                      <Upload className="h-8 w-8 text-orange-400 group-hover:text-orange-600 mb-2 transition-colors" />
+                      <p className="text-xs text-orange-600 font-semibold mb-1">
                         Click to upload Work Order
                       </p>
                       <p className="text-[10px] text-slate-400">
@@ -505,17 +505,17 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                       {workOrderFiles.map((file, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between p-2.5 bg-indigo-50/80 border border-indigo-100 rounded-lg"
+                          className="flex items-center justify-between p-2.5 bg-orange-50/80 border border-orange-100 rounded-lg"
                         >
                           <div className="flex items-center gap-2 overflow-hidden">
-                            <FileText className="h-4 w-4 text-indigo-500 flex-shrink-0" />
-                            <span className="text-[11px] font-medium text-indigo-900 truncate">
+                            <FileText className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                            <span className="text-[11px] font-medium text-orange-900 truncate">
                               {file.name}
                             </span>
                           </div>
                           <Badge
                             variant="secondary"
-                            className="text-[9px] bg-white border-indigo-100"
+                            className="text-[9px] bg-white border-orange-100"
                           >
                             {(file.size / 1024).toFixed(0)} KB
                           </Badge>
@@ -587,7 +587,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
             <div className="space-y-5 pt-8 border-t border-slate-100">
               <div className="flex items-center justify-between">
                 <label className="text-base font-bold text-slate-800 flex items-center gap-2">
-                  <Info className="h-5 w-5 text-indigo-500" />
+                  <Info className="h-5 w-5 text-orange-500" />
                   Additional Documents & Attachments
                 </label>
                 <div className="flex items-center gap-2">
@@ -601,7 +601,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                   />
                   <label
                     htmlFor="other-files-upload"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-all cursor-pointer active:scale-95"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm font-semibold shadow-sm transition-all cursor-pointer active:scale-95"
                   >
                     <Upload className="h-4 w-4" />
                     Add More Files
@@ -614,12 +614,12 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                   {otherFiles.map((paper) => (
                     <div
                       key={paper.id}
-                      className="group flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-indigo-300 hover:shadow-md transition-all animate-in zoom-in-95 duration-200"
+                      className="group flex flex-col p-4 bg-white border border-slate-200 rounded-xl hover:border-orange-300 hover:shadow-md transition-all animate-in zoom-in-95 duration-200"
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2 overflow-hidden">
-                          <div className="p-1.5 bg-indigo-50 rounded">
-                            <FileText className="h-4 w-4 text-indigo-600" />
+                          <div className="p-1.5 bg-orange-50 rounded">
+                            <FileText className="h-4 w-4 text-orange-600" />
                           </div>
                           <span className="text-xs font-bold text-slate-700 truncate">
                             {paper.name}
@@ -641,7 +641,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                         onChange={(e) =>
                           updateOtherFileDescription(paper.id, e.target.value)
                         }
-                        className="h-9 text-[11px] bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                        className="h-9 text-[11px] bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-1 focus:ring-orange-500"
                       />
                     </div>
                   ))}
@@ -665,14 +665,14 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
           <CardHeader className="bg-slate-900 text-white">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Camera className="h-5 w-5 text-indigo-400" />
+                <Camera className="h-5 w-5 text-orange-400" />
                 <CardTitle className="text-xl">Work Photos (Onset)</CardTitle>
               </div>
-              <Badge className="bg-indigo-500 hover:bg-indigo-400 text-white border-none px-3">
+              <Badge className="bg-orange-500 hover:bg-orange-400 text-white border-none px-3">
                 {workPhotos.length} Photos Added
               </Badge>
             </div>
-            <CardDescription className="text-indigo-200/70">
+            <CardDescription className="text-orange-200/70">
               Upload photos of the site before starting work.
             </CardDescription>
           </CardHeader>
@@ -680,7 +680,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
             <div className="flex flex-col md:flex-row items-stretch md:items-center gap-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
               <div className="flex-1 space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3 text-indigo-500" />
+                  <CheckCircle2 className="h-3 w-3 text-orange-500" />
                   Select Stage
                 </label>
                 <Select
@@ -700,7 +700,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
 
               <div className="flex-1 space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1">
-                  <Camera className="h-3 w-3 text-indigo-500" />
+                  <Camera className="h-3 w-3 text-orange-500" />
                   Select Photos
                 </label>
                 <input
@@ -726,7 +726,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                 {workPhotos.map((photo) => (
                   <div
                     key={photo.id}
-                    className="group relative flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 animate-in zoom-in-95"
+                    className="group relative flex flex-col bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-orange-200 transition-all duration-300 animate-in zoom-in-95"
                   >
                     <div className="relative h-48 overflow-hidden">
                       <img
@@ -764,7 +764,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
                         onChange={(e) =>
                           updatePhotoCaption(photo.id, e.target.value)
                         }
-                        className="h-9 text-[11px] border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-1 focus:ring-indigo-500"
+                        className="h-9 text-[11px] border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-1 focus:ring-orange-500"
                       />
                     </div>
                   </div>
@@ -772,8 +772,8 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-16 border-2 border-dashed border-slate-100 rounded-3xl bg-slate-50/30">
-                <div className="p-4 bg-white rounded-full shadow-md mb-4 ring-4 ring-indigo-50">
-                  <Camera className="h-8 w-8 text-indigo-200" />
+                <div className="p-4 bg-white rounded-full shadow-md mb-4 ring-4 ring-orange-50">
+                  <Camera className="h-8 w-8 text-orange-200" />
                 </div>
                 <h3 className="text-slate-800 font-bold mb-1">
                   No photos uploaded yet
@@ -809,7 +809,7 @@ export default function StartWorkForm({ works }: StartWorkFormProps) {
               "w-full sm:w-[240px] h-14 rounded-xl text-base font-bold shadow-xl transition-all active:scale-[0.97]",
               isUploading
                 ? "bg-slate-200 text-slate-500"
-                : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200",
+                : "bg-orange-600 hover:bg-orange-700 text-white shadow-orange-200",
             )}
           >
             {isUploading ? (

@@ -88,7 +88,7 @@ export default function VendorRegistrationForm() {
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-2xl rounded-2xl border bg-gradient-to-br from-white to-gray-50">
       <CardHeader>
-        <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+        <CardTitle className="text-3xl font-bold text-center bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
           Vendor Registration
         </CardTitle>
         <p className="text-center text-muted-foreground text-sm">
@@ -107,7 +107,7 @@ export default function VendorRegistrationForm() {
             {/* ========================= */}
             <div className="p-6 rounded-xl border bg-white shadow-sm space-y-6">
               <h3 className="flex items-center gap-2 font-semibold text-lg">
-                <User className="h-5 w-5 text-blue-600" />
+                <User className="h-5 w-5 text-orange-600" />
                 Personal Information
               </h3>
 
@@ -130,7 +130,7 @@ export default function VendorRegistrationForm() {
                       <SelectContent>
                         <SelectItem value="INDIVIDUAL">
                           <div className="flex items-center gap-2">
-                            <User2 className="h-4 w-4 text-blue-600" />
+                            <User2 className="h-4 w-4 text-orange-600" />
                             Individual
                           </div>
                         </SelectItem>

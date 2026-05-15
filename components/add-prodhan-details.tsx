@@ -130,7 +130,7 @@ export function ProdhanForm() {
                       <Input
                         placeholder="John"
                         {...field}
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-sm" />
@@ -150,7 +150,7 @@ export function ProdhanForm() {
                       <Input
                         placeholder="Michael"
                         {...field}
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-sm" />
@@ -170,7 +170,7 @@ export function ProdhanForm() {
                       <Input
                         placeholder="Doe"
                         {...field}
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-sm" />
@@ -194,7 +194,7 @@ export function ProdhanForm() {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger className="w-full focus:ring-2 focus:ring-blue-500 border-gray-300 dark:border-gray-600">
+                        <SelectTrigger className="w-full focus:ring-2 focus:ring-orange-500 border-gray-300 dark:border-gray-600">
                           <SelectValue placeholder="Select gender" />
                         </SelectTrigger>
                       </FormControl>
@@ -284,7 +284,7 @@ export function ProdhanForm() {
                       <Input
                         placeholder="9876543210"
                         {...field}
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-sm" />
@@ -362,7 +362,7 @@ export function ProdhanForm() {
                       <Input
                         placeholder="123 Main Street"
                         {...field}
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-sm" />
@@ -382,7 +382,7 @@ export function ProdhanForm() {
                       <Input
                         placeholder="Green Valley"
                         {...field}
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                         onInput={(e) => {
                           e.currentTarget.value = e.currentTarget.value.replace(
                             /[^A-Za-z\s]/g,
@@ -410,7 +410,7 @@ export function ProdhanForm() {
                         onChange={(e) =>
                           field.onChange(e.target.files?.[0])
                         }
-                        className="focus-visible:ring-2 focus-visible:ring-blue-500 border-gray-300 dark:border-gray-600"
+                        className="focus-visible:ring-2 focus-visible:ring-orange-500 border-gray-300 dark:border-gray-600"
                       />
                     </FormControl>
                     <FormMessage className="text-red-500 text-sm" />
@@ -423,7 +423,7 @@ export function ProdhanForm() {
           <div className="flex justify-end pt-6 border-t">
             <Button
               type="submit"
-              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-8 py-4 rounded-lg font-semibold shadow-md transition-all"
+              className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white px-8 py-4 rounded-lg font-semibold shadow-md transition-all"
               disabled={isPending}
             >
               {isPending ? (

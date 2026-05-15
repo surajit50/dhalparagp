@@ -306,7 +306,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
         : termsArray;
 
     const fields = array.fields;
-    const iconColor = fieldName === "eligible" ? "text-blue-500" : fieldName === "qualificationCriteria" ? "text-green-500" : "text-purple-500";
+    const iconColor = fieldName === "eligible" ? "text-orange-500" : fieldName === "qualificationCriteria" ? "text-green-500" : "text-purple-500";
 
     return (
     <FormField
@@ -328,7 +328,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
                 variant="outline"
                 size="sm"
                 onClick={() => array.append({ value: "" })}
-                className="border-blue-300 text-blue-700 hover:bg-blue-50"
+                className="border-orange-300 text-orange-700 hover:bg-orange-50"
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add Item
@@ -348,7 +348,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => array.append({ value: "" })}
-                  className="text-blue-600 hover:text-blue-700"
+                  className="text-orange-600 hover:text-orange-700"
                 >
                   <Plus className="h-4 w-4 mr-1" />
                   Add your first item
@@ -426,7 +426,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="space-y-4">
           <div className="flex items-center gap-4">
@@ -438,7 +438,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
             </Button>
           </div>
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-orange-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
               Edit Tender Term Template
             </h1>
             <p className="text-gray-600 text-lg font-medium">
@@ -448,9 +448,9 @@ const EditTemplatePage = ({ params }: PageProps) => {
         </div>
 
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 rounded-t-lg">
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50 border-b border-orange-100/50 rounded-t-lg">
             <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <div className="h-1 w-1 rounded-full bg-blue-600"></div>
+              <div className="h-1 w-1 rounded-full bg-orange-600"></div>
               Template details
             </CardTitle>
             <CardDescription className="text-gray-600 font-medium">
@@ -463,7 +463,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
                 {/* Template Information Section */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 pb-2">
-                    <FileText className="h-5 w-5 text-blue-600" />
+                    <FileText className="h-5 w-5 text-orange-600" />
                     <h3 className="text-lg font-semibold text-gray-900">Template Information</h3>
                   </div>
 
@@ -523,16 +523,16 @@ const EditTemplatePage = ({ params }: PageProps) => {
                 {/* Content Sections */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 pb-2">
-                    <AlignLeft className="h-5 w-5 text-blue-600" />
+                    <AlignLeft className="h-5 w-5 text-orange-600" />
                     <h3 className="text-lg font-semibold text-gray-900">Template Content</h3>
                     <span className="text-sm text-gray-500 font-normal">
                       (At least one section is required)
                     </span>
                   </div>
 
-                  <Alert className="border-blue-200 bg-blue-50">
-                    <Info className="h-4 w-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800">
+                  <Alert className="border-orange-200 bg-orange-50">
+                    <Info className="h-4 w-4 text-orange-600" />
+                    <AlertDescription className="text-orange-800">
                       Click Add to create new items. Empty items will be removed on save.
                     </AlertDescription>
                   </Alert>
@@ -566,7 +566,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
                 {/* Status Section */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 pb-2">
-                    <ToggleLeft className="h-5 w-5 text-blue-600" />
+                    <ToggleLeft className="h-5 w-5 text-orange-600" />
                     <h3 className="text-lg font-semibold text-gray-900">Template Status</h3>
                   </div>
 
@@ -605,9 +605,9 @@ const EditTemplatePage = ({ params }: PageProps) => {
                 )}
 
                 {hasChanges && (
-                  <Alert className="border-blue-200 bg-blue-50">
-                    <Info className="h-4 w-4 text-blue-600" />
-                    <AlertDescription className="text-blue-800">
+                  <Alert className="border-orange-200 bg-orange-50">
+                    <Info className="h-4 w-4 text-orange-600" />
+                    <AlertDescription className="text-orange-800">
                       You have unsaved changes. Do not forget to save your updates.
                     </AlertDescription>
                   </Alert>
@@ -626,7 +626,7 @@ const EditTemplatePage = ({ params }: PageProps) => {
                   <Button 
                     type="submit" 
                     disabled={isSubmitting || !hasChanges}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                    className="bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
                   >
                     {isSubmitting ? (
                       <>

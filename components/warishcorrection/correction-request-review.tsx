@@ -267,7 +267,7 @@ export default function CorrectionRequestReview({
                 <div className="flex items-center gap-2">
                   <Badge
                     variant="secondary"
-                    className="text-xs h-6 px-2 capitalize font-medium bg-blue-100 text-blue-700 border-blue-200"
+                    className="text-xs h-6 px-2 capitalize font-medium bg-orange-100 text-orange-700 border-orange-200"
                   >
                     {selectedRequest.targetType}
                   </Badge>

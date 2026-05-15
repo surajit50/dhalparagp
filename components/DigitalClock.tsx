@@ -56,7 +56,7 @@ export default function TinyDigitalClock() {
         <div className="flex items-center text-xl">
           <span className="text-gray-600 tabular-nums">{currentDate}</span>
           <span className="text-gray-500 mx-2">|</span>
-          <span className="text-blue-600 tabular-nums w-8 text-center">
+          <span className="text-orange-600 tabular-nums w-8 text-center">
             {hours}
           </span>
           <span className="text-gray-500 mx-1">:</span>

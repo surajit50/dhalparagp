@@ -10,7 +10,7 @@ const reportTypes = [
     title: "Quotation Summary Report",
     description: "Overview of all quotations by status and type",
     icon: BarChart3,
-    color: "bg-blue-500",
+    color: "bg-orange-500",
     data: "24 Total, 18 Published, 6 Draft",
   },
   {
@@ -38,7 +38,7 @@ const reportTypes = [
     title: "Work Category Analysis",
     description: "Analysis by work type (Supply/Work/Sale)",
     icon: FileText,
-    color: "bg-teal-500",
+    color: "bg-orange-500",
     data: "60% Supply, 30% Work, 10% Sale",
   },
   {
@@ -110,7 +110,7 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardContent className="pt-6">
-              <div className="text-2xl font-bold text-blue-600">₹5.2L</div>
+              <div className="text-2xl font-bold text-orange-600">₹5.2L</div>
               <p className="text-sm text-muted-foreground">Total Budget</p>
               <div className="text-xs text-green-600 mt-1">+12% from last year</div>
             </CardContent>
@@ -120,7 +120,7 @@ export default function ReportsPage() {
             <CardContent className="pt-6">
               <div className="text-2xl font-bold text-green-600">₹3.8L</div>
               <p className="text-sm text-muted-foreground">Utilized</p>
-              <div className="text-xs text-blue-600 mt-1">73% utilization</div>
+              <div className="text-xs text-orange-600 mt-1">73% utilization</div>
             </CardContent>
           </Card>
 

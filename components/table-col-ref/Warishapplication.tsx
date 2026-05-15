@@ -61,7 +61,7 @@ export const warishcolref: ColumnDef<WarishApplicationProps>[] = [
     header: "Father's Name",
     cell: ({ row }) => (
       <div className="flex items-center">
-        <UserRound className="mr-2 h-4 w-4 text-blue-500" />
+        <UserRound className="mr-2 h-4 w-4 text-orange-500" />
         <span className="text-muted-foreground">
           {row.original.fatherName === "NA" ? "N/A" : row.original.fatherName}
         </span>

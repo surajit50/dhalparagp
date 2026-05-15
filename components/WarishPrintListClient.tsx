@@ -90,20 +90,20 @@ export default function WarishPrintListClient({
   return (
     <Card className="border shadow-md rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-800 to-blue-700 text-white px-6 py-4 flex justify-between items-center">
+      <div className="bg-gradient-to-r from-orange-800 to-orange-700 text-white px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <FileText className="h-6 w-6" />
           <div>
             <h2 className="text-lg font-semibold">
               Warish Certificate Print List
             </h2>
-            <p className="text-xs text-blue-100">
+            <p className="text-xs text-orange-100">
               Government of West Bengal Portal
             </p>
           </div>
         </div>
 
-        <Badge className="bg-white text-blue-800 font-semibold px-3 py-1">
+        <Badge className="bg-white text-orange-800 font-semibold px-3 py-1">
           Total: {total}
         </Badge>
       </div>
@@ -157,7 +157,7 @@ export default function WarishPrintListClient({
                   <TableCell>{item.nameOfDeceased}</TableCell>
 
                   <TableCell>
-                    <Badge className="bg-blue-700 text-white">
+                    <Badge className="bg-orange-700 text-white">
                       {item.warishRefNo || "N/A"}
                     </Badge>
                   </TableCell>
@@ -187,7 +187,7 @@ export default function WarishPrintListClient({
                   <TableCell className="text-center">
                     <Button
                       size="sm"
-                      className="bg-blue-700 hover:bg-blue-800 text-white"
+                      className="bg-orange-700 hover:bg-orange-800 text-white"
                       onClick={() =>
                         download(item.documentUrl, item.applicantName)
                       }

@@ -25,22 +25,22 @@ export default function ApplicantInfoSection() {
   const { control } = useFormContext<LandConversionApplicationInput>();
 
   return (
-    <Card className="shadow-sm border-blue-100">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50/50 border-b border-blue-100">
-        <CardTitle className="text-blue-800 text-lg flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center">
-            <User className="h-4 w-4 text-blue-600" />
+    <Card className="shadow-sm border-orange-100">
+      <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
+        <CardTitle className="text-orange-800 text-lg flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center">
+            <User className="h-4 w-4 text-orange-600" />
           </div>
           Applicant Information
         </CardTitle>
-        <p className="text-sm text-blue-600/70 mt-1">
+        <p className="text-sm text-orange-600/70 mt-1">
           Provide your personal and contact details
         </p>
       </CardHeader>
       <CardContent className="space-y-6 pt-6">
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-            <div className="h-1 w-8 rounded-full bg-blue-200"></div>
+            <div className="h-1 w-8 rounded-full bg-orange-200"></div>
             Contact Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -50,14 +50,14 @@ export default function ApplicantInfoSection() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-700 font-medium flex items-center gap-2">
-                    <User className="h-3.5 w-3.5 text-blue-500" />
+                    <User className="h-3.5 w-3.5 text-orange-500" />
                     Full Name *
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="Enter full name"
-                      className="h-11 bg-slate-50/50 border-slate-200 focus:ring-blue-500 focus:border-blue-500"
+                      className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -70,7 +70,7 @@ export default function ApplicantInfoSection() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-700 font-medium flex items-center gap-2">
-                    <Phone className="h-3.5 w-3.5 text-blue-500" />
+                    <Phone className="h-3.5 w-3.5 text-orange-500" />
                     Phone *
                   </FormLabel>
                   <FormControl>
@@ -78,7 +78,7 @@ export default function ApplicantInfoSection() {
                       {...field}
                       inputMode="tel"
                       placeholder="10-digit mobile number"
-                      className="h-11 bg-slate-50/50 border-slate-200 focus:ring-blue-500 focus:border-blue-500"
+                      className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -91,7 +91,7 @@ export default function ApplicantInfoSection() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-700 font-medium flex items-center gap-2">
-                    <Mail className="h-3.5 w-3.5 text-blue-500" />
+                    <Mail className="h-3.5 w-3.5 text-orange-500" />
                     Email
                   </FormLabel>
                   <FormControl>
@@ -99,7 +99,7 @@ export default function ApplicantInfoSection() {
                       {...field}
                       type="email"
                       placeholder="example@email.com"
-                      className="h-11 bg-slate-50/50 border-slate-200 focus:ring-blue-500 focus:border-blue-500"
+                      className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500"
                     />
                   </FormControl>
                   <FormMessage className="text-xs" />
@@ -111,7 +111,7 @@ export default function ApplicantInfoSection() {
 
         <div className="space-y-4 pt-2">
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-            <div className="h-1 w-8 rounded-full bg-blue-200"></div>
+            <div className="h-1 w-8 rounded-full bg-orange-200"></div>
             <MapPin className="h-4 w-4 text-slate-500" />
             Address Details
           </h3>
@@ -127,7 +127,7 @@ export default function ApplicantInfoSection() {
                     defaultValue={field.value}
                   >
                     <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-blue-500 focus:border-blue-500">
+                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
                         <SelectValue placeholder="Select village" />
                       </SelectTrigger>
                     </FormControl>

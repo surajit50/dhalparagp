@@ -28,7 +28,7 @@ const GovtScheme = () => {
                 <p className="mb-4 line-clamp-2 text-sm text-gray-600">
                   {item.description.description || "Brief description of the government scheme and its benefits."}
                 </p>
-                <Button variant="outline" size="sm" className="w-full justify-between hover:bg-blue-50">
+                <Button variant="outline" size="sm" className="w-full justify-between hover:bg-orange-50">
                   Learn More
                   <ChevronRight className="ml-2 h-4 w-4" />
                 </Button>

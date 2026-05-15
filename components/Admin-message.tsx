@@ -72,22 +72,22 @@ export default function AdminMessageCenter() {
     backgrounds: [
       { value: "bg-slate-700", label: "Slate" },
       { value: "bg-emerald-600", label: "Emerald" },
-      { value: "bg-indigo-600", label: "Indigo" },
+      { value: "bg-orange-600", label: "Indigo" },
       { value: "bg-rose-600", label: "Rose" },
       { value: "bg-amber-600", label: "Amber" },
-      { value: "bg-cyan-600", label: "Cyan" },
+      { value: "bg-orange-600", label: "Cyan" },
       { value: "bg-violet-600", label: "Violet" },
-      { value: "bg-teal-600", label: "Teal" },
+      { value: "bg-orange-600", label: "Teal" },
     ],
     text: [
       { value: "text-white", label: "White" },
       { value: "text-slate-100", label: "Light Slate" },
       { value: "text-amber-100", label: "Light Amber" },
       { value: "text-emerald-100", label: "Light Emerald" },
-      { value: "text-cyan-100", label: "Light Cyan" },
+      { value: "text-orange-100", label: "Light Cyan" },
       { value: "text-rose-100", label: "Light Rose" },
       { value: "text-violet-100", label: "Light Violet" },
-      { value: "text-indigo-100", label: "Light Indigo" },
+      { value: "text-orange-100", label: "Light Indigo" },
     ],
   };
 
@@ -95,12 +95,12 @@ export default function AdminMessageCenter() {
   const colorCombinations = [
     { bg: "bg-slate-700", text: "text-white" },
     { bg: "bg-emerald-600", text: "text-white" },
-    { bg: "bg-indigo-600", text: "text-indigo-100" },
+    { bg: "bg-orange-600", text: "text-orange-100" },
     { bg: "bg-rose-600", text: "text-rose-100" },
     { bg: "bg-amber-600", text: "text-amber-100" },
-    { bg: "bg-cyan-600", text: "text-cyan-100" },
+    { bg: "bg-orange-600", text: "text-orange-100" },
     { bg: "bg-violet-600", text: "text-violet-100" },
-    { bg: "bg-teal-600", text: "text-teal-100" },
+    { bg: "bg-orange-600", text: "text-orange-100" },
   ];
 
   // Function to get a random color combination

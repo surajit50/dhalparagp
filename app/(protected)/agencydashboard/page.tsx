@@ -109,7 +109,7 @@ async function AgencyDashboardContent() {
             <Card className="shadow-sm border-slate-200">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">Active Works</CardTitle>
-                <Briefcase className="h-4 w-4 text-blue-500" />
+                <Briefcase className="h-4 w-4 text-orange-500" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{works.length}</div>

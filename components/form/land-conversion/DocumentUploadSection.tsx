@@ -47,8 +47,8 @@ export default function DocumentUploadSection({
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="h-7 w-7 rounded-lg bg-blue-100 flex items-center justify-center">
-                  <ShieldCheck className="h-4 w-4 text-blue-600" />
+                <div className="h-7 w-7 rounded-lg bg-orange-100 flex items-center justify-center">
+                  <ShieldCheck className="h-4 w-4 text-orange-600" />
                 </div>
                 <span className="text-sm font-semibold text-slate-700">
                   ID Proof (PDF or Image) {!isAdminOrSuperAdmin && " *"}
@@ -77,18 +77,18 @@ export default function DocumentUploadSection({
                     e.target.value = "";
                   }}
                   disabled={!!uploadingDoc}
-                  className="h-11 bg-slate-50/50 border-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="h-11 bg-slate-50/50 border-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
                 />
                 {uploadingDoc === "ID_PROOF" && (
-                  <span className="text-sm text-blue-600 animate-pulse font-medium flex items-center gap-1">
-                    <div className="h-2 w-2 bg-blue-500 rounded-full animate-bounce"></div>
+                  <span className="text-sm text-orange-600 animate-pulse font-medium flex items-center gap-1">
+                    <div className="h-2 w-2 bg-orange-500 rounded-full animate-bounce"></div>
                     Uploading...
                   </span>
                 )}
               </div>
               {idProofFile && (
-                <div className="flex items-center gap-2 text-sm text-slate-600 bg-gradient-to-r from-slate-50 to-blue-50 p-3 rounded-xl border border-blue-100 shadow-sm">
-                  <File className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                <div className="flex items-center gap-2 text-sm text-slate-600 bg-gradient-to-r from-slate-50 to-orange-50 p-3 rounded-xl border border-orange-100 shadow-sm">
+                  <File className="h-4 w-4 text-orange-500 flex-shrink-0" />
                   <span className="truncate max-w-[200px] font-medium">
                     {idProofFile.name}
                   </span>

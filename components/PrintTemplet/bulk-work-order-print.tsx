@@ -33,7 +33,7 @@ export const BulkWorkOrderPrint = ({
         }
 
         // ================= HEADER =================
-        doc.setTextColor(30, 58, 138); // text-blue-900
+        doc.setTextColor(30, 58, 138); // text-orange-900
         doc.setFont("helvetica", "bold");
         doc.setFontSize(22);
         doc.text(
@@ -282,7 +282,7 @@ export const BulkWorkOrderPrint = ({
     <Button
       onClick={handleGeneratePDF}
       disabled={isGenerating || workOrders.length === 0}
-      className="gap-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+      className="gap-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg"
     >
       {isGenerating ? (
         <Loader2 className="animate-spin h-4 w-4" />

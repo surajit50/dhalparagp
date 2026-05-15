@@ -262,11 +262,11 @@ export default function CertificateDownload({
               Share
             </Button>
           </div>
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <h4 className="font-medium text-blue-900 mb-2">
+          <div className="mt-4 p-4 bg-orange-50 rounded-lg border border-orange-200">
+            <h4 className="font-medium text-orange-900 mb-2">
               Download Instructions:
             </h4>
-            <ul className="text-sm text-blue-800 space-y-1">
+            <ul className="text-sm text-orange-800 space-y-1">
               <li>
                 • <strong>Print:</strong> Direct printing with optimized layout
                 for A4 paper

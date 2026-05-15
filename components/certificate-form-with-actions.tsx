@@ -320,7 +320,7 @@ export default function CertificateFormWithActions() {
             <div
               className={`flex items-center justify-between p-3 border rounded-lg cursor-pointer transition-colors ${
                 selectedParent?.id === member.id
-                  ? "border-blue-500 bg-blue-50"
+                  ? "border-orange-500 bg-orange-50"
                   : "hover:bg-gray-50"
               }`}
               onClick={() => setSelectedParent(member)}
@@ -667,7 +667,7 @@ export default function CertificateFormWithActions() {
               )}
             </div>
             {selectedParent && (
-              <p className="text-sm text-blue-600 mt-2">
+              <p className="text-sm text-orange-600 mt-2">
                 Adding child to: <strong>{selectedParent.name}</strong> (
                 {selectedParent.relation})
               </p>

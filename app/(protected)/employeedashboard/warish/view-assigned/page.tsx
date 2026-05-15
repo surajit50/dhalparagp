@@ -30,7 +30,7 @@ const StaffDashboard = async () => {
 
   if (!cstaff) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-orange-50 to-purple-100">
         <div className="bg-white p-10 rounded-3xl shadow-xl text-center max-w-md">
           <AlertCircleIcon className="w-16 h-16 text-yellow-500 mx-auto mb-6" />
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
@@ -74,12 +74,12 @@ const StaffDashboard = async () => {
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-4rem)] bg-gradient-to-br from-slate-50 to-indigo-50">
+    <ScrollArea className="h-[calc(100vh-4rem)] bg-gradient-to-br from-slate-50 to-orange-50">
       <div className="container mx-auto py-10 px-4">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-            <ClipboardListIcon className="w-8 h-8 text-indigo-600" />
+            <ClipboardListIcon className="w-8 h-8 text-orange-600" />
             Staff Dashboard
           </h1>
           <p className="text-gray-500 mt-1">
@@ -138,7 +138,7 @@ const StaffDashboard = async () => {
 
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <UserIcon className="h-5 w-5 text-indigo-600" />
+                        <UserIcon className="h-5 w-5 text-orange-600" />
                         <span className="text-sm font-medium">
                           {application.applicantName}
                         </span>
@@ -196,7 +196,7 @@ function StatCard({
           <p className="text-sm text-gray-500">{title}</p>
           <h3 className="text-2xl font-bold text-gray-800 mt-1">{value}</h3>
         </div>
-        <div className="bg-indigo-100 text-indigo-600 p-3 rounded-full">
+        <div className="bg-orange-100 text-orange-600 p-3 rounded-full">
           {icon}
         </div>
       </div>

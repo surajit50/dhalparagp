@@ -362,7 +362,7 @@ const DraftsPage = () => {
                   return (
                     <TableRow
                       key={email.id}
-                      className="hover:bg-blue-50 cursor-pointer"
+                      className="hover:bg-orange-50 cursor-pointer"
                       onClick={() => handleViewEmail(email)}
                     >
                       <TableCell onClick={(e) => e.stopPropagation()}>
@@ -510,7 +510,7 @@ const DraftsPage = () => {
                           href={attachment.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-between text-sm text-blue-600 hover:text-blue-800 transition-colors p-2 hover:bg-gray-100 rounded"
+                          className="flex items-center justify-between text-sm text-orange-600 hover:text-orange-800 transition-colors p-2 hover:bg-gray-100 rounded"
                         >
                           <div className="flex items-center">
                             <File className="h-4 w-4 mr-2 flex-shrink-0" />

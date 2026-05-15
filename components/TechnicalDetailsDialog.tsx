@@ -162,8 +162,8 @@ export function TechnicalDetailsDialog({
           size="sm"
           className="flex items-center bg-transparent"
         >
-          <Eye className="mr-2 h-4 w-4 text-blue-600" />
-          <span className="text-blue-600">View Details</span>
+          <Eye className="mr-2 h-4 w-4 text-orange-600" />
+          <span className="text-orange-600">View Details</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">

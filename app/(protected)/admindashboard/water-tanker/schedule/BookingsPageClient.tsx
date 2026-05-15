@@ -48,7 +48,7 @@ const statusFilters = [
 
 const statusStyles: Record<BookingStatus, string> = {
   CONFIRMED: "bg-green-600 text-white",
-  COMPLETED: "bg-blue-600 text-white",
+  COMPLETED: "bg-orange-600 text-white",
   PENDING: "bg-yellow-500 text-white",
   CANCELLED: "bg-red-600 text-white",
   REJECTED: "bg-gray-600 text-white",

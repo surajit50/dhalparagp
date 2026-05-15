@@ -98,12 +98,12 @@ export default function SeedPage() {
               </div>
             )}
 
-            <div className="mt-8 p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-2">
-              <h3 className="font-semibold text-blue-900">API Usage</h3>
-              <p className="text-sm text-blue-700">
+            <div className="mt-8 p-4 bg-orange-50 border border-orange-200 rounded-lg space-y-2">
+              <h3 className="font-semibold text-orange-900">API Usage</h3>
+              <p className="text-sm text-orange-700">
                 You can also call the API directly:
               </p>
-              <pre className="bg-blue-100 p-3 rounded text-xs overflow-auto">
+              <pre className="bg-orange-100 p-3 rounded text-xs overflow-auto">
                 {`POST /api/seed/applications
 {
   "count": 500,

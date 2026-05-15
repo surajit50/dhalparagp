@@ -323,7 +323,7 @@ export function WorkList({ works }: WorkListProps) {
               <Button
                 onClick={handleGeneratePDF}
                 disabled={selectedWorks.length === 0 || isGenerating}
-                className="min-w-[200px] bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-md"
+                className="min-w-[200px] bg-gradient-to-r from-emerald-500 to-orange-500 hover:from-emerald-600 hover:to-orange-600 text-white shadow-md"
               >
                 {isGenerating ? (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

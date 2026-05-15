@@ -39,13 +39,13 @@ export default async function Page({ params }: PageProps) {
   const workDetails = await fetchWorkDetails(tenderId);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 py-4 sm:py-6 md:py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-orange-50/50 py-4 sm:py-6 md:py-8">
       <div className="container mx-auto px-3 sm:px-4 md:px-6 max-w-7xl">
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-4 sm:p-6 md:p-8 lg:p-10">
           {/* Header Section */}
           <div className="mb-8 sm:mb-10">
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg shadow-md">
+              <div className="p-2 bg-gradient-to-br from-orange-600 to-orange-600 rounded-lg shadow-md">
                 <ListChecks className="h-6 w-6 text-white" />
                 <NITCopy nitdetails={workDetails} />
               </div>
@@ -60,10 +60,10 @@ export default async function Page({ params }: PageProps) {
           
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-8 md:gap-10">
             {/* Add New Work Details Card */}
-            <Card className="lg:w-1/2 border-2 border-blue-100 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-blue-50/30">
-              <CardHeader className="pb-4 bg-gradient-to-r from-blue-600/10 to-indigo-600/10 rounded-t-lg border-b border-blue-100">
+            <Card className="lg:w-1/2 border-2 border-orange-100 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-orange-50/30">
+              <CardHeader className="pb-4 bg-gradient-to-r from-orange-600/10 to-orange-600/10 rounded-t-lg border-b border-orange-100">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg shadow-sm">
+                  <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-sm">
                     <PlusCircle className="h-5 w-5 text-white" />
                   </div>
                   <CardTitle className="text-xl sm:text-2xl font-bold text-gray-800">
@@ -77,10 +77,10 @@ export default async function Page({ params }: PageProps) {
             </Card>
 
             {/* Existing Work Details Card */}
-            <Card className="lg:w-1/2 border-2 border-indigo-100 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-indigo-50/30">
-              <CardHeader className="pb-4 bg-gradient-to-r from-indigo-600/10 to-purple-600/10 rounded-t-lg border-b border-indigo-100">
+            <Card className="lg:w-1/2 border-2 border-orange-100 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-orange-50/30">
+              <CardHeader className="pb-4 bg-gradient-to-r from-orange-600/10 to-purple-600/10 rounded-t-lg border-b border-orange-100">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg shadow-sm">
+                  <div className="p-2 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg shadow-sm">
                     <ListChecks className="h-5 w-5 text-white" />
                   </div>
                   <CardTitle className="text-xl sm:text-2xl font-bold text-gray-800">

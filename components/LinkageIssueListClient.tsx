@@ -89,10 +89,10 @@ export default function LinkageIssueListClient({
     <div className="space-y-6">
       {/* Header Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 col-span-1 md:col-span-2">
+        <Card className="shadow-lg border-0 bg-gradient-to-br from-orange-50 to-orange-50 dark:from-orange-950/20 dark:to-orange-950/20 col-span-1 md:col-span-2">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-800/30 text-blue-600 dark:text-blue-400">
+              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-800/30 text-orange-600 dark:text-orange-400">
                 <FilePlus className="h-6 w-6" />
               </div>
               <div>
@@ -149,12 +149,12 @@ export default function LinkageIssueListClient({
                   items.map((app, index) => (
                     <TableRow
                       key={app.id}
-                      className="hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-colors"
+                      className="hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-colors"
                     >
                       <TableCell className="text-center text-gray-500">
                         {(page - 1) * pageSize + index + 1}
                       </TableCell>
-                      <TableCell className="font-semibold text-blue-700">
+                      <TableCell className="font-semibold text-orange-700">
                         {app.applicationNo}
                       </TableCell>
                       <TableCell className="font-medium">
@@ -164,7 +164,7 @@ export default function LinkageIssueListClient({
                         <Button
                           size="sm"
                           onClick={() => handleIssueSelect(app)}
-                          className="bg-blue-700 hover:bg-blue-800 text-white"
+                          className="bg-orange-700 hover:bg-orange-800 text-white"
                         >
                           <ClipboardList className="h-4 w-4 mr-2" />
                           Issue Now
@@ -222,7 +222,7 @@ export default function LinkageIssueListClient({
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-xl flex items-center gap-2">
-              <FilePlus className="h-5 w-5 text-blue-600" />
+              <FilePlus className="h-5 w-5 text-orange-600" />
               Issue Professional Linkage Certificate
             </DialogTitle>
           </DialogHeader>
@@ -259,7 +259,7 @@ export default function LinkageIssueListClient({
               }}
               className="space-y-4 py-4"
             >
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-100 mb-2">
+              <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 mb-2">
                 <p className="text-sm">
                   <strong>Applicant:</strong> {selectedApp.applicantName}
                 </p>
@@ -358,7 +358,7 @@ function SubmitButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="bg-blue-700 hover:bg-blue-800"
+      className="bg-orange-700 hover:bg-orange-800"
     >
       {pending ? "Issuing..." : "Issue Professional Certificate"}
     </Button>

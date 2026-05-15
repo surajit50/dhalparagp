@@ -310,13 +310,13 @@ export default function MBMeasurementDialog({
           <DialogHeader>
             <div className="flex items-center justify-between">
               <DialogTitle className="flex items-center gap-4 text-2xl font-extrabold tracking-tight text-slate-900">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-200 ring-4 ring-indigo-50">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-600 text-white shadow-lg shadow-orange-200 ring-4 ring-orange-50">
                   <Ruler className="h-6 w-6" />
                 </div>
                 <div className="flex flex-col">
                   <span className="leading-tight">Add Measurements</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-700/10">MB-ENTRY</span>
+                    <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-inset ring-orange-700/10">MB-ENTRY</span>
                     <span className="text-sm font-medium text-slate-500 line-clamp-1 max-w-md">{estimateItem.description}</span>
                   </div>
                 </div>
@@ -329,7 +329,7 @@ export default function MBMeasurementDialog({
 
           {/* MB DETAILS CARD */}
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-orange-500 rounded-2xl blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
             <div className="relative grid grid-cols-1 md:grid-cols-4 gap-6 p-6 bg-white rounded-2xl border border-slate-200 shadow-sm">
               <div className="space-y-2">
                 <Label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">MB Number</Label>
@@ -339,7 +339,7 @@ export default function MBMeasurementDialog({
                     setMetadata({ ...metadata, mbNumber: e.target.value })
                   }
                   placeholder="Enter MB No."
-                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all h-10 font-medium"
+                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-orange-500/20 transition-all h-10 font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -353,7 +353,7 @@ export default function MBMeasurementDialog({
                     })
                   }
                   placeholder="e.g. 45"
-                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all h-10 font-medium"
+                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-orange-500/20 transition-all h-10 font-medium"
                 />
               </div>
               <div className="space-y-2">
@@ -367,7 +367,7 @@ export default function MBMeasurementDialog({
                       measuredDate: e.target.value,
                     })
                   }
-                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all h-10 font-medium cursor-pointer"
+                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-orange-500/20 transition-all h-10 font-medium cursor-pointer"
                 />
               </div>
               <div className="space-y-2">
@@ -381,7 +381,7 @@ export default function MBMeasurementDialog({
                     })
                   }
                   placeholder="Name of official"
-                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all h-10 font-medium"
+                  className="bg-slate-50/50 border-slate-200 focus:bg-white focus:ring-2 focus:ring-orange-500/20 transition-all h-10 font-medium"
                 />
               </div>
             </div>
@@ -409,7 +409,7 @@ export default function MBMeasurementDialog({
                     className={cn(
                       "group transition-all duration-200",
                       m.isSubItem
-                        ? "bg-indigo-50/30 hover:bg-indigo-50/50 border-l-[3px] border-l-indigo-400"
+                        ? "bg-orange-50/30 hover:bg-orange-50/50 border-l-[3px] border-l-orange-400"
                         : "hover:bg-slate-50/80"
                     )}
                   >
@@ -420,7 +420,7 @@ export default function MBMeasurementDialog({
                       <div className="flex items-center gap-3">
                         {m.isSubItem && (
                           <div className="flex-shrink-0 w-5 flex justify-center">
-                            <span className="text-indigo-400 font-bold text-lg leading-none mt-[-4px]">↳</span>
+                            <span className="text-orange-400 font-bold text-lg leading-none mt-[-4px]">↳</span>
                           </div>
                         )}
                         <Input
@@ -429,7 +429,7 @@ export default function MBMeasurementDialog({
                             handleChange(m.id, "description", e.target.value)
                           }
                           className={cn(
-                            "h-9 bg-transparent border-slate-200 group-hover:border-slate-300 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all",
+                            "h-9 bg-transparent border-slate-200 group-hover:border-slate-300 focus:bg-white focus:ring-2 focus:ring-orange-500/20 transition-all",
                             m.isSubItem ? "font-medium text-slate-700" : "font-semibold text-slate-900"
                           )}
                           placeholder={m.isSubItem ? "Sub-item details..." : "Primary measurement description..."}
@@ -438,7 +438,7 @@ export default function MBMeasurementDialog({
                           <Button
                             size="icon"
                             variant="ghost"
-                            className="h-8 w-8 text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white rounded-lg shadow-sm active:scale-95 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0"
+                            className="h-8 w-8 text-orange-600 bg-orange-50 hover:bg-orange-600 hover:text-white rounded-lg shadow-sm active:scale-95 transition-all opacity-0 group-hover:opacity-100 flex-shrink-0"
                             onClick={() => handleAddSub(index)}
                             title="Add Sub-item"
                           >
@@ -464,7 +464,7 @@ export default function MBMeasurementDialog({
                               e.target.value,
                             )
                           }
-                          className="h-9 text-center bg-transparent border-slate-200 group-hover:border-slate-300 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 transition-all font-medium tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                          className="h-9 text-center bg-transparent border-slate-200 group-hover:border-slate-300 focus:bg-white focus:ring-2 focus:ring-orange-500/20 transition-all font-medium tabular-nums [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                           placeholder="-"
                         />
                       </TableCell>
@@ -493,7 +493,7 @@ export default function MBMeasurementDialog({
               <Button
                 variant="outline"
                 onClick={handleAddMain}
-                className="text-indigo-600 border-indigo-200 bg-white hover:bg-indigo-600 hover:text-white hover:border-indigo-600 rounded-xl shadow-sm px-8 font-semibold transition-all duration-300"
+                className="text-orange-600 border-orange-200 bg-white hover:bg-orange-600 hover:text-white hover:border-orange-600 rounded-xl shadow-sm px-8 font-semibold transition-all duration-300"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Main Measurement Entry
@@ -513,9 +513,9 @@ export default function MBMeasurementDialog({
                 </div>
               </div>
 
-              <div className="bg-indigo-600 p-5 rounded-2xl shadow-xl shadow-indigo-100 min-w-[240px] flex flex-col gap-1 items-start relative overflow-hidden group">
+              <div className="bg-orange-600 p-5 rounded-2xl shadow-xl shadow-orange-100 min-w-[240px] flex flex-col gap-1 items-start relative overflow-hidden group">
                 <div className="absolute right-[-20px] top-[-20px] h-24 w-24 bg-white/10 rounded-full group-hover:scale-125 transition-transform duration-500"></div>
-                <span className="text-xs font-bold text-indigo-100 uppercase tracking-widest relative z-10">Estimated Valuation</span>
+                <span className="text-xs font-bold text-orange-100 uppercase tracking-widest relative z-10">Estimated Valuation</span>
                 <div className="relative z-10">
                   <span className="text-3xl font-black text-white tracking-tight">₹{totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
@@ -534,7 +534,7 @@ export default function MBMeasurementDialog({
                 className="px-10 h-12 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl shadow-xl shadow-slate-200 active:scale-95 transition-all overflow-hidden relative group"
                 onClick={handleSave}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <span className="relative z-10">Submit Measurements</span>
               </Button>
             </div>

@@ -171,7 +171,7 @@ export default function WomenEmpowerment() {
               <li key={index}>
                 <Link
                   href={resource.link}
-                  className="text-blue-600 hover:underline"
+                  className="text-orange-600 hover:underline"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

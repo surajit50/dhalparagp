@@ -67,11 +67,11 @@ export default function WarishGenerateListClient({
     <div className="space-y-6">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row gap-6">
-        <Card className="flex-1 shadow-lg border-0 overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+        <Card className="flex-1 shadow-lg border-0 overflow-hidden bg-gradient-to-br from-orange-50 to-orange-50 dark:from-orange-950/20 dark:to-orange-950/20">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-800/30">
-                <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              <div className="p-2 rounded-lg bg-orange-100 dark:bg-orange-800/30">
+                <Users className="h-6 w-6 text-orange-600 dark:text-orange-400" />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">
@@ -161,13 +161,13 @@ export default function WarishGenerateListClient({
                   applications.map((application, index) => (
                     <TableRow
                       key={application.id}
-                      className="border-b border-gray-100 dark:border-gray-800 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-colors group"
+                      className="border-b border-gray-100 dark:border-gray-800 hover:bg-orange-50/50 dark:hover:bg-orange-950/20 transition-colors group"
                     >
                       <TableCell className="text-center font-medium text-gray-600 dark:text-gray-400 py-4">
                         {(page - 1) * pageSize + index + 1}
                       </TableCell>
                       <TableCell className="py-4">
-                        <div className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <div className="font-semibold text-gray-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                           {application.nameOfDeceased}
                         </div>
                       </TableCell>
@@ -179,7 +179,7 @@ export default function WarishGenerateListClient({
                       <TableCell className="text-center py-4">
                         <Badge
                           variant="outline"
-                          className="font-mono px-3 py-1 text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                          className="font-mono px-3 py-1 text-xs bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800"
                         >
                           {application.warishRefNo || "N/A"}
                         </Badge>
@@ -196,7 +196,7 @@ export default function WarishGenerateListClient({
                       </TableCell>
                       <TableCell className="text-center py-4">
                         {application.digitallySigned ? (
-                          <Badge className="bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800 px-3 py-1">
+                          <Badge className="bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800 px-3 py-1">
                             <FileSignature className="h-3 w-3 mr-1" />
                             Signed
                           </Badge>

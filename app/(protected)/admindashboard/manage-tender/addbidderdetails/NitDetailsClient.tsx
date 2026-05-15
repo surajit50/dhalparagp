@@ -130,7 +130,7 @@ export const NitDetailsClient = ({ data }: NitDetailsClientProps) => {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
                 <Input
                   placeholder="Search by NIT No, Work Description, or Work Sl No..."
-                  className="pl-9 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="pl-9 bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -152,16 +152,16 @@ export const NitDetailsClient = ({ data }: NitDetailsClientProps) => {
             <Table>
               <TableHeader>
                 <TableRow className="bg-[#1e40af] hover:bg-[#1e40af] border-b border-gray-300">
-                  <TableHead className="w-[250px] text-white font-semibold h-12 border-r border-blue-800/30">
+                  <TableHead className="w-[250px] text-white font-semibold h-12 border-r border-orange-800/30">
                     NIT Information
                   </TableHead>
-                  <TableHead className="min-w-[400px] text-white font-semibold h-12 border-r border-blue-800/30">
+                  <TableHead className="min-w-[400px] text-white font-semibold h-12 border-r border-orange-800/30">
                     Work Description
                   </TableHead>
-                  <TableHead className="w-[180px] text-white font-semibold h-12 border-r border-blue-800/30">
+                  <TableHead className="w-[180px] text-white font-semibold h-12 border-r border-orange-800/30">
                     Important Dates
                   </TableHead>
-                  <TableHead className="w-[150px] text-white font-semibold text-center h-12 border-r border-blue-800/30">
+                  <TableHead className="w-[150px] text-white font-semibold text-center h-12 border-r border-orange-800/30">
                     Status
                   </TableHead>
                   <TableHead className="w-[150px] text-white font-semibold text-right h-12">
@@ -175,7 +175,7 @@ export const NitDetailsClient = ({ data }: NitDetailsClientProps) => {
                     item.WorksDetail.map((worklist, index) => (
                       <TableRow
                         key={`${item.id}-${index}`}
-                        className="hover:bg-blue-50/50 transition-colors border-b border-gray-200 group"
+                        className="hover:bg-orange-50/50 transition-colors border-b border-gray-200 group"
                       >
                         <TableCell className="align-top py-4 border-r border-gray-100 bg-gray-50/30 font-medium">
                           <ShowNitDetails
@@ -222,7 +222,7 @@ export const NitDetailsClient = ({ data }: NitDetailsClientProps) => {
                         <TableCell className="align-top py-4 text-center border-r border-gray-100">
                           <Badge
                             variant="secondary"
-                            className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-200"
+                            className="bg-orange-100 text-orange-700 hover:bg-orange-200 border-orange-200"
                           >
                             In Progress
                           </Badge>
@@ -233,7 +233,7 @@ export const NitDetailsClient = ({ data }: NitDetailsClientProps) => {
                           >
                             <Button
                               size="sm"
-                              className="bg-white text-blue-700 border-2 border-blue-600 hover:bg-blue-50 shadow-sm font-semibold"
+                              className="bg-white text-orange-700 border-2 border-orange-600 hover:bg-orange-50 shadow-sm font-semibold"
                             >
                               <Plus className="mr-1.5 h-4 w-4" />
                               Add Bidder

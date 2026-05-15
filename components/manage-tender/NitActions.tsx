@@ -18,7 +18,7 @@ export default function NitActions({ nit }: NitActionsProps) {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+          className="h-8 w-8 p-0 text-orange-600 hover:text-orange-800 hover:bg-orange-50"
           title="Edit"
           onClick={() =>
             router.push(`/admindashboard/manage-tender/add/${nit.id}`)

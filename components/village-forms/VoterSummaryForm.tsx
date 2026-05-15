@@ -107,7 +107,7 @@ export function VoterSummaryForm({
       type="number"
       value={field.value}
       onChange={(e) => field.onChange(Number(e.target.value))}
-      className="h-12 text-xl font-bold bg-gray-50/50 border-none focus:bg-white focus:ring-2 focus:ring-blue-500/10 transition-all rounded-xl shadow-inner shadow-gray-100"
+      className="h-12 text-xl font-bold bg-gray-50/50 border-none focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all rounded-xl shadow-inner shadow-gray-100"
     />
   );
 
@@ -125,7 +125,7 @@ export function VoterSummaryForm({
               name="pollingStationNo"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel className="text-sm font-bold text-blue-900 flex items-center space-x-2 mb-1">
+                  <FormLabel className="text-sm font-bold text-orange-900 flex items-center space-x-2 mb-1">
                     <span>Polling Station Number</span>
                   </FormLabel>
                   <FormControl>
@@ -140,7 +140,7 @@ export function VoterSummaryForm({
               name="pollingStationName"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel className="text-sm font-bold text-blue-900 flex items-center space-x-2 mb-1">
+                  <FormLabel className="text-sm font-bold text-orange-900 flex items-center space-x-2 mb-1">
                     <span>Polling Station Name</span>
                   </FormLabel>
                   <FormControl>
@@ -157,8 +157,8 @@ export function VoterSummaryForm({
             name="mouzaIds"
             render={() => (
               <FormItem className="space-y-3">
-                <FormLabel className="text-sm font-bold text-blue-900 flex items-center space-x-2 mb-3">
-                  <MapPin className="h-5 w-5 text-blue-600" />
+                <FormLabel className="text-sm font-bold text-orange-900 flex items-center space-x-2 mb-3">
+                  <MapPin className="h-5 w-5 text-orange-600" />
                   <span>Covered Administrative Areas (Mouzas)</span>
                 </FormLabel>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
@@ -220,12 +220,12 @@ export function VoterSummaryForm({
                 name="totalMaleVoter"
                 render={({ field }) => (
                   <FormItem className="p-6 bg-white rounded-3xl border border-gray-100 space-y-4 shadow-sm">
-                    <FormLabel className="font-bold text-blue-700 tracking-tight flex justify-between items-center">
+                    <FormLabel className="font-bold text-orange-700 tracking-tight flex justify-between items-center">
                       Aggregate Male Voters
-                      <span className="text-[10px] bg-blue-50 px-2 py-1 rounded-full">SYSTEM AUTO</span>
+                      <span className="text-[10px] bg-orange-50 px-2 py-1 rounded-full">SYSTEM AUTO</span>
                     </FormLabel>
                     <FormControl>
-                      <Input disabled value={field.value} className="h-14 text-2xl font-black bg-blue-50/50 border-none cursor-not-allowed opacity-70 text-blue-900" />
+                      <Input disabled value={field.value} className="h-14 text-2xl font-black bg-orange-50/50 border-none cursor-not-allowed opacity-70 text-orange-900" />
                     </FormControl>
                   </FormItem>
                 )}
@@ -317,7 +317,7 @@ export function VoterSummaryForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-14 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-100 transition-all duration-200 active:scale-[0.98] text-lg"
+            className="w-full h-14 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-bold rounded-2xl shadow-xl shadow-orange-100 transition-all duration-200 active:scale-[0.98] text-lg"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">

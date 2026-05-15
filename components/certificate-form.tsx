@@ -239,7 +239,7 @@ export default function CertificateForm() {
                   <div
                     className={`flex items-center gap-2 p-2 rounded-lg border transition-all cursor-pointer ${
                       selectedParent?.id === member.id
-                        ? "border-blue-500 bg-blue-50"
+                        ? "border-orange-500 bg-orange-50"
                         : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
                     }`}
                     onClick={() => setSelectedParent(member)}
@@ -686,7 +686,7 @@ export default function CertificateForm() {
               )}
             </div>
             {selectedParent && (
-              <p className="text-sm text-blue-600 mt-2">
+              <p className="text-sm text-orange-600 mt-2">
                 Adding child to: <strong>{selectedParent.name}</strong> (
                 {selectedParent.relation})
                 <Button

@@ -49,7 +49,7 @@ export default async function DemoPage() {
                 Tender Management System
               </h1>
 
-              <p className="text-xs text-blue-100">
+              <p className="text-xs text-orange-100">
                 Government of West Bengal
               </p>
             </div>
@@ -57,7 +57,7 @@ export default async function DemoPage() {
           </div>
 
           <Link href="/admindashboard/manage-tender/create">
-            <Button className="bg-white text-blue-700 hover:bg-blue-50">
+            <Button className="bg-white text-orange-700 hover:bg-orange-50">
               <PlusCircle className="mr-2 h-4 w-4" />
               Create New NIT
             </Button>

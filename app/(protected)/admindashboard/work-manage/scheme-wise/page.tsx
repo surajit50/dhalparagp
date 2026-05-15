@@ -17,7 +17,7 @@ async function WorkListContent() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:items-center">
         <h1 className="text-4xl font-extrabold tracking-tight">
-          <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+          <span className="bg-gradient-to-r from-orange-600 to-purple-600 text-transparent bg-clip-text">
             Scheme-wise Work List
           </span>
         </h1>

@@ -40,7 +40,7 @@ export default function ActionButtons({
             <button
               onClick={() => setPdfMode?.("detailed")}
               className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all ${pdfMode === "detailed"
-                ? "bg-white text-blue-600 shadow-sm"
+                ? "bg-white text-orange-600 shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
                 }`}
             >
@@ -49,7 +49,7 @@ export default function ActionButtons({
             <button
               onClick={() => setPdfMode?.("abstract")}
               className={`flex-1 text-xs font-medium py-1.5 rounded-sm transition-all ${pdfMode === "abstract"
-                ? "bg-white text-blue-600 shadow-sm"
+                ? "bg-white text-orange-600 shadow-sm"
                 : "text-slate-500 hover:text-slate-700"
                 }`}
             >
@@ -70,7 +70,7 @@ export default function ActionButtons({
           <Button
             onClick={onGeneratePDF}
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="w-full bg-orange-600 hover:bg-orange-700 text-white"
             size="lg"
           >
             <Download className="mr-2 h-4 w-4" />
@@ -82,7 +82,7 @@ export default function ActionButtons({
               onClick={onGenerateAbstractPDF}
               disabled={loading}
               variant="outline"
-              className="w-full border-blue-200 text-blue-700 hover:bg-blue-50"
+              className="w-full border-orange-200 text-orange-700 hover:bg-orange-50"
               size="lg"
             >
               <FileText className="mr-2 h-4 w-4" />

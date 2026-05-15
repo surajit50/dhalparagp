@@ -397,7 +397,7 @@ export default function TenderStatusReportPage() {
 
       {filteredData.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-4">
-          <Card className="border-blue-100 bg-blue-50">
+          <Card className="border-orange-100 bg-orange-50">
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -408,8 +408,8 @@ export default function TenderStatusReportPage() {
                     {statusSummary.total}
                   </div>
                 </div>
-                <div className="rounded-full bg-blue-100 p-2">
-                  <FileText className="h-5 w-5 text-blue-600" />
+                <div className="rounded-full bg-orange-100 p-2">
+                  <FileText className="h-5 w-5 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -433,37 +433,37 @@ export default function TenderStatusReportPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-indigo-100 bg-indigo-50">
+          <Card className="border-orange-100 bg-orange-50">
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs text-muted-foreground">
                     Work Order Issued (Yes)
                   </div>
-                  <div className="text-2xl font-bold text-indigo-700">
+                  <div className="text-2xl font-bold text-orange-700">
                     {statusSummary.workOrderIssued}
                   </div>
                 </div>
-                <div className="rounded-full bg-indigo-100 p-2">
-                  <FileText className="h-5 w-5 text-indigo-700" />
+                <div className="rounded-full bg-orange-100 p-2">
+                  <FileText className="h-5 w-5 text-orange-700" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-teal-100 bg-teal-50">
+          <Card className="border-orange-100 bg-orange-50">
             <CardContent className="py-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-xs text-muted-foreground">
                     Geo Photo Uploaded (Yes)
                   </div>
-                  <div className="text-2xl font-bold text-teal-700">
+                  <div className="text-2xl font-bold text-orange-700">
                     {statusSummary.geoTagged}
                   </div>
                 </div>
-                <div className="rounded-full bg-teal-100 p-2">
-                  <Camera className="h-5 w-5 text-teal-700" />
+                <div className="rounded-full bg-orange-100 p-2">
+                  <Camera className="h-5 w-5 text-orange-700" />
                 </div>
               </div>
             </CardContent>

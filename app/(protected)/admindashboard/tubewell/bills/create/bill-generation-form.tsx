@@ -178,7 +178,7 @@ export default function BillGenerationForm({
                 <Card className="rounded-3xl border shadow-sm overflow-hidden">
                   <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
                     <CardTitle className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                      <div className="w-1.5 h-8 bg-indigo-500 rounded-full"></div>
+                      <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
                       Select Mistri
                     </CardTitle>
                   </CardHeader>
@@ -221,7 +221,7 @@ export default function BillGenerationForm({
                   <Card className="rounded-3xl border shadow-sm overflow-hidden">
                     <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-8 py-6">
                       <CardTitle className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-3">
-                        <div className="w-1.5 h-8 bg-sky-500 rounded-full"></div>
+                        <div className="w-1.5 h-8 bg-orange-500 rounded-full"></div>
                         Available Work Orders
                       </CardTitle>
                       <CardDescription className="font-medium text-slate-500">
@@ -234,11 +234,11 @@ export default function BillGenerationForm({
                         {mistriOrders.map((wo) => (
                           <div
                             key={wo.id}
-                            className={`p-5 flex items-start gap-4 cursor-pointer transition-all duration-200 hover:bg-slate-50 ${selectedOrderIds.includes(wo.id) ? "bg-indigo-50/50" : ""}`}
+                            className={`p-5 flex items-start gap-4 cursor-pointer transition-all duration-200 hover:bg-slate-50 ${selectedOrderIds.includes(wo.id) ? "bg-orange-50/50" : ""}`}
                             onClick={() => toggleOrder(wo.id)}
                           >
                             <div
-                              className={`w-6 h-6 mt-1 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${selectedOrderIds.includes(wo.id) ? "bg-indigo-600 border-indigo-600" : "bg-white border-slate-200"}`}
+                              className={`w-6 h-6 mt-1 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${selectedOrderIds.includes(wo.id) ? "bg-orange-600 border-orange-600" : "bg-white border-slate-200"}`}
                             >
                               {selectedOrderIds.includes(wo.id) && (
                                 <CheckCircle2 className="h-4 w-4 text-white" />
@@ -266,7 +266,7 @@ export default function BillGenerationForm({
                                 {wo.request?.address}
                               </p>
                               <div className="flex justify-between items-center mt-3">
-                                <span className="text-xs font-black text-indigo-600">
+                                <span className="text-xs font-black text-orange-600">
                                   ₹ {wo.mustiAmount.toFixed(2)} Labor
                                 </span>
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
@@ -284,7 +284,7 @@ export default function BillGenerationForm({
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="font-bold text-xs uppercase tracking-widest text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-xl"
+                          className="font-bold text-xs uppercase tracking-widest text-orange-600 hover:text-orange-700 hover:bg-orange-50 rounded-xl"
                           onClick={() =>
                             form.setValue(
                               "orderIds",
@@ -405,12 +405,12 @@ export default function BillGenerationForm({
                           </div>
                           <div className="flex justify-between items-center pt-6 border-t border-slate-200">
                             <span className="font-black text-xl flex items-center gap-3 text-slate-900">
-                              <div className="p-2 bg-indigo-600 rounded-lg">
+                              <div className="p-2 bg-orange-600 rounded-lg">
                                 <IndianRupee className="h-5 w-5 text-white" />
                               </div>
                               Net Total
                             </span>
-                            <span className="font-black text-3xl text-indigo-600">
+                            <span className="font-black text-3xl text-orange-600">
                               ₹ {grandTotal.toLocaleString("en-IN")}
                             </span>
                           </div>
@@ -430,7 +430,7 @@ export default function BillGenerationForm({
                     <Button
                       type="submit"
                       disabled={selectedOrders.length === 0 || isPending}
-                      className="rounded-xl h-12 px-10 bg-indigo-600 hover:bg-indigo-700 text-white font-black shadow-lg shadow-indigo-100 transition-all active:scale-95 disabled:opacity-50 disabled:bg-slate-300 disabled:shadow-none gap-2"
+                      className="rounded-xl h-12 px-10 bg-orange-600 hover:bg-orange-700 text-white font-black shadow-lg shadow-orange-100 transition-all active:scale-95 disabled:opacity-50 disabled:bg-slate-300 disabled:shadow-none gap-2"
                     >
                       <Save className="h-5 w-5" />
                       {isPending

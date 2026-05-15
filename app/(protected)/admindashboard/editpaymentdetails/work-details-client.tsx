@@ -149,11 +149,11 @@ export function EditWorkDetailsClient({ initialWorkDetails, schemeNames }: EditW
                 </span>
               )}
               {selectedNit !== "all" && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
                   NIT: {selectedNit}
                   <button 
                     onClick={() => setSelectedNit("all")}
-                    className="ml-2 hover:text-blue-900 focus:outline-none"
+                    className="ml-2 hover:text-orange-900 focus:outline-none"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -178,8 +178,8 @@ export function EditWorkDetailsClient({ initialWorkDetails, schemeNames }: EditW
                   <p className="text-xs text-gray-400 mt-1">of {initialWorkDetails.length} total works with payments</p>
                 )}
               </div>
-              <div className="p-4 bg-blue-50 rounded-2xl">
-                <FileText className="h-8 w-8 text-blue-600" />
+              <div className="p-4 bg-orange-50 rounded-2xl">
+                <FileText className="h-8 w-8 text-orange-600" />
               </div>
             </div>
           </CardContent>
@@ -307,7 +307,7 @@ export function EditWorkDetailsClient({ initialWorkDetails, schemeNames }: EditW
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                  className="hover:bg-orange-50 hover:text-orange-700 transition-colors"
                                   onClick={() => handleEditClick(work.id)}
                                 >
                                   <Edit className="h-4 w-4 mr-2" />

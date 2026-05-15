@@ -132,7 +132,7 @@ export default async function Dashboard() {
               {/* 👤 Profile */}
               <div className="flex items-center gap-3 rounded-xl bg-white/70 backdrop-blur px-4 py-2 shadow">
                 <Avatar className="h-9 w-9">
-                  <AvatarFallback className="bg-blue-600 text-white">
+                  <AvatarFallback className="bg-orange-600 text-white">
                     {cuser.name?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -200,7 +200,7 @@ export default async function Dashboard() {
                     </p>
                   </div>
 
-                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
+                  <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
                     Submitted
                   </span>
                 </div>

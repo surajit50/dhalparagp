@@ -36,7 +36,7 @@ export default async function AdminBudgetReportPage({
   return (
     <div className="min-h-screen bg-white">
       {/* Admin Budget Report Header */}
-      <section className="bg-gradient-to-r from-blue-800 to-green-700 text-white py-16">
+      <section className="bg-gradient-to-r from-orange-800 to-green-700 text-white py-16">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             Admin: Budget & Finance Report
@@ -83,7 +83,7 @@ export default async function AdminBudgetReportPage({
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-700 mb-1">
+                <div className="text-3xl font-bold text-orange-700 mb-1">
                   ₹{(budgetData.summary.totalScFund / 100000).toFixed(1)}L
                 </div>
                 <div className="text-gray-700">SC Fund</div>
@@ -196,7 +196,7 @@ export default async function AdminBudgetReportPage({
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center">
-                        <BarChart3 className="mr-2 h-5 w-5 text-blue-700" />
+                        <BarChart3 className="mr-2 h-5 w-5 text-orange-700" />
                         SC Fund - ₹
                         {budgetData.summary.totalScFund.toLocaleString()}
                       </CardTitle>
@@ -333,9 +333,9 @@ export default async function AdminBudgetReportPage({
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
-                        <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                        <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                           <span className="font-medium">Total Budget</span>
-                          <span className="text-2xl font-bold text-blue-700">
+                          <span className="text-2xl font-bold text-orange-700">
                             ₹{budgetData.summary.totalBudget.toLocaleString()}
                           </span>
                         </div>
@@ -369,15 +369,15 @@ export default async function AdminBudgetReportPage({
                             {budgetData.summary.totalGeneralFund.toLocaleString()}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-indigo-50 rounded-lg">
+                        <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                           <span className="font-medium">SC Fund</span>
-                          <span className="text-2xl font-bold text-indigo-700">
+                          <span className="text-2xl font-bold text-orange-700">
                             ₹{budgetData.summary.totalScFund.toLocaleString()}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center p-3 bg-teal-50 rounded-lg">
+                        <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
                           <span className="font-medium">ST Fund</span>
-                          <span className="text-2xl font-bold text-teal-700">
+                          <span className="text-2xl font-bold text-orange-700">
                             ₹{budgetData.summary.totalStFund.toLocaleString()}
                           </span>
                         </div>
@@ -486,11 +486,11 @@ export default async function AdminBudgetReportPage({
                       </CardHeader>
                       <CardContent>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                          <div className="text-center p-3 bg-blue-50 rounded-lg">
-                            <div className="text-lg font-bold text-blue-700">
+                          <div className="text-center p-3 bg-orange-50 rounded-lg">
+                            <div className="text-lg font-bold text-orange-700">
                               ₹{plan.generalFund.toLocaleString()}
                             </div>
-                            <div className="text-sm text-blue-600">
+                            <div className="text-sm text-orange-600">
                               General Fund
                             </div>
                           </div>

@@ -31,8 +31,8 @@ export default function WarishApplicationDetailsEdit({
   return (
     <div className="w-full p-4 space-y-6">
       <Card className="shadow-lg">
-        <CardHeader className="bg-blue-50/50 border-b">
-          <CardTitle className="text-2xl font-bold flex items-center gap-3 text-blue-800">
+        <CardHeader className="bg-orange-50/50 border-b">
+          <CardTitle className="text-2xl font-bold flex items-center gap-3 text-orange-800">
             <FileText className="h-6 w-6" />
             Warish Application Details
           </CardTitle>
@@ -65,7 +65,7 @@ function ApplicationOverview({
     <div className="space-y-8">
       {/* Reporting Information */}
       <SectionWrapper
-        icon={<Calendar className="h-5 w-5 text-blue-600" />}
+        icon={<Calendar className="h-5 w-5 text-orange-600" />}
         title="Reporting Information / প্রতিবেদন তথ্য"
         titleNumber="1"
       >
@@ -190,7 +190,7 @@ function SectionWrapper({
     <div className={className}>
       <div className="flex items-center gap-3 mb-4">
         {titleNumber && (
-          <div className="h-8 w-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-orange-100 text-orange-800 flex items-center justify-center">
             {titleNumber}
           </div>
         )}

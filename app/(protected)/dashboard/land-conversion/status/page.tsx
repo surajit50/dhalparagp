@@ -47,7 +47,7 @@ const LandConversionStatusPage = async () => {
         return (
           <Badge
             variant="secondary"
-            className="bg-blue-100 text-blue-700 hover:bg-blue-100"
+            className="bg-orange-100 text-orange-700 hover:bg-orange-100"
           >
             <Clock className="w-3 h-3 mr-1" /> Submitted
           </Badge>
@@ -56,7 +56,7 @@ const LandConversionStatusPage = async () => {
         return (
           <Badge
             variant="secondary"
-            className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50"
+            className="bg-orange-50 text-orange-700 hover:bg-orange-50"
           >
             <Clock className="w-3 h-3 mr-1" /> Verification Pending
           </Badge>
@@ -65,7 +65,7 @@ const LandConversionStatusPage = async () => {
         return (
           <Badge
             variant="secondary"
-            className="bg-indigo-100 text-indigo-700 hover:bg-indigo-100"
+            className="bg-orange-100 text-orange-700 hover:bg-orange-100"
           >
             <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
           </Badge>
@@ -168,7 +168,7 @@ const LandConversionStatusPage = async () => {
           </p>
         </div>
         <Link href="/dashboard/land-conversion/apply">
-          <Button className="bg-blue-600 hover:bg-blue-700">
+          <Button className="bg-orange-600 hover:bg-orange-700">
             <Trees className="w-4 h-4 mr-2" />
             New Application
           </Button>
@@ -207,7 +207,7 @@ const LandConversionStatusPage = async () => {
                     key={app.id}
                     className="hover:bg-slate-50 transition-colors"
                   >
-                    <TableCell className="font-medium text-blue-700">
+                    <TableCell className="font-medium text-orange-700">
                       {app.applicationNo}
                     </TableCell>
                     <TableCell>

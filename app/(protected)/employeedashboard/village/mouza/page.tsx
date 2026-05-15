@@ -101,7 +101,7 @@ export default function MouzaPage() {
     {
       header: "Total Households",
       accessor: (item: any) => (
-        <span className="font-medium text-blue-600">
+        <span className="font-medium text-orange-600">
           {item.totalHouseholds || 0}
         </span>
       ),
@@ -122,7 +122,7 @@ export default function MouzaPage() {
             variant="ghost"
             size="icon"
             onClick={() => handleEditClick(item)}
-            className="hover:bg-blue-100 hover:text-blue-600 transition-colors"
+            className="hover:bg-orange-100 hover:text-orange-600 transition-colors"
           >
             <Pencil className="h-4 w-4" />
           </Button>
@@ -146,8 +146,8 @@ export default function MouzaPage() {
         title="Mouza Management"
         description="Manage village administrative boundaries, J.L. numbers, and household data."
         icon={MapPin}
-        gradientFrom="from-blue-600"
-        gradientTo="to-indigo-600"
+        gradientFrom="from-orange-600"
+        gradientTo="to-orange-600"
       />
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-10 items-start">
@@ -159,8 +159,8 @@ export default function MouzaPage() {
         >
           <Card className="shadow-2xl shadow-gray-200/50 border-none rounded-3xl bg-white overflow-hidden">
             <CardHeader className="border-b border-gray-50 bg-gradient-to-r from-gray-50 to-white py-6">
-              <div className="flex items-center space-x-3 text-blue-600">
-                <div className="p-2 bg-blue-50 rounded-lg">
+              <div className="flex items-center space-x-3 text-orange-600">
+                <div className="p-2 bg-orange-50 rounded-lg">
                   <Plus className="h-5 w-5" />
                 </div>
                 <CardTitle className="text-xl font-bold tracking-tight text-gray-800">
@@ -203,8 +203,8 @@ export default function MouzaPage() {
         <DialogContent className="sm:max-w-[500px] rounded-3xl border-none shadow-2xl">
           <DialogHeader className="space-y-3 pb-4 border-b">
             <DialogTitle className="text-2xl font-bold text-gray-800 flex items-center space-x-2">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <MapPin className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <MapPin className="h-5 w-5 text-orange-600" />
               </div>
               <span>Edit Mouza Details</span>
             </DialogTitle>

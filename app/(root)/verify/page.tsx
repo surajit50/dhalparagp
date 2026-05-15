@@ -55,7 +55,7 @@ export default async function VerifyNocPage({ searchParams }: PageProps) {
       <div className="min-h-[70vh] flex flex-col items-center justify-start py-10 px-4">
         {/* ── Header banner ── */}
         <div className="w-full max-w-2xl mb-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 tracking-wide">
+          <div className="inline-flex items-center gap-2 bg-orange-50 border border-orange-200 text-orange-800 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 tracking-wide">
             <ShieldCheck className="h-3.5 w-3.5" />
             OFFICIAL CERTIFICATE VERIFICATION PORTAL
           </div>
@@ -170,7 +170,7 @@ export default async function VerifyNocPage({ searchParams }: PageProps) {
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
               <div className="bg-slate-50 border-b border-gray-200 px-6 py-3">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-blue-500" />
+                  <FileText className="h-4 w-4 text-orange-500" />
                   Certificate Details
                 </h3>
               </div>
@@ -236,7 +236,7 @@ export default async function VerifyNocPage({ searchParams }: PageProps) {
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
               <div className="bg-slate-50 border-b border-gray-200 px-6 py-3">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <User className="h-4 w-4 text-blue-500" />
+                  <User className="h-4 w-4 text-orange-500" />
                   Applicant Information
                 </h3>
               </div>
@@ -273,7 +273,7 @@ export default async function VerifyNocPage({ searchParams }: PageProps) {
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
               <div className="bg-slate-50 border-b border-gray-200 px-6 py-3">
                 <h3 className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-blue-500" />
+                  <MapPin className="h-4 w-4 text-orange-500" />
                   Land Parcel
                 </h3>
               </div>

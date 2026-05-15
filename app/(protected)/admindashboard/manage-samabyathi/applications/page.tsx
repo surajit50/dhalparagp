@@ -128,19 +128,19 @@ export default async function ApplicationsPage({
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-blue-500 shadow-sm">
+        <Card className="border-l-4 border-l-orange-500 shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
                   Total Disbursed
                 </p>
-                <h3 className="text-2xl font-bold mt-1 text-blue-600">
+                <h3 className="text-2xl font-bold mt-1 text-orange-600">
                   ₹{stats.totalAmount.toLocaleString("en-IN")}
                 </h3>
               </div>
-              <div className="p-3 bg-blue-50 rounded-full">
-                <IndianRupee className="h-5 w-5 text-blue-500" />
+              <div className="p-3 bg-orange-50 rounded-full">
+                <IndianRupee className="h-5 w-5 text-orange-500" />
               </div>
             </div>
           </CardContent>

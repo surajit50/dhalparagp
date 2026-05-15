@@ -30,8 +30,8 @@ export const MeasurementProgress: React.FC<MeasurementProgressProps> = ({
           <div className="space-y-5">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
-                <div className="p-2.5 bg-blue-50 rounded-xl">
-                  <Clock className="h-5 w-5 text-blue-600" />
+                <div className="p-2.5 bg-orange-50 rounded-xl">
+                  <Clock className="h-5 w-5 text-orange-600" />
                 </div>
                 <div>
                   <h3 className="font-bold text-[15px] text-slate-800">
@@ -43,15 +43,15 @@ export const MeasurementProgress: React.FC<MeasurementProgressProps> = ({
                 </div>
               </div>
               <div className="text-right">
-                <span className="text-2xl font-black text-blue-600">
+                <span className="text-2xl font-black text-orange-600">
                   {completionPercentage}%
                 </span>
               </div>
             </div>
-            <Progress value={completionPercentage} className="h-2.5 bg-slate-100 rounded-full overflow-hidden [&>div]:bg-blue-600 [&>div]:transition-all" />
+            <Progress value={completionPercentage} className="h-2.5 bg-slate-100 rounded-full overflow-hidden [&>div]:bg-orange-600 [&>div]:transition-all" />
             <div className="flex justify-between text-xs font-semibold text-slate-500">
               <span className="flex items-center gap-1.5 uppercase tracking-wider">
-                <div className="w-2.5 h-2.5 rounded-full bg-blue-600 shadow-sm"></div>
+                <div className="w-2.5 h-2.5 rounded-full bg-orange-600 shadow-sm"></div>
                 Measured: {mbEntriesLength}
               </span>
               <span className="flex items-center gap-1.5 uppercase tracking-wider">

@@ -29,7 +29,7 @@ export type Bill = {
 const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
     case "GENERATED":
-      return <Badge variant="secondary" className="bg-sky-50 text-sky-700 border-sky-200/50 px-3 py-1 rounded-full font-medium">Generated</Badge>;
+      return <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200/50 px-3 py-1 rounded-full font-medium">Generated</Badge>;
     case "PAID":
       return <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 border-emerald-200/50 px-3 py-1 rounded-full font-medium">Paid</Badge>;
     case "CANCELLED":
@@ -120,13 +120,13 @@ export const columns: ColumnDef<Bill>[] = [
             <DropdownMenuSeparator className="my-1" />
             <DropdownMenuItem asChild>
               <Link href={`/admindashboard/tubewell/bills/${bill.id}`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
-                <FileText className="h-4 w-4 mr-3 text-sky-600" /> <span className="font-medium">View Details</span>
+                <FileText className="h-4 w-4 mr-3 text-orange-600" /> <span className="font-medium">View Details</span>
               </Link>
             </DropdownMenuItem>
 
             <DropdownMenuItem asChild>
               <Link href={`/admindashboard/tubewell/bills/${bill.id}/print`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
-                <Printer className="h-4 w-4 mr-3 text-indigo-600" /> <span className="font-medium">Print Mustor Roll</span>
+                <Printer className="h-4 w-4 mr-3 text-orange-600" /> <span className="font-medium">Print Mustor Roll</span>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -221,7 +221,7 @@ export default function ViewVillageDetails() {
                       />
                     </div>
                     <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-blue-500" />
+                      <Users className="h-5 w-5 text-orange-500" />
                       <div>
                         <Label>Households</Label>
                         <p className="text-2xl font-bold">
@@ -234,7 +234,7 @@ export default function ViewVillageDetails() {
                 <TabsContent value="population">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <Users className="h-5 w-5 text-blue-500" />
+                      <Users className="h-5 w-5 text-orange-500" />
                       <div>
                         <Label>Total</Label>
                         <p className="text-2xl font-bold">
@@ -265,7 +265,7 @@ export default function ViewVillageDetails() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center justify-between">
                       <Label>Tap</Label>
-                      <Droplets className="h-4 w-4 text-sky-500" />
+                      <Droplets className="h-4 w-4 text-orange-500" />
                     </div>
                     <Input
                       value={String(details.water?.tapWater || 0)}

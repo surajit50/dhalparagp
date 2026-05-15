@@ -26,9 +26,9 @@ export default function ProjectInfoCard({
 }: ProjectInfoCardProps) {
   return (
     <Card className="border-0 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
         <CardTitle>Project Information</CardTitle>
-        <CardDescription className="text-blue-100">
+        <CardDescription className="text-orange-100">
           {workSelected
             ? "Project details auto-populated from selected work"
             : "Enter project details"}

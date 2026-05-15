@@ -138,7 +138,7 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
       case "PRESENT": return <Badge className="bg-green-100 text-green-800 border-green-200">Present</Badge>;
       case "ABSENT": return <Badge className="bg-red-100 text-red-800 border-red-200">Absent</Badge>;
       case "LEAVE": return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Leave</Badge>;
-      case "HALF_DAY": return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Half Day</Badge>;
+      case "HALF_DAY": return <Badge className="bg-orange-100 text-orange-800 border-orange-200">Half Day</Badge>;
       default: return <Badge variant="outline">{status}</Badge>;
     }
   };
@@ -183,7 +183,7 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
                   <div className="w-3 h-3 rounded-full bg-yellow-100 flex items-center justify-center text-[8px] font-bold text-yellow-700">L</div> Leave
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
-                  <div className="w-3 h-3 rounded-full bg-blue-100 flex items-center justify-center text-[8px] font-bold text-blue-700">H</div> Half Day
+                  <div className="w-3 h-3 rounded-full bg-orange-100 flex items-center justify-center text-[8px] font-bold text-orange-700">H</div> Half Day
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-slate-500">
                   <div className="w-3 h-3 rounded-full bg-orange-100 flex items-center justify-center text-[8px] font-bold text-orange-700">H</div> Holiday
@@ -229,7 +229,7 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
                       <TableRow key={user.id} className="hover:bg-slate-50/50 transition-colors">
                         <TableCell className="font-medium border-r py-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700">
                               <UserIcon className="h-4 w-4" />
                             </div>
                             <div className="flex flex-col">
@@ -268,7 +268,7 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
                                   ) : (
                                     <div className={cn(
                                       "w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold",
-                                      record.status === "LEAVE" ? "bg-yellow-100 text-yellow-700" : "bg-blue-100 text-blue-700"
+                                      record.status === "LEAVE" ? "bg-yellow-100 text-yellow-700" : "bg-orange-100 text-orange-700"
                                     )}>
                                       {record.status[0]}
                                     </div>
@@ -294,7 +294,7 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
           <Card className="border-none shadow-md">
             <CardHeader className="bg-slate-50/50 border-b flex flex-row items-center justify-between py-4">
               <CardTitle className="text-lg flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5 text-blue-600" />
+                <CalendarIcon className="h-5 w-5 text-orange-600" />
                 Holidays
               </CardTitle>
               <Dialog open={isHolidayDialogOpen} onOpenChange={setIsHolidayDialogOpen}>
@@ -361,7 +361,7 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
                           <div className="flex justify-between items-start">
                             <div className="space-y-1">
                               <p className="font-semibold text-sm">{holiday.name}</p>
-                              <p className="text-xs text-blue-600 font-medium">{format(new Date(holiday.date), "PPP")}</p>
+                              <p className="text-xs text-orange-600 font-medium">{format(new Date(holiday.date), "PPP")}</p>
                               {holiday.description && (
                                 <p className="text-xs text-slate-500 line-clamp-2 mt-1">{holiday.description}</p>
                               )}
@@ -384,24 +384,24 @@ export default function AttendanceClient({ initialHolidays }: AttendanceClientPr
           </Card>
 
           {/* Statistics Card */}
-          <Card className="border-none shadow-md bg-gradient-to-br from-blue-600 to-indigo-700 text-white">
+          <Card className="border-none shadow-md bg-gradient-to-br from-orange-600 to-orange-700 text-white">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-white/10 rounded-xl backdrop-blur-md">
                   <UserIcon className="h-6 w-6" />
                 </div>
                 <div>
-                  <p className="text-blue-100 text-sm font-medium">Total Staff Tracked</p>
+                  <p className="text-orange-100 text-sm font-medium">Total Staff Tracked</p>
                   <h3 className="text-2xl font-bold">{staffMembers.length} Members</h3>
                 </div>
               </div>
               <div className="mt-6 pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-blue-100 text-xs font-medium">Active This Month</p>
+                  <p className="text-orange-100 text-xs font-medium">Active This Month</p>
                   <p className="text-xl font-bold">{attendanceRecords.length}</p>
                 </div>
                 <div>
-                  <p className="text-blue-100 text-xs font-medium">Holidays</p>
+                  <p className="text-orange-100 text-xs font-medium">Holidays</p>
                   <p className="text-xl font-bold">{holidays.filter(h => getMonth(new Date(h.date)) === month).length}</p>
                 </div>
               </div>

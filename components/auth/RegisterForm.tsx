@@ -110,7 +110,7 @@ const RegisterForm = () => {
                       <Input
                         placeholder="John Doe"
                         type="text"
-                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
                         disabled={isPending}
                         {...field}
                       />
@@ -135,7 +135,7 @@ const RegisterForm = () => {
                       <Input
                         placeholder="you@example.com"
                         type="email"
-                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
                         disabled={isPending}
                         {...field}
                       />
@@ -160,7 +160,7 @@ const RegisterForm = () => {
                     <Input
                       placeholder="9876543210"
                       type="text"
-                      className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
                       disabled={isPending}
                       {...field}
                     />
@@ -184,7 +184,7 @@ const RegisterForm = () => {
                       <Input
                         placeholder="••••••••"
                         type={showPassword ? "text" : "password"}
-                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
                         disabled={isPending}
                         {...field}
                         onChange={(e) => {
@@ -344,7 +344,7 @@ const RegisterForm = () => {
                       <Input
                         placeholder="••••••••"
                         type={showPassword ? "text" : "password"}
-                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                        className="pl-4 pr-10 py-2 w-full border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
                         disabled={isPending}
                         {...field}
                       />
@@ -376,8 +376,8 @@ const RegisterForm = () => {
               disabled={isPending || isRedirecting}
               className={cn(
                 "w-full py-2.5 rounded-lg text-white font-medium transition-all",
-                "bg-blue-600 hover:bg-blue-700",
-                "disabled:bg-blue-400 disabled:cursor-not-allowed"
+                "bg-orange-600 hover:bg-orange-700",
+                "disabled:bg-orange-400 disabled:cursor-not-allowed"
               )}
             >
               {isPending || isRedirecting ? (
@@ -396,7 +396,7 @@ const RegisterForm = () => {
               Already have an account?{" "}
               <a
                 href="/auth/login"
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-orange-600 hover:text-orange-700 font-medium"
               >
                 Sign in
               </a>

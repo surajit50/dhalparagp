@@ -107,7 +107,7 @@ export function PopulationSummaryForm({
       type="number"
       value={field.value}
       onChange={(e) => field.onChange(Number(e.target.value))}
-      className="h-12 text-xl font-bold bg-gray-50/50 border-none focus:bg-white focus:ring-2 focus:ring-indigo-500/10 transition-all rounded-xl shadow-inner shadow-gray-100"
+      className="h-12 text-xl font-bold bg-gray-50/50 border-none focus:bg-white focus:ring-2 focus:ring-orange-500/10 transition-all rounded-xl shadow-inner shadow-gray-100"
     />
   );
 
@@ -123,8 +123,8 @@ export function PopulationSummaryForm({
             name="mouzaId"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel className="text-sm font-bold text-indigo-900 flex items-center space-x-2 mb-1">
-                  <MapPin className="h-5 w-5 text-indigo-600" />
+                <FormLabel className="text-sm font-bold text-orange-900 flex items-center space-x-2 mb-1">
+                  <MapPin className="h-5 w-5 text-orange-600" />
                   <span>Administrative Area (Mouza)</span>
                 </FormLabel>
                 <Select
@@ -136,13 +136,13 @@ export function PopulationSummaryForm({
                   disabled={isEditing}
                 >
                   <FormControl>
-                    <SelectTrigger className="h-12 bg-white border-gray-200 rounded-xl focus:ring-indigo-500/20 shadow-sm transition-all duration-200">
+                    <SelectTrigger className="h-12 bg-white border-gray-200 rounded-xl focus:ring-orange-500/20 shadow-sm transition-all duration-200">
                       <SelectValue placeholder="Select Mouza for population audit" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="rounded-xl border-gray-100 shadow-xl">
                     {mouzas.map((m) => (
-                      <SelectItem key={m.id} value={m.id} className="focus:bg-indigo-50 focus:text-indigo-900 transition-colors">
+                      <SelectItem key={m.id} value={m.id} className="focus:bg-orange-50 focus:text-orange-900 transition-colors">
                         {m.name}
                       </SelectItem>
                     ))}
@@ -171,12 +171,12 @@ export function PopulationSummaryForm({
                 name="totalMale"
                 render={({ field }) => (
                   <FormItem className="p-6 bg-white rounded-3xl border border-gray-100 space-y-4 shadow-sm">
-                    <FormLabel className="font-bold text-indigo-700 tracking-tight flex justify-between items-center">
+                    <FormLabel className="font-bold text-orange-700 tracking-tight flex justify-between items-center">
                       Aggregate Male Population
-                      <span className="text-[10px] bg-indigo-50 px-2 py-1 rounded-full">SYSTEM AUTO</span>
+                      <span className="text-[10px] bg-orange-50 px-2 py-1 rounded-full">SYSTEM AUTO</span>
                     </FormLabel>
                     <FormControl>
-                      <Input disabled value={field.value} className="h-14 text-2xl font-black bg-indigo-50/50 border-none cursor-not-allowed opacity-70 text-indigo-900" />
+                      <Input disabled value={field.value} className="h-14 text-2xl font-black bg-orange-50/50 border-none cursor-not-allowed opacity-70 text-orange-900" />
                     </FormControl>
                   </FormItem>
                 )}
@@ -188,12 +188,12 @@ export function PopulationSummaryForm({
                 name="totalFemale"
                 render={({ field }) => (
                   <FormItem className="p-6 bg-white rounded-3xl border border-gray-100 space-y-4 shadow-sm">
-                    <FormLabel className="font-bold text-teal-700 tracking-tight flex justify-between items-center">
+                    <FormLabel className="font-bold text-orange-700 tracking-tight flex justify-between items-center">
                       Aggregate Female Population
-                      <span className="text-[10px] bg-teal-50 px-2 py-1 rounded-full font-bold">SYSTEM AUTO</span>
+                      <span className="text-[10px] bg-orange-50 px-2 py-1 rounded-full font-bold">SYSTEM AUTO</span>
                     </FormLabel>
                     <FormControl>
-                      <Input disabled value={field.value} className="h-14 text-2xl font-black bg-teal-50/50 border-none cursor-not-allowed opacity-70 text-teal-900" />
+                      <Input disabled value={field.value} className="h-14 text-2xl font-black bg-orange-50/50 border-none cursor-not-allowed opacity-70 text-orange-900" />
                     </FormControl>
                   </FormItem>
                 )}
@@ -268,7 +268,7 @@ export function PopulationSummaryForm({
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="w-full h-14 bg-gradient-to-r from-indigo-600 to-teal-600 hover:from-indigo-700 hover:to-teal-700 text-white font-bold rounded-2xl shadow-xl shadow-indigo-100 transition-all duration-200 active:scale-[0.98] text-lg"
+            className="w-full h-14 bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white font-bold rounded-2xl shadow-xl shadow-orange-100 transition-all duration-200 active:scale-[0.98] text-lg"
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center space-x-2">

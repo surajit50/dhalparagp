@@ -27,12 +27,12 @@ const notifications = [
 export default function NotificationsSection() {
   return (
     <Card className="overflow-hidden">
-      <div className="bg-indigo-800 p-6">
+      <div className="bg-orange-800 p-6">
         <h2 className="text-2xl font-bold text-white">Updates</h2>
       </div>
       <CardContent className="p-0">
         <Tabs defaultValue="notifications" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-indigo-100">
+          <TabsList className="grid w-full grid-cols-3 bg-orange-100">
             <TabsTrigger value="notifications" className="data-[state=active]:bg-white">
               Notifications
             </TabsTrigger>
@@ -52,8 +52,8 @@ export default function NotificationsSection() {
                       key={index}
                       className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow transition-all duration-300 hover:shadow-md hover:translate-x-1"
                     >
-                      <div className="bg-indigo-100 p-2 rounded-full">
-                        <item.icon className="h-5 w-5 text-indigo-600" aria-hidden="true" />
+                      <div className="bg-orange-100 p-2 rounded-full">
+                        <item.icon className="h-5 w-5 text-orange-600" aria-hidden="true" />
                       </div>
                       <div className="flex-1">
                         <p className="font-medium text-gray-800">{item.content}</p>

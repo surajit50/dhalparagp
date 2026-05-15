@@ -29,7 +29,7 @@ export default function LandConversionLayout({
             <h1 className="text-lg font-semibold">
               Land Conversion Management System
             </h1>
-            <p className="text-xs text-blue-100">{subtitle}</p>
+            <p className="text-xs text-orange-100">{subtitle}</p>
           </div>
         </div>
       </header>

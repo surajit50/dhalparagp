@@ -40,8 +40,8 @@ export default async function CreateAOCPage() {
       <div className="flex items-center justify-between">
 
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-blue-100">
-            <FileCheck className="h-6 w-6 text-blue-700" />
+          <div className="p-3 rounded-lg bg-orange-100">
+            <FileCheck className="h-6 w-6 text-orange-700" />
           </div>
 
           <div>
@@ -65,8 +65,8 @@ export default async function CreateAOCPage() {
 
         <Card className="border shadow-sm">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="p-3 rounded-lg bg-blue-100">
-              <FileText className="h-5 w-5 text-blue-700" />
+            <div className="p-3 rounded-lg bg-orange-100">
+              <FileText className="h-5 w-5 text-orange-700" />
             </div>
 
             <div>

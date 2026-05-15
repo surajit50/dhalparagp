@@ -206,7 +206,7 @@ export default function DocumentVerificationPage() {
                         key={it.id}
                         className={`cursor-pointer transition-colors ${
                           selected?.id === it.id
-                            ? "bg-blue-50 hover:bg-blue-50"
+                            ? "bg-orange-50 hover:bg-orange-50"
                             : "hover:bg-gray-50"
                         }`}
                         onClick={() =>
@@ -216,7 +216,7 @@ export default function DocumentVerificationPage() {
                         <TableCell className="text-gray-500 text-sm">
                           {idx + 1}
                         </TableCell>
-                        <TableCell className="font-mono font-semibold text-blue-800 text-sm">
+                        <TableCell className="font-mono font-semibold text-orange-800 text-sm">
                           {it.applicationNo}
                         </TableCell>
                         <TableCell className="font-medium text-gray-800 text-sm">
@@ -240,7 +240,7 @@ export default function DocumentVerificationPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-7 text-xs"
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 h-7 text-xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelected(
@@ -263,15 +263,15 @@ export default function DocumentVerificationPage() {
 
         {/* ─── DETAIL PANEL ─── */}
         {selected && (
-          <Card className="border-blue-200 shadow-sm">
-            <CardHeader className="bg-blue-50 border-b">
+          <Card className="border-orange-200 shadow-sm">
+            <CardHeader className="bg-orange-50 border-b">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base text-blue-900">
+                  <CardTitle className="text-base text-orange-900">
                     Verification Panel —{" "}
                     <span className="font-mono">{selected.applicationNo}</span>
                   </CardTitle>
-                  <CardDescription className="text-blue-700">
+                  <CardDescription className="text-orange-700">
                     {selected.applicantName} · Mouza: {selected.mouza}
                   </CardDescription>
                 </div>
@@ -339,7 +339,7 @@ export default function DocumentVerificationPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                              className="h-7 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                               asChild
                             >
                               <a

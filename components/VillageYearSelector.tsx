@@ -36,7 +36,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
         <CardHeader className="pb-4">
           <CardTitle className="text-2xl font-bold text-center text-gray-800 flex flex-col items-center">
             <div className="flex items-center gap-3 mb-2">
-              <Building2 className="h-7 w-7 text-blue-600" />
+              <Building2 className="h-7 w-7 text-orange-600" />
               <span>Select Village and Year</span>
             </div>
             <p className="text-base font-normal text-gray-600 mt-2">
@@ -50,7 +50,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
               {/* Year Selector */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Calendar className="h-4 w-4 text-blue-500" />
+                  <Calendar className="h-4 w-4 text-orange-500" />
                   <span>Year *</span>
                 </div>
                 <Select value={year} onValueChange={setYear} required>
@@ -63,7 +63,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
                         <SelectItem 
                           key={y.id} 
                           value={y.yeardata}
-                          className="py-3 px-4 text-base hover:bg-blue-50"
+                          className="py-3 px-4 text-base hover:bg-orange-50"
                         >
                           {y.yeardata}
                         </SelectItem>
@@ -75,7 +75,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
               {/* Village Selector */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <Building2 className="h-4 w-4 text-blue-500" />
+                  <Building2 className="h-4 w-4 text-orange-500" />
                   <span>Village *</span>
                 </div>
                 <Select value={villageId} onValueChange={setVillageId} required>
@@ -87,7 +87,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
                       <SelectItem 
                         key={v.id} 
                         value={v.id}
-                        className="py-3 px-4 text-base hover:bg-blue-50"
+                        className="py-3 px-4 text-base hover:bg-orange-50"
                       >
                         {v.name}
                       </SelectItem>
@@ -99,10 +99,10 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
 
             {/* Village Information Card */}
             {selectedVillage && (
-              <Card className="bg-blue-50 border border-blue-200 rounded-xl">
+              <Card className="bg-orange-50 border border-orange-200 rounded-xl">
                 <CardContent className="p-4">
                   <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-2 text-blue-800">
+                    <div className="flex items-center gap-2 text-orange-800">
                       <Info className="h-4 w-4" />
                       <h3 className="font-medium">Village Details</h3>
                     </div>
@@ -111,7 +111,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
                       <div className="flex items-center gap-2">
                         <Badge 
                           variant="secondary" 
-                          className="bg-white text-blue-600 border border-blue-200 px-3 py-1"
+                          className="bg-white text-orange-600 border border-orange-200 px-3 py-1"
                         >
                           LGD Code
                         </Badge>
@@ -120,7 +120,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
                       <div className="flex items-center gap-2">
                         <Badge 
                           variant="secondary" 
-                          className="bg-white text-blue-600 border border-blue-200 px-3 py-1"
+                          className="bg-white text-orange-600 border border-orange-200 px-3 py-1"
                         >
                           JL No
                         </Badge>
@@ -136,7 +136,7 @@ export function VillageYearSelector({ years, villages, onSelect }: Props) {
             <div className="flex justify-center pt-4">
               <Button 
                 type="submit" 
-                className="px-8 py-6 text-base font-medium bg-blue-600 hover:bg-blue-700 transition-all"
+                className="px-8 py-6 text-base font-medium bg-orange-600 hover:bg-orange-700 transition-all"
                 disabled={!year || !villageId}
               >
                 <span className="flex items-center gap-2">

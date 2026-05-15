@@ -65,7 +65,7 @@ export function PendingDetailsDialog({ lease }: PendingDetailsDialogProps) {
       <DialogTrigger asChild>
         <Button
           variant="link"
-          className="p-0 h-auto text-[10px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+          className="p-0 h-auto text-[10px] font-bold text-orange-600 hover:text-orange-800 flex items-center gap-1"
         >
           <Info className="h-3 w-3" />
           View Year-wise Pending
@@ -157,8 +157,8 @@ export function PendingDetailsDialog({ lease }: PendingDetailsDialogProps) {
             </div>
           </div>
 
-          <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100/50">
-            <p className="text-[10px] text-blue-700 leading-relaxed font-medium">
+          <div className="bg-orange-50/50 p-3 rounded-lg border border-orange-100/50">
+            <p className="text-[10px] text-orange-700 leading-relaxed font-medium">
               Note: This breakdown uses FIFO logic. Payments are automatically
               applied to the oldest outstanding year first.
             </p>

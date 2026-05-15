@@ -126,7 +126,7 @@ export function HolidayCalendarNIC() {
         >
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-blue-800 hover:bg-blue-900 text-white px-5 py-3 rounded-full text-sm font-semibold shadow-2xl flex items-center gap-2 border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-95"
+            className="bg-orange-800 hover:bg-orange-900 text-white px-5 py-3 rounded-full text-sm font-semibold shadow-2xl flex items-center gap-2 border-2 border-white/20 transition-all duration-300 hover:scale-110 active:scale-95"
           >
             <Landmark className="w-5 h-5" />
             <span className="hidden md:inline">Holiday Calendar</span>
@@ -139,7 +139,7 @@ export function HolidayCalendarNIC() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white w-[500px] max-w-[95%] border rounded-md shadow-md">
             {/* Header */}
-            <div className="bg-blue-900 text-white px-4 py-3 flex justify-between items-center border-b">
+            <div className="bg-orange-900 text-white px-4 py-3 flex justify-between items-center border-b">
               <div className="flex items-center gap-2">
                 <Landmark className="w-5 h-5" />
                 <div>
@@ -185,7 +185,7 @@ export function HolidayCalendarNIC() {
               <div className="border border-gray-300 rounded-md p-4 bg-gray-50">
                 {holidayName ? (
                   <>
-                    <p className="text-sm font-semibold text-blue-900">
+                    <p className="text-sm font-semibold text-orange-900">
                       {holidayName}
                     </p>
                     <p className="text-xs text-gray-600 mt-1">

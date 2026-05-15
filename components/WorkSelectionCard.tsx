@@ -32,16 +32,16 @@ export default function WorkSelectionCard({
 }: WorkSelectionCardProps) {
   return (
     <Card className="border-0 shadow-lg">
-      <CardHeader className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white">
+      <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-700 text-white">
         <CardTitle>Select Work</CardTitle>
-        <CardDescription className="text-indigo-100">
+        <CardDescription className="text-orange-100">
           Choose a work to auto-populate project details
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6">
         {loadingWorks ? (
           <div className="flex items-center justify-center py-8">
-            <Loader className="h-6 w-6 animate-spin text-blue-600 mr-2" />
+            <Loader className="h-6 w-6 animate-spin text-orange-600 mr-2" />
             <span className="text-slate-600">Loading works...</span>
           </div>
         ) : works.length === 0 ? (

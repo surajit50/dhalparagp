@@ -237,7 +237,7 @@ const FinancialReportPage = async () => {
 
   const getSourceBadge = (source: string) => {
     const colors = {
-      SFC: "bg-blue-100 text-blue-800 border-blue-200",
+      SFC: "bg-orange-100 text-orange-800 border-orange-200",
       CFC: "bg-purple-100 text-purple-800 border-purple-200",
       OSR: "bg-orange-100 text-orange-800 border-orange-200",
     };
@@ -373,7 +373,7 @@ const FinancialReportPage = async () => {
           </CardDescription>
           <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mt-2">
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 bg-blue-100 rounded-sm"></div>
+              <div className="w-3 h-3 bg-orange-100 rounded-sm"></div>
               Work orders ≥ ₹2.5 lakh
             </div>
             <div className="flex items-center gap-1">
@@ -393,7 +393,7 @@ const FinancialReportPage = async () => {
               Top 5 by value
             </div>
             <div className="flex items-center gap-1">
-              <span className="w-5 h-5 flex items-center justify-center text-xs font-bold bg-blue-600 text-white rounded-full">
+              <span className="w-5 h-5 flex items-center justify-center text-xs font-bold bg-orange-600 text-white rounded-full">
                 1
               </span>
               Ranked by value
@@ -445,7 +445,7 @@ const FinancialReportPage = async () => {
                             : isHighlighted
                               ? "bg-red-50 hover:bg-red-100"
                               : isHighValue
-                                ? "bg-blue-50 hover:bg-blue-100"
+                                ? "bg-orange-50 hover:bg-orange-100"
                                 : "hover:bg-muted/50"
                         }
                       `}
@@ -505,7 +505,7 @@ const FinancialReportPage = async () => {
                             <span className="text-muted-foreground">₹0</span>
                           )}
                           {rank && (
-                            <span className="absolute -top-2 -right-2 bg-blue-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                            <span className="absolute -top-2 -right-2 bg-orange-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                               {rank}
                             </span>
                           )}

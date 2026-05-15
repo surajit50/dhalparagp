@@ -52,7 +52,7 @@ export default function VillageDashboardPage() {
     const totalPopulation = overview.reduce((acc, curr) => acc + (curr.totalPopulation || 0), 0);
     const totalHouseholds = overview.reduce((acc, curr) => acc + (curr.householdCount || 0), 0);
     return [
-      { label: "Administrative Mouzas", value: mouzas.length, icon: MapPin, color: "text-blue-600", bg: "bg-blue-50" },
+      { label: "Administrative Mouzas", value: mouzas.length, icon: MapPin, color: "text-orange-600", bg: "bg-orange-50" },
       { label: "Total Residents", value: totalPopulation, icon: Users, color: "text-emerald-600", bg: "bg-emerald-50" },
       { label: "Recorded Households", value: totalHouseholds, icon: Home, color: "text-purple-600", bg: "bg-purple-50" },
       { label: "Active Constituencies", value: 12, icon: ShieldCheck, color: "text-amber-600", bg: "bg-amber-50" }, // Placeholder for Sansad count
@@ -215,7 +215,7 @@ export default function VillageDashboardPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-gray-800 flex items-center">
-            <PlusCircle className="h-6 w-6 mr-2 text-blue-600" />
+            <PlusCircle className="h-6 w-6 mr-2 text-orange-600" />
             Management Modules
           </h2>
           <div className="flex items-center space-x-2 text-sm text-gray-500 font-medium bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
@@ -250,7 +250,7 @@ export default function VillageDashboardPage() {
                         {mod.category}
                       </Badge>
                     </div>
-                    <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-blue-600 transition-colors">
+                    <CardTitle className="text-xl font-bold text-gray-800 group-hover:text-orange-600 transition-colors">
                       {mod.title}
                     </CardTitle>
                   </CardHeader>
@@ -258,7 +258,7 @@ export default function VillageDashboardPage() {
                     <CardDescription className="text-gray-500 text-sm leading-relaxed mb-6">
                       {mod.description}
                     </CardDescription>
-                    <div className="flex items-center text-xs font-bold text-blue-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-[-10px] group-hover:translate-x-0">
+                    <div className="flex items-center text-xs font-bold text-orange-600 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-[-10px] group-hover:translate-x-0">
                       Explore Module
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </div>
@@ -271,7 +271,7 @@ export default function VillageDashboardPage() {
       </div>
 
       {/* Decorative background element */}
-      <div className="fixed bottom-[-100px] right-[-100px] w-96 h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
+      <div className="fixed bottom-[-100px] right-[-100px] w-96 h-96 bg-orange-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
       <div className="fixed top-[20%] left-[-100px] w-72 h-72 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -z-10" />
     </div>
   );

@@ -928,7 +928,7 @@ export default function AddEstimateItemCard({
                   </h3>
                   {editingMeasurementId && (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-blue-600 font-medium">
+                      <span className="text-xs text-orange-600 font-medium">
                         Editing Measurement
                       </span>
                       <Button
@@ -978,7 +978,7 @@ export default function AddEstimateItemCard({
                                 onClick={() => editMeasurement(m.id!)}
                                 disabled={estimateExists && !isEditing}
                               >
-                                <Edit className="h-4 w-4 text-blue-500" />
+                                <Edit className="h-4 w-4 text-orange-500" />
                               </Button>
                               <Button
                                 variant="ghost"
@@ -1214,7 +1214,7 @@ export default function AddEstimateItemCard({
               <div className="flex items-center gap-2">
                 {editingSubItemId && (
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-blue-600 font-medium">
+                    <span className="text-xs text-orange-600 font-medium">
                       Editing Sub-item
                     </span>
                     <Button
@@ -1301,7 +1301,7 @@ export default function AddEstimateItemCard({
                                 onClick={() => editSubItem(item.id || "", idx)}
                                 disabled={estimateExists && !isEditing}
                               >
-                                <Edit className="h-4 w-4 text-blue-500" />
+                                <Edit className="h-4 w-4 text-orange-500" />
                               </Button>
                               <Button
                                 variant="ghost"

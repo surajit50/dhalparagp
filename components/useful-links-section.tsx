@@ -22,7 +22,7 @@ export default function UsefulLinksSection() {
   const [showAll, setShowAll] = useState(false)
 
   return (
-    <Card className="bg-gradient-to-br from-indigo-500 to-purple-600 text-white overflow-hidden">
+    <Card className="bg-gradient-to-br from-orange-500 to-purple-600 text-white overflow-hidden">
       <div className="p-6 border-b border-white/10">
         <h2 className="text-2xl font-bold">Useful Links</h2>
       </div>
@@ -49,7 +49,7 @@ export default function UsefulLinksSection() {
           <div className="mt-4">
             <Button 
               onClick={() => setShowAll(true)} 
-              className="bg-white text-indigo-600 hover:bg-indigo-100 w-full"
+              className="bg-white text-orange-600 hover:bg-orange-100 w-full"
             >
               More Links
             </Button>

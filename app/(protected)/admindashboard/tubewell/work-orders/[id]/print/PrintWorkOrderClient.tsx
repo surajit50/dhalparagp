@@ -67,8 +67,8 @@ export function PrintWorkOrderClient({
         {/* Main Paper */}
         <div className="bg-white shadow-xl print:shadow-none p-8 print:p-4 text-[12px] leading-relaxed">
           {/* Header */}
-          <div className="text-center border-b-4 border-blue-900 pb-4 mb-6">
-            <h1 className="text-3xl font-extrabold text-blue-900">
+          <div className="text-center border-b-4 border-orange-900 pb-4 mb-6">
+            <h1 className="text-3xl font-extrabold text-orange-900">
               {gpProfile?.gpname || "No. 3 Dhalpara Gram Panchayat"}
             </h1>
             <p className="text-sm font-semibold mt-1">
@@ -85,7 +85,7 @@ export function PrintWorkOrderClient({
           <div className="grid grid-cols-2 mb-4 text-sm">
             <div>
               <span className="font-bold">Serial No. :</span>
-              <span className="border-b border-dotted ml-2 px-2 font-bold text-blue-900">
+              <span className="border-b border-dotted ml-2 px-2 font-bold text-orange-900">
                 {order.orderNumber}
               </span>
             </div>
@@ -152,7 +152,7 @@ export function PrintWorkOrderClient({
                       <tr key={i}>
                         <td className="border text-center">{i + 1}</td>
                         <td className="border pl-2">{item}</td>
-                        <td className="border text-center font-bold text-blue-900">
+                        <td className="border text-center font-bold text-orange-900">
                           {getMaterialQty(item)}
                         </td>
                       </tr>
@@ -178,7 +178,7 @@ export function PrintWorkOrderClient({
                           {leftItems.length + i + 1}
                         </td>
                         <td className="border pl-2">{item}</td>
-                        <td className="border text-center font-bold text-blue-900">
+                        <td className="border text-center font-bold text-orange-900">
                           {getMaterialQty(item)}
                         </td>
                       </tr>
@@ -215,7 +215,7 @@ export function PrintWorkOrderClient({
                       <tr key={i}>
                         <td className="border text-center py-1">{i + 1}</td>
                         <td className="border px-2 py-1">{row.workType}</td>
-                        <td className="border text-center font-bold text-blue-900 py-1">{row.quantity}</td>
+                        <td className="border text-center font-bold text-orange-900 py-1">{row.quantity}</td>
                         <td className="border text-center py-1">{row.rate.toFixed(2)}</td>
                         <td className="border text-center font-bold py-1">{row.total.toFixed(2)}</td>
                       </tr>

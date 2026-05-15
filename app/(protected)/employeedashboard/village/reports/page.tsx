@@ -111,7 +111,7 @@ export default function VillageReportsPage() {
 
     return [
       { label: "Total Population", value: totalPop, icon: Users, color: "text-emerald-600", bg: "bg-emerald-50", desc: "Total residents across GP" },
-      { label: "Households", value: totalHouseholds, icon: Home, color: "text-blue-600", bg: "bg-blue-50", desc: "Registered housing units" },
+      { label: "Households", value: totalHouseholds, icon: Home, color: "text-orange-600", bg: "bg-orange-50", desc: "Registered housing units" },
       { label: "Voter Base", value: totalVoters, icon: ShieldCheck, color: "text-amber-600", bg: "bg-amber-50", desc: "Eligible electoral population" },
       { label: "GP Personnel", value: totalMembers, icon: UserCheck, color: "text-purple-600", bg: "bg-purple-50", desc: "Active executive members" },
     ];
@@ -259,7 +259,7 @@ export default function VillageReportsPage() {
         header: "Households", 
         accessor: (item: any) => (
           <div className="flex items-center space-x-2">
-            <Home className="h-4 w-4 text-blue-400" />
+            <Home className="h-4 w-4 text-orange-400" />
             <span className="font-bold">{item.totalHouseholds || 0}</span>
           </div>
         )
@@ -285,8 +285,8 @@ export default function VillageReportsPage() {
         header: "Gender Distribution", 
         accessor: (item: any) => (
           <div className="flex space-x-4">
-            <div className="flex items-center text-xs font-bold text-blue-600">
-              <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5" />
+            <div className="flex items-center text-xs font-bold text-orange-600">
+              <span className="w-2 h-2 rounded-full bg-orange-500 mr-1.5" />
               M: {item.male}
             </div>
             <div className="flex items-center text-xs font-bold text-pink-600">
@@ -331,7 +331,7 @@ export default function VillageReportsPage() {
         accessor: (item: any) => (
           <div className="flex space-x-4">
             <div className="flex items-center text-xs font-bold text-slate-600">
-              <span className="w-2 h-2 rounded-full bg-blue-500 mr-1.5" />
+              <span className="w-2 h-2 rounded-full bg-orange-500 mr-1.5" />
               Male: {item.totalMaleVoter}
             </div>
             <div className="flex items-center text-xs font-bold text-slate-600">
@@ -359,10 +359,10 @@ export default function VillageReportsPage() {
         header: "Water Supply",
         accessor: (item: any) => (
           <div className="flex flex-wrap gap-2">
-            <div className="flex items-center text-[10px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+            <div className="flex items-center text-[10px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
               <Waves className="h-2.5 w-2.5 mr-1" /> Tap: {item.tapWater || 0}
             </div>
-            <div className="flex items-center text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+            <div className="flex items-center text-[10px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
               <Droplets className="h-2.5 w-2.5 mr-1" /> Pump: {item.handPump || 0}
             </div>
           </div>
@@ -393,7 +393,7 @@ export default function VillageReportsPage() {
         accessor: (item: any) => (
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline" className="text-[9px] font-black border-amber-200 text-amber-700 bg-amber-50">Primary: {item.primarySchool || 0}</Badge>
-            <Badge variant="outline" className="text-[9px] font-black border-blue-200 text-blue-700 bg-blue-50">High: {item.highSchool || 0}</Badge>
+            <Badge variant="outline" className="text-[9px] font-black border-orange-200 text-orange-700 bg-orange-50">High: {item.highSchool || 0}</Badge>
           </div>
         )
       },
@@ -402,7 +402,7 @@ export default function VillageReportsPage() {
         accessor: (item: any) => (
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline" className="text-[9px] font-black border-pink-200 text-pink-700 bg-pink-50">Anganwadi: {item.anganwadi || 0}</Badge>
-            <Badge variant="outline" className="text-[9px] font-black border-indigo-200 text-indigo-700 bg-indigo-50">SSK: {item.ssk || 0}</Badge>
+            <Badge variant="outline" className="text-[9px] font-black border-orange-200 text-orange-700 bg-orange-50">SSK: {item.ssk || 0}</Badge>
           </div>
         )
       },
@@ -421,7 +421,7 @@ export default function VillageReportsPage() {
         header: "Contact", 
         accessor: (item: any) => (
           <div className="flex items-center text-sm font-medium text-slate-600">
-            <UserCheck className="h-3 w-3 mr-1.5 text-blue-500" />
+            <UserCheck className="h-3 w-3 mr-1.5 text-orange-500" />
             {item.contactNo}
           </div>
         )
@@ -525,12 +525,12 @@ export default function VillageReportsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-xl font-black text-gray-800 flex items-center gap-2">
-                    <BarChart3 className="h-6 w-6 text-blue-500" />
+                    <BarChart3 className="h-6 w-6 text-orange-500" />
                     Population Density
                   </CardTitle>
                   <CardDescription className="text-xs font-medium text-gray-400">Gender distribution across top 10 Mouzas</CardDescription>
                 </div>
-                <Badge variant="outline" className="bg-white border-blue-100 text-blue-600 font-bold uppercase tracking-tighter">Live Census</Badge>
+                <Badge variant="outline" className="bg-white border-orange-100 text-orange-600 font-bold uppercase tracking-tighter">Live Census</Badge>
               </div>
             </CardHeader>
             <CardContent className="p-8 h-[350px]">
@@ -664,7 +664,7 @@ export default function VillageReportsPage() {
                       <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <h3 className="font-black text-gray-800 flex items-center gap-2 uppercase tracking-widest text-xs">
-                            <Waves className="h-4 w-4 text-sky-500" />
+                            <Waves className="h-4 w-4 text-orange-500" />
                             Water Resources Audit
                           </h3>
                         </div>

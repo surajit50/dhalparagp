@@ -203,7 +203,7 @@ export default function ApprovalWorkflowPage() {
                         key={item.id}
                         className={`cursor-pointer transition-colors ${
                           selected?.id === item.id
-                            ? "bg-blue-50 hover:bg-blue-50"
+                            ? "bg-orange-50 hover:bg-orange-50"
                             : "hover:bg-gray-50"
                         }`}
                         onClick={() =>
@@ -213,7 +213,7 @@ export default function ApprovalWorkflowPage() {
                         <TableCell className="text-gray-500 text-sm">
                           {idx + 1}
                         </TableCell>
-                        <TableCell className="font-mono font-semibold text-blue-800 text-sm">
+                        <TableCell className="font-mono font-semibold text-orange-800 text-sm">
                           {item.applicationNo}
                         </TableCell>
                         <TableCell className="font-medium text-gray-800 text-sm">
@@ -222,7 +222,7 @@ export default function ApprovalWorkflowPage() {
                         <TableCell className="text-center">
                           <Badge
                             variant="outline"
-                            className="bg-blue-50 text-blue-700 border-blue-200 text-xs"
+                            className="bg-orange-50 text-orange-700 border-orange-200 text-xs"
                           >
                             {item.status.replace(/_/g, " ")}
                           </Badge>
@@ -231,7 +231,7 @@ export default function ApprovalWorkflowPage() {
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-7 text-xs"
+                            className="text-orange-600 hover:text-orange-700 hover:bg-orange-50 h-7 text-xs"
                             onClick={(e) => {
                               e.stopPropagation();
                               setSelected(
@@ -254,15 +254,15 @@ export default function ApprovalWorkflowPage() {
 
         {/* ─── DECISION PANEL ─── */}
         {selected && (
-          <Card className="border-blue-200 shadow-sm">
-            <CardHeader className="bg-blue-50 border-b">
+          <Card className="border-orange-200 shadow-sm">
+            <CardHeader className="bg-orange-50 border-b">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base text-blue-900">
+                  <CardTitle className="text-base text-orange-900">
                     Decision Panel —{" "}
                     <span className="font-mono">{selected.applicationNo}</span>
                   </CardTitle>
-                  <CardDescription className="text-blue-700">
+                  <CardDescription className="text-orange-700">
                     {selected.applicantName}
                   </CardDescription>
                 </div>
@@ -278,9 +278,9 @@ export default function ApprovalWorkflowPage() {
             </CardHeader>
             <CardContent className="p-4 space-y-4">
               {/* Summary row */}
-              <div className="grid grid-cols-2 gap-4 p-3 bg-blue-50/50 rounded-lg border border-blue-100 text-sm">
+              <div className="grid grid-cols-2 gap-4 p-3 bg-orange-50/50 rounded-lg border border-orange-100 text-sm">
                 <div>
-                  <span className="text-blue-700 font-semibold block uppercase text-[10px] mb-1">
+                  <span className="text-orange-700 font-semibold block uppercase text-[10px] mb-1">
                     Application No
                   </span>
                   <span className="font-mono font-bold text-slate-800">
@@ -288,7 +288,7 @@ export default function ApprovalWorkflowPage() {
                   </span>
                 </div>
                 <div>
-                  <span className="text-blue-700 font-semibold block uppercase text-[10px] mb-1">
+                  <span className="text-orange-700 font-semibold block uppercase text-[10px] mb-1">
                     Applicant Name
                   </span>
                   <span className="font-bold text-slate-800">
@@ -312,7 +312,7 @@ export default function ApprovalWorkflowPage() {
                   onChange={(e) => setComments(e.target.value)}
                   placeholder="Provide detailed reasons for your decision..."
                   disabled={isPending}
-                  className="focus:ring-blue-500 border-gray-300 text-sm"
+                  className="focus:ring-orange-500 border-gray-300 text-sm"
                 />
               </div>
 

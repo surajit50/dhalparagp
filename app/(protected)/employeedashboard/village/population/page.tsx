@@ -140,7 +140,7 @@ export default function PopulationPage() {
         description="Monitor demographic distributions and religious data across GP administrative areas."
         icon={Users}
         gradientFrom="from-emerald-600"
-        gradientTo="to-teal-600"
+        gradientTo="to-orange-600"
       />
 
       <div className="space-y-10">

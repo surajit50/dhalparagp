@@ -60,7 +60,7 @@ export default function SamabyathiStatusPage() {
       case "APPROVED":
         return <CheckCircle2 className="h-8 w-8 text-green-500" />;
       case "PENDING":
-        return <Clock className="h-8 w-8 text-blue-500" />;
+        return <Clock className="h-8 w-8 text-orange-500" />;
       case "UNDER_REVIEW":
         return <Clock className="h-8 w-8 text-yellow-500" />;
       default:
@@ -78,7 +78,7 @@ export default function SamabyathiStatusPage() {
         );
       case "PENDING":
         return (
-          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 border-blue-200">
+          <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100 border-orange-200">
             Pending Sanction
           </Badge>
         );
@@ -198,11 +198,11 @@ export default function SamabyathiStatusPage() {
                 )}
 
               {statusData.status === "PENDING" && (
-                <div className="mt-6 p-4 bg-blue-50 border border-blue-100 rounded-lg">
-                  <p className="text-sm text-blue-700 font-medium">
+                <div className="mt-6 p-4 bg-orange-50 border border-orange-100 rounded-lg">
+                  <p className="text-sm text-orange-700 font-medium">
                     Verified & Pending Sanction
                   </p>
-                  <p className="text-sm text-blue-600 mt-1">
+                  <p className="text-sm text-orange-600 mt-1">
                     Your application has been verified by the administration. It
                     is now in the queue for fund allotment and sanction.
                   </p>

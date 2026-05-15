@@ -95,7 +95,7 @@ export default async function CorrigendumPage() {
     <div className="max-w-7xl mx-auto py-6 px-4 space-y-6">
       {/* Header Card */}
       <Card className="shadow-lg border-0">
-        <CardHeader className="bg-gradient-to-r from-purple-50 via-indigo-50 to-slate-50 border-b">
+        <CardHeader className="bg-gradient-to-r from-purple-50 via-orange-50 to-slate-50 border-b">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-purple-500 flex items-center justify-center">
               <FileText className="h-5 w-5 text-white" />

@@ -15,7 +15,7 @@ interface RequestDetailsPageProps {
 const StatusBadge = ({ status }: { status: string }) => {
     switch (status) {
         case "PENDING": return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">Pending Approval</Badge>;
-        case "APPROVED": return <Badge variant="secondary" className="bg-blue-100 text-blue-800">Approved (Ready for WO)</Badge>;
+        case "APPROVED": return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Approved (Ready for WO)</Badge>;
         case "WORK_ORDER_ISSUED": return <Badge variant="secondary" className="bg-purple-100 text-purple-800">Work Order Issued</Badge>;
         case "COMPLETED": return <Badge variant="secondary" className="bg-green-100 text-green-800">Completed</Badge>;
         case "REJECTED": return <Badge variant="destructive">Rejected</Badge>;

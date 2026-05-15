@@ -116,7 +116,7 @@ const AddTermsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
       <div className="mx-auto max-w-4xl space-y-8">
         <div className="space-y-4">
           <div className="flex items-center gap-4">
@@ -128,7 +128,7 @@ const AddTermsPage = () => {
             </Button>
           </div>
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-orange-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
               Add New Tender Term
             </h1>
             <p className="text-gray-600 text-lg font-medium">
@@ -138,9 +138,9 @@ const AddTermsPage = () => {
         </div>
 
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 rounded-t-lg">
+          <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50 border-b border-orange-100/50 rounded-t-lg">
             <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <div className="h-1 w-1 rounded-full bg-blue-600"></div>
+              <div className="h-1 w-1 rounded-full bg-orange-600"></div>
               Term Information
             </CardTitle>
             <CardDescription className="text-gray-600 font-medium">
@@ -153,7 +153,7 @@ const AddTermsPage = () => {
                 {/* Basic Information Section */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 pb-2">
-                    <FileText className="h-5 w-5 text-blue-600" />
+                    <FileText className="h-5 w-5 text-orange-600" />
                     <h3 className="text-lg font-semibold text-gray-900">Basic Information</h3>
                   </div>
                   
@@ -219,7 +219,7 @@ const AddTermsPage = () => {
                           </FormControl>
                           <FormDescription className="text-sm text-gray-500">
                             {orderData?.lastOrder !== undefined && !field.value ? (
-                              <span className="text-blue-600 font-medium">
+                              <span className="text-orange-600 font-medium">
                                 Suggested: {orderData.lastOrder + 1} (lower numbers appear first)
                               </span>
                             ) : (
@@ -238,7 +238,7 @@ const AddTermsPage = () => {
                 {/* Content Section */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2 pb-2">
-                    <AlignLeft className="h-5 w-5 text-blue-600" />
+                    <AlignLeft className="h-5 w-5 text-orange-600" />
                     <h3 className="text-lg font-semibold text-gray-900">Term Content</h3>
                   </div>
 
@@ -317,7 +317,7 @@ const AddTermsPage = () => {
                   <Button 
                     type="submit" 
                     disabled={mutation.isPending}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     {mutation.isPending ? (
                       <>

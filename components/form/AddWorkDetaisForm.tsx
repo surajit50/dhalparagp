@@ -203,7 +203,7 @@ const SelectWithOther = ({
   return (
     <div className="space-y-3">
       <Label className="text-gray-700 flex items-center gap-2 font-medium">
-        <IndianRupee className="h-5 w-5 text-blue-500" />
+        <IndianRupee className="h-5 w-5 text-orange-500" />
         {label}
       </Label>
 
@@ -213,7 +213,7 @@ const SelectWithOther = ({
           onValueChange={handleTypeChange}
           disabled={disabled}
         >
-          <SelectTrigger className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 disabled:opacity-50 disabled:cursor-not-allowed">
+          <SelectTrigger className="h-12 rounded-lg border-2 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:opacity-50 disabled:cursor-not-allowed">
             <SelectValue placeholder={`Select ${label}`} />
           </SelectTrigger>
           <SelectContent>
@@ -239,7 +239,7 @@ const SelectWithOther = ({
                 value={selectedValue}
                 onChange={onValueChange}
                 placeholder={placeholder}
-                className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 pl-12 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-12 rounded-lg border-2 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100 pl-12 disabled:opacity-50 disabled:cursor-not-allowed"
                 type="number"
                 min="0"
                 disabled={disabled}
@@ -482,7 +482,7 @@ export default function AddWorkDetailsForm({
   const isSubmitting = mutation.isPending;
 
   return (
-    <Card className="w-full max-w-6xl mx-auto shadow-2xl rounded-2xl border-0 bg-gradient-to-br from-white to-blue-50/30">
+    <Card className="w-full max-w-6xl mx-auto shadow-2xl rounded-2xl border-0 bg-gradient-to-br from-white to-orange-50/30">
       <CardContent className="p-8">
         <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -492,7 +492,7 @@ export default function AddWorkDetailsForm({
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
-                      <Search className="h-6 w-6 text-blue-500" />
+                      <Search className="h-6 w-6 text-orange-500" />
                       Search Work From Plans
                     </h3>
                     <div className="flex gap-2">
@@ -529,7 +529,7 @@ export default function AddWorkDetailsForm({
                           setSearchTerm(e.target.value);
                           setPage(1);
                         }}
-                        className="pl-10 pr-10 h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                        className="pl-10 pr-10 h-12 rounded-lg border-2 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
                       />
                       {searchTerm && (
                         <Button
@@ -554,7 +554,7 @@ export default function AddWorkDetailsForm({
                         setPage(1);
                       }}
                     >
-                      <SelectTrigger className="h-12 rounded-lg border-2 border-gray-200 focus:border-blue-500">
+                      <SelectTrigger className="h-12 rounded-lg border-2 border-gray-200 focus:border-orange-500">
                         <SelectValue placeholder="Filter by Financial Year" />
                       </SelectTrigger>
                       <SelectContent>
@@ -631,7 +631,7 @@ export default function AddWorkDetailsForm({
                       <Card className="border-2 border-gray-100 shadow-sm rounded-xl overflow-hidden bg-white/90 backdrop-blur-sm">
                         <div className="p-4 bg-gray-50/50 border-b flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <ClipboardList className="h-5 w-5 text-blue-500" />
+                            <ClipboardList className="h-5 w-5 text-orange-500" />
                             <span className="font-medium text-gray-700">
                               {isLoading
                                 ? "Searching..."
@@ -672,7 +672,7 @@ export default function AddWorkDetailsForm({
                             {isLoading ? (
                               <div className="flex items-center justify-center h-32">
                                 <div className="flex flex-col items-center gap-2">
-                                  <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+                                  <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
                                   <p className="text-sm text-gray-600">
                                     Loading plans...
                                   </p>
@@ -716,13 +716,13 @@ export default function AddWorkDetailsForm({
                                       <Label
                                         htmlFor={work.id}
                                         className="flex flex-col p-6 border-2 rounded-xl cursor-pointer transition-all 
-                                          bg-white hover:border-blue-300 hover:shadow-md peer-checked:border-blue-500 
-                                          peer-checked:bg-blue-50/50 peer-checked:shadow-lg group"
+                                          bg-white hover:border-orange-300 hover:shadow-md peer-checked:border-orange-500 
+                                          peer-checked:bg-orange-50/50 peer-checked:shadow-lg group"
                                       >
                                         <div className="flex items-start justify-between mb-4">
                                           <div className="flex items-center gap-3">
-                                            <div className="bg-blue-100 p-2 rounded-lg group-hover:bg-blue-200 transition-colors">
-                                              <ClipboardList className="h-6 w-6 text-blue-600" />
+                                            <div className="bg-orange-100 p-2 rounded-lg group-hover:bg-orange-200 transition-colors">
+                                              <ClipboardList className="h-6 w-6 text-orange-600" />
                                             </div>
                                             <div>
                                               <h3 className="font-semibold text-gray-800 text-lg leading-tight">
@@ -745,7 +745,7 @@ export default function AddWorkDetailsForm({
 
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                                           <div className="flex items-center gap-2 text-gray-600">
-                                            <CalendarDays className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                            <CalendarDays className="h-4 w-4 text-orange-500 flex-shrink-0" />
                                             <span className="truncate">
                                               {work.financialYear}
                                             </span>
@@ -887,7 +887,7 @@ export default function AddWorkDetailsForm({
                 {/* Financial Details Section */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-2">
-                    <IndianRupee className="h-6 w-6 text-blue-500" />
+                    <IndianRupee className="h-6 w-6 text-orange-500" />
                     <h3 className="text-xl font-semibold text-gray-800">
                       Financial Details
                     </h3>
@@ -913,7 +913,7 @@ export default function AddWorkDetailsForm({
 
                     <div className="space-y-4">
                       {selectedWork && (
-                        <div className="flex items-center space-x-2 mb-4 p-3 bg-blue-50 rounded-lg">
+                        <div className="flex items-center space-x-2 mb-4 p-3 bg-orange-50 rounded-lg">
                           <Checkbox
                             id="useSameAsEstimatedCost"
                             checked={useSameAsEstimatedCost}
@@ -1005,7 +1005,7 @@ export default function AddWorkDetailsForm({
               {currentStep === 2 && (
                 <Button
                   type="submit"
-                  className="w-full h-14 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 
+                  className="w-full h-14 bg-gradient-to-r from-orange-700 to-orange-700 hover:from-orange-800 hover:to-orange-800 
                   text-white rounded-xl shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02] text-lg font-semibold
                   disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   disabled={isSubmitting || !selectedWork}
@@ -1056,7 +1056,7 @@ export default function AddWorkDetailsForm({
               </Button>
               <Button
                 onClick={handleDialogClose}
-                className="h-12 flex-1 bg-blue-700 hover:bg-blue-800 text-white rounded-xl shadow-md"
+                className="h-12 flex-1 bg-orange-700 hover:bg-orange-800 text-white rounded-xl shadow-md"
               >
                 Add Another
               </Button>

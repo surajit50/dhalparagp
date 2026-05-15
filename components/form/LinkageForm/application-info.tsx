@@ -51,7 +51,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Applicant Name / আবেদনকারীর নাম"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -72,7 +72,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="Enter Mobile Number / মোবাইল নম্বর দিন"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -93,7 +93,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 placeholder="email@example.com"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -123,7 +123,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   }
                 }}
               >
-                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Enter Village / গ্রামের নাম লিখুন" />
                 </SelectTrigger>
                 <SelectContent>
@@ -182,7 +182,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -203,7 +203,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -225,7 +225,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Village, PO, PS, District"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -244,7 +244,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
             </FormLabel>
             <Select onValueChange={field.onChange} value={field.value}>
               <FormControl>
-                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
+                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
                   <SelectValue placeholder="Select type / ধরন নির্বাচন করুন" />
                 </SelectTrigger>
               </FormControl>
@@ -273,7 +273,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 {...field}
                 placeholder="e.g. Heirship, Ownership"
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -297,7 +297,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -321,7 +321,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Input
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />
@@ -342,7 +342,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <Textarea
                 {...field}
                 placeholder="Explain why this certificate is needed / এই শংসাপত্র কেন প্রয়োজন তা ব্যাখ্যা করুন"
-                className="bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
             <FormMessage className="text-xs text-red-500" />

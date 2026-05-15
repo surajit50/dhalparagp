@@ -92,7 +92,7 @@ function TendersTable({ tenders }: TendersTableProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-2 hover:bg-blue-50 hover:text-blue-700 border-blue-200"
+                    className="gap-2 hover:bg-orange-50 hover:text-orange-700 border-orange-200"
                     asChild
                   >
                     <a

@@ -344,7 +344,7 @@ export default function EnhancedCorrectionSearch({
                       <CardContent className="p-6">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-background/50 p-4 rounded-lg border border-dashed">
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <Info className="w-4 h-4 text-blue-500" />
+                            <Info className="w-4 h-4 text-orange-500" />
                             <span>Select a field to request a correction. Admin approval required.</span>
                           </div>
                           <CorrectionRequestForm

@@ -462,16 +462,16 @@ function WorkDetailsList({ workDetails }: WorkDetailsListProps) {
       <CardContent className="py-6">
         {/* 显示两个总计 */}
         <div className="mb-6 space-y-4">
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+          <div className="p-4 bg-orange-50 rounded-lg border border-orange-100">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-blue-800">
+              <h3 className="text-lg font-semibold text-orange-800">
                 Total Estimated Amount
               </h3>
-              <p className="text-2xl font-bold text-blue-900">
+              <p className="text-2xl font-bold text-orange-900">
                 ₹{totalEstimatedAmount.toLocaleString()}
               </p>
             </div>
-            <p className="text-sm text-blue-600 mt-1">
+            <p className="text-sm text-orange-600 mt-1">
               Based on {workDetails.WorksDetail.length} work items
             </p>
           </div>

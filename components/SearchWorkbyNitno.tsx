@@ -163,7 +163,7 @@ export function SearchWorkbyNitNoForm() {
           <Button
             type="submit"
             disabled={!selectedNitNo || isFetching}
-            className="w-full sm:w-auto px-8 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200"
+            className="w-full sm:w-auto px-8 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white transition-colors duration-200"
           >
             {isFetching ? (
               <span className="flex items-center">
@@ -179,7 +179,7 @@ export function SearchWorkbyNitNoForm() {
         {selectedNitNo && !isFetching && (
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
             Selected NIT:{" "}
-            <span className="font-medium text-blue-600 dark:text-blue-400">
+            <span className="font-medium text-orange-600 dark:text-orange-400">
               {`${selectedNitNo}/${gpcode}/(${selectedMemoDate?.getFullYear()})`}
             </span>
           </p>

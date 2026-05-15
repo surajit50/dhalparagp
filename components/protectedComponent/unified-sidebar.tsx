@@ -98,9 +98,9 @@ function MenuItem({
         onClick={handleNavigation}
         className={cn(
           "w-full justify-start px-3 py-2 text-sm transition-all duration-200 group relative overflow-hidden",
-          "hover:bg-blue-50/80 hover:text-blue-700",
+          "hover:bg-orange-50/80 hover:text-orange-700",
           isActive
-            ? "bg-blue-600 text-white font-medium shadow-md shadow-blue-200 hover:bg-blue-700 hover:text-white"
+            ? "bg-orange-600 text-white font-medium shadow-md shadow-orange-200 hover:bg-orange-700 hover:text-white"
             : "text-slate-600",
           level > 0 ? "pl-9 rounded-md" : "rounded-lg",
         )}
@@ -170,7 +170,7 @@ function SidebarContent({
       {/* Header */}
       <header className="h-16 px-6 flex items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-200">
+          <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-orange-200">
             <h1 className="text-lg font-bold">D</h1>
           </div>
           <div className="flex flex-col">
@@ -233,7 +233,7 @@ function SidebarContent({
             <Button
               variant="ghost"
               size="icon"
-              className="w-7 h-7 text-slate-400 hover:text-blue-600"
+              className="w-7 h-7 text-slate-400 hover:text-orange-600"
             >
               <Settings className="w-3.5 h-3.5" />
             </Button>

@@ -123,7 +123,7 @@ export default function ApprovedWarishApplications({ enableUpload = false }: { e
 
       {/* Search Card */}
       <Card className="shadow-lg border-gray-100 dark:border-gray-800">
-        <CardHeader className="bg-gradient-to-r from-primary/5 to-blue-50/50 dark:from-primary/10 dark:to-blue-900/10">
+        <CardHeader className="bg-gradient-to-r from-primary/5 to-orange-50/50 dark:from-primary/10 dark:to-orange-900/10">
           <CardTitle className="text-xl flex items-center gap-3 text-gray-800 dark:text-gray-100">
             <Search className="h-6 w-6 text-primary" />
             Certificate Search

@@ -45,8 +45,8 @@ const NotificationPage = async () => {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-blue-100">
-            <Bell className="h-6 w-6 text-blue-700" />
+          <div className="p-3 rounded-lg bg-orange-100">
+            <Bell className="h-6 w-6 text-orange-700" />
           </div>
 
           <div>
@@ -112,8 +112,8 @@ const NotificationPage = async () => {
                     className="flex items-start gap-4 border rounded-lg p-4 hover:bg-muted/50 transition"
                   >
 
-                    <div className="p-2 rounded-md bg-blue-100">
-                      <Bell className="h-4 w-4 text-blue-700" />
+                    <div className="p-2 rounded-md bg-orange-100">
+                      <Bell className="h-4 w-4 text-orange-700" />
                     </div>
 
                     <div className="flex-1">

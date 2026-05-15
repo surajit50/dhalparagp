@@ -13,7 +13,7 @@ function renderMenu(items: MenuItemProps[]): JSX.Element {
           <div>
             <span className="font-semibold">{item.menuItemText}</span>
             {item.menuItemLink && (
-              <span className="ml-2 text-blue-600 text-xs">
+              <span className="ml-2 text-orange-600 text-xs">
                 [{item.menuItemLink}]
               </span>
             )}

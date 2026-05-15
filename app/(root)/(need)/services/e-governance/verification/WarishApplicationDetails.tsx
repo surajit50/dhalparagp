@@ -132,13 +132,13 @@ export function WarishApplicationDetails() {
 
   // Status configuration based on your enum
   const statusConfig = {
-    submitted: { label: "Submitted", color: "bg-blue-100 text-blue-800" },
+    submitted: { label: "Submitted", color: "bg-orange-100 text-orange-800" },
     pending: { label: "Pending", color: "bg-amber-100 text-amber-800" },
     process: { label: "In Process", color: "bg-purple-100 text-purple-800" },
     approved: { label: "Approved", color: "bg-green-100 text-green-800" },
     rejected: { label: "Rejected", color: "bg-red-100 text-red-800" },
     cancelled: { label: "Cancelled", color: "bg-gray-100 text-gray-800" },
-    renewed: { label: "Renewed", color: "bg-teal-100 text-teal-800" }
+    renewed: { label: "Renewed", color: "bg-orange-100 text-orange-800" }
   };
 
   const status = application.warishApplicationStatus;
@@ -149,7 +149,7 @@ export function WarishApplicationDetails() {
       <DialogContent className="max-w-4xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
-            <Shield className="w-6 h-6 text-indigo-600" />
+            <Shield className="w-6 h-6 text-orange-600" />
             Warish Certificate Details
           </DialogTitle>
         </DialogHeader>
@@ -169,13 +169,13 @@ export function WarishApplicationDetails() {
             </Alert>
           )}
 
-          <Card className="w-full max-w-4xl mx-auto border-2 border-indigo-100 shadow-lg">
-            <CardHeader className="bg-indigo-800 text-white border-b-4 border-indigo-600">
+          <Card className="w-full max-w-4xl mx-auto border-2 border-orange-100 shadow-lg">
+            <CardHeader className="bg-orange-800 text-white border-b-4 border-orange-600">
               <div className="flex flex-col items-center space-y-2">
                 <CardTitle className="text-2xl font-bold text-center mb-2">
                   No 3 Dhalpara Gram Panchayat
                 </CardTitle>
-                <CardDescription className="text-indigo-100">
+                <CardDescription className="text-orange-100">
                   <p className="text-sm">Hili Development Block</p>
                   <p className="text-sm">Dakshin Dinajpur, West Bengal</p>
                 </CardDescription>
@@ -183,15 +183,15 @@ export function WarishApplicationDetails() {
             </CardHeader>
 
             <CardContent className="space-y-6 py-6">
-              <div className="grid grid-cols-2 gap-6 mb-8 bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+              <div className="grid grid-cols-2 gap-6 mb-8 bg-orange-50 p-4 rounded-lg border border-orange-200">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <FileDigit className="h-6 w-6 text-indigo-700" />
+                    <FileDigit className="h-6 w-6 text-orange-700" />
                     <div>
                       <p className="text-sm font-semibold text-gray-600">
                         Certificate Number
                       </p>
-                      <p className="font-mono text-lg text-indigo-900">
+                      <p className="font-mono text-lg text-orange-900">
                         {application.warishRefNo}
                       </p>
                     </div>
@@ -219,7 +219,7 @@ export function WarishApplicationDetails() {
                           : "NA"}
                       </p>
                     </div>
-                    <CalendarDays className="h-6 w-6 text-indigo-700" />
+                    <CalendarDays className="h-6 w-6 text-orange-700" />
                   </div>
                   <div className="mt-2 flex justify-end">
                     <Badge 
@@ -233,10 +233,10 @@ export function WarishApplicationDetails() {
               </div>
 
               <div className="text-center space-y-4">
-                <h3 className="text-2xl font-bold text-indigo-900 font-serif">
+                <h3 className="text-2xl font-bold text-orange-900 font-serif">
                   LEGAL HEIR CERTIFICATE
                 </h3>
-                <div className="border-t-2 border-indigo-200 w-1/3 mx-auto"></div>
+                <div className="border-t-2 border-orange-200 w-1/3 mx-auto"></div>
               </div>
 
               <div className="space-y-4 text-gray-700">
@@ -282,7 +282,7 @@ export function WarishApplicationDetails() {
                 />
               </div>
 
-              <div className="mt-8 pt-4 border-t-2 border-indigo-100">
+              <div className="mt-8 pt-4 border-t-2 border-orange-100">
                 <p className="text-sm text-gray-500 text-center">
                   This certificate is issued based on information provided by
                   the applicant and verification by local authorities

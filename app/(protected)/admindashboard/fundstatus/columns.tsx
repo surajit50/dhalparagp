@@ -123,7 +123,7 @@ const getStatusStyle = (status: string) => {
     case "workcompleted":
       return "bg-green-100 text-green-800";
     case "billpaid":
-      return "bg-blue-100 text-blue-800";
+      return "bg-orange-100 text-orange-800";
     case "approved":
       return "bg-purple-100 text-purple-800";
     case "workorder":

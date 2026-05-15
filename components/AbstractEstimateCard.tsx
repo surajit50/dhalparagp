@@ -96,11 +96,11 @@ export default function AbstractEstimateCard({
 
             <Separator className="my-3" />
 
-            <div className="flex justify-between items-center bg-gradient-to-r from-blue-50 to-blue-100 p-3 rounded-lg">
+            <div className="flex justify-between items-center bg-gradient-to-r from-orange-50 to-orange-100 p-3 rounded-lg">
               <span className="font-bold text-slate-900">
                 SAY / Final Cost
               </span>
-              <span className="text-2xl font-bold text-blue-600">
+              <span className="text-2xl font-bold text-orange-600">
                 ₹{finalCost.toLocaleString()}
               </span>
             </div>

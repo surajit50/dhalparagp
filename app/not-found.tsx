@@ -3,12 +3,12 @@ import { ArrowLeft, Home, AlertTriangle } from "lucide-react"
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4 py-10">
+    <main className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 flex items-center justify-center px-4 py-10">
       <div className="relative w-full max-w-2xl">
 
         {/* Glow Background */}
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-blue-200 rounded-full blur-3xl opacity-30 animate-pulse" />
-        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-indigo-200 rounded-full blur-3xl opacity-30 animate-pulse" />
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-orange-200 rounded-full blur-3xl opacity-30 animate-pulse" />
+        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-orange-200 rounded-full blur-3xl opacity-30 animate-pulse" />
 
         {/* Card */}
         <div className="relative bg-white/90 backdrop-blur-md border border-gray-200 rounded-3xl shadow-xl p-10 md:p-14 text-center">
@@ -21,7 +21,7 @@ export default function NotFound() {
           </div>
 
           {/* 404 */}
-          <h1 className="text-8xl md:text-9xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-8xl md:text-9xl font-extrabold bg-gradient-to-r from-orange-600 to-orange-600 bg-clip-text text-transparent tracking-tight">
             404
           </h1>
 
@@ -37,14 +37,14 @@ export default function NotFound() {
           </p>
 
           {/* Divider */}
-          <div className="mt-8 h-1 w-24 mx-auto bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full" />
+          <div className="mt-8 h-1 w-24 mx-auto bg-gradient-to-r from-orange-400 to-orange-500 rounded-full" />
 
           {/* Actions */}
           <div className="mt-10 flex flex-col md:flex-row gap-4 justify-center">
 
             <Link
               href="/"
-              className="flex items-center justify-center gap-2 px-7 py-3 font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow hover:scale-105 transition"
+              className="flex items-center justify-center gap-2 px-7 py-3 font-semibold rounded-xl bg-gradient-to-r from-orange-600 to-orange-600 text-white shadow hover:scale-105 transition"
             >
               <Home className="w-5 h-5" />
               Go to Dashboard

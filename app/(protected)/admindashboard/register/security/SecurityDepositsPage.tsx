@@ -126,7 +126,7 @@ const DepositTableRow = memo(
               checked={selectedDeposits.has(deposit.id)}
               onCheckedChange={() => onToggleSelection(deposit.id)}
               aria-label={`Select deposit ${index + 1}`}
-              className="border-slate-300 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+              className="border-slate-300 data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600"
             />
           )}
         </TableCell>
@@ -498,7 +498,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
         >
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
-              <span className="bg-indigo-600/10 p-2 rounded-xl text-indigo-600">
+              <span className="bg-orange-600/10 p-2 rounded-xl text-orange-600">
                 <IndianRupee className="h-7 w-7" strokeWidth={2.5} />
               </span>
               Security Deposits
@@ -511,7 +511,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
             className="bg-white text-slate-700 border border-slate-200 shadow-sm hover:bg-slate-50 transition-all rounded-xl px-5 h-11"
             onClick={exportToPDF}
           >
-            <Download className="h-4 w-4 mr-2 text-indigo-500" />
+            <Download className="h-4 w-4 mr-2 text-orange-500" />
             Export Report
           </Button>
         </motion.div>
@@ -533,8 +533,8 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
                     {formatCurrency(summary.totalDeposits)}
                   </h3>
                 </div>
-                <div className="h-12 w-12 bg-indigo-50 rounded-full flex items-center justify-center">
-                  <IndianRupee className="h-6 w-6 text-indigo-600" />
+                <div className="h-12 w-12 bg-orange-50 rounded-full flex items-center justify-center">
+                  <IndianRupee className="h-6 w-6 text-orange-600" />
                 </div>
               </div>
             </CardContent>
@@ -605,7 +605,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
               placeholder="Search agency name or NIT number..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-11 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-indigo-500 w-full"
+              className="pl-11 h-11 bg-slate-50/50 border-slate-200 rounded-xl focus-visible:ring-orange-500 w-full"
             />
           </div>
 
@@ -646,7 +646,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
               animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
               exit={{ opacity: 0, height: 0, marginBottom: 0 }}
             >
-              <div className="bg-indigo-600 text-white rounded-2xl shadow-lg p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="bg-orange-600 text-white rounded-2xl shadow-lg p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3 font-medium">
                   <div className="bg-white/20 px-3 py-1 rounded-full text-sm">
                     {selectedDeposits.size} selected
@@ -656,7 +656,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
                 <Button
                   onClick={markSelectedAsPaid}
                   variant="secondary"
-                  className="bg-white text-indigo-700 hover:bg-slate-50 border-0 shadow-sm w-full sm:w-auto rounded-xl"
+                  className="bg-white text-orange-700 hover:bg-slate-50 border-0 shadow-sm w-full sm:w-auto rounded-xl"
                 >
                   <Check className="h-4 w-4 mr-2" />
                   Mark as Paid
@@ -676,7 +676,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
             <CardHeader className="border-b border-slate-100 py-5 bg-white">
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-indigo-500" />
+                  <FileText className="h-5 w-5 text-orange-500" />
                   Deposit Ledger
                 </CardTitle>
                 <Badge
@@ -707,7 +707,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
                       setSelectedFund("all");
                       setStatusFilter("all");
                     }}
-                    className="mt-4 text-indigo-600"
+                    className="mt-4 text-orange-600"
                   >
                     Clear all filters
                   </Button>
@@ -727,7 +727,7 @@ export function SecurityDepositsPage({ deposits }: SecurityDepositsPageProps) {
                               }
                               onCheckedChange={toggleAllDeposits}
                               aria-label="Select all deposits"
-                              className="border-slate-300 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
+                              className="border-slate-300 data-[state=checked]:bg-orange-600 data-[state=checked]:border-orange-600"
                             />
                           )}
                         </TableHead>

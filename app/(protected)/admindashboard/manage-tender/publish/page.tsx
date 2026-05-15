@@ -41,7 +41,7 @@ export default async function DemoPage() {
 
     return (
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-green-500 to-teal-600 p-4">
+            <div className="bg-gradient-to-r from-green-500 to-orange-600 p-4">
                 <h2 className="text-2xl font-bold text-white">Existing NITs</h2>
             </div>
             <div className="p-6">

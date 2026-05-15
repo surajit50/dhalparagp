@@ -246,7 +246,7 @@ const ManageTermsPage = () => {
   const getCategoryBadgeColor = (category: string) => {
     switch (category) {
       case "ELIGIBLE":
-        return "bg-blue-100 text-blue-800 hover:bg-blue-100";
+        return "bg-orange-100 text-orange-800 hover:bg-orange-100";
       case "QUALIFICATION_CRITERIA":
         return "bg-green-100 text-green-800 hover:bg-green-100";
       case "TERMS_CONDITIONS":
@@ -275,7 +275,7 @@ const ManageTermsPage = () => {
         <div className="mx-auto max-w-7xl">
           <div className="flex items-center justify-center h-64">
             <div className="text-center">
-              <RefreshCw className="h-8 w-8 animate-spin mx-auto text-blue-600" />
+              <RefreshCw className="h-8 w-8 animate-spin mx-auto text-orange-600" />
               <p className="mt-2 text-gray-600">Loading tender terms...</p>
             </div>
           </div>
@@ -302,12 +302,12 @@ const ManageTermsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50/30 to-slate-50 p-4 sm:p-6 md:p-8">
       <div className="mx-auto max-w-7xl space-y-8">
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-orange-800 to-gray-900 bg-clip-text text-transparent tracking-tight">
               Manage Tender Terms
             </h1>
             <p className="text-gray-600 text-lg font-medium">
@@ -320,7 +320,7 @@ const ManageTermsPage = () => {
                 Manage Templates
               </Link>
             </Button>
-            <Button asChild className="whitespace-nowrap bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
+            <Button asChild className="whitespace-nowrap bg-gradient-to-r from-orange-600 to-orange-600 hover:from-orange-700 hover:to-orange-700 text-white shadow-lg hover:shadow-xl transition-all duration-200">
               <Link href="/admindashboard/manage-tender/add-terms">
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Term
@@ -351,7 +351,7 @@ const ManageTermsPage = () => {
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                       <option value="">All Categories</option>
                       <option value="ELIGIBLE">Eligible</option>
@@ -406,9 +406,9 @@ const ManageTermsPage = () => {
 
         {/* Terms Table */}
         <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="pb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-blue-100/50 rounded-t-lg">
+          <CardHeader className="pb-4 bg-gradient-to-r from-orange-50 to-orange-50 border-b border-orange-100/50 rounded-t-lg">
             <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-              <div className="h-1 w-1 rounded-full bg-blue-600"></div>
+              <div className="h-1 w-1 rounded-full bg-orange-600"></div>
               Tender Terms
             </CardTitle>
             <CardDescription className="text-gray-600 font-medium">
@@ -468,7 +468,7 @@ const ManageTermsPage = () => {
                     </TableRow>
                   ) : (
                     filteredTerms.map((term) => (
-                      <TableRow key={term.id} className="group hover:bg-blue-50/50 transition-colors duration-150">
+                      <TableRow key={term.id} className="group hover:bg-orange-50/50 transition-colors duration-150">
                         <TableCell className="font-medium text-center">
                           {term.order}
                         </TableCell>

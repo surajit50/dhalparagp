@@ -130,7 +130,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
                     Yearly Amount
                   </p>
-                  <p className="text-sm font-bold text-blue-600">
+                  <p className="text-sm font-bold text-orange-600">
                     ₹{lease.leaseAmountYearly.toLocaleString()}
                   </p>
                 </div>

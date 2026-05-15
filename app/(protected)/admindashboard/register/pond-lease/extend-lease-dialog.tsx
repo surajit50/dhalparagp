@@ -101,8 +101,8 @@ export function ExtendLeaseDialog({ lease }: ExtendLeaseDialogProps) {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg space-y-1">
-              <div className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+            <div className="bg-orange-50 border border-orange-100 p-4 rounded-lg space-y-1">
+              <div className="text-xs font-bold text-orange-600 uppercase tracking-wider">
                 Lease Basis
               </div>
               <div className="flex justify-between items-center text-sm">
@@ -111,11 +111,11 @@ export function ExtendLeaseDialog({ lease }: ExtendLeaseDialogProps) {
                   {currency.format(yearlyAmount)}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-sm pt-1 border-t border-blue-200 mt-1">
-                <span className="text-blue-700 font-medium">
+              <div className="flex justify-between items-center text-sm pt-1 border-t border-orange-200 mt-1">
+                <span className="text-orange-700 font-medium">
                   Calculated Extension Fee:
                 </span>
-                <span className="text-lg font-extrabold text-blue-800">
+                <span className="text-lg font-extrabold text-orange-800">
                   {currency.format(form.watch("extensionAmount"))}
                 </span>
               </div>

@@ -53,8 +53,8 @@ export default async function FormsPage({
 
         <div className="flex items-center gap-3">
 
-          <div className="p-3 rounded-lg bg-blue-100">
-            <FileText className="h-6 w-6 text-blue-700" />
+          <div className="p-3 rounded-lg bg-orange-100">
+            <FileText className="h-6 w-6 text-orange-700" />
           </div>
 
           <div>
@@ -124,14 +124,14 @@ export default async function FormsPage({
 
       <Card className="shadow-md border">
 
-        <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-t-lg">
+        <CardHeader className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-lg">
 
           <CardTitle className="text-xl font-semibold flex items-center gap-2">
             <UploadCloud className="h-5 w-5" />
             Upload New Form
           </CardTitle>
 
-          <CardDescription className="text-blue-100">
+          <CardDescription className="text-orange-100">
             Upload a new document that users can download from the portal
           </CardDescription>
 

@@ -317,7 +317,7 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
           <div
             key={step}
             className={`text-sm font-medium ${
-              index === currentStep ? "text-blue-600" : index < currentStep ? "text-green-600" : "text-gray-500"
+              index === currentStep ? "text-orange-600" : index < currentStep ? "text-green-600" : "text-gray-500"
             }`}
           >
             {step}
@@ -326,7 +326,7 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
       </div>
       <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
         <div
-          className="absolute top-0 left-0 h-full bg-blue-600 transition-all duration-300 ease-in-out"
+          className="absolute top-0 left-0 h-full bg-orange-600 transition-all duration-300 ease-in-out"
           style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
         />
       </div>
@@ -357,7 +357,7 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
       <Toaster position="top-right" richColors expand={true} />
 
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-blue-600 to-indigo-700 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold text-gray-900 bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
           Domicile Certificate Enquiry Report
         </h1>
         <p className="text-gray-600 mt-3">Complete the form below to submit a domicile certificate enquiry report</p>
@@ -397,9 +397,9 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
         >
           {/* Step 0: Header Information */}
           {currentStep === 0 && (
-            <Card className="border-l-4 border-blue-500">
-              <CardHeader className="bg-blue-50 py-4">
-                <CardTitle className="flex items-center gap-3 text-blue-800">
+            <Card className="border-l-4 border-orange-500">
+              <CardHeader className="bg-orange-50 py-4">
+                <CardTitle className="flex items-center gap-3 text-orange-800">
                   <FileText className="h-6 w-6" />
                   <span>Header Information</span>
                 </CardTitle>
@@ -796,7 +796,7 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
                                           val && (
                                             <span
                                               key={idx}
-                                              className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs"
+                                              className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs"
                                             >
                                               {val}
                                             </span>
@@ -998,9 +998,9 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
 
           {/* Step 4: Final Report */}
           {currentStep === 4 && (
-            <Card className="border-l-4 border-indigo-500">
-              <CardHeader className="bg-indigo-50 py-4">
-                <CardTitle className="flex items-center gap-3 text-indigo-800">
+            <Card className="border-l-4 border-orange-500">
+              <CardHeader className="bg-orange-50 py-4">
+                <CardTitle className="flex items-center gap-3 text-orange-800">
                   <FileText className="h-6 w-6" />
                   <span>Final Report</span>
                 </CardTitle>
@@ -1010,19 +1010,19 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
                   control={form.control}
                   name="isPermanentResident"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-indigo-200 bg-indigo-50 p-4">
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-orange-200 bg-orange-50 p-4">
                       <FormControl>
                         <Checkbox
                           checked={field.value}
                           onCheckedChange={field.onChange}
-                          className="border-indigo-300 data-[state=checked]:bg-indigo-600"
+                          className="border-orange-300 data-[state=checked]:bg-orange-600"
                         />
                       </FormControl>
                       <div className="space-y-1 leading-none">
-                        <FormLabel className="text-indigo-800 font-medium">
+                        <FormLabel className="text-orange-800 font-medium">
                           Applicant is a permanent resident of the area
                         </FormLabel>
-                        <p className="text-sm text-indigo-600">
+                        <p className="text-sm text-orange-600">
                           Check this box if the applicant meets all residency requirements
                         </p>
                       </div>
@@ -1087,7 +1087,7 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
               {currentStep < totalSteps - 1 ? (
                 <Button
                   type="button"
-                  className="bg-blue-600 hover:bg-blue-700"
+                  className="bg-orange-600 hover:bg-orange-700"
                   onClick={goToNextStep}
                   disabled={isPending}
                 >
@@ -1099,7 +1099,7 @@ export default function DomicileCertificateEnquiryForm({ onSubmitted }: Domicile
                   type="button"
                   disabled={isPending}
                   onClick={handleExplicitSubmit}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
+                  className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800"
                 >
                   {isPending ? (
                     <span className="flex items-center">
@@ -1166,7 +1166,7 @@ function DomicileCertificateReport({
               ? "text-green-600"
               : data.status === "REJECTED"
                 ? "text-red-600"
-                : "text-blue-600"
+                : "text-orange-600"
           }`}
         >
           Status: {data.status}
@@ -1252,7 +1252,7 @@ function DomicileCertificateReport({
                         {finding.details.split(",").map(
                           (source: string, idx: number) =>
                             source && (
-                              <span key={idx} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                              <span key={idx} className="bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs">
                                 {source}
                               </span>
                             ),
@@ -1326,7 +1326,7 @@ function DomicileCertificateReport({
         </Button>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="bg-blue-600 hover:bg-blue-700">Show Previous</Button>
+            <Button className="bg-orange-600 hover:bg-orange-700">Show Previous</Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
@@ -1354,7 +1354,7 @@ function DomicileCertificateReport({
                   <h3 className="font-semibold mb-2">Enquiry Findings</h3>
                   <div className="space-y-2">
                     {data.enquiryFindings.map((finding: { particulars: string; details: string }, index: number) => (
-                      <div key={index} className="border-l-4 border-blue-500 pl-3">
+                      <div key={index} className="border-l-4 border-orange-500 pl-3">
                         <p>
                           <strong>{finding.particulars}:</strong> {finding.details}
                         </p>

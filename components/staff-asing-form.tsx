@@ -115,7 +115,7 @@ export default function StaffAssignForm({
             <Button
               type="submit"
               disabled={isSubmitting || isSuccess}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-orange-600 hover:bg-orange-700 text-white"
             >
               {isSubmitting ? (
                 <>

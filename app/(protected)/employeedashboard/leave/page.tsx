@@ -42,8 +42,8 @@ const LeaveDashboard = async () => {
       description: "Submit a new leave request",
       href: "/employeedashboard/leave/apply",
       icon: PlusCircle,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
+      color: "text-orange-600",
+      bgColor: "bg-orange-50"
     },
     {
       title: "Leave History",

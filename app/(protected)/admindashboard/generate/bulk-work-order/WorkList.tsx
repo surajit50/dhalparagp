@@ -162,7 +162,7 @@ export function WorkList({ works }: WorkListProps) {
     <div className="space-y-4">
 
       {/* HEADER */}
-      <div className="bg-blue-900 text-white px-6 py-3 rounded">
+      <div className="bg-orange-900 text-white px-6 py-3 rounded">
         <h1 className="text-lg font-semibold">
           Work Order Register
         </h1>
@@ -213,7 +213,7 @@ export function WorkList({ works }: WorkListProps) {
         <Button
           onClick={handleGeneratePDF}
           size="sm"
-          className="bg-blue-900 hover:bg-blue-800"
+          className="bg-orange-900 hover:bg-orange-800"
         >
           {isGenerating && <Loader2 className="animate-spin mr-2 w-4 h-4" />}
           <FileText className="mr-2 w-4 h-4" />
@@ -225,7 +225,7 @@ export function WorkList({ works }: WorkListProps) {
       <div className="bg-white border rounded overflow-hidden">
 
         <Table>
-          <TableHeader className="bg-blue-50">
+          <TableHeader className="bg-orange-50">
             <TableRow>
               <TableHead className="w-10">
                 <Checkbox
@@ -286,7 +286,7 @@ export function WorkList({ works }: WorkListProps) {
                   {work.Bidagency?.agencydetails?.name || "N/A"}
                 </TableCell>
 
-                <TableCell className="text-right font-semibold text-blue-900">
+                <TableCell className="text-right font-semibold text-orange-900">
                   ₹ {work.Bidagency?.biddingAmount?.toLocaleString("en-IN") || 0}
                 </TableCell>
 
@@ -307,7 +307,7 @@ function Summary({ title, value }: any) {
   return (
     <div className="bg-white border rounded p-4">
       <p className="text-xs text-gray-500">{title}</p>
-      <h2 className="text-lg font-semibold text-blue-900">{value}</h2>
+      <h2 className="text-lg font-semibold text-orange-900">{value}</h2>
     </div>
   );
 }

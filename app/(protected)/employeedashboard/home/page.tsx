@@ -116,8 +116,8 @@ export default async function GPEmployeeDashboard() {
         priority: "NORMAL",
         date: w.createdAt,
         icon: FileText,
-        iconColor: "text-blue-600",
-        iconBg: "bg-blue-100"
+        iconColor: "text-orange-600",
+        iconBg: "bg-orange-100"
       })),
       ...recentNoc.map(n => ({
         id: n.id.slice(-6).toUpperCase(),
@@ -172,12 +172,12 @@ export default async function GPEmployeeDashboard() {
           
           {/* Header Section */}
           <div className="flex flex-col gap-6 rounded-3xl bg-white p-8 shadow-sm border border-slate-200 sm:flex-row sm:items-center sm:justify-between relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-50/50 rounded-bl-full -mr-16 -mt-16 transition-all group-hover:scale-110 duration-500"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50/50 rounded-bl-full -mr-16 -mt-16 transition-all group-hover:scale-110 duration-500"></div>
             
             <div className="flex items-center gap-6 relative z-10">
               <div className="relative">
                 <Avatar className="h-20 w-20 border-4 border-white shadow-xl">
-                  <AvatarFallback className="bg-gradient-to-br from-indigo-600 to-violet-700 text-2xl font-bold text-white">
+                  <AvatarFallback className="bg-gradient-to-br from-orange-600 to-violet-700 text-2xl font-bold text-white">
                     {dbUser?.name?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -186,7 +186,7 @@ export default async function GPEmployeeDashboard() {
               
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-none uppercase tracking-widest text-[10px] font-bold px-2.5 py-0.5">
+                  <Badge variant="secondary" className="bg-orange-50 text-orange-700 hover:bg-orange-100 border-none uppercase tracking-widest text-[10px] font-bold px-2.5 py-0.5">
                     {dbUser?.designation?.replace('_', ' ') || "Staff"}
                   </Badge>
                   <span className="text-slate-300">•</span>
@@ -232,7 +232,7 @@ export default async function GPEmployeeDashboard() {
               { title: "Approved Leaves", value: approvedLeavesCount, sub: "Historical total", Icon: CalendarCheck, color: "emerald" },
             ].map((stat, i) => {
               const colorMap: Record<string, { border: string, bg: string, text: string, shadow: string }> = {
-                blue: { border: "border-blue-500", bg: "bg-blue-50", text: "text-blue-600", shadow: "shadow-blue-100" },
+                blue: { border: "border-orange-500", bg: "bg-orange-50", text: "text-orange-600", shadow: "shadow-orange-100" },
                 purple: { border: "border-purple-500", bg: "bg-purple-50", text: "text-purple-600", shadow: "shadow-purple-100" },
                 amber: { border: "border-amber-500", bg: "bg-amber-50", text: "text-amber-600", shadow: "shadow-amber-100" },
                 emerald: { border: "border-emerald-500", bg: "bg-emerald-50", text: "text-emerald-600", shadow: "shadow-emerald-100" },
@@ -242,7 +242,7 @@ export default async function GPEmployeeDashboard() {
               return (
                 <Card key={i} className={`group border-none shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white overflow-hidden`}>
                   <CardContent className="p-0">
-                    <div className={`h-1 w-full bg-slate-100 group-hover:bg-gradient-to-r ${stat.color === 'blue' ? 'from-blue-400 to-blue-600' : stat.color === 'purple' ? 'from-purple-400 to-purple-600' : stat.color === 'amber' ? 'from-amber-400 to-amber-600' : 'from-emerald-400 to-emerald-600'}`}></div>
+                    <div className={`h-1 w-full bg-slate-100 group-hover:bg-gradient-to-r ${stat.color === 'blue' ? 'from-orange-400 to-orange-600' : stat.color === 'purple' ? 'from-purple-400 to-purple-600' : stat.color === 'amber' ? 'from-amber-400 to-amber-600' : 'from-emerald-400 to-emerald-600'}`}></div>
                     <div className="p-6">
                       <div className="flex items-start justify-between">
                         <div className="space-y-2">
@@ -273,7 +273,7 @@ export default async function GPEmployeeDashboard() {
             <Card className="lg:col-span-2 shadow-sm border-slate-200 flex flex-col overflow-hidden bg-white">
               <CardHeader className="flex flex-row items-center justify-between border-b border-slate-100 bg-slate-50/30 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="bg-indigo-600 p-2 rounded-lg">
+                  <div className="bg-orange-600 p-2 rounded-lg">
                     <ClipboardList className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -281,7 +281,7 @@ export default async function GPEmployeeDashboard() {
                     <p className="text-xs text-slate-400 mt-0.5 font-bold uppercase tracking-widest">Immediate Attention Required</p>
                   </div>
                 </div>
-                <Badge variant="secondary" className="bg-indigo-50 text-indigo-700 border-indigo-100 font-bold px-3 py-1">
+                <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-100 font-bold px-3 py-1">
                   {taskQueue.length} Active
                 </Badge>
               </CardHeader>
@@ -299,7 +299,7 @@ export default async function GPEmployeeDashboard() {
                   <div className="divide-y divide-slate-50">
                     {taskQueue.map((task, idx) => (
                       <div key={idx} className="group flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-slate-50/80 transition-all cursor-pointer relative">
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-indigo-600 transition-colors"></div>
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-transparent group-hover:bg-orange-600 transition-colors"></div>
                         <div className="flex items-start gap-5">
                           <div className={`mt-1 p-3 rounded-2xl ${task.iconBg} ${task.iconColor} transition-transform group-hover:scale-110 duration-300`}>
                             <task.icon className="h-6 w-6" strokeWidth={2.5} />
@@ -311,7 +311,7 @@ export default async function GPEmployeeDashboard() {
                               </span>
                               <span className="text-[10px] font-bold text-slate-300">#{task.id}</span>
                             </div>
-                            <p className="text-base font-bold text-slate-800 group-hover:text-indigo-600 transition-colors">{task.title}</p>
+                            <p className="text-base font-bold text-slate-800 group-hover:text-orange-600 transition-colors">{task.title}</p>
                             <div className="flex items-center gap-4 mt-2">
                               <span className="flex items-center gap-1.5 text-xs text-slate-400 font-bold">
                                 <Clock className="h-3.5 w-3.5" /> 
@@ -331,11 +331,11 @@ export default async function GPEmployeeDashboard() {
                               <StaffWarishActionCell applicationId={task.applicationId!} />
                             </div>
                           ) : (
-                            <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity bg-white shadow-sm border border-slate-200 text-indigo-600 font-bold text-xs h-8 px-4 rounded-lg">
+                            <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity bg-white shadow-sm border border-slate-200 text-orange-600 font-bold text-xs h-8 px-4 rounded-lg">
                               Handle Task
                             </Button>
                           )}
-                          <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-indigo-600 transition-colors">
+                          <div className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-orange-600 transition-colors">
                             <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-white transition-colors" />
                           </div>
                         </div>
@@ -345,7 +345,7 @@ export default async function GPEmployeeDashboard() {
                 )}
               </CardContent>
               <div className="p-4 bg-slate-50/50 border-t border-slate-100 text-center">
-                <Button variant="link" className="text-xs font-bold text-slate-500 hover:text-indigo-600 uppercase tracking-widest">
+                <Button variant="link" className="text-xs font-bold text-slate-500 hover:text-orange-600 uppercase tracking-widest">
                   View All Activity Logs
                 </Button>
               </div>
@@ -358,7 +358,7 @@ export default async function GPEmployeeDashboard() {
               <Card className="shadow-sm border-slate-200 overflow-hidden bg-white">
                 <CardHeader className="border-b border-slate-100 bg-slate-50/30 pb-4">
                   <CardTitle className="text-lg font-black text-slate-800 flex items-center gap-2 tracking-tight">
-                    <CalendarDays className="h-5 w-5 text-indigo-600" /> 
+                    <CalendarDays className="h-5 w-5 text-orange-600" /> 
                     Meetings
                   </CardTitle>
                 </CardHeader>
@@ -377,16 +377,16 @@ export default async function GPEmployeeDashboard() {
                           
                           {/* Calendar Tear-off Graphic */}
                           <div className="flex flex-col items-center justify-center bg-white rounded-xl border border-slate-200 min-w-[60px] shadow-sm overflow-hidden transition-transform group-hover:-rotate-3 duration-300">
-                            <div className="bg-indigo-600 w-full text-center py-1">
+                            <div className="bg-orange-600 w-full text-center py-1">
                               <span className="text-[9px] font-black text-white tracking-widest uppercase">{getMonth(meeting.meetingDate)}</span>
                             </div>
                             <div className="py-2">
-                              <span className="text-xl font-black text-indigo-950 leading-none">{getDay(meeting.meetingDate)}</span>
+                              <span className="text-xl font-black text-orange-950 leading-none">{getDay(meeting.meetingDate)}</span>
                             </div>
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-slate-800 truncate group-hover:text-indigo-600 transition-colors leading-tight">{meeting.title}</p>
+                            <p className="text-sm font-bold text-slate-800 truncate group-hover:text-orange-600 transition-colors leading-tight">{meeting.title}</p>
                             <div className="flex items-center gap-2 mt-2">
                               <Badge variant="secondary" className="bg-slate-100 text-slate-500 font-bold text-[9px] uppercase tracking-tighter border-none px-1.5 py-0">
                                 {meeting.meetingType.replace(/_/g, ' ')}
@@ -405,7 +405,7 @@ export default async function GPEmployeeDashboard() {
                 </CardContent>
                 {upcomingMeetings.length > 0 && (
                   <div className="p-3 bg-slate-50/50 border-t border-slate-100 text-center">
-                    <Button variant="link" className="text-[10px] font-black text-slate-400 hover:text-indigo-600 uppercase tracking-widest h-auto p-0">
+                    <Button variant="link" className="text-[10px] font-black text-slate-400 hover:text-orange-600 uppercase tracking-widest h-auto p-0">
                       Full Calendar
                     </Button>
                   </div>
@@ -423,7 +423,7 @@ export default async function GPEmployeeDashboard() {
                 <CardContent className="p-3">
                   <div className="grid grid-cols-1 gap-2">
                     {[
-                      { label: "My Attendance", href: "/employeedashboard/attendance", icon: History, color: "text-blue-600", bg: "bg-blue-50" },
+                      { label: "My Attendance", href: "/employeedashboard/attendance", icon: History, color: "text-orange-600", bg: "bg-orange-50" },
                       { label: "Leave Requests", href: "/employeedashboard/leave-request", icon: CalendarCheck, color: "text-purple-600", bg: "bg-purple-50" },
                       { label: "View Reports", href: "/employeedashboard/reports", icon: FileText, color: "text-amber-600", bg: "bg-amber-50" },
                     ].map((link, idx) => (
@@ -433,10 +433,10 @@ export default async function GPEmployeeDashboard() {
                             <div className={`p-2.5 rounded-xl ${link.bg} ${link.color} transition-transform group-hover:scale-110`}>
                               <link.icon className="h-5 w-5" strokeWidth={2.5} />
                             </div>
-                            <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors tracking-tight">{link.label}</span>
+                            <span className="text-sm font-bold text-slate-700 group-hover:text-orange-600 transition-colors tracking-tight">{link.label}</span>
                           </div>
-                          <div className="h-6 w-6 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-indigo-50 transition-colors">
-                            <ExternalLink className="h-3 w-3 text-slate-300 group-hover:text-indigo-400 transition-colors" />
+                          <div className="h-6 w-6 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-orange-50 transition-colors">
+                            <ExternalLink className="h-3 w-3 text-slate-300 group-hover:text-orange-400 transition-colors" />
                           </div>
                         </div>
                       </Link>

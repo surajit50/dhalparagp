@@ -126,7 +126,7 @@ export default function Component() {
               <TableCell>{festival.attendees.toLocaleString()}</TableCell>
               <TableCell>
                 <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  festival.status === 'upcoming' ? 'bg-blue-100 text-blue-800' :
+                  festival.status === 'upcoming' ? 'bg-orange-100 text-orange-800' :
                   festival.status === 'ongoing' ? 'bg-green-100 text-green-800' :
                   'bg-gray-100 text-gray-800'
                 }`}>

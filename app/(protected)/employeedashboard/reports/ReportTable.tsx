@@ -36,7 +36,7 @@ export default function ReportTable({ data, isLoading }: ReportTableProps) {
     <div className="space-y-6">
       {/* Summary Cards */}
       <Card className="border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg">
+        <CardHeader className="bg-gradient-to-r from-orange-600 to-purple-600 rounded-t-lg">
           <CardTitle className="text-white flex items-center gap-2">
             <FileText className="h-6 w-6" />
             Project Financial Summary
@@ -45,7 +45,7 @@ export default function ReportTable({ data, isLoading }: ReportTableProps) {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
-              icon={<IndianRupee className="h-5 w-5 text-blue-600" />}
+              icon={<IndianRupee className="h-5 w-5 text-orange-600" />}
               title="Total Work Order Value"
               value={formatCurrency(totalWorkOrderValue)}
               currency
@@ -74,7 +74,7 @@ export default function ReportTable({ data, isLoading }: ReportTableProps) {
 
       {/* Detailed Report Table */}
       <Card className="border-0 shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg">
+        <CardHeader className="bg-gradient-to-r from-orange-600 to-purple-600 rounded-t-lg">
           <CardTitle className="text-white">Detailed Work Report</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
@@ -142,7 +142,7 @@ export default function ReportTable({ data, isLoading }: ReportTableProps) {
 
                       <TableCell className="px-6 text-right">
                         <div className="flex flex-col items-end">
-                          <span className="font-semibold text-blue-700">
+                          <span className="font-semibold text-orange-700">
                             {formatCurrency(billedAmount)}
                           </span>
                           <span className="text-sm text-muted-foreground">

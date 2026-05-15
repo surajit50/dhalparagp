@@ -83,11 +83,11 @@ export default function NITListWithYearFilter({
     <Card className="shadow-md">
 
       {/* Header */}
-      <CardHeader className="bg-blue-50 border-b">
+      <CardHeader className="bg-orange-50 border-b">
 
         <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
 
-          <CardTitle className="text-blue-900">
+          <CardTitle className="text-orange-900">
             Notice Inviting Tender (NIT) List
           </CardTitle>
 
@@ -190,7 +190,7 @@ export default function NITListWithYearFilter({
 
                     <Link
                       href={`/admindashboard/manage-tender/view/${nit.id}`}
-                      className="text-blue-600 hover:underline font-medium"
+                      className="text-orange-600 hover:underline font-medium"
                     >
                       {nit.memoNumber}/{gpcode}/{nitYear}
                     </Link>

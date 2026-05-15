@@ -164,7 +164,7 @@ const Page = async () => {
                       {notice.status === "OPEN" ? (
                         <Badge
                           variant="outline"
-                          className="text-blue-600 border-blue-200 bg-blue-50 gap-1"
+                          className="text-orange-600 border-orange-200 bg-orange-50 gap-1"
                         >
                           <Clock className="h-3 w-3" />
                           Open
@@ -236,7 +236,7 @@ const Page = async () => {
                             {notice.status === "OPEN" ? (
                               <CheckCircle className="h-4 w-4 text-green-600" />
                             ) : (
-                              <Clock className="h-4 w-4 text-blue-600" />
+                              <Clock className="h-4 w-4 text-orange-600" />
                             )}
                           </Button>
                         </form>
@@ -299,7 +299,7 @@ const Page = async () => {
                           <Link
                             href={`/admindashboard/notice/edit/${notice.id}`}
                           >
-                            <Pencil className="h-4 w-4 text-blue-600" />
+                            <Pencil className="h-4 w-4 text-orange-600" />
                           </Link>
                         </Button>
 

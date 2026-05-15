@@ -128,7 +128,7 @@ export function MarkPaidButton({ depositId }: { depositId: string }) {
         <Button
           size="sm"
           variant="outline"
-          className="h-9 px-4 gap-2 bg-white border-slate-200 text-slate-600 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 transition-all rounded-xl shadow-sm"
+          className="h-9 px-4 gap-2 bg-white border-slate-200 text-slate-600 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200 transition-all rounded-xl shadow-sm"
         >
           <CheckCircle className="h-4 w-4" />
           <span className="font-medium">Mark Paid</span>
@@ -138,8 +138,8 @@ export function MarkPaidButton({ depositId }: { depositId: string }) {
       <DialogContent className="sm:max-w-[460px] p-0 overflow-hidden border-0 shadow-2xl rounded-2xl">
         <DialogHeader className="px-6 py-5 bg-slate-50 border-b border-slate-100">
           <DialogTitle className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <div className="bg-indigo-100 p-1.5 rounded-lg">
-              <Receipt className="h-5 w-5 text-indigo-600" />
+            <div className="bg-orange-100 p-1.5 rounded-lg">
+              <Receipt className="h-5 w-5 text-orange-600" />
             </div>
             Record Payment
           </DialogTitle>
@@ -160,24 +160,24 @@ export function MarkPaidButton({ depositId }: { depositId: string }) {
                   <FormLabel className="text-sm font-semibold text-slate-700">Payment Method</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
-                      <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl focus:ring-indigo-500 transition-all">
+                      <SelectTrigger className="h-12 bg-slate-50/50 border-slate-200 rounded-xl focus:ring-orange-500 transition-all">
                         <SelectValue placeholder="Select how it was paid" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="rounded-xl border-slate-200 shadow-lg">
-                      <SelectItem value="CHEQUE" className="py-3 cursor-pointer focus:bg-indigo-50">
+                      <SelectItem value="CHEQUE" className="py-3 cursor-pointer focus:bg-orange-50">
                         <div className="flex items-center gap-3">
-                          <div className="bg-blue-50 p-1.5 rounded-md"><Landmark className="h-4 w-4 text-blue-600" /></div>
+                          <div className="bg-orange-50 p-1.5 rounded-md"><Landmark className="h-4 w-4 text-orange-600" /></div>
                           <span className="font-medium text-slate-700">Cheque</span>
                         </div>
                       </SelectItem>
-                      <SelectItem value="ONLINE_TRANSFER" className="py-3 cursor-pointer focus:bg-indigo-50">
+                      <SelectItem value="ONLINE_TRANSFER" className="py-3 cursor-pointer focus:bg-orange-50">
                         <div className="flex items-center gap-3">
                           <div className="bg-emerald-50 p-1.5 rounded-md"><CreditCard className="h-4 w-4 text-emerald-600" /></div>
                           <span className="font-medium text-slate-700">Online Transfer</span>
                         </div>
                       </SelectItem>
-                      <SelectItem value="CASH" className="py-3 cursor-pointer focus:bg-indigo-50">
+                      <SelectItem value="CASH" className="py-3 cursor-pointer focus:bg-orange-50">
                         <div className="flex items-center gap-3">
                           <div className="bg-amber-50 p-1.5 rounded-md"><Banknote className="h-4 w-4 text-amber-600" /></div>
                           <span className="font-medium text-slate-700">Cash</span>
@@ -205,7 +205,7 @@ export function MarkPaidButton({ depositId }: { depositId: string }) {
                             <Input
                               placeholder="e.g. 123456"
                               {...field}
-                              className="h-11 bg-white border-slate-200 rounded-lg focus-visible:ring-indigo-500"
+                              className="h-11 bg-white border-slate-200 rounded-lg focus-visible:ring-orange-500"
                             />
                           </FormControl>
                           <FormMessage className="text-rose-500 text-xs" />
@@ -261,7 +261,7 @@ export function MarkPaidButton({ depositId }: { depositId: string }) {
                           <Input
                             placeholder="e.g. SBIN00012345678"
                             {...field}
-                            className="h-11 bg-white border-slate-200 rounded-lg focus-visible:ring-indigo-500"
+                            className="h-11 bg-white border-slate-200 rounded-lg focus-visible:ring-orange-500"
                           />
                         </FormControl>
                         <FormMessage className="text-rose-500 text-xs" />
@@ -291,7 +291,7 @@ export function MarkPaidButton({ depositId }: { depositId: string }) {
                         <Button
                           variant="outline"
                           className={cn(
-                            "h-11 w-full pl-3 text-left font-normal bg-white border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 focus-visible:ring-indigo-500 transition-all",
+                            "h-11 w-full pl-3 text-left font-normal bg-white border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 focus-visible:ring-orange-500 transition-all",
                             !field.value && "text-slate-400"
                           )}
                         >

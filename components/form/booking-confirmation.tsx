@@ -58,7 +58,7 @@ export function BookingConfirmation({ booking }: { booking: BookingDetails }) {
         {/* Booking Details */}
         <div className="space-y-4">
           <div className="flex items-center gap-4">
-            <User className="h-6 w-6 text-blue-500" />
+            <User className="h-6 w-6 text-orange-500" />
             <div>
               <p className="font-medium">{user?.name}</p>
               <p className="text-sm text-muted-foreground">
@@ -73,7 +73,7 @@ export function BookingConfirmation({ booking }: { booking: BookingDetails }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Calendar className="h-6 w-6 text-blue-500" />
+            <Calendar className="h-6 w-6 text-orange-500" />
             <div>
               <p className="font-medium">
                 {format(booking.bookingDate, "PPP")}
@@ -83,7 +83,7 @@ export function BookingConfirmation({ booking }: { booking: BookingDetails }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <MapPin className="h-6 w-6 text-blue-500" />
+            <MapPin className="h-6 w-6 text-orange-500" />
             <div>
               <p className="font-medium">{booking.address}</p>
               <p className="text-sm text-muted-foreground">Service Address</p>
@@ -91,7 +91,7 @@ export function BookingConfirmation({ booking }: { booking: BookingDetails }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <Phone className="h-6 w-6 text-blue-500" />
+            <Phone className="h-6 w-6 text-orange-500" />
             <div>
               <p className="font-medium">{booking.phone}</p>
               <p className="text-sm text-muted-foreground">Contact Number</p>

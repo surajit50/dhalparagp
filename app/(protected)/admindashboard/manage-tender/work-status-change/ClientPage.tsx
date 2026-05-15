@@ -106,7 +106,7 @@ export default function ClientPage({ workList }: ClientPageProps) {
   return (
     <>
       {/* WB GOV HEADER */}
-      <div className="w-full bg-blue-900 text-white py-3 shadow-md">
+      <div className="w-full bg-orange-900 text-white py-3 shadow-md">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div>
             <h2 className="text-lg font-semibold tracking-wide">
@@ -149,7 +149,7 @@ export default function ClientPage({ workList }: ClientPageProps) {
                 setSearchQuery(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-9 border-blue-300 focus-visible:ring-blue-500"
+              className="pl-9 border-orange-300 focus-visible:ring-orange-500"
             />
           </div>
         </Card>
@@ -162,7 +162,7 @@ export default function ClientPage({ workList }: ClientPageProps) {
             setCurrentPage(1);
           }}
         >
-          <TabsList className="flex flex-wrap gap-2 p-2 bg-blue-50 rounded-lg border mb-4">
+          <TabsList className="flex flex-wrap gap-2 p-2 bg-orange-50 rounded-lg border mb-4">
             {STATUS_TABS.map((tab) => {
               const count =
                 tab.value === "all"
@@ -191,7 +191,7 @@ export default function ClientPage({ workList }: ClientPageProps) {
             <Card className="rounded-xl shadow-sm bg-white">
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader className="bg-blue-800 text-white">
+                  <TableHeader className="bg-orange-800 text-white">
                     <TableRow>
                       <TableHead className="text-white">SL</TableHead>
                       <TableHead className="text-white">NIT No</TableHead>
@@ -315,13 +315,13 @@ function getStatusColor(status: string) {
     case "approved":
       return "bg-slate-200 text-slate-900 border";
     case "tenderPublish":
-      return "bg-indigo-200 text-indigo-900 border";
+      return "bg-orange-200 text-orange-900 border";
     case "workorder":
-      return "bg-cyan-200 text-cyan-900 border";
+      return "bg-orange-200 text-orange-900 border";
     case "yettostart":
       return "bg-yellow-200 text-yellow-900 border";
     case "workinprogress":
-      return "bg-blue-200 text-blue-900 border";
+      return "bg-orange-200 text-orange-900 border";
     case "workcompleted":
       return "bg-green-200 text-green-900 border font-semibold";
     case "billgenerated":

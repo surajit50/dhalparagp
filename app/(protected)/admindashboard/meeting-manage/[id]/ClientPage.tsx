@@ -29,7 +29,7 @@ import {
 import Link from "next/link";
 
 const meetingTypes = [
-  { value: "UPASAMITY", label: "Upasamity", color: "bg-blue-100 text-blue-800" },
+  { value: "UPASAMITY", label: "Upasamity", color: "bg-orange-100 text-orange-800" },
   { value: "GENERAL", label: "General", color: "bg-green-100 text-green-800" },
   { value: "ARTHO", label: "Artho", color: "bg-purple-100 text-purple-800" },
   { value: "SPECIAL_GRAM_SABHA", label: "Special Gram Sabha", color: "bg-orange-100 text-orange-800" },
@@ -37,7 +37,7 @@ const meetingTypes = [
 ];
 
 const meetingStatuses = [
-  { value: "SCHEDULED", label: "Scheduled", color: "bg-blue-100 text-blue-800", icon: Calendar },
+  { value: "SCHEDULED", label: "Scheduled", color: "bg-orange-100 text-orange-800", icon: Calendar },
   { value: "IN_PROGRESS", label: "In Progress", color: "bg-yellow-100 text-yellow-800", icon: Play },
   { value: "COMPLETED", label: "Completed", color: "bg-green-100 text-green-800", icon: CheckCircle },
   { value: "CANCELLED", label: "Cancelled", color: "bg-red-100 text-red-800", icon: XCircle },
@@ -134,14 +134,14 @@ export default function ClientPage({ id }: { id: string }) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="flex items-center"><Calendar className="mr-3 h-5 w-5 text-blue-600" /><div><p className="text-sm text-gray-600">Meeting Date</p><p className="font-semibold">{formatDate(meeting.meetingDate)}</p></div></div>
+            <div className="flex items-center"><Calendar className="mr-3 h-5 w-5 text-orange-600" /><div><p className="text-sm text-gray-600">Meeting Date</p><p className="font-semibold">{formatDate(meeting.meetingDate)}</p></div></div>
             <div className="flex items-center"><Clock className="mr-3 h-5 w-5 text-green-600" /><div><p className="text-sm text-gray-600">Time</p><p className="font-semibold">{meeting.startTime} - {meeting.endTime}</p></div></div>
             <div className="flex items-center"><MapPin className="mr-3 h-5 w-5 text-red-600" /><div><p className="text-sm text-gray-600">Venue</p><p className="font-semibold">{meeting.venue}</p></div></div>
             <div className="flex items-center"><Users className="mr-3 h-5 w-5 text-purple-600" /><div><p className="text-sm text-gray-600">Attendance</p><p className="font-semibold">{meeting.attendance ?? meeting.attendees?.length ?? 0} members</p></div></div>
           </div>
           <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center"><CalendarDays className="mr-3 h-5 w-5 text-indigo-600" /><div><p className="text-sm text-gray-600">Financial Year</p><p className="font-semibold">{meeting.financialYear}</p></div></div>
-            <div className="flex items-center"><UserCheck className="mr-3 h-5 w-5 text-teal-600" /><div><p className="text-sm text-gray-600">Quorum Achieved</p><p className="font-semibold">{meeting.quorumAchieved ? "Yes" : "No"}</p></div></div>
+            <div className="flex items-center"><CalendarDays className="mr-3 h-5 w-5 text-orange-600" /><div><p className="text-sm text-gray-600">Financial Year</p><p className="font-semibold">{meeting.financialYear}</p></div></div>
+            <div className="flex items-center"><UserCheck className="mr-3 h-5 w-5 text-orange-600" /><div><p className="text-sm text-gray-600">Quorum Achieved</p><p className="font-semibold">{meeting.quorumAchieved ? "Yes" : "No"}</p></div></div>
             <div className="flex items-center"><Building className="mr-3 h-5 w-5 text-orange-600" /><div><p className="text-sm text-gray-600">Month</p><p className="font-semibold">{meeting.month}</p></div></div>
           </div>
         </CardContent>
@@ -175,7 +175,7 @@ export default function ClientPage({ id }: { id: string }) {
                   <div key={attendee.id} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center"><User className="h-5 w-5 text-blue-600" /></div>
+                        <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center"><User className="h-5 w-5 text-orange-600" /></div>
                         <div><h4 className="font-semibold">{attendee.name}</h4><p className="text-sm text-gray-600">{attendee.designation}</p></div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -207,7 +207,7 @@ export default function ClientPage({ id }: { id: string }) {
                       <div><h5 className="font-semibold mb-2">Decision:</h5><p className="text-gray-700">{resolution.decision}</p></div>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="flex items-center"><IndianRupee className="mr-2 h-4 w-4 text-green-600" /><div><p className="text-sm text-gray-600">Budget Amount</p><p className="font-semibold">₹{resolution.budgetAmount?.toLocaleString?.() ?? resolution.budgetAmount}</p></div></div>
-                        <div className="flex items-center"><CalendarDays className="mr-2 h-4 w-4 text-blue-600" /><div><p className="text-sm text-gray-600">Timeline</p><p className="font-semibold">{resolution.implementationTimeline}</p></div></div>
+                        <div className="flex items-center"><CalendarDays className="mr-2 h-4 w-4 text-orange-600" /><div><p className="text-sm text-gray-600">Timeline</p><p className="font-semibold">{resolution.implementationTimeline}</p></div></div>
                         <div className="flex items-center"><User className="mr-2 h-4 w-4 text-purple-600" /><div><p className="text-sm text-gray-600">Responsible</p><p className="font-semibold">{resolution.responsiblePerson}</p></div></div>
                       </div>
                       {resolution.votingResults && (<div className="bg-gray-50 p-4 rounded-lg"><h5 className="font-semibold mb-2">Voting Results:</h5><div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm"><div><span className="text-gray-600">In Favor:</span><span className="font-semibold ml-2">{resolution.votingResults.inFavor}</span></div><div><span className="text-gray-600">Against:</span><span className="font-semibold ml-2">{resolution.votingResults.against}</span></div><div><span className="text-gray-600">Abstained:</span><span className="font-semibold ml-2">{resolution.votingResults.abstained}</span></div><div><span className="text-gray-600">Total:</span><span className="font-semibold ml-2">{resolution.votingResults.total}</span></div></div></div>)}
@@ -229,7 +229,7 @@ export default function ClientPage({ id }: { id: string }) {
                 {meeting.documents?.map((document: any) => (
                   <div key={document.id} className="border rounded-lg p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><FileText className="h-5 w-5 text-blue-600" /></div>
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center"><FileText className="h-5 w-5 text-orange-600" /></div>
                       <div><h4 className="font-semibold">{document.title}</h4><p className="text-sm text-gray-600">{document.fileName}</p><p className="text-xs text-gray-500">{formatFileSize(document.fileSize)} • {formatDateTime(document.uploadedAt)}</p></div>
                     </div>
                     <div className="flex items-center gap-2"><Badge variant="outline">{document.documentType}</Badge><Button variant="outline" size="sm"><Download className="h-4 w-4" /></Button></div>

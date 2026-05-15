@@ -15,7 +15,7 @@ async function ActionPlansContent() {
 
         <div className="flex items-center gap-3">
           <h1 className="text-4xl font-extrabold tracking-tight">
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-orange-600 to-purple-600 text-transparent bg-clip-text">
               Approved Action Plans
             </span>
           </h1>

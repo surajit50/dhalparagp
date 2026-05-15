@@ -157,7 +157,7 @@ export default function UploadNITDocument({ nitId }: UploadNITDocumentProps) {
                   ) : (
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <File className="w-5 h-5 text-blue-500" />
+                        <File className="w-5 h-5 text-orange-500" />
                         <span className="text-sm font-medium">
                           {selectedFile.name}
                         </span>

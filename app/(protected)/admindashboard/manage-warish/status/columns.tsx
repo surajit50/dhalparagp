@@ -10,7 +10,7 @@ export const warishapplicationColref: ColumnDef<WarishApplication>[] = [
     header: () => <span className="font-bold text-gray-800 uppercase text-sm">Ack. No</span>,
     accessorFn: (row) => row.acknowlegment,
     cell: (info) => (
-      <span className="font-medium text-blue-800 font-mono">
+      <span className="font-medium text-orange-800 font-mono">
         {info.getValue<string>()}
       </span>
     ),
@@ -50,9 +50,9 @@ export const warishapplicationColref: ColumnDef<WarishApplication>[] = [
         pending: "bg-amber-100 text-amber-800",
         rejected: "bg-red-100 text-red-800",
         cancelled: "bg-gray-100 text-gray-800",
-        process: "bg-blue-100 text-blue-800",
+        process: "bg-orange-100 text-orange-800",
         renewed: "bg-purple-100 text-purple-800",
-        submitted: "bg-cyan-100 text-cyan-800",
+        submitted: "bg-orange-100 text-orange-800",
       };
       
       const style = statusStyle[status];

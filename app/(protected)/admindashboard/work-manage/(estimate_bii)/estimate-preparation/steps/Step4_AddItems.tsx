@@ -139,8 +139,8 @@ export function Step4_AddItems({
                     className="cursor-pointer hover:bg-emerald-50"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-teal-100 rounded-lg">
-                        <FileText className="h-4 w-4 text-teal-700" />
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <FileText className="h-4 w-4 text-orange-700" />
                       </div>
                       <div>
                         <div className="font-medium">Load Template</div>

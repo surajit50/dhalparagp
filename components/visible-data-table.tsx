@@ -183,9 +183,9 @@ export function VisibleDataTable<TData, TValue>({
   };
 
   return (
-    <div className="rounded-xl border border-blue-200 bg-white shadow-md">
+    <div className="rounded-xl border border-orange-200 bg-white shadow-md">
       {/* Header Controls */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border-b border-blue-200 bg-gradient-to-r from-[#0B3C8C] to-[#1E63B5] text-white rounded-t-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 border-b border-orange-200 bg-gradient-to-r from-[#0B3C8C] to-[#1E63B5] text-white rounded-t-xl">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -223,14 +223,14 @@ export function VisibleDataTable<TData, TValue>({
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={exportToExcel}
-            className="gap-2 bg-white text-[#0B3C8C] hover:bg-blue-100 font-semibold"
+            className="gap-2 bg-white text-[#0B3C8C] hover:bg-orange-100 font-semibold"
           >
             <Download className="h-4 w-4" />
             <span>Export Excel</span>
           </Button>
           <Button
             onClick={exportToPDF}
-            className="gap-2 bg-white text-[#0B3C8C] hover:bg-blue-100 font-semibold"
+            className="gap-2 bg-white text-[#0B3C8C] hover:bg-orange-100 font-semibold"
           >
             <Download className="h-4 w-4" />
             <span>Export PDF</span>
@@ -242,11 +242,11 @@ export function VisibleDataTable<TData, TValue>({
       <Table className="border-collapse">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="bg-blue-50">
+            <TableRow key={headerGroup.id} className="bg-orange-50">
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="font-semibold text-[#0B3C8C] border-b border-blue-200 py-3"
+                  className="font-semibold text-[#0B3C8C] border-b border-orange-200 py-3"
                 >
                   {header.isPlaceholder
                     ? null
@@ -266,13 +266,13 @@ export function VisibleDataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 className={`transition-colors ${
-                  index % 2 === 0 ? "bg-white" : "bg-blue-50"
-                } hover:bg-blue-100`}
+                  index % 2 === 0 ? "bg-white" : "bg-orange-50"
+                } hover:bg-orange-100`}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="border-b border-blue-100 py-3 text-gray-700"
+                    className="border-b border-orange-100 py-3 text-gray-700"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

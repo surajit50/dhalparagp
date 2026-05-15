@@ -70,7 +70,7 @@ export default async function Page({
 
       {/* MAIN APPLICATION CARD */}
       <Card className="shadow-xl border rounded-2xl">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-2xl">
+        <CardHeader className="bg-gradient-to-r from-orange-600 to-orange-600 text-white rounded-t-2xl">
           <CardTitle className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
             <div className="flex items-center gap-3 text-2xl font-bold">
@@ -152,7 +152,7 @@ export default async function Page({
                     className="border rounded-xl p-4 flex items-center justify-between hover:shadow-md transition"
                   >
                     <div className="flex items-center gap-3">
-                      <File className="h-5 w-5 text-indigo-600" />
+                      <File className="h-5 w-5 text-orange-600" />
                       <span className="text-sm font-medium">
                         {document.documentType}
                       </span>
@@ -205,7 +205,7 @@ function Section({
 }) {
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold flex items-center gap-2 text-blue-700">
+      <h2 className="text-xl font-semibold flex items-center gap-2 text-orange-700">
         {icon}
         {title}
       </h2>

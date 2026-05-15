@@ -32,7 +32,7 @@ const meetingTypes = [
   {
     value: "UPASAMITY",
     label: "Upasamity",
-    color: "bg-blue-100 text-blue-800",
+    color: "bg-orange-100 text-orange-800",
   },
   { value: "GENERAL", label: "General", color: "bg-green-100 text-green-800" },
   { value: "ARTHO", label: "Artho", color: "bg-purple-100 text-purple-800" },
@@ -278,7 +278,7 @@ export default function AddMeetingPage() {
       <div className="sticky top-0 z-10 bg-white/80 backdrop-blur flex items-center justify-between py-4 mb-2 border-b">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <Calendar className="h-7 w-7 text-blue-600" />
+            <Calendar className="h-7 w-7 text-orange-600" />
             Add New Meeting
           </h1>
           <p className="text-gray-600 mt-1 text-base">
@@ -308,7 +308,7 @@ export default function AddMeetingPage() {
               <div
                 className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
                   isActive
-                    ? "bg-blue-600 text-white"
+                    ? "bg-orange-600 text-white"
                     : isCompleted
                     ? "bg-green-500 text-white"
                     : "bg-gray-200 text-gray-500"
@@ -323,7 +323,7 @@ export default function AddMeetingPage() {
               <span
                 className={`text-sm font-medium ${
                   isActive
-                    ? "text-blue-600 font-bold"
+                    ? "text-orange-600 font-bold"
                     : isCompleted
                     ? "text-green-600"
                     : "text-gray-500"
@@ -349,7 +349,7 @@ export default function AddMeetingPage() {
           <Card className="bg-gray-50 shadow-none border">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
-                <Calendar className="h-5 w-5 text-blue-600" />
+                <Calendar className="h-5 w-5 text-orange-600" />
                 Basic Meeting Information
               </CardTitle>
             </CardHeader>
@@ -844,7 +844,7 @@ export default function AddMeetingPage() {
             <Button
               type="button"
               onClick={goToNextStep}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-orange-600 hover:bg-orange-700 text-white"
             >
               Next
             </Button>
@@ -859,7 +859,7 @@ export default function AddMeetingPage() {
               </Button>
               <Button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-orange-600 hover:bg-orange-700 text-white"
               >
                 <Save className="mr-2 h-4 w-4" />
                 Create Meeting

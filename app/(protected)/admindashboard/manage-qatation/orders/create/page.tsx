@@ -177,9 +177,9 @@ export default async function CreateOrderPage() {
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <div className="flex items-center gap-2 text-blue-800">
-                    <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">
+                <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+                  <div className="flex items-center gap-2 text-orange-800">
+                    <div className="w-5 h-5 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-bold">
                       ✓
                     </div>
                     <p className="text-sm font-medium">
@@ -218,7 +218,7 @@ export default async function CreateOrderPage() {
                                     quotation.quotationType === "SALE"
                                       ? "bg-green-100 text-green-800"
                                       : quotation.quotationType === "WORK"
-                                      ? "bg-blue-100 text-blue-800"
+                                      ? "bg-orange-100 text-orange-800"
                                       : "bg-purple-100 text-purple-800"
                                   }`}
                                 >

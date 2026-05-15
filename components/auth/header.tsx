@@ -18,7 +18,7 @@ const Header = ({ label }: HeaderProps) => {
 
       <p className=" text-lg mt-3"> {label} </p>
       <Link href="/">
-        <Button variant="link" className="text-md text-blue-700">
+        <Button variant="link" className="text-md text-orange-700">
           Back to Website
         </Button>
       </Link>
