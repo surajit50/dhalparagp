@@ -283,6 +283,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Action Plans", ["admin"], `${BASE_URLS.admin}/work-manage/view`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("Work Status Tracking", ["admin"], `${BASE_URLS.admin}/manage-tender/work-status-change`, FaChevronCircleRight, COLORS.indigo),
       createMenuItem("Fund Status", ["admin"], `${BASE_URLS.admin}/fundstatus`, FaChevronCircleRight, COLORS.red),
+      createMenuItem("Fund Details", ["admin"], `${BASE_URLS.admin}/fund-details`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Work Details", ["admin"], `${BASE_URLS.admin}/work-manage/scheme-wise`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Upload Work Photo", ["admin"], `${BASE_URLS.admin}/work-manage/upload-photo`, FaChevronCircleRight, COLORS.red),
       createMenuItem("Work Photos Validation", ["admin"], `${BASE_URLS.admin}/work-manage/photos`, FaChevronCircleRight, COLORS.green),

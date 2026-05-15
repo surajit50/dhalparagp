@@ -400,6 +400,7 @@ model ApprovedActionPlanDetails {
   scFund              Int
   stFund              Int
   isPublish           Boolean @default(false)
+  fundType            String?
 
   WorksDetail    WorksDetail[]
   AggrementModel AggrementModel[]
@@ -3766,4 +3767,36 @@ model MusterRoll {
   paymentStatus  String @default("PENDING")
 
   createdAt DateTime @default(now())
+}
+
+//schemewise availability of fund
+
+//
+model FundAvailability {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  year                  String
+  schemeName            String
+  
+  // A: Opening Balance
+  openingBalanceTied    Float    @default(0)
+  openingBalanceUntied  Float    @default(0)
+  openingBalanceTotal   Float    @default(0)
+
+  // B: Direct Receipt
+  directReceiptTied     Float    @default(0)
+  directReceiptUntied   Float    @default(0)
+  directReceiptTotal    Float    @default(0)
+
+  // C: Auto Receipt
+  autoReceiptTied       Float    @default(0)
+  autoReceiptUntied     Float    @default(0)
+  autoReceiptTotal      Float    @default(0)
+
+  // D: Expenditure
+  expenditureTied       Float    @default(0)
+  expenditureUntied     Float    @default(0)
+  expenditureTotal      Float    @default(0)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 }

@@ -17,17 +17,9 @@ interface adminhomelayoutprops {
 }
 
 export default function Adminhomelayoutprops({
-  warishapp,
+ 
   children,
-  visitor,
-  nitCount,
-  aocwork,
-  worksummery,
-  tenderstatus,
-  techev,
-  cancelwork,
-  publishwork,
-  retender,
+  
   livedashboard,
   holidaycalendar,
   noticepopup,

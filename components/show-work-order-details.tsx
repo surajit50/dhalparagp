@@ -38,10 +38,10 @@ export const ShowWorkOrderDetails: React.FC<WorkOrderDetailsProps> = ({
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <FileText className="w-4 h-4 text-orange-500" />
-              {workorderno}/{gpcode}/{workorderdate?.getFullYear() || "N/A"}
+              {workorderno}/{gpcode}/{workorderdate ? new Date(workorderdate).getFullYear() : "N/A"}
             </div>
             <div className="text-xs text-gray-500">
-              {workorderdate ? formatDate(workorderdate) : "N/A"}
+              {workorderdate ? formatDate(new Date(workorderdate)) : "N/A"}
             </div>
           </div>
         </div>
@@ -67,13 +67,13 @@ export const ShowWorkOrderDetails: React.FC<WorkOrderDetailsProps> = ({
               <div className="space-y-1">
                 <p className="text-sm text-gray-500">Order Number</p>
                 <p className="font-medium text-gray-800">
-                  {workorderno}/{gpcode}/{workorderdate?.getFullYear() || "N/A"}
+                  {workorderno}/{gpcode}/{workorderdate ? new Date(workorderdate).getFullYear() : "N/A"}
                 </p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm text-gray-500">Order Date</p>
                 <p className="font-medium text-gray-800">
-                  {workorderdate ? formatDate(workorderdate) : "N/A"}
+                  {workorderdate ? formatDate(new Date(workorderdate)) : "N/A"}
                 </p>
               </div>
             </div>

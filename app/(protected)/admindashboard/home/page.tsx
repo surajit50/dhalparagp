@@ -1,5 +1,8 @@
 import { LayoutDashboard, Plus, FilePlus } from "lucide-react";
 import Link from "next/link";
+import FundSummaryCards from "@/components/protectedComponent/FundSummaryCards";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminDashboard() {
   return (
@@ -41,6 +44,10 @@ export default function AdminDashboard() {
           </Link>
         </div>
       </div>
+
+      <Suspense fallback={<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-8"><Skeleton className="h-32" /><Skeleton className="h-32" /><Skeleton className="h-32" /><Skeleton className="h-32" /></div>}>
+        <FundSummaryCards />
+      </Suspense>
     </div>
   );
 }

@@ -30,6 +30,7 @@ interface WorkItem {
     activityCode: string;
     activityDescription: string;
     schemeName: string;
+    fundType: string | null;
   } | null;
   AwardofContract: {
     workorderdetails: Array<{
@@ -51,12 +52,14 @@ interface WorkItem {
 
 interface WorksTabsProps {
   works: WorkItem[];
+  selectedSchemeName?: string;
   selectedFundType?: string;
   selectedYear?: string;
 }
 
 export default function WorksTabs({
   works,
+  selectedSchemeName,
   selectedFundType,
   selectedYear,
 }: WorksTabsProps) {
@@ -84,16 +87,15 @@ export default function WorksTabs({
     };
   });
 
-  // Further filter by fund type if selected
-  const worksByFund = selectedFundType
-    ? processedWorks.filter(
-        (work) =>
-          work.ApprovedActionPlanDetails?.schemeName === selectedFundType,
-      )
-    : processedWorks;
+  // Further filter if selected (mostly redundant as API filters)
+  const worksByFilter = processedWorks.filter((work) => {
+    if (selectedSchemeName && work.ApprovedActionPlanDetails?.schemeName !== selectedSchemeName) return false;
+    if (selectedFundType && work.ApprovedActionPlanDetails?.fundType !== selectedFundType) return false;
+    return true;
+  });
 
   // Filter works based on tab
-  const filteredWorks = worksByFund.filter((work) => {
+  const filteredWorks = worksByFilter.filter((work) => {
     if (activeTab === "all") return true;
     if (activeTab === "pending") return !work.isPaid && work.pending > 0;
     if (activeTab === "paid") return work.isPaid || work.pending === 0;
@@ -173,6 +175,7 @@ export default function WorksTabs({
       doc.setFont("helvetica", "normal");
       const filterText = [
         `Financial Year: ${selectedYear || "All"}`,
+        `Scheme: ${selectedSchemeName || "All"}`,
         `Fund Type: ${selectedFundType || "All"}`,
       ].join(" | ");
       doc.text(filterText, pageWidth / 2, 28, { align: "center" });
@@ -352,11 +355,13 @@ export default function WorksTabs({
     return (
       <div>
         <Tabs defaultValue={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="mb-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="paid">Paid</TabsTrigger>
-          </TabsList>
+          <div className="flex justify-between items-center mb-6">
+            <TabsList className="bg-orange-50/80 p-1.5 border border-orange-100 rounded-xl shadow-sm">
+              <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-6 py-2 transition-all font-medium">All</TabsTrigger>
+              <TabsTrigger value="pending" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-6 py-2 transition-all font-medium">Pending</TabsTrigger>
+              <TabsTrigger value="paid" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-6 py-2 transition-all font-medium">Paid</TabsTrigger>
+            </TabsList>
+          </div>
 
           <div className="p-8 text-center">
             <div className="inline-flex items-center justify-center bg-orange-100 rounded-full p-4 mb-4">
@@ -375,15 +380,19 @@ export default function WorksTabs({
   }
 
   return (
-    <Tabs defaultValue={activeTab} onValueChange={handleTabChange}>
-      <div className="flex justify-between items-center mb-4">
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="paid">Paid</TabsTrigger>
+    <Tabs defaultValue={activeTab} onValueChange={handleTabChange} className="w-full">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <TabsList className="bg-orange-50/80 p-1.5 border border-orange-100 rounded-xl shadow-sm">
+          <TabsTrigger value="all" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-6 py-2 transition-all font-medium">All</TabsTrigger>
+          <TabsTrigger value="pending" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-6 py-2 transition-all font-medium">Pending</TabsTrigger>
+          <TabsTrigger value="paid" className="data-[state=active]:bg-orange-500 data-[state=active]:text-white rounded-lg px-6 py-2 transition-all font-medium">Paid</TabsTrigger>
         </TabsList>
 
-        <Button onClick={generatePDF} size="sm" className="ml-4">
+        <Button 
+          onClick={generatePDF} 
+          size="sm" 
+          className="bg-orange-600 hover:bg-orange-700 text-white shadow-md hover:shadow-lg transition-all rounded-lg px-4"
+        >
           <Download className="mr-2 h-4 w-4" />
           Export PDF
         </Button>

@@ -64,7 +64,7 @@ const processWorkItem = (work: any): WorkItem => {
     p.billType.toLowerCase().includes("final bill")
   );
   const pending = hasFinalBill ? 0 : estimatedCost - totalPaid;
-  const financialYear = getFinancialYear(work.nitDetails.memoDate);
+  const financialYear = getFinancialYear(new Date(work.nitDetails.memoDate));
 
   return {
     ...work,
@@ -76,7 +76,8 @@ const processWorkItem = (work: any): WorkItem => {
 };
 
 // Financial year helper function
-const getFinancialYear = (date: Date) => {
+const getFinancialYear = (dateInput: Date | string) => {
+  const date = new Date(dateInput);
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   return month >= 4 ? `${year}-${year + 1}` : `${year - 1}-${year}`;

@@ -19,9 +19,9 @@ export const ShowNitDetails = ({
     <div className="flex items-center gap-1">
       <div>
         <p className="font-semibold text-primary">
-          {`${nitdetails}/${gpcode}/${memoDate.getFullYear()}`}
+          {`${nitdetails}/${gpcode}/${new Date(memoDate).getFullYear()}`}
         </p>
-        <p>Date: {formatDate(memoDate)}</p>
+        <p>Date: {formatDate(new Date(memoDate))}</p>
       </div>
 
       <Badge variant="outline" className="mt-1">
