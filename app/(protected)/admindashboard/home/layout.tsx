@@ -9,7 +9,7 @@ interface adminhomelayoutprops {
   publishwork: React.ReactNode;
   retender: React.ReactNode;
   warishapp: React.ReactNode;
-  worksummery: React.ReactNode;
+  
   livedashboard: React.ReactNode;
   holidaycalendar: React.ReactNode;
   noticepopup: React.ReactNode;
