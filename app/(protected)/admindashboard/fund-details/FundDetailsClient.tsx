@@ -14,6 +14,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -227,6 +234,12 @@ export default function FundDetailsClient() {
     fund.year.includes(searchTerm)
   );
 
+  const schemeOptions = useMemo(() => {
+    const defaults = ["15th CFC", "5th SFC", "Own Fund", "MGNREGS", "HBM", "SBM", "PBSS", "ICDS", "BEUP", "MPLAD"];
+    const existing = funds?.map(f => f.schemeName) || [];
+    return Array.from(new Set([...defaults, ...existing])).sort();
+  }, [funds]);
+
   return (
     <div className="p-8 space-y-8 min-h-screen bg-[#fafafa]">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
@@ -274,13 +287,32 @@ export default function FundDetailsClient() {
                         </div>
                         <div className="space-y-2">
                            <Label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Scheme Name</Label>
-                           <Input 
-                              value={formData.schemeName}
-                              onChange={(e) => handleInputChange("schemeName", e.target.value)}
-                              placeholder="e.g. 15th CFC" 
-                              className="h-12 bg-white border-slate-200 rounded-lg font-semibold"
-                              required 
-                           />
+                           <Select 
+                              value={formData.schemeName} 
+                              onValueChange={(val) => handleInputChange("schemeName", val)}
+                           >
+                              <SelectTrigger className="h-12 bg-white border-slate-200 rounded-lg font-semibold">
+                                 <SelectValue placeholder="Select a scheme" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                 {schemeOptions.map((scheme) => (
+                                    <SelectItem key={scheme} value={scheme} className="font-medium">
+                                       {scheme}
+                                    </SelectItem>
+                                 ))}
+                                 <SelectItem value="Other" className="text-orange-600 font-bold italic">
+                                    + Add Other Scheme
+                                 </SelectItem>
+                              </SelectContent>
+                           </Select>
+                           {formData.schemeName === "Other" && (
+                              <Input 
+                                 placeholder="Enter scheme name..." 
+                                 className="mt-2 h-10 border-orange-200 focus:ring-orange-500"
+                                 onChange={(e) => handleInputChange("schemeName", e.target.value)}
+                                 autoFocus
+                              />
+                           )}
                         </div>
                      </div>
 
