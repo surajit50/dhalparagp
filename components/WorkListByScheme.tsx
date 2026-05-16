@@ -53,7 +53,7 @@ interface ApprovedActionPlanDetails {
   sector: string;
   estimatedCost: number;
   isPublish: boolean;
-  fundType?: string; // added fundType (optional)
+  fundType?: string | null; // allows null from database// added fundType (optional)
 }
 
 interface WorkListBySchemeProps {
