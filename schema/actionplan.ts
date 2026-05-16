@@ -1,4 +1,5 @@
 import * as z from "zod";
+
 export const actionplanschema = z.object({
   financialYear: z.string().min(4, {
     message: "Financial year must be at least 4 characters.",
@@ -34,6 +35,11 @@ export const actionplanschema = z.object({
   generalFund: z.number().int().nonnegative(),
   scFund: z.number().int().nonnegative(),
   stFund: z.number().int().nonnegative(),
+  // NEW: fund type (Tied / Untied)
+  fundType: z.enum(["Tied", "Untied"], {
+    required_error: "Please select a fund type",
+    invalid_type_error: "Fund type must be Tied or Untied",
+  }),
 });
 
 export type ActionPlanDetailsProps = z.infer<typeof actionplanschema>;
