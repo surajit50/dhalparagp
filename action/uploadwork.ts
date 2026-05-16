@@ -1,12 +1,12 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { AgencyDetails, ApprovedActionPlanDetails } from "@prisma/client";
 import { actionplanschema } from "@/schema/actionplan";
 import * as z from "zod";
 import { vendorSchema } from "@/schema/venderschema";
 
 type VendorSchemaType = z.infer<typeof vendorSchema>;
+
 export async function fetchallApproveActionPlanDetails() {
   try {
     const schme = await db.approvedActionPlanDetails.findMany({
@@ -20,50 +20,78 @@ export async function fetchallApproveActionPlanDetails() {
   }
 }
 
+// Single creation – skip if activityCode already exists
 export async function createschme(values: z.infer<typeof actionplanschema>) {
   console.log(values);
 
   try {
+    // Check for duplicate activityCode
+    const existing = await db.approvedActionPlanDetails.findUnique({
+      where: { activityCode: values.activityCode },
+    });
+
+    if (existing) {
+      console.log(`Skipping duplicate activityCode: ${values.activityCode}`);
+      return { skipped: true, activityCode: values.activityCode };
+    }
+
+    // Create new record with all fields including fundType
     const scheme = await db.approvedActionPlanDetails.create({
       data: {
         financialYear: values.financialYear,
         themeName: values.themeName,
         activityCode: values.activityCode,
         activityName: values.activityName,
-
         activityDescription: values.activityDescription,
-
         activityFor: values.activityFor,
         sector: values.sector,
         locationofAsset: values.locationofAsset,
         estimatedCost: values.estimatedCost,
         totalduration: values.totalduration,
-
         schemeName: values.schemeName,
         generalFund: values.generalFund,
         scFund: values.scFund,
         stFund: values.stFund,
+        fundType: values.fundType,
       },
     });
-    return scheme;
+    return { skipped: false, scheme };
   } catch (error) {
-    console.log(error);
+    console.error("Error in createschme:", error);
+    throw error;
   }
 }
 
+// Bulk create – returns summary of created, skipped, duplicates, errors
 export const createbulkschme = async (
   value: z.infer<typeof actionplanschema>[]
 ) => {
-  try {
-    for (let warish of value) {
-      console.log(warish);
-      await createschme(warish);
+  const results = {
+    total: value.length,
+    created: 0,
+    skipped: 0,
+    duplicates: [] as string[],
+    errors: [] as { activityCode: string; error: any }[],
+  };
+
+  for (const item of value) {
+    try {
+      const result = await createschme(item);
+      if (result.skipped) {
+        results.skipped++;
+        results.duplicates.push(item.activityCode);
+      } else {
+        results.created++;
+      }
+    } catch (error) {
+      results.errors.push({ activityCode: item.activityCode, error });
     }
-  } catch (error) {
-    console.log(error);
   }
+
+  return results;
 };
 
+// Vendor registration (unchanged)
 export async function vendorSchemaAction(values: VendorSchemaType) {
   const validatedFields = vendorSchema.safeParse(values);
 
@@ -87,7 +115,6 @@ export async function vendorSchemaAction(values: VendorSchemaType) {
   } = validatedFields.data;
 
   try {
-    // Check for existing vendor by name
     const existingVendor = await db.agencyDetails.findFirst({
       where: { name },
     });
@@ -96,7 +123,6 @@ export async function vendorSchemaAction(values: VendorSchemaType) {
       return { error: "Vendor with this name already exists" };
     }
 
-    // Create new vendor with agency type and proprietor name
     const newVendor = await db.agencyDetails.create({
       data: {
         name,
@@ -106,8 +132,8 @@ export async function vendorSchemaAction(values: VendorSchemaType) {
         pan,
         tin,
         contactDetails: postalAddress,
-        agencyType,       // Added agency type
-        proprietorName,   // Added proprietor name (will be null for individuals)
+        agencyType,
+        proprietorName,
       },
     });
 
@@ -123,6 +149,7 @@ export async function vendorSchemaAction(values: VendorSchemaType) {
   }
 }
 
+// Bulk vendor creation (unchanged)
 export async function createBulkAgency(values: VendorSchemaType[]) {
   const results = [];
 
