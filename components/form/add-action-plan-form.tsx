@@ -17,6 +17,8 @@ import {
   Landmark,
   PlusCircle,
   FileText,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -39,6 +41,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { toast } from "@/components/ui/use-toast";
 
@@ -67,13 +71,11 @@ export default function AddActionPlanForm() {
       generalFund: 0,
       scFund: 0,
       stFund: 0,
+      fundType: "Tied", // default to Tied
     },
   });
 
-  /* -------------------------------- */
-  /* Fund calculation                  */
-  /* -------------------------------- */
-
+  /* Fund calculation */
   const general = form.watch("generalFund");
   const sc = form.watch("scFund");
   const st = form.watch("stFund");
@@ -82,10 +84,7 @@ export default function AddActionPlanForm() {
     return (general || 0) + (sc || 0) + (st || 0);
   }, [general, sc, st]);
 
-  /* -------------------------------- */
-  /* Submit                           */
-  /* -------------------------------- */
-
+  /* Submit */
   async function onSubmit(values: z.infer<typeof actionplanschema>) {
     if (totalFund !== values.estimatedCost) {
       toast({
@@ -118,338 +117,324 @@ export default function AddActionPlanForm() {
     }
   }
 
-  /* -------------------------------- */
-  /* UI                               */
-  /* -------------------------------- */
-
   return (
     <div className="mx-auto max-w-4xl bg-white dark:bg-zinc-900 rounded-2xl border shadow-lg p-8">
-
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        New Action Plan Form
-      </h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">New Action Plan Form</h1>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
-          {/* ----------------------------- */}
-          {/* Financial Section             */}
-          {/* ----------------------------- */}
-
+          {/* Financial Section */}
           <div className="bg-muted/50 p-6 rounded-xl space-y-6">
-
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Wallet className="h-5 w-5 text-orange-600" />
               Financial Details
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6">
-
-              {/* Financial Year */}
-
               <FormField
                 control={form.control}
                 name="financialYear"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
                       Financial Year
                     </FormLabel>
-
                     <Select
                       disabled={isLoading}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
-
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select financial year" />
                         </SelectTrigger>
                       </FormControl>
-
                       <SelectContent>
                         <SelectItem value="2023-2024">2023-2024</SelectItem>
                         <SelectItem value="2024-2025">2024-2025</SelectItem>
                         <SelectItem value="2025-2026">2025-2026</SelectItem>
                       </SelectContent>
-
                     </Select>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
-              {/* Theme */}
 
               <FormField
                 control={form.control}
                 name="themeName"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel className="flex items-center gap-2">
                       <LayoutGrid className="h-4 w-4" />
                       Theme Name
                     </FormLabel>
-
                     <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        placeholder="Development"
-                        {...field}
-                      />
+                      <Input disabled={isLoading} placeholder="Development" {...field} />
                     </FormControl>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
             </div>
-
-            {/* Scheme Name */}
 
             <FormField
               control={form.control}
               name="schemeName"
               render={({ field }) => (
                 <FormItem>
-
                   <FormLabel className="flex items-center gap-2">
                     <FileText className="h-4 w-4" />
                     Scheme Name
                   </FormLabel>
-
                   <FormControl>
-                    <Input
-                      disabled={isLoading}
-                      placeholder="Enter scheme name"
-                      {...field}
-                    />
+                    <Input disabled={isLoading} placeholder="Enter scheme name" {...field} />
                   </FormControl>
-
                   <FormMessage />
-
                 </FormItem>
               )}
             />
-
           </div>
 
-          {/* ----------------------------- */}
-          {/* Activity Section              */}
-          {/* ----------------------------- */}
-
+          {/* Activity Section */}
           <div className="bg-muted/50 p-6 rounded-xl space-y-6">
-
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Route className="h-5 w-5 text-green-600" />
               Activity Details
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6">
-
-              {/* Activity Code */}
-
               <FormField
                 control={form.control}
                 name="activityCode"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel className="flex items-center gap-2">
                       <Hash className="h-4 w-4" />
                       Activity Code
                     </FormLabel>
-
                     <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        placeholder="1001"
-                        {...field}
-                      />
+                      <Input disabled={isLoading} placeholder="1001" {...field} />
                     </FormControl>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
-              {/* Activity Name */}
 
               <FormField
                 control={form.control}
                 name="activityName"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel className="flex items-center gap-2">
                       <Route className="h-4 w-4" />
                       Activity Name
                     </FormLabel>
-
                     <FormControl>
-                      <Input
-                        disabled={isLoading}
-                        placeholder="Road Construction"
-                        {...field}
-                      />
+                      <Input disabled={isLoading} placeholder="Road Construction" {...field} />
                     </FormControl>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
             </div>
-
-            {/* Description */}
 
             <FormField
               control={form.control}
               name="activityDescription"
               render={({ field }) => (
                 <FormItem>
-
                   <FormLabel className="flex items-center gap-2">
                     <BookOpen className="h-4 w-4" />
                     Description
                   </FormLabel>
-
                   <FormControl>
-                    <Textarea
-                      disabled={isLoading}
-                      className="min-h-[120px]"
-                      {...field}
-                    />
+                    <Textarea disabled={isLoading} className="min-h-[120px]" {...field} />
                   </FormControl>
-
                   <FormMessage />
-
                 </FormItem>
               )}
             />
 
+            <div className="grid md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="sector"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sector</FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} placeholder="e.g., Sanitation" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="locationofAsset"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location of Asset</FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} placeholder="Village / Town" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="estimatedCost"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estimated Cost (₹)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        disabled={isLoading}
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="totalduration"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Duration</FormLabel>
+                    <FormControl>
+                      <Input disabled={isLoading} placeholder="6 months" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
 
-          {/* ----------------------------- */}
-          {/* Funding Section               */}
-          {/* ----------------------------- */}
-
+          {/* Funding Allocation Section */}
           <div className="bg-muted/50 p-6 rounded-xl space-y-6">
-
             <h2 className="text-xl font-semibold flex items-center gap-2">
               <Wallet className="h-5 w-5 text-purple-600" />
               Funding Allocation
             </h2>
 
             <div className="grid md:grid-cols-3 gap-6">
-
-              {/* General Fund */}
-
               <FormField
                 control={form.control}
                 name="generalFund"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel>General Fund</FormLabel>
-
                     <FormControl>
                       <Input
                         type="number"
                         disabled={isLoading}
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value) || 0)
-                        }
+                        onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                       />
                     </FormControl>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
-              {/* SC Fund */}
 
               <FormField
                 control={form.control}
                 name="scFund"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel>SC Fund</FormLabel>
-
                     <FormControl>
                       <Input
                         type="number"
                         disabled={isLoading}
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value) || 0)
-                        }
+                        onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                       />
                     </FormControl>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
-              {/* ST Fund */}
 
               <FormField
                 control={form.control}
                 name="stFund"
                 render={({ field }) => (
                   <FormItem>
-
                     <FormLabel>ST Fund</FormLabel>
-
                     <FormControl>
                       <Input
                         type="number"
                         disabled={isLoading}
                         {...field}
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value) || 0)
-                        }
+                        onChange={(e) => field.onChange(Number(e.target.value) || 0)}
                       />
                     </FormControl>
-
                     <FormMessage />
-
                   </FormItem>
                 )}
               />
-
             </div>
 
-            {/* Total Fund Display */}
+            {/* NEW: Fund Type Selection */}
+            <FormField
+              control={form.control}
+              name="fundType"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel className="flex items-center gap-2">
+                    {field.value === "Tied" ? (
+                      <TrendingUp className="h-4 w-4 text-blue-600" />
+                    ) : (
+                      <TrendingDown className="h-4 w-4 text-amber-600" />
+                    )}
+                    Fund Type (Tied / Untied)
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Tied" id="tied" />
+                        <label htmlFor="tied" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Tied
+                        </label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Untied" id="untied" />
+                        <label htmlFor="untied" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                          Untied
+                        </label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="text-sm font-medium text-muted-foreground">
               Total Allocation: ₹{totalFund.toLocaleString()}
             </div>
-
           </div>
 
-          {/* ----------------------------- */}
-          {/* Submit                        */}
-          {/* ----------------------------- */}
-
+          {/* Submit Button */}
           <div className="flex justify-center">
-
             <Button
               type="submit"
               disabled={isLoading}
@@ -471,9 +456,7 @@ export default function AddActionPlanForm() {
                 </>
               )}
             </Button>
-
           </div>
-
         </form>
       </Form>
     </div>
