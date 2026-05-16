@@ -19,7 +19,7 @@ import {
 import { FileSpreadsheet, AlertCircle, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createbulkschme } from "@/action/uploadwork";
-import { ApprovedActionPlanDetails } from "@prisma/client";
+import { actionplanschema } from "@/schema/actionplan";
 
 const formSchema = z.object({
   file: z
@@ -36,6 +36,45 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+// Helper to transform Excel row to the format expected by createbulkschme
+function transformToActionPlan(row: any): z.infer<typeof actionplanschema> {
+  // Remove id if present
+  const { id, ...cleanRow } = row;
+
+  // Normalize fundType
+  let fundType: "Tied" | "Untied" = "Tied";
+  const rawFundType = cleanRow.fundType;
+  if (rawFundType) {
+    const ft = String(rawFundType).toLowerCase();
+    if (ft === "untied") fundType = "Untied";
+    else if (ft === "tied") fundType = "Tied";
+  }
+
+  // Convert numeric fields
+  const estimatedCost = Number(cleanRow.estimatedCost) || 0;
+  const generalFund = Number(cleanRow.generalFund) || 0;
+  const scFund = Number(cleanRow.scFund) || 0;
+  const stFund = Number(cleanRow.stFund) || 0;
+
+  return {
+    financialYear: String(cleanRow.financialYear || ""),
+    themeName: String(cleanRow.themeName || ""),
+    activityCode: String(cleanRow.activityCode || ""),
+    activityName: String(cleanRow.activityName || ""),
+    activityDescription: String(cleanRow.activityDescription || ""),
+    activityFor: String(cleanRow.activityFor || ""),
+    sector: String(cleanRow.sector || ""),
+    locationofAsset: String(cleanRow.locationofAsset || ""),
+    estimatedCost,
+    totalduration: String(cleanRow.totalduration || ""),
+    schemeName: String(cleanRow.schemeName || ""),
+    generalFund,
+    scFund,
+    stFund,
+    fundType,
+  };
+}
 
 export default function ExcelUpload() {
   const [uploadStatus, setUploadStatus] = useState<{
@@ -57,15 +96,26 @@ export default function ExcelUpload() {
           const binaryStr = event.target?.result;
           const workbook = XLSX.read(binaryStr, { type: "binary" });
 
-          // Assuming the data is in the first sheet
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(
-            worksheet
-          ) as ApprovedActionPlanDetails[];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[];
 
-          // Now call createbulkschme with the parsed data
-          await createbulkschme(jsonData);
+          // Transform each row
+          const cleanedData = jsonData.map(transformToActionPlan);
+
+          // Optional: validate all rows against schema
+          try {
+            cleanedData.forEach(item => actionplanschema.parse(item));
+          } catch (err) {
+            setUploadStatus({
+              type: "error",
+              message: "Invalid data in Excel. Please check column headers and values (e.g., fundType must be 'Tied' or 'Untied').",
+            });
+            return;
+          }
+
+          // Now call createbulkschme with the cleaned data
+          await createbulkschme(cleanedData);
 
           setUploadStatus({
             type: "success",
