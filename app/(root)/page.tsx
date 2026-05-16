@@ -6,14 +6,14 @@ import { db } from "@/lib/db";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  Calendar, 
-  Users, 
-  MapPin, 
-  Quote, 
-  IndianRupee, 
-  CheckCircle, 
-  Landmark 
+import {
+  Calendar,
+  Users,
+  MapPin,
+  Quote,
+  IndianRupee,
+  CheckCircle,
+  Landmark,
 } from "lucide-react";
 import LatestNewsUpdate from "@/components/latest-news-update";
 import { gpnameinshort } from "@/constants/gpinfor";
@@ -32,16 +32,16 @@ export default async function Home() {
   const adminMessages = (await db.adminMessage.findMany({})) as AdminMessage[];
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
+    <div className="min-h-screen bg-background font-sans">
       {/* ================= ANNOUNCEMENT ================= */}
       {adminMessages.length > 0 && (
-        <div className="bg-[#1e3a8a] text-white shadow-sm relative z-10">
+        <div className="bg-nic-primary text-primary-foreground shadow-sm relative z-10">
           {adminMessages.map((item) => (
             <AdminMarquee
               key={item.id}
               message={item.content}
-              bgColor="#1e3a8a"
-              textColor="#ffffff"
+              bgColor="#F97316"       // nic-primary
+              textColor="#FFFFFF"
               speed={18}
               icon={<span className="mr-2">📢</span>}
             />
@@ -50,7 +50,7 @@ export default async function Home() {
       )}
 
       {/* ================= HERO ================= */}
-      <section className="bg-white shadow-sm">
+      <section className="bg-card shadow-sm">
         <div className="container mx-auto px-4 py-8 md:py-12">
           <HeroSection />
         </div>
@@ -60,10 +60,10 @@ export default async function Home() {
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-orange-200 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-card p-6 rounded-2xl shadow-sm border border-border hover:shadow-md hover:border-nic-primary/30 transition-all duration-300 transform hover:-translate-y-1">
               <PayPropertyTaxButton />
             </div>
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md hover:border-orange-200 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="bg-card p-6 rounded-2xl shadow-sm border border-border hover:shadow-md hover:border-nic-primary/30 transition-all duration-300 transform hover:-translate-y-1">
               <HousingListButton />
             </div>
           </div>
@@ -71,13 +71,13 @@ export default async function Home() {
       </section>
 
       {/* ================= STATISTICS ================= */}
-      <section className="py-16 bg-white border-y border-slate-100">
+      <section className="py-16 bg-card border-y border-border">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-[#1e3a8a] tracking-tight mb-3">
+            <h2 className="text-3xl font-extrabold text-nic-primary tracking-tight mb-3">
               Gram Panchayat at a Glance
             </h2>
-            <div className="w-24 h-1 bg-[#1e3a8a] mx-auto rounded-full opacity-80"></div>
+            <div className="w-24 h-1 bg-nic-primary mx-auto rounded-full opacity-80"></div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
@@ -89,15 +89,15 @@ export default async function Home() {
             ].map((stat, index) => (
               <div
                 key={index}
-                className="bg-slate-50 border border-slate-100 rounded-2xl p-6 text-center hover:bg-orange-50 transition-colors duration-300 group"
+                className="bg-muted border border-border rounded-2xl p-6 text-center hover:bg-nic-bg transition-colors duration-300 group"
               >
-                <div className="mx-auto w-12 h-12 bg-white rounded-full flex items-center justify-center text-[#1e3a8a] shadow-sm mb-4 group-hover:scale-110 transition-transform">
+                <div className="mx-auto w-12 h-12 bg-card rounded-full flex items-center justify-center text-nic-primary shadow-sm mb-4 group-hover:scale-110 transition-transform">
                   {stat.icon}
                 </div>
-                <div className="text-3xl font-bold text-slate-800 mb-1">
+                <div className="text-3xl font-bold text-foreground mb-1">
                   {stat.value}
                 </div>
-                <div className="text-slate-500 text-sm font-medium">{stat.label}</div>
+                <div className="text-muted-foreground text-sm font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -105,12 +105,12 @@ export default async function Home() {
       </section>
 
       {/* ================= PRODHAN MESSAGE ================= */}
-      <section className="py-16 bg-gradient-to-b from-slate-50 to-white">
+      <section className="py-16 bg-gradient-to-b from-muted/50 to-background">
         <div className="container mx-auto px-4 max-w-5xl">
-          <Card className="border-0 shadow-lg rounded-3xl overflow-hidden bg-white">
+          <Card className="border-0 shadow-lg rounded-3xl overflow-hidden bg-card">
             <div className="flex flex-col md:flex-row">
               {/* Image Section */}
-              <div className="bg-[#1e3a8a] md:w-1/3 p-8 flex flex-col items-center justify-center text-white relative overflow-hidden">
+              <div className="bg-nic-primary md:w-1/3 p-8 flex flex-col items-center justify-center text-primary-foreground relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                   <Landmark size={120} />
                 </div>
@@ -123,23 +123,22 @@ export default async function Home() {
                   />
                 </div>
                 <h3 className="text-xl font-bold text-center z-10">Smt. Bithika Ghosh</h3>
-                <p className="text-orange-200 text-sm text-center z-10 mt-1">
+                <p className="text-primary-foreground/80 text-sm text-center z-10 mt-1">
                   Prodhan, {gpnameinshort} GP
                 </p>
               </div>
-              
+
               {/* Message Section */}
               <div className="md:w-2/3 p-8 md:p-12 relative">
-                <Quote className="absolute top-8 left-8 text-slate-100 w-16 h-16 -z-10" />
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">
+                <Quote className="absolute top-8 left-8 text-border w-16 h-16 -z-10" />
+                <h3 className="text-2xl font-bold text-foreground mb-6">
                   Message from the Desk
                 </h3>
-                <p className="text-slate-600 leading-relaxed text-lg italic z-10 relative">
-  Welcome to {gpnameinshort}. We are committed to
-  transparency accountability and inclusive rural
-  development for the welfare of all citizens. Our goal is to ensure every village thrives through sustainable growth;
-</p>
-
+                <p className="text-muted-foreground leading-relaxed text-lg italic z-10 relative">
+                  Welcome to {gpnameinshort}. We are committed to
+                  transparency accountability and inclusive rural
+                  development for the welfare of all citizens. Our goal is to ensure every village thrives through sustainable growth;
+                </p>
               </div>
             </div>
           </Card>
@@ -147,13 +146,13 @@ export default async function Home() {
       </section>
 
       {/* ================= SERVICES ================= */}
-      <section className="py-16 bg-white border-t border-slate-100">
+      <section className="py-16 bg-card border-t border-border">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight mb-3">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-tight mb-3">
               Citizen Services
             </h2>
-            <p className="text-slate-500 max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto">
               Access important panchayat services quickly and easily from your home.
             </p>
           </div>
@@ -163,34 +162,34 @@ export default async function Home() {
               {
                 title: "Birth & Death Certificates",
                 description: "Apply for or download digital certificates.",
-                icon: <Users className="h-6 w-6 text-[#1e3a8a]" />,
+                icon: <Users className="h-6 w-6 text-nic-primary" />,
               },
               {
                 title: "Property Tax Services",
                 description: "View dues and pay your property taxes online.",
-                icon: <MapPin className="h-6 w-6 text-[#1e3a8a]" />,
+                icon: <MapPin className="h-6 w-6 text-nic-primary" />,
               },
               {
                 title: "Welfare Schemes",
                 description: "Information on state and central government schemes.",
-                icon: <Calendar className="h-6 w-6 text-[#1e3a8a]" />,
+                icon: <Calendar className="h-6 w-6 text-nic-primary" />,
               },
             ].map((service, index) => (
               <Card
                 key={index}
-                className="border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col h-full"
+                className="border border-border shadow-sm hover:shadow-md transition-all duration-300 rounded-2xl flex flex-col h-full"
               >
                 <CardHeader className="pb-4">
-                  <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mb-4">
                     {service.icon}
                   </div>
-                  <CardTitle className="text-xl text-slate-800">{service.title}</CardTitle>
+                  <CardTitle className="text-xl text-foreground">{service.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-grow flex flex-col justify-between">
-                  <p className="text-slate-500 mb-6">{service.description}</p>
+                  <p className="text-muted-foreground mb-6">{service.description}</p>
                   <Button
                     variant="outline"
-                    className="w-full border-slate-200 text-[#1e3a8a] hover:bg-[#1e3a8a] hover:text-white transition-colors"
+                    className="w-full border-border text-nic-primary hover:bg-nic-primary hover:text-primary-foreground transition-colors"
                   >
                     View Details
                   </Button>
@@ -202,10 +201,10 @@ export default async function Home() {
       </section>
 
       {/* ================= LATEST NEWS ================= */}
-      <section className="py-16 bg-slate-50 border-t border-slate-200">
+      <section className="py-16 bg-muted border-t border-border">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="mb-10">
-            <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
               Latest News & Updates
             </h2>
           </div>
