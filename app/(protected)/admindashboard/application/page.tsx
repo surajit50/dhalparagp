@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "@/component
 import { FileSpreadsheet, AlertCircle, CheckCircle } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { createbulkschme } from '@/action/uploadwork';
-import { ApprovedActionPlanDetails } from '@prisma/client';
+import { actionplanschema } from '@/schema/actionplan'; // Import the schema to validate
 
 const formSchema = z.object({
   file: z.instanceof(File)
@@ -25,6 +25,47 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+// Helper function to clean and validate the parsed data
+function prepareDataForBulkCreate(parsedData: any[]): z.infer<typeof actionplanschema>[] {
+  return parsedData.map((row) => {
+    // Remove `id` if present and map fundType from string/null to union
+    const { id, ...cleanRow } = row;
+    
+    // Ensure fundType is either "Tied" or "Untied"
+    let fundType: "Tied" | "Untied" = "Tied"; // default
+    if (cleanRow.fundType) {
+      const ft = String(cleanRow.fundType).toLowerCase();
+      if (ft === 'untied') fundType = 'Untied';
+      else if (ft === 'tied') fundType = 'Tied';
+    }
+    
+    // Convert numeric strings to numbers
+    const estimatedCost = Number(cleanRow.estimatedCost) || 0;
+    const generalFund = Number(cleanRow.generalFund) || 0;
+    const scFund = Number(cleanRow.scFund) || 0;
+    const stFund = Number(cleanRow.stFund) || 0;
+    
+    // Return object matching actionplanschema
+    return {
+      financialYear: String(cleanRow.financialYear || ''),
+      themeName: String(cleanRow.themeName || ''),
+      activityCode: String(cleanRow.activityCode || ''),
+      activityName: String(cleanRow.activityName || ''),
+      activityDescription: String(cleanRow.activityDescription || ''),
+      activityFor: String(cleanRow.activityFor || ''),
+      sector: String(cleanRow.sector || ''),
+      locationofAsset: String(cleanRow.locationofAsset || ''),
+      estimatedCost,
+      totalduration: String(cleanRow.totalduration || ''),
+      schemeName: String(cleanRow.schemeName || ''),
+      generalFund,
+      scFund,
+      stFund,
+      fundType,
+    };
+  });
+}
 
 export default function ExcelUpload() {
   const [uploadStatus, setUploadStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
@@ -46,10 +87,21 @@ export default function ExcelUpload() {
           // Assuming the data is in the first sheet
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet) as ApprovedActionPlanDetails[];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[];
 
-          // Now call createbulkschme with the parsed data
-          await createbulkschme(jsonData);
+          // Transform the data to match the expected type
+          const cleanedData = prepareDataForBulkCreate(jsonData);
+
+          // Optional: Validate each item against the schema (can be done inside action too)
+          try {
+            cleanedData.forEach(item => actionplanschema.parse(item));
+          } catch (validationError) {
+            setUploadStatus({ type: 'error', message: 'Invalid data format in Excel. Please check column names and values.' });
+            return;
+          }
+
+          // Now call createbulkschme with the transformed data
+          await createbulkschme(cleanedData);
 
           setUploadStatus({ type: 'success', message: 'File uploaded successfully!' });
         };
@@ -57,6 +109,7 @@ export default function ExcelUpload() {
         reader.readAsBinaryString(file);
       }
     } catch (error) {
+      console.error(error);
       setUploadStatus({ type: 'error', message: 'Failed to upload file. Please try again.' });
     }
   };
