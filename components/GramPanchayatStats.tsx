@@ -53,7 +53,7 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
     // PROJECTS COMPLETED
     const projectsCompleted = await prisma.worksDetail.count({
       where: {
-        workStatus: "workcompleted",
+        workStatus: "billpaid",
       },
     });
 
