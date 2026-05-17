@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import CombinedFilter from "@/components/CombinedFilter";
+import { Suspense } from "react";
+import FilterSkeleton from "@/components/FilterSkeleton";
 import SummaryCard from "@/components/SummaryCard";
 import WorksTabs from "@/components/WorksTabs";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import FullPageLoader from "@/components/FullPageLoader";
+import { Loader2 } from "lucide-react";
 import axios from "axios";
 
 export default function FundStatusClient() {
@@ -19,9 +20,6 @@ export default function FundStatusClient() {
   const sortBy = searchParams.get("sortBy") || "nit";
   const order = searchParams.get("order") || "asc";
   const tab = searchParams.get("tab") || "all";
-
-  // Simulated progress state (0 to 100)
-  const [simulatedProgress, setSimulatedProgress] = useState(0);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["fundstatus", { nit, schemeName, fundType, year, sortBy, order }],
@@ -39,83 +37,61 @@ export default function FundStatusClient() {
     },
   });
 
-  // Simulate progress while loading
-  useEffect(() => {
-    if (isLoading) {
-      setSimulatedProgress(0);
-      const interval = setInterval(() => {
-        setSimulatedProgress((prev) => {
-          if (prev >= 95) return prev; // stop at 95% until actual load finishes
-          return prev + Math.random() * 15;
-        });
-      }, 300);
-      return () => clearInterval(interval);
-    } else {
-      // When loading finishes, jump to 100%
-      setSimulatedProgress(100);
-      // Reset after a short delay (optional)
-      const timeout = setTimeout(() => setSimulatedProgress(0), 500);
-      return () => clearTimeout(timeout);
-    }
-  }, [isLoading]);
-
-  // Show error alert if fetch fails
   if (isError) {
     return (
       <div className="p-4">
         <Alert variant="destructive">
           <AlertTitle>Error Loading Data</AlertTitle>
           <AlertDescription>
-            {axios.isAxiosError(error) 
-              ? error.response?.data?.error || error.message 
-              : "Failed to load fund status"}
+            {axios.isAxiosError(error) ? error.response?.data?.error || error.message : "Failed to load fund status"}
           </AlertDescription>
         </Alert>
       </div>
     );
   }
 
-  // Show full-page loader with progress props
-  if (isLoading) {
-    return (
-      <FullPageLoader
-        isLoading={true}
-        progress={Math.min(simulatedProgress, 99)} // cap at 99% until real finish
-        title="Fetching Fund Status"
-        description="Please wait while we load financial data for your filters"
-      />
-    );
-  }
-
-  // Data loaded – render main content
   return (
     <div className="p-4 space-y-6">
-      <CombinedFilter
-        nitOptions={data?.nitOptions || []}
-        financialYears={data?.financialYears || []}
-        schemeNames={data?.schemeNames || []}
-        fundTypes={data?.fundTypes || []}
-        selectedNit={nit}
-        selectedSchemeName={schemeName}
-        selectedFundType={fundType}
-        selectedYear={data?.effectiveYear || year}
-        selectedSortBy={sortBy}
-        selectedOrder={order as "asc" | "desc"}
-      />
+      <Suspense fallback={<FilterSkeleton />}>
+        {isLoading ? (
+          <FilterSkeleton />
+        ) : (
+          <CombinedFilter
+            nitOptions={data?.nitOptions || []}
+            financialYears={data?.financialYears || []}
+            schemeNames={data?.schemeNames || []}
+            fundTypes={data?.fundTypes || []}
+            selectedNit={nit}
+            selectedSchemeName={schemeName}
+            selectedFundType={fundType}
+            selectedYear={data?.effectiveYear || year}
+            selectedSortBy={sortBy}
+            selectedOrder={order as "asc" | "desc"}
+          />
+        )}
+      </Suspense>
 
-      <SummaryCard
-        summaryData={data?.summary || {}}
-        grandTotalPaid={data?.grandTotalPaid || 0}
-        grandTotalPending={data?.grandTotalPending || 0}
-        totalWorks={data?.totalWorks || 0}
-      />
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        </div>
+      ) : (
+        <>
+          <SummaryCard
+            summaryData={data?.summary || {}}
+            grandTotalPaid={data?.grandTotalPaid || 0}
+            grandTotalPending={data?.grandTotalPending || 0}
+            totalWorks={data?.totalWorks || 0}
+          />
 
-      <WorksTabs
-        works={data?.works || []}
-        selectedSchemeName={schemeName}
-        selectedFundType={fundType}
-        selectedYear={data?.effectiveYear || year}
-      />
+          <WorksTabs
+            works={data?.works || []}
+            selectedSchemeName={schemeName}
+            selectedFundType={fundType}
+            selectedYear={data?.effectiveYear || year}
+          />
+        </>
+      )}
     </div>
   );
 }
