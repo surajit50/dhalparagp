@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import LatestNewsUpdate from "@/components/latest-news-update";
 import { gpnameinshort } from "@/constants/gpinfor";
-
+import GramPanchayatStats from "@/components/GramPanchayatStats";
 type AdminMessage = {
   id: string;
   title: string;
@@ -71,38 +71,8 @@ export default async function Home() {
       </section>
 
       {/* ================= STATISTICS ================= */}
-      <section className="py-16 bg-card border-y border-border">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold text-nic-primary tracking-tight mb-3">
-              Gram Panchayat at a Glance
-            </h2>
-            <div className="w-24 h-1 bg-nic-primary mx-auto rounded-full opacity-80"></div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {[
-              { value: "15,247", label: "Total Population", icon: <Users size={24} /> },
-              { value: "12", label: "Villages Covered", icon: <MapPin size={24} /> },
-              { value: "₹2.5Cr", label: "Annual Budget", icon: <IndianRupee size={24} /> },
-              { value: "45+", label: "Projects Completed", icon: <CheckCircle size={24} /> },
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className="bg-muted border border-border rounded-2xl p-6 text-center hover:bg-nic-bg transition-colors duration-300 group"
-              >
-                <div className="mx-auto w-12 h-12 bg-card rounded-full flex items-center justify-center text-nic-primary shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                  {stat.icon}
-                </div>
-                <div className="text-3xl font-bold text-foreground mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-muted-foreground text-sm font-medium">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
+      <GramPanchayatStats />
 
       {/* ================= PRODHAN MESSAGE ================= */}
       <section className="py-16 bg-gradient-to-b from-muted/50 to-background">
