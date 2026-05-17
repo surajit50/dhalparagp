@@ -8,7 +8,7 @@ import SummaryCard from "@/components/SummaryCard";
 import WorksTabs from "@/components/WorksTabs";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import FullPageLoader  from "@/components/FullPageLoader";
 import axios from "axios";
 
 export default function FundStatusClient() {
@@ -52,9 +52,9 @@ export default function FundStatusClient() {
 
   return (
     <div className="p-4 space-y-6">
-      <Suspense fallback={<FilterSkeleton />}>
+      <Suspense fallback={<FullPageLoader />}>
         {isLoading ? (
-          <FilterSkeleton />
+          <FullPageLoader />
         ) : (
           <CombinedFilter
             nitOptions={data?.nitOptions || []}
@@ -73,7 +73,7 @@ export default function FundStatusClient() {
 
       {isLoading ? (
         <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+          < FullPageLoader/>
         </div>
       ) : (
         <>
