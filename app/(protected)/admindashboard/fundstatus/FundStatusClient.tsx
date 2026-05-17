@@ -9,7 +9,7 @@ import WorksTabs from "@/components/WorksTabs";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import axios from "axios";
+import { getFundStatus } from "@/action/fundstatus"; // <-- import server action
 
 export default function FundStatusClient() {
   const searchParams = useSearchParams();
@@ -19,21 +19,19 @@ export default function FundStatusClient() {
   const year = searchParams.get("year") || "";
   const sortBy = searchParams.get("sortBy") || "nit";
   const order = searchParams.get("order") || "asc";
-  const tab = searchParams.get("tab") || "all";
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["fundstatus", { nit, schemeName, fundType, year, sortBy, order }],
     queryFn: async () => {
-      const params = new URLSearchParams();
-      if (nit) params.set("nit", nit);
-      if (schemeName) params.set("schemeName", schemeName);
-      if (fundType) params.set("fundType", fundType);
-      if (year) params.set("year", year);
-      if (sortBy) params.set("sortBy", sortBy);
-      if (order) params.set("order", order);
-      
-      const { data } = await axios.get(`/api/fundstatus?${params.toString()}`);
-      return data;
+      // Call server action directly – no fetch/axios needed
+      return await getFundStatus({
+        nit,
+        schemeName,
+        fundType,
+        year,
+        sortBy,
+        order,
+      });
     },
   });
 
@@ -43,7 +41,7 @@ export default function FundStatusClient() {
         <Alert variant="destructive">
           <AlertTitle>Error Loading Data</AlertTitle>
           <AlertDescription>
-            {axios.isAxiosError(error) ? error.response?.data?.error || error.message : "Failed to load fund status"}
+            {error instanceof Error ? error.message : "Failed to load fund status"}
           </AlertDescription>
         </Alert>
       </div>
