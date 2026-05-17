@@ -1,4 +1,5 @@
 // components/GramPanchayatStats.tsx
+
 import { Users, MapPin, IndianRupee, CheckCircle } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
@@ -11,72 +12,49 @@ interface GramPanchayatStatsData {
 
 async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
   try {
-    // 1. Total Population: Sum from VillagePopulation linked to non‑draft VillageInfo
+    // TOTAL POPULATION
     const villageInfos = await prisma.villageInfo.findMany({
       where: {
         isDraft: false,
-        villagePopulationId: { not: null },
       },
       include: {
         villagePopulation: true,
       },
     });
 
-    let totalPopulation = 0;
-    for (const vi of villageInfos) {
-      if (vi.villagePopulation) {
-        totalPopulation +=
-          (vi.villagePopulation.male || 0) +
-          (vi.villagePopulation.female || 0);
-      }
-    }
+    const totalPopulation = villageInfos.reduce((total, village) => {
+      return (
+        total +
+        (village.villagePopulation?.male || 0) +
+        (village.villagePopulation?.female || 0)
+      );
+    }, 0);
 
-    // 2. Villages Covered: Count of non‑draft VillageInfo
+    // VILLAGES COUNT
     const villagesCovered = await prisma.villageInfo.count({
-      where: { isDraft: false },
+      where: {
+        isDraft: false,
+      },
     });
 
-    // 3. Annual Budget: Try Statistic model first, fallback to FundAvailability
+    // ANNUAL BUDGET
     let annualBudget = 0;
 
-    const budgetStat = await prisma.statistic.findUnique({
-      where: { name: "annual_budget" },
+    const budgetStat = await prisma.statistic.findFirst({
+      where: {
+        name: "annual_budget",
+      },
     });
 
-    if (budgetStat && budgetStat.value > 0) {
-      annualBudget = budgetStat.value;
-    } else {
-      const currentYear = getCurrentFinancialYear();
-      const fundData = await prisma.fundAvailability.findMany({
-        where: { year: currentYear },
-      });
-
-      annualBudget = fundData.reduce((total, fund) => {
-        return (
-          total +
-          (fund.openingBalanceTotal || 0) +
-          (fund.directReceiptTotal || 0) +
-          (fund.autoReceiptTotal || 0)
-        );
-      }, 0);
-
-      // If still zero, sum across all years
-      if (annualBudget === 0) {
-        const allFunds = await prisma.fundAvailability.findMany();
-        annualBudget = allFunds.reduce((total, fund) => {
-          return (
-            total +
-            (fund.openingBalanceTotal || 0) +
-            (fund.directReceiptTotal || 0) +
-            (fund.autoReceiptTotal || 0)
-          );
-        }, 0);
-      }
+    if (budgetStat) {
+      annualBudget = budgetStat.value || 0;
     }
 
-    // 4. Projects Completed: Count of WorksDetail with workStatus = 'workcompleted'
+    // PROJECTS COMPLETED
     const projectsCompleted = await prisma.worksDetail.count({
-      where: { workStatus: "workcompleted" },
+      where: {
+        workStatus: "workcompleted",
+      },
     });
 
     return {
@@ -86,7 +64,8 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
       projectsCompleted,
     };
   } catch (error) {
-    console.error("Error fetching Gram Panchayat stats:", error);
+    console.error("Stats Error:", error);
+
     return {
       totalPopulation: 0,
       villagesCovered: 0,
@@ -96,31 +75,8 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
   }
 }
 
-function getCurrentFinancialYear(): string {
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
-  // Financial year starts in April
-  if (currentMonth >= 3) {
-    return `${currentYear}-${(currentYear + 1).toString().slice(-2)}`;
-  } else {
-    return `${currentYear - 1}-${currentYear.toString().slice(-2)}`;
-  }
-}
-
 function formatIndianNumber(num: number): string {
-  if (num >= 10000000) {
-    return `₹${(num / 10000000).toFixed(1)}Cr`;
-  } else if (num >= 100000) {
-    return `₹${(num / 100000).toFixed(1)}L`;
-  } else if (num >= 1000) {
-    return `₹${(num / 1000).toFixed(1)}K`;
-  }
-  return `₹${num}`;
-}
-
-function formatNumber(num: number): string {
-  return num.toLocaleString("en-IN");
+  return new Intl.NumberFormat("en-IN").format(num);
 }
 
 export default async function GramPanchayatStats() {
@@ -128,52 +84,47 @@ export default async function GramPanchayatStats() {
 
   const statItems = [
     {
-      value: formatNumber(stats.totalPopulation),
+      value: formatIndianNumber(stats.totalPopulation),
       label: "Total Population",
-      icon: <Users size={24} />,
+      icon: <Users className="h-6 w-6" />,
     },
     {
-      value: formatNumber(stats.villagesCovered),
+      value: formatIndianNumber(stats.villagesCovered),
       label: "Villages Covered",
-      icon: <MapPin size={24} />,
+      icon: <MapPin className="h-6 w-6" />,
     },
     {
-      value: formatIndianNumber(stats.annualBudget),
+      value: `₹${formatIndianNumber(stats.annualBudget)}`,
       label: "Annual Budget",
-      icon: <IndianRupee size={24} />,
+      icon: <IndianRupee className="h-6 w-6" />,
     },
     {
-      value: `${formatNumber(stats.projectsCompleted)}+`,
+      value: formatIndianNumber(stats.projectsCompleted),
       label: "Projects Completed",
-      icon: <CheckCircle size={24} />,
+      icon: <CheckCircle className="h-6 w-6" />,
     },
   ];
 
   return (
-    <section className="py-16 bg-card border-y border-border">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-nic-primary tracking-tight mb-3">
-            Gram Panchayat at a Glance
-          </h2>
-          <div className="w-24 h-1 bg-nic-primary mx-auto rounded-full opacity-80"></div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {statItems.map((stat, index) => (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {statItems.map((item, index) => (
             <div
               key={index}
-              className="bg-muted border border-border rounded-2xl p-6 text-center hover:bg-nic-bg transition-colors duration-300 group"
+              className="rounded-2xl border bg-card p-6 text-center shadow-sm"
             >
-              <div className="mx-auto w-12 h-12 bg-card rounded-full flex items-center justify-center text-nic-primary shadow-sm mb-4 group-hover:scale-110 transition-transform">
-                {stat.icon}
+              <div className="flex justify-center mb-4 text-primary">
+                {item.icon}
               </div>
-              <div className="text-3xl font-bold text-foreground mb-1">
-                {stat.value}
-              </div>
-              <div className="text-muted-foreground text-sm font-medium">
-                {stat.label}
-              </div>
+
+              <h3 className="text-3xl font-bold mb-2">
+                {item.value}
+              </h3>
+
+              <p className="text-muted-foreground text-sm">
+                {item.label}
+              </p>
             </div>
           ))}
         </div>
