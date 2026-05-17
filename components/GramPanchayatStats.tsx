@@ -1,8 +1,7 @@
 // components/GramPanchayatStats.tsx
 import { Users, MapPin, IndianRupee, CheckCircle } from "lucide-react";
-import { prisma } from "@/lib/prisma"; // Adjust the import path to your Prisma client
+import { prisma } from "@/lib/prisma";
 
-// Type for the stats data
 interface GramPanchayatStatsData {
   totalPopulation: number;
   villagesCovered: number;
@@ -10,40 +9,36 @@ interface GramPanchayatStatsData {
   projectsCompleted: number;
 }
 
-// Function to fetch statistics from the database
 async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
   try {
-    // 1. Total Population: Sum of male + female from all non-draft VillagePopulation records
-    //    linked to non-draft VillageInfo.
-    const populationResult = await prisma.villageInfo.aggregate({
+    // 1. Total Population: Sum from VillagePopulation linked to non‑draft VillageInfo
+    const villageInfos = await prisma.villageInfo.findMany({
       where: {
         isDraft: false,
-        villagePopulation: {
-          isNot: null,
-        },
+        villagePopulationId: { not: null },
       },
-      _sum: {
-        villagePopulation: {
-          male: true,
-          female: true,
-        },
+      include: {
+        villagePopulation: true,
       },
     });
 
-    // Since _sum on nested relation returns nested object, we need to sum the values
-    const totalPopulation =
-      (populationResult._sum?.villagePopulation?.male || 0) +
-      (populationResult._sum?.villagePopulation?.female || 0);
+    let totalPopulation = 0;
+    for (const vi of villageInfos) {
+      if (vi.villagePopulation) {
+        totalPopulation +=
+          (vi.villagePopulation.male || 0) +
+          (vi.villagePopulation.female || 0);
+      }
+    }
 
-    // 2. Villages Covered: Count of non-draft VillageInfo records
+    // 2. Villages Covered: Count of non‑draft VillageInfo
     const villagesCovered = await prisma.villageInfo.count({
       where: { isDraft: false },
     });
 
-    // 3. Annual Budget: Try to get from Statistic model first, then fallback to FundAvailability
+    // 3. Annual Budget: Try Statistic model first, fallback to FundAvailability
     let annualBudget = 0;
 
-    // Check if Statistic model has annual budget
     const budgetStat = await prisma.statistic.findUnique({
       where: { name: "annual_budget" },
     });
@@ -51,13 +46,11 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
     if (budgetStat && budgetStat.value > 0) {
       annualBudget = budgetStat.value;
     } else {
-      // Fallback: Use FundAvailability for current financial year (e.g., "2025-26")
       const currentYear = getCurrentFinancialYear();
       const fundData = await prisma.fundAvailability.findMany({
         where: { year: currentYear },
       });
 
-      // Sum opening balance + direct receipts + auto receipts as total available budget
       annualBudget = fundData.reduce((total, fund) => {
         return (
           total +
@@ -67,7 +60,7 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
         );
       }, 0);
 
-      // If still zero, try to get from any year
+      // If still zero, sum across all years
       if (annualBudget === 0) {
         const allFunds = await prisma.fundAvailability.findMany();
         annualBudget = allFunds.reduce((total, fund) => {
@@ -94,7 +87,6 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
     };
   } catch (error) {
     console.error("Error fetching Gram Panchayat stats:", error);
-    // Return default values on error
     return {
       totalPopulation: 0,
       villagesCovered: 0,
@@ -104,23 +96,18 @@ async function fetchGramPanchayatStats(): Promise<GramPanchayatStatsData> {
   }
 }
 
-// Helper function to get current financial year (e.g., "2025-26")
 function getCurrentFinancialYear(): string {
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth(); // 0-indexed (0 = January)
-
-  // Financial year starts from April
+  const currentMonth = now.getMonth();
+  // Financial year starts in April
   if (currentMonth >= 3) {
-    // April to December
     return `${currentYear}-${(currentYear + 1).toString().slice(-2)}`;
   } else {
-    // January to March
     return `${currentYear - 1}-${currentYear.toString().slice(-2)}`;
   }
 }
 
-// Format number with Indian numbering system (lakhs/crores)
 function formatIndianNumber(num: number): string {
   if (num >= 10000000) {
     return `₹${(num / 10000000).toFixed(1)}Cr`;
@@ -132,12 +119,10 @@ function formatIndianNumber(num: number): string {
   return `₹${num}`;
 }
 
-// Format plain number with commas
 function formatNumber(num: number): string {
   return num.toLocaleString("en-IN");
 }
 
-// Server Component (Next.js App Router)
 export default async function GramPanchayatStats() {
   const stats = await fetchGramPanchayatStats();
 
