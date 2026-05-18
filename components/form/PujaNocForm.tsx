@@ -39,26 +39,24 @@ import {
 
 import ErrorForm from "@/components/ErrorForm";
 import SuccessForm from "@/components/SuccessForm";
-import { User, Calendar, Settings, Upload, FileText, Heart } from "lucide-react";
+import { User, Calendar, Settings, Upload, FileText } from "lucide-react";
 
-// ✅ Extended Schema – now supports both Puja & Blood Donation Camp
+// ✅ FINAL SCHEMA WITH VALIDATION
 const formSchema = z
   .object({
-    // --- Common fields ---
     applicantName: z.string().min(2),
     applicantPhone: z.string().min(10),
     applicantEmail: z.string().email().optional().or(z.literal("")),
     applicantAddress: z.string().min(5),
+
     organizerName: z.string().min(2),
 
-    // event types now include Blood Donation Camp
     eventName: z.enum([
       "Durga Puja",
       "Kali Puja",
       "Saraswati Puja",
       "Jagaddhatri Puja",
       "Ganesh Puja",
-      "Blood Donation Camp",
       "Other",
     ]),
 
@@ -70,35 +68,17 @@ const formSchema = z
 
     expectedAttendance: z.coerce.number().optional(),
 
-    // Puja‑specific requirements (hidden for blood camp)
     loudspeakerRequired: z.boolean().default(false),
     electricityRequired: z.boolean().default(false),
     roadClosureRequired: z.boolean().default(false),
 
-    // Blood Donation Camp specific fields
-    bloodBankName: z.string().optional(),
-    expectedDonors: z.coerce.number().optional(),
-    medicalSupportRequired: z.boolean().default(false),
-    ambulanceRequired: z.boolean().default(false),
-
     additionalRequirements: z.string().optional(),
   })
-  // Validate custom event name when "Other" is chosen
   .refine(
     (data) => data.eventName !== "Other" || !!data.customEventName?.trim(),
     {
       message: "Please enter event name",
       path: ["customEventName"],
-    },
-  )
-  // Validate blood camp specific fields
-  .refine(
-    (data) =>
-      data.eventName !== "Blood Donation Camp" ||
-      (!!data.bloodBankName?.trim() && data.expectedDonors !== undefined),
-    {
-      message: "Blood bank name and expected donors are required for blood donation camp",
-      path: ["bloodBankName"], // error will be shown on the first missing field
     },
   );
 
@@ -116,8 +96,6 @@ export default function PujaNocForm({ userId }: { userId: string }) {
       loudspeakerRequired: false,
       electricityRequired: false,
       roadClosureRequired: false,
-      medicalSupportRequired: false,
-      ambulanceRequired: false,
     },
   });
 
@@ -141,6 +119,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
     setError("");
     setSuccess("");
 
+    // ✅ SAFE (no TS error)
     const finalEventName =
       values.eventName === "Other" ? values.customEventName! : values.eventName;
 
@@ -157,8 +136,6 @@ export default function PujaNocForm({ userId }: { userId: string }) {
           fileKey = uploadResult.publicId;
         }
 
-        // Send everything to the server action.
-        // Backend must be updated to accept the new fields for blood camp.
         const result = await applyPujaNOC({
           ...values,
           eventName: finalEventName,
@@ -185,20 +162,14 @@ export default function PujaNocForm({ userId }: { userId: string }) {
     });
   }
 
-  const isBloodCamp = form.watch("eventName") === "Blood Donation Camp";
-
   return (
     <div className="min-h-screen bg-muted/40 p-4">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-semibold">
-            {isBloodCamp ? "Blood Donation Camp Application" : "Puja NOC Application"}
-          </h1>
+          <h1 className="text-2xl font-semibold">Puja NOC Application</h1>
           <p className="text-muted-foreground text-sm">
-            {isBloodCamp
-              ? "Submit your request for organizing a blood donation camp"
-              : "Submit your request for organizing a puja/event"}
+            Submit your request for organizing a puja/event
           </p>
         </div>
 
@@ -207,7 +178,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Applicant Info – remains the same for both */}
+            {/* Applicant Info */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -230,6 +201,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="applicantPhone"
@@ -243,6 +215,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="applicantEmail"
@@ -255,6 +228,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="applicantAddress"
@@ -281,23 +255,15 @@ export default function PujaNocForm({ userId }: { userId: string }) {
               </CardHeader>
 
               <CardContent className="grid md:grid-cols-2 gap-4">
+                {/* Event Select */}
                 <FormField
                   control={form.control}
                   name="eventName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Select Event Type</FormLabel>
+                      <FormLabel>Select Puja/Event</FormLabel>
                       <Select
-                        onValueChange={(value) => {
-                          field.onChange(value);
-                          // Reset blood‑camp fields when switching away from it
-                          if (value !== "Blood Donation Camp") {
-                            form.setValue("bloodBankName", "");
-                            form.setValue("expectedDonors", undefined);
-                            form.setValue("medicalSupportRequired", false);
-                            form.setValue("ambulanceRequired", false);
-                          }
-                        }}
+                        onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
@@ -305,16 +271,18 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                             <SelectValue placeholder="Choose event" />
                           </SelectTrigger>
                         </FormControl>
+
                         <SelectContent>
                           <SelectItem value="Durga Puja">Durga Puja</SelectItem>
                           <SelectItem value="Kali Puja">Kali Puja</SelectItem>
-                          <SelectItem value="Saraswati Puja">Saraswati Puja</SelectItem>
-                          <SelectItem value="Jagaddhatri Puja">Jagaddhatri Puja</SelectItem>
-                          <SelectItem value="Ganesh Puja">Ganesh Puja</SelectItem>
-                          <SelectItem value="Blood Donation Camp">
-                            <span className="flex items-center gap-2">
-                              <Heart size={14} className="text-red-500" /> Blood Donation Camp
-                            </span>
+                          <SelectItem value="Saraswati Puja">
+                            Saraswati Puja
+                          </SelectItem>
+                          <SelectItem value="Jagaddhatri Puja">
+                            Jagaddhatri Puja
+                          </SelectItem>
+                          <SelectItem value="Ganesh Puja">
+                            Ganesh Puja
                           </SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
@@ -329,7 +297,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                   name="organizerName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Organizer / Institution</FormLabel>
+                      <FormLabel>Organizer</FormLabel>
                       <FormControl>
                         <Input className="rounded-lg" {...field} />
                       </FormControl>
@@ -337,6 +305,7 @@ export default function PujaNocForm({ userId }: { userId: string }) {
                   )}
                 />
 
+                {/* Custom Event */}
                 {form.watch("eventName") === "Other" && (
                   <FormField
                     control={form.control}
@@ -398,144 +367,56 @@ export default function PujaNocForm({ userId }: { userId: string }) {
               </CardContent>
             </Card>
 
-            {/* Blood Donation Camp specific details */}
-            {isBloodCamp && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart size={18} className="text-red-500" /> Blood Donation Camp Details
-                  </CardTitle>
-                  <CardDescription>
-                    Information about the organising body and expected participation
-                  </CardDescription>
-                </CardHeader>
+            {/* Requirements */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings size={18} /> Requirements
+                </CardTitle>
+              </CardHeader>
 
-                <CardContent className="grid md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="bloodBankName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Organising Blood Bank / Hospital</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="rounded-lg"
-                            placeholder="e.g. Red Cross Blood Bank"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  {[
+                    { name: "loudspeakerRequired", label: "Loudspeaker" },
+                    { name: "electricityRequired", label: "Electricity" },
+                    { name: "roadClosureRequired", label: "Road Closure" },
+                  ].map((item) => (
+                    <FormField
+                      key={item.name}
+                      control={form.control}
+                      name={item.name as any}
+                      render={({ field }) => (
+                        <FormItem className="flex items-center gap-3 border rounded-xl p-4 hover:bg-muted transition">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormLabel>{item.label}</FormLabel>
+                        </FormItem>
+                      )}
+                    />
+                  ))}
+                </div>
 
-                  <FormField
-                    control={form.control}
-                    name="expectedDonors"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Expected Number of Donors</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            className="rounded-lg"
-                            placeholder="100"
-                            {...field}
-                            onChange={(e) => field.onChange(e.target.valueAsNumber || undefined)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="additionalRequirements"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Additional Notes</FormLabel>
+                      <FormControl>
+                        <Textarea className="rounded-lg" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
 
-                  <FormField
-                    control={form.control}
-                    name="medicalSupportRequired"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-3 border rounded-xl p-4 hover:bg-muted transition">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel>Medical Support Required</FormLabel>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="ambulanceRequired"
-                    render={({ field }) => (
-                      <FormItem className="flex items-center gap-3 border rounded-xl p-4 hover:bg-muted transition">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormLabel>Ambulance on Standby</FormLabel>
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Requirements (shown only for Puja events, not blood camp) */}
-            {!isBloodCamp && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings size={18} /> Requirements
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-3 gap-4">
-                    {[
-                      { name: "loudspeakerRequired", label: "Loudspeaker" },
-                      { name: "electricityRequired", label: "Electricity" },
-                      { name: "roadClosureRequired", label: "Road Closure" },
-                    ].map((item) => (
-                      <FormField
-                        key={item.name}
-                        control={form.control}
-                        name={item.name as any}
-                        render={({ field }) => (
-                          <FormItem className="flex items-center gap-3 border rounded-xl p-4 hover:bg-muted transition">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormLabel>{item.label}</FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="additionalRequirements"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Additional Notes</FormLabel>
-                        <FormControl>
-                          <Textarea className="rounded-lg" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
-            )}
-
-            {/* Document Upload – available for all event types */}
+            {/* Document Upload */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
