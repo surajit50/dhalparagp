@@ -109,7 +109,7 @@ function MenuItem({
           {item.Icon && (
             <item.Icon
               className={cn(
-                "w-4.5 h-4.5 transition-transform duration-200 group-hover:scale-110",
+                "w-4 h-4 transition-transform duration-200 group-hover:scale-110",
                 isActive ? "text-white" : item.color || "text-slate-500",
               )}
             />
@@ -136,7 +136,7 @@ function MenuItem({
       </Button>
 
       {item.submenu && isOpen && (
-        <div className="ml-5 mt-1 border-l-2 border-slate-100 pl-2 space-y-1">
+        <div className="ml-2 mt-1 border-l-2 border-slate-100 pl-2 space-y-1">
           {item.subMenuItems.map((subItem) => (
             <MenuItem
               key={subItem.menuItemText}
@@ -166,7 +166,7 @@ function SidebarContent({
   const config = DASHBOARD_CONFIG[role];
 
   return (
-    <div className="w-72 h-screen flex flex-col bg-white border-r border-slate-200 fixed left-0 top-0 z-30 shadow-sm">
+    <div className="w-80 h-screen flex flex-col bg-white border-r border-slate-200 fixed left-0 top-0 z-30 shadow-sm">
       {/* Header */}
       <header className="h-16 px-6 flex items-center justify-between border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
         <div className="flex items-center gap-2">
