@@ -31,7 +31,9 @@ export const {
     },
   },
 
+  ...authConfig,
   callbacks: {
+    ...authConfig.callbacks,
     async signIn({ user, account }) {
       if (account?.provider !== "credentials") return true;
 
@@ -53,25 +55,20 @@ export const {
       return true;
     },
 
-    async session({ token, session }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
+    // Session callback moved to auth.config.ts for Edge middleware support
+
+    async jwt({ token, user, trigger }) {
+      // 🚀 Fix for HTTP 431 Request Header Fields Too Large
+      // NextAuth implicitly merges the returned user object from authorize() into the token.
+      // If the user has a large base64 image or other large fields, it causes the cookies to exceed the 16KB limit.
+      if (user) {
+        delete token.image;
+        delete token.picture;
+        delete token.password;
+        delete token.imageKey;
+        // Keep only essential fields if necessary, but Auth.js requires some base fields.
       }
 
-      if (session.user) {
-        session.user.role = token.role as UserRole;
-        session.user.isTwoFactorEnabled =
-          token.isTwoFactorEnabled as boolean;
-        session.user.name = token.name as string;
-        session.user.email = token.email as string;
-        session.user.isOAuth = token.isOAuth as boolean;
-        session.user.agencyDetailsId = token.agencyDetailsId as string | null;
-      }
-
-      return session;
-    },
-
-    async jwt({ token, trigger }) {
       if (!token.sub) return token;
 
       // 🔁 When client calls update() → renew session
@@ -102,6 +99,4 @@ export const {
     strategy: "jwt",
     maxAge: 15 * 60, // 15 minutes
   },
-
-  ...authConfig,
 });

@@ -36,4 +36,22 @@ export default {
       clientSecret: process.env.GITHUB_CLIENT_SECRET,
     }),
   ],
+  callbacks: {
+    async session({ token, session }) {
+      if (token.sub && session.user) {
+        session.user.id = token.sub;
+      }
+
+      if (session.user) {
+        session.user.role = token.role as any;
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.isOAuth = token.isOAuth as boolean;
+        session.user.agencyDetailsId = token.agencyDetailsId as string | null;
+      }
+
+      return session;
+    },
+  },
 } satisfies NextAuthConfig;
