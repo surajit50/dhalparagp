@@ -147,66 +147,6 @@ export default async function Dashboard() {
               </div>
             </div>
           </div>
-
-          {/* 📊 Stats */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat, i) => (
-              <Card
-                key={i}
-                className={`
-                  group transition-all duration-300 hover:scale-[1.02] hover:shadow-lg
-                  ${i === 0 ? "lg:col-span-2 bg-gradient-to-br from-orange-50 to-white" : ""}
-                `}
-              >
-                <CardContent className="p-6 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-500">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-900">
-                      {stat.value}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Updated recently
-                    </p>
-                  </div>
-
-                  <div className={`p-3 rounded-full bg-${stat.color}-100`}>
-                    <stat.icon
-                      className={`h-6 w-6 text-${stat.color}-600 group-hover:rotate-6 transition`}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* 📄 Recent Applications */}
-          <div className="rounded-xl border bg-white shadow-sm">
-            <div className="p-4 border-b font-semibold text-gray-700">
-              Recent Applications
-            </div>
-
-            <div className="divide-y">
-              {[1, 2, 3].map((_, i) => (
-                <div
-                  key={i}
-                  className="p-4 flex justify-between items-center hover:bg-gray-50 transition"
-                >
-                  <div>
-                    <p className="text-sm font-medium">
-                      Application #{i + 1}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Submitted recently
-                    </p>
-                  </div>
-
-                  <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
-                    Submitted
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </main>
     );
