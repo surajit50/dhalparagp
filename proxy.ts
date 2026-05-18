@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import authConfig from "@/auth.config";
-import { currentRole } from "@/lib/auth";
 
 const { auth } = NextAuth(authConfig);
 
@@ -8,7 +7,8 @@ export default auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
 
-  const user = await currentRole();
+  // Retrieve user role directly from NextAuth session to be 100% edge-safe and prevent database / Prisma calls in middleware
+  const user = req.auth?.user?.role;
 
   // ⭐ EDGE SAFE MAINTENANCE CHECK
   const isMaintenance = process.env.MAINTENANCE_MODE === "true";
@@ -23,10 +23,10 @@ export default auth(async (req) => {
   const admindashboard = nextUrl.pathname.startsWith("/admindashboard");
   const staffdashboard = nextUrl.pathname.startsWith("/employeedashboard");
   const publicdashboard = nextUrl.pathname.startsWith("/dashboard");
-  const superadmindashboard = nextUrl.pathname.startsWith(
-    "/superadmindashboard"
-  );
+  const superadmindashboard = nextUrl.pathname.startsWith("/superadmindashboard");
+  const agencydashboard = nextUrl.pathname.startsWith("/agencydashboard");
 
+  // Redirect if accessing a protected dashboard but role doesn't match
   if (admindashboard && user !== "admin") {
     return Response.redirect(new URL("/", nextUrl));
   }
@@ -43,6 +43,11 @@ export default auth(async (req) => {
     return Response.redirect(new URL("/", nextUrl));
   }
 
+  if (agencydashboard && user !== "agency") {
+    return Response.redirect(new URL("/", nextUrl));
+  }
+
+  // Redirect to home page if trying to access any protected dashboard when not logged in
   if (!isLoggedIn) {
     return Response.redirect(new URL("/", nextUrl));
   }
@@ -54,5 +59,6 @@ export const config = {
     "/admindashboard/:path*",
     "/employeedashboard/:path*",
     "/superadmindashboard/:path*",
+    "/agencydashboard/:path*",
   ],
 };
