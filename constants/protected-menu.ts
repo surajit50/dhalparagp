@@ -450,6 +450,7 @@ export const adminMenuItems: MenuItemProps[] = [
       ]),
       createMenuItem("Personnel Directory", ["admin", "superadmin"], `${BASE_URLS.admin}/viewmenberdetails`, FaChevronCircleRight, COLORS.purple),
     ]),
+    createMenuItem("Staff Attendance & Holidays", ["admin", "superadmin"], `${BASE_URLS.admin}/staff-attendance`, MdCalendarToday, COLORS.orange),
     createMenuItem("System Configuration", ["admin", "superadmin"], undefined, FaChevronCircleRight, COLORS.red, [
       createMenuItem("Services", ["admin", "superadmin"], undefined, FaChevronDown, COLORS.purple, [
         createMenuItem("Email Services", ["admin", "superadmin"], `${BASE_URLS.admin}/master/utils/emails-service`, FaChevronCircleRight, COLORS.purple),

@@ -57,7 +57,7 @@ export async function getHolidays() {
 }
 
 export async function addHoliday(name: string, date: Date, description?: string) {
-  await db.holiday.create({
+  const holiday = await db.holiday.create({
     data: {
       name,
       date,
@@ -65,6 +65,12 @@ export async function addHoliday(name: string, date: Date, description?: string)
     },
   });
   revalidatePath("/admindashboard/staff-attendance");
+  return {
+    id: holiday.id.toString(),
+    name: holiday.name,
+    date: holiday.date,
+    description: holiday.description,
+  };
 }
 
 export async function deleteHoliday(id: string) {
