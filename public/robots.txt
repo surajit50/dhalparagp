@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /admindashboard/
+Disallow: /agencydashboard/
+Disallow: /dashboard/
+Disallow: /employeedashboard/
+Disallow: /superadmindashboard/
+Sitemap: https://www.dhalparagp.in/sitemap.xml

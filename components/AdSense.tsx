@@ -17,14 +17,20 @@ type AdSenseProviderProps = {
   enableAutoAds?: boolean
 }
 
+const formatPublisherId = (id: string) => {
+  if (!id) return "";
+  return id.startsWith("ca-pub-") ? id : `ca-pub-${id}`;
+};
+
 export const AdSenseProvider = ({ pId, children, enableAutoAds = true }: AdSenseProviderProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
+  const publisherId = formatPublisherId(pId)
 
   return (
     <AdSenseContext.Provider value={{ isLoaded, setIsLoaded }}>
       <Script
         async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${pId}`}
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
         crossOrigin="anonymous"
         strategy="afterInteractive"
         onLoad={() => {
@@ -33,7 +39,7 @@ export const AdSenseProvider = ({ pId, children, enableAutoAds = true }: AdSense
             // Enable auto ads
             ;(window as any).adsbygoogle = (window as any).adsbygoogle || []
             ;(window as any).adsbygoogle.push({
-              google_ad_client: `ca-pub-${pId}`,
+              google_ad_client: publisherId,
               enable_page_level_ads: true,
             })
           }
@@ -82,16 +88,27 @@ export const AdUnit = ({ slot, format = "auto", responsive = true, style, classN
     ...style,
   }
 
+  const clientPId = formatPublisherId(process.env.NEXT_PUBLIC_ADSENSE_PID || "")
+
   return (
     <ins
       className={`adsbygoogle ${className || ""}`}
       style={defaultStyle}
-      data-ad-client={`ca-pub-${process.env.NEXT_PUBLIC_ADSENSE_PID}`}
+      data-ad-client={clientPId}
       data-ad-slot={slot}
       data-ad-format={format}
       data-full-width-responsive={responsive.toString()}
     />
   )
+}
+
+// Hook to use AdSense context
+export const useAdSense = () => {
+  const context = useContext(AdSenseContext)
+  if (!context) {
+    throw new Error("useAdSense must be used within AdSenseProvider")
+  }
+  return context
 }
 
 // Legacy component for backward compatibility
@@ -100,10 +117,11 @@ type AdSenseTypes = {
 }
 
 const AdSense = ({ pId }: AdSenseTypes) => {
+  const publisherId = formatPublisherId(pId)
   return (
     <Script
       async
-      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${pId}`}
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
       crossOrigin="anonymous"
       strategy="afterInteractive"
     />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-		<!--	created with www.mysitemapgenerator.com	-->
-		<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<!--	created with www.mysitemapgenerator.com	-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 	<loc>https://www.dhalparagp.in/</loc>
 	<lastmod>2025-05-30T12:00:00+01:00</lastmod>
@@ -142,5 +142,20 @@
 	<loc>https://www.dhalparagp.in/resources/faqs</loc>
 	<lastmod>2025-05-30T12:00:00+01:00</lastmod>
 	<priority>0.8</priority>
+</url>
+<url>
+	<loc>https://www.dhalparagp.in/privacy-policy</loc>
+	<lastmod>2026-05-25T16:00:00+05:30</lastmod>
+	<priority>0.5</priority>
+</url>
+<url>
+	<loc>https://www.dhalparagp.in/terms-and-conditions</loc>
+	<lastmod>2026-05-25T16:00:00+05:30</lastmod>
+	<priority>0.5</priority>
+</url>
+<url>
+	<loc>https://www.dhalparagp.in/disclaimer</loc>
+	<lastmod>2026-05-25T16:00:00+05:30</lastmod>
+	<priority>0.5</priority>
 </url>
 </urlset>

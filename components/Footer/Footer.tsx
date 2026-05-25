@@ -60,8 +60,13 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 text-center text-xs border-t border-nic-primary/30 pt-6">
-          © {currentYear} Dhalpara Gram Panchayat
+        <div className="mt-8 text-center text-xs border-t border-nic-primary/30 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>© {currentYear} Dhalpara Gram Panchayat. All rights reserved.</div>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className="hover:underline">Terms & Conditions</Link>
+            <Link href="/disclaimer" className="hover:underline">Disclaimer</Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -18,8 +18,14 @@ type AdSenseProviderProps = {
   enableAutoAds?: boolean
 }
 
+const formatPublisherId = (id: string) => {
+  if (!id) return "";
+  return id.startsWith("ca-pub-") ? id : `ca-pub-${id}`;
+};
+
 export const AdSenseProvider = ({ pId, children, enableAutoAds = true }: AdSenseProviderProps) => {
   const [isLoaded, setIsLoaded] = useState(false)
+  const publisherId = formatPublisherId(pId)
 
   const pushAd = useCallback(() => {
     if (typeof window !== "undefined" && isLoaded) {
@@ -40,7 +46,7 @@ export const AdSenseProvider = ({ pId, children, enableAutoAds = true }: AdSense
       try {
         ;(window as any).adsbygoogle = (window as any).adsbygoogle || []
         ;(window as any).adsbygoogle.push({
-          google_ad_client: `ca-pub-${pId}`,
+          google_ad_client: publisherId,
           enable_page_level_ads: true,
         })
       } catch (error) {
@@ -50,10 +56,10 @@ export const AdSenseProvider = ({ pId, children, enableAutoAds = true }: AdSense
   }
 
   return (
-    <AdSenseContext.Provider value={{ isLoaded, pId, pushAd }}>
+    <AdSenseContext.Provider value={{ isLoaded, pId: publisherId, pushAd }}>
       <Script
         async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-${pId}`}
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${publisherId}`}
         crossOrigin="anonymous"
         strategy="afterInteractive"
         onLoad={handleScriptLoad}
@@ -107,7 +113,7 @@ export const AdUnit = ({ slot, format = "auto", responsive = true, style, classN
       <ins
         className="adsbygoogle"
         style={defaultStyle}
-        data-ad-client={`ca-pub-${pId}`}
+        data-ad-client={pId}
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive={responsive.toString()}
