@@ -101,6 +101,7 @@ model User {
   meetingDocuments             MeetingDocument[]            @relation("MeetingDocumentUploadedBy")
   nocApplications              NocApplication[]
   domicileCertificateEnquiries DomicileCertificateEnquiry[]
+  birthVerificationReports     BirthVerificationReport[]
   landConversionApplications   LandConversionApplication[]
   workEstimateItems            WorkEstimateItem[]
   workMeasurementBooks         WorkMeasurementBook[]
@@ -3800,3 +3801,36 @@ model FundAvailability {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 }
+
+model BirthVerificationReport {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  memoNo              String    // E.g., CAF066804290826
+  memoDate            DateTime  // Letter date
+  toAuthority         String    @default("The District Informatics Officer (DIO)")
+  toZone              String    @default("Hili Zone, Dakshin Dinajpur")
+  subject             String    @default("Verification Report on Birth Certificate")
+  
+  // Certificate particulars
+  certificateHolder   String
+  motherName          String
+  fatherName          String
+  address             String
+  dateOfBirth         DateTime
+  registrationNo      String
+  dateOfRegistration  DateTime
+  placeOfRegistration String    @default("No. 3 Dhalpara Gram Panchayat")
+  
+  // Verification details
+  isGenuine           Boolean   @default(true)
+  remarks             String?
+  
+  // Metadata
+  status              String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdBy           String    @db.ObjectId
+  createdByUser       User      @relation(fields: [createdBy], references: [id])
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@map("birth_verification_reports")
+}
+

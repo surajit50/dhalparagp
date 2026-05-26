@@ -200,6 +200,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Issued NOC Records", ["admin"], `${baseUrl}/generate/puja-noc?tab=history`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Settings", ["admin"], `${baseUrl}/generate/puja-noc?tab=settings`, FaChevronCircleRight, COLORS.purple),
   ]),
+  createMenuItem("Birth Verification Report", ["admin"], `${baseUrl}/birth-verification`, FaRegFileAlt, COLORS.orange),
 ];
 
 // Extract APA reports structure
