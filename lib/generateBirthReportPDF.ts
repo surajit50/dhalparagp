@@ -18,7 +18,7 @@ export interface BirthVerificationReportData {
   registrationNo: string;
   dateOfRegistration: Date | string;
   placeOfRegistration: string;
-  isGenuine: boolean;
+  verificationResult: string;
   remarks?: string | null;
   status: string;
   createdAt: Date | string;
@@ -150,8 +150,14 @@ export async function generateBirthReportPDF(data: BirthVerificationReportData) 
   cursorY += 12;
 
   // --- Certification Conclusion ---
-  const statusStr = data.isGenuine ? "genuine and authentic" : "not genuine / authentic";
-  const certText = `This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been duly traced and verified with the official records maintained by this office and have been found to be ${statusStr}.`;
+  let certText = "";
+  if (data.verificationResult === "GENUINE") {
+    certText = "This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been duly traced and verified with the official records maintained by this office and have been found to be genuine and authentic.";
+  } else if (data.verificationResult === "NOT_GENUINE") {
+    certText = "This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been checked and have been found to be not genuine and authentic.";
+  } else {
+    certText = "This is to certify that the particulars furnished in the said Birth Certificate could not be verified as the relevant Birth Register is not available in this office.";
+  }
   cursorY = addWrappedText(certText, margin.left, cursorY, 11, "bold");
   cursorY += 12;
 

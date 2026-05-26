@@ -31,7 +31,7 @@ export const birthVerificationReportSchema = z.object({
   }),
   placeOfRegistration: z.string().min(1, "Place of registration is required"),
   
-  isGenuine: z.boolean().default(true),
+  verificationResult: z.enum(["GENUINE", "NOT_GENUINE", "NOT_AVAILABLE"]).default("GENUINE"),
   remarks: z.string().optional(),
 });
 

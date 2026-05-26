@@ -256,11 +256,17 @@ export default function BirthVerificationPage() {
                         <div className="flex flex-col gap-2">
                           <div>
                             <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
-                              report.isGenuine 
-                                ? "bg-green-50 text-green-700 border border-green-200" 
-                                : "bg-red-50 text-red-700 border border-red-200"
+                              report.verificationResult === "NOT_GENUINE"
+                                ? "bg-red-50 text-red-700 border border-red-200"
+                                : report.verificationResult === "NOT_AVAILABLE"
+                                ? "bg-amber-50 text-amber-700 border border-amber-200"
+                                : "bg-green-50 text-green-700 border border-green-200"
                             }`}>
-                              {report.isGenuine ? "Genuine & Authentic" : "Not Genuine"}
+                              {report.verificationResult === "NOT_GENUINE"
+                                ? "Not Genuine"
+                                : report.verificationResult === "NOT_AVAILABLE"
+                                ? "Register Not Available"
+                                : "Genuine & Authentic"}
                             </span>
                           </div>
                           <div>

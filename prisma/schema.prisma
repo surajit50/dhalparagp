@@ -3821,9 +3821,8 @@ model BirthVerificationReport {
   registrationNo      String
   dateOfRegistration  DateTime
   placeOfRegistration String    @default("No. 3 Dhalpara Gram Panchayat")
-  
   // Verification details
-  isGenuine           Boolean   @default(true)
+  verificationResult  String    @default("GENUINE") // GENUINE, NOT_GENUINE, NOT_AVAILABLE
   remarks             String?
   
   // Metadata
