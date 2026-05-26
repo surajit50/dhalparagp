@@ -105,9 +105,9 @@ export default function BirthVerificationPage() {
     fetchReports();
   };
 
-  const handlePrint = (report: any) => {
+  const handlePrint = async (report: any) => {
     try {
-      generateBirthReportPDF(report);
+      await generateBirthReportPDF(report);
       toast.success("Opening PDF for printing...");
     } catch (error) {
       toast.error("Failed to generate PDF");
@@ -229,9 +229,14 @@ export default function BirthVerificationPage() {
                   reports.map((report) => (
                     <TableRow key={report.id} className="hover:bg-slate-50/50">
                       <TableCell className="align-top py-4">
-                        <div className="font-medium text-slate-800">{report.memoNo}</div>
-                        <div className="text-xs text-slate-500 mt-1">Date: {formatDate(new Date(report.memoDate))}</div>
-                        <div className="text-[10px] text-slate-400 mt-1 uppercase">Created: {formatDate(new Date(report.createdAt))}</div>
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">GP Outgoing:</div>
+                        <div className="font-semibold text-slate-900">{report.gpMemoNo}</div>
+                        <div className="text-xs text-slate-600">Date: {formatDate(new Date(report.gpMemoDate))}</div>
+                        
+                        <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold mt-3">Ref/Incoming:</div>
+                        <div className="font-medium text-slate-700">{report.memoNo}</div>
+                        <div className="text-xs text-slate-500">Date: {formatDate(new Date(report.memoDate))}</div>
+                        <div className="text-[9px] text-slate-400 mt-2 uppercase">Created: {formatDate(new Date(report.createdAt))}</div>
                       </TableCell>
                       
                       <TableCell className="align-top py-4">

@@ -20,6 +20,13 @@ interface BirthVerificationFormProps {
   onCancel?: () => void;
 }
 
+const getSafeDateString = (date: any): string => {
+  if (!date) return "";
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return "";
+  return d.toISOString().split("T")[0];
+};
+
 export default function BirthVerificationForm({ initialData, onSuccess, onCancel }: BirthVerificationFormProps) {
   const [isPending, startTransition] = useTransition();
 
@@ -28,6 +35,8 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
     defaultValues: {
       memoNo: initialData?.memoNo || "",
       memoDate: initialData?.memoDate ? new Date(initialData.memoDate) : new Date(),
+      gpMemoNo: initialData?.gpMemoNo || "",
+      gpMemoDate: initialData?.gpMemoDate ? new Date(initialData.gpMemoDate) : new Date(),
       toAuthority: initialData?.toAuthority || "The District Informatics Officer (DIO)",
       toZone: initialData?.toZone || "Hili Zone, Dakshin Dinajpur",
       subject: initialData?.subject || "Verification Report on Birth Certificate",
@@ -112,8 +121,44 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                       <FormControl>
                         <Input
                           type="date"
-                          value={field.value ? field.value.toISOString().split("T")[0] : ""}
-                          onChange={(e) => field.onChange(new Date(e.target.value))}
+                          value={getSafeDateString(field.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            field.onChange(val ? new Date(val) : undefined);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gpMemoNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>GP Outgoing Memo No *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 1/DGP/2026" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="gpMemoDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>GP Outgoing Memo Date *</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          value={getSafeDateString(field.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            field.onChange(val ? new Date(val) : undefined);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -191,8 +236,11 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                       <FormControl>
                         <Input
                           type="date"
-                          value={field.value ? field.value.toISOString().split("T")[0] : ""}
-                          onChange={(e) => field.onChange(new Date(e.target.value))}
+                          value={getSafeDateString(field.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            field.onChange(val ? new Date(val) : undefined);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -260,8 +308,11 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                       <FormControl>
                         <Input
                           type="date"
-                          value={field.value ? field.value.toISOString().split("T")[0] : ""}
-                          onChange={(e) => field.onChange(new Date(e.target.value))}
+                          value={getSafeDateString(field.value)}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            field.onChange(val ? new Date(val) : undefined);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />

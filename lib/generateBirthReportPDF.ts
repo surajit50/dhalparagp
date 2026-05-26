@@ -1,9 +1,12 @@
 import jsPDF from "jspdf";
+import QRCode from "qrcode";
 
 export interface BirthVerificationReportData {
   id: string;
   memoNo: string;
   memoDate: Date | string;
+  gpMemoNo: string;
+  gpMemoDate: Date | string;
   toAuthority: string;
   toZone: string;
   subject: string;
@@ -25,7 +28,7 @@ export interface BirthVerificationReportData {
   } | null;
 }
 
-export function generateBirthReportPDF(data: BirthVerificationReportData) {
+export async function generateBirthReportPDF(data: BirthVerificationReportData) {
   // Use A4 format in points (595.28 x 841.89 pt)
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -74,11 +77,11 @@ export function generateBirthReportPDF(data: BirthVerificationReportData) {
   doc.line(margin.left, cursorY, pageWidth - margin.right, cursorY);
   cursorY += 25;
 
-  // --- Reference Details ---
+  // --- Reference Details (GP Outgoing) ---
   doc.setFont("times", "bold");
   doc.setFontSize(11);
-  const refText = `Ref No.: ${data.memoNo}`;
-  const dateFormatted = new Date(data.memoDate).toLocaleDateString("en-GB");
+  const refText = `Ref No.: ${data.gpMemoNo}`;
+  const dateFormatted = new Date(data.gpMemoDate).toLocaleDateString("en-GB");
   const dateText = `Date: ${dateFormatted}`;
 
   doc.text(refText, margin.left, cursorY);
@@ -105,8 +108,8 @@ export function generateBirthReportPDF(data: BirthVerificationReportData) {
   doc.text("Sir,", margin.left, cursorY);
   cursorY += 20;
 
-  // --- Body ---
-  const bodyText = "With reference to the above, I, the undersigned, Pradhan of No. 3 Dhalpara Gram Panchayat, hereby submit the verification report regarding the birth certificate furnished by the applicant.";
+  // --- Body (referencing BDO / incoming letter details) ---
+  const bodyText = `With reference to your Ref No.: ${data.memoNo} Date: ${new Date(data.memoDate).toLocaleDateString("en-GB")}, regarding the subject cited above, I, the undersigned, Pradhan of No. 3 Dhalpara Gram Panchayat, hereby submit the verification report regarding the birth certificate furnished by the applicant.`;
   cursorY = addWrappedText(bodyText, margin.left, cursorY, 11, "normal");
   cursorY += 10;
 
@@ -156,9 +159,26 @@ export function generateBirthReportPDF(data: BirthVerificationReportData) {
   cursorY = addWrappedText(forwardText, margin.left, cursorY, 11, "normal");
   cursorY += 45;
 
-  // --- Signature Block ---
-  doc.setFont("times", "bold");
+  // --- Signature Block & QR Code ---
   const signatureX = pageWidth - margin.right - 180;
+  
+  // Generate and draw QR Code for validation check
+  try {
+    const verifyUrl = `https://dhalparagp.in/verify-birth-report?id=${data.id}`;
+    const qrDataUrl = await QRCode.toDataURL(verifyUrl, { margin: 1, width: 120 });
+    
+    // Draw QR code on the left side, aligned with signature block
+    const qrY = cursorY;
+    doc.addImage(qrDataUrl, "PNG", margin.left, qrY, 80, 80);
+    doc.setFont("times", "bolditalic");
+    doc.setFontSize(8);
+    doc.text("Scan to Verify Report", margin.left + 2, qrY + 90);
+  } catch (err) {
+    console.error("Error generating QR code in PDF:", err);
+  }
+
+  doc.setFont("times", "bold");
+  doc.setFontSize(11);
   doc.text("Yours faithfully,", signatureX, cursorY);
   cursorY += 50;
 

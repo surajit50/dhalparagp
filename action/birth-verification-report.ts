@@ -37,6 +37,8 @@ export async function createBirthVerificationReport(
       data: {
         memoNo: validatedData.memoNo,
         memoDate: validatedData.memoDate,
+        gpMemoNo: validatedData.gpMemoNo,
+        gpMemoDate: validatedData.gpMemoDate,
         toAuthority: validatedData.toAuthority,
         toZone: validatedData.toZone,
         subject: validatedData.subject,
@@ -176,6 +178,8 @@ export async function updateBirthVerificationReport(
       data: {
         memoNo: validatedData.memoNo,
         memoDate: validatedData.memoDate,
+        gpMemoNo: validatedData.gpMemoNo,
+        gpMemoDate: validatedData.gpMemoDate,
         toAuthority: validatedData.toAuthority,
         toZone: validatedData.toZone,
         subject: validatedData.subject,

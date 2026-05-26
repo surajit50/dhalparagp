@@ -6,6 +6,11 @@ export const birthVerificationReportSchema = z.object({
     required_error: "Memo date is required",
     invalid_type_error: "Invalid date format for memo date",
   }),
+  gpMemoNo: z.string().min(1, "GP Memo number is required"),
+  gpMemoDate: z.date({
+    required_error: "GP Memo date is required",
+    invalid_type_error: "Invalid date format for GP Memo date",
+  }),
   toAuthority: z.string().min(1, "Recipient authority is required"),
   toZone: z.string().min(1, "Recipient zone is required"),
   subject: z.string().min(1, "Subject is required"),

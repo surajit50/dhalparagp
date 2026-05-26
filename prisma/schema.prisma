@@ -3804,8 +3804,10 @@ model FundAvailability {
 
 model BirthVerificationReport {
   id                  String    @id @default(auto()) @map("_id") @db.ObjectId
-  memoNo              String    // E.g., CAF066804290826
-  memoDate            DateTime  // Letter date
+  memoNo              String    // E.g., CAF066804290826 (Reference letter/memo)
+  memoDate            DateTime  // Reference Date (e.g. 14/05/2026)
+  gpMemoNo            String    // GP Outgoing Memo No, e.g. 1/DGP/2026
+  gpMemoDate          DateTime  // GP Outgoing Memo Date
   toAuthority         String    @default("The District Informatics Officer (DIO)")
   toZone              String    @default("Hili Zone, Dakshin Dinajpur")
   subject             String    @default("Verification Report on Birth Certificate")
