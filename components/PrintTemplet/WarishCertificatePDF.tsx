@@ -111,11 +111,13 @@ const generateTableData = (
 type Props = {
   applicationDetails: WarishApplicationProps;
   mode?: "downloadOnly" | "uploadAndDownload";
+  onSuccess?: () => void;
 };
 
 export default function WarishCertificatePDF({
   applicationDetails,
   mode = "downloadOnly",
+  onSuccess,
 }: Props) {
   const [isGenerating, setIsGenerating] = useState(false);
   const router = useRouter();
@@ -200,7 +202,7 @@ export default function WarishCertificatePDF({
           reader.readAsDataURL(blob);
         });
 
-        await fetch("/api/warish/certificate/upload", {
+        const res = await fetch("/api/warish/certificate/upload", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -211,12 +213,20 @@ export default function WarishCertificatePDF({
             digitallySigned: withSignature,
           }),
         });
+
+        if (!res.ok) {
+          throw new Error("Failed to upload generated certificate");
+        }
       }
 
       toast({
         title: "Success",
         description: "Warish Certificate generated successfully",
       });
+
+      if (onSuccess) {
+        onSuccess();
+      }
 
       router.refresh();
     } catch (error) {

@@ -45,6 +45,7 @@ export default function WarishGenerateListClient({
   const [total, setTotal] = useState(initial.length);
   const [applications, setApplications] =
     useState<WarishApplicationProps[]>(initial);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -55,11 +56,26 @@ export default function WarishGenerateListClient({
         const data = await res.json();
         setApplications(data.items);
         setTotal(data.total);
+
+        // Auto-correct page if current page is now beyond total pages due to items being processed
+        const computedTotalPages = Math.max(1, Math.ceil(data.total / pageSize));
+        if (page > computedTotalPages) {
+          setPage(computedTotalPages);
+        }
       }
     };
     run();
     return () => controller.abort();
-  }, [q, page, pageSize]);
+  }, [q, page, pageSize, refreshTrigger]);
+
+  const handleGenerationSuccess = (id: string) => {
+    // 1. Snappily filter out the generated application from the current list
+    setApplications((prev) => prev.filter((app) => app.id !== id));
+    setTotal((prev) => Math.max(0, prev - 1));
+
+    // 2. Trigger a refetch in the background to pull in remaining data/update pagination
+    setRefreshTrigger((prev) => prev + 1);
+  };
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
@@ -214,6 +230,7 @@ export default function WarishGenerateListClient({
                           <WarishCertificatePDF
                             applicationDetails={application}
                             mode="uploadAndDownload"
+                            onSuccess={() => handleGenerationSuccess(application.id)}
                           />
                         </div>
                       </TableCell>
