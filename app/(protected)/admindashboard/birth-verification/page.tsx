@@ -292,10 +292,10 @@ export default function BirthVerificationPage() {
                         
                         {report.status === "PENDING" && (
                           <div className="flex items-center justify-end gap-1">
-                            <Button size="xs" className="bg-green-600 hover:bg-green-700 text-white text-[10px] h-6 px-2" onClick={() => handleUpdateStatus(report.id, "APPROVED")}>
+                            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white text-[10px] h-6 px-2" onClick={() => handleUpdateStatus(report.id, "APPROVED")}>
                               <CheckCircle className="h-3 w-3 mr-1" /> Approve
                             </Button>
-                            <Button size="xs" className="bg-red-600 hover:bg-red-700 text-white text-[10px] h-6 px-2" onClick={() => handleUpdateStatus(report.id, "REJECTED")}>
+                            <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white text-[10px] h-6 px-2" onClick={() => handleUpdateStatus(report.id, "REJECTED")}>
                               <XCircle className="h-3 w-3 mr-1" /> Reject
                             </Button>
                           </div>
