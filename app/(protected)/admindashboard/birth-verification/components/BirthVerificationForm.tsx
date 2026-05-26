@@ -2,14 +2,14 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTransition } from "react";
+import { useTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FileText, User, MapPin, Calendar, Info, Loader2, Check, Building2, Hash, Shield, BookOpen } from "lucide-react";
+import { FileText, User, MapPin, Calendar, Info, Loader2, Check, Building2, Hash, Shield, BookOpen, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 import { birthVerificationReportSchema, type BirthVerificationReportFormData } from "@/schema/birth-verification-report";
 import { createBirthVerificationReport, updateBirthVerificationReport } from "@/action/birth-verification-report";
@@ -53,6 +53,31 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
     },
   });
 
+  // Reset form when initialData changes (edit mode)
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        memoNo: initialData.memoNo || "",
+        memoDate: initialData.memoDate ? new Date(initialData.memoDate) : new Date(),
+        gpMemoNo: initialData.gpMemoNo || "",
+        gpMemoDate: initialData.gpMemoDate ? new Date(initialData.gpMemoDate) : new Date(),
+        toAuthority: initialData.toAuthority || "The District Informatics Officer (DIO)",
+        toZone: initialData.toZone || "Hili Zone, Dakshin Dinajpur",
+        subject: initialData.subject || "Verification Report on Birth Certificate",
+        certificateHolder: initialData.certificateHolder || "",
+        motherName: initialData.motherName || "",
+        fatherName: initialData.fatherName || "",
+        address: initialData.address || "",
+        dateOfBirth: initialData.dateOfBirth ? new Date(initialData.dateOfBirth) : undefined,
+        registrationNo: initialData.registrationNo || "",
+        dateOfRegistration: initialData.dateOfRegistration ? new Date(initialData.dateOfRegistration) : undefined,
+        placeOfRegistration: initialData.placeOfRegistration || "No. 3 Dhalpara Gram Panchayat",
+        verificationResult: initialData.verificationResult || "GENUINE",
+        remarks: initialData.remarks || "",
+      });
+    }
+  }, [initialData, form]);
+
   const onSubmit = async (data: BirthVerificationReportFormData) => {
     startTransition(async () => {
       try {
@@ -76,51 +101,79 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
     });
   };
 
+  // Helper to display verification status with dot
+  const getVerificationDisplay = (value: string) => {
+    switch (value) {
+      case "GENUINE":
+        return { label: "Genuine & Authentic", dotClass: "bg-green-500", textClass: "text-green-700" };
+      case "NOT_GENUINE":
+        return { label: "Not Genuine", dotClass: "bg-red-500", textClass: "text-red-700" };
+      case "NOT_AVAILABLE":
+        return { label: "Register Not Available", dotClass: "bg-amber-500", textClass: "text-amber-700" };
+      default:
+        return { label: "Select status", dotClass: "bg-gray-400", textClass: "text-gray-700" };
+    }
+  };
+
+  const selectedVerification = form.watch("verificationResult");
+  const verificationDisplay = getVerificationDisplay(selectedVerification);
+
   return (
-    <Card className="border-t-4 border-orange-600 shadow-xl overflow-hidden rounded-2xl bg-white/70 backdrop-blur-md">
-      <CardHeader className="bg-gradient-to-r from-orange-50/80 to-amber-50/40 border-b border-orange-100/60 py-5">
-        <CardTitle className="flex items-center gap-4 text-orange-950">
-          <div className="p-3 bg-orange-100/90 text-orange-600 rounded-2xl shadow-inner shrink-0">
+    <Card className="border-0 shadow-2xl overflow-hidden rounded-2xl bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-2xl">
+      {/* Decorative gradient bar */}
+      <div className="h-2 bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600" />
+
+      <CardHeader className="bg-white border-b border-slate-100 pb-6 pt-7 px-6 md:px-8">
+        <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-4 text-slate-800">
+          <div className="p-3 bg-gradient-to-br from-orange-100 to-amber-100 text-orange-600 rounded-2xl shadow-sm shrink-0">
             <FileText className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight">
+            <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
               {initialData ? "Edit Verification Report" : "New Birth Verification Report"}
             </h1>
-            <p className="text-xs font-medium text-slate-500 mt-1">
-              Create an official birth register verification report to be sent to external authorities.
+            <p className="text-sm text-slate-500 mt-1 max-w-2xl">
+              Create an official birth register verification report to be sent to external authorities. All marked fields are required.
             </p>
           </div>
         </CardTitle>
       </CardHeader>
+
       <CardContent className="p-6 md:p-8">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {/* Header & Office Reference Section */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:shadow-md">
-              <div className="border-l-4 border-orange-500 bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <Info className="h-4 w-4 text-orange-600" />
+            {/* Office Reference Section */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
+              <div className="border-l-4 border-orange-500 bg-gradient-to-r from-slate-50/80 to-white px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-base font-bold text-slate-800 flex items-center gap-2.5">
+                  <Info className="h-4.5 w-4.5 text-orange-600" />
                   Office Reference & Recipient Details
                 </h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100">
-                  Section 1
+                <span className="text-[11px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-3 py-1 rounded-full border border-orange-100 shadow-sm">
+                  Section 1 of 3
                 </span>
               </div>
-              <div className="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="p-6 md:p-7 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="memoNo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Reference / Incoming Memo No. *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Reference / Incoming Memo No. <span className="text-orange-500 text-base">*</span>
+                        <HelpCircle className="h-3.5 w-3.5 text-slate-400 cursor-help" title="Unique reference number from the incoming memo" />
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. CAF066804290826" {...field} />
+                        <div className="relative group">
+                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. CAF066804290826"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -129,12 +182,14 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="memoDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Incoming Memo Date *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Incoming Memo Date <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <div className="relative group">
+                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500 pointer-events-none" />
                           <Input
-                            className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10"
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
                             type="date"
                             value={getSafeDateString(field.value)}
                             onChange={(e) => {
@@ -144,7 +199,7 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                           />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -153,14 +208,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="gpMemoNo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">GP Outgoing Memo No. *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        GP Outgoing Memo No. <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. 1/DGP/2026" {...field} />
+                        <div className="relative group">
+                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. 1/DGP/2026"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -169,12 +230,14 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="gpMemoDate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">GP Outgoing Memo Date *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        GP Outgoing Memo Date <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <div className="relative group">
+                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500 pointer-events-none" />
                           <Input
-                            className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10"
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
                             type="date"
                             value={getSafeDateString(field.value)}
                             onChange={(e) => {
@@ -184,7 +247,7 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                           />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -193,14 +256,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="toAuthority"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Recipient Authority *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Recipient Authority <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. The District Informatics Officer (DIO)" {...field} />
+                        <div className="relative group">
+                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. The District Informatics Officer (DIO)"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -209,14 +278,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="toZone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Recipient Zone / Location *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Recipient Zone / Location <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. Hili Zone, Dakshin Dinajpur" {...field} />
+                        <div className="relative group">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. Hili Zone, Dakshin Dinajpur"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -225,45 +300,57 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="subject"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-xs font-semibold text-slate-700">Subject *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Subject <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="Verification Subject" {...field} />
+                        <div className="relative group">
+                          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="Verification Subject"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
             </div>
 
-            {/* Birth Certificate Details Section */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:shadow-md">
-              <div className="border-l-4 border-orange-500 bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <BookOpen className="h-4 w-4 text-orange-600" />
+            {/* Birth Certificate Particulars */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
+              <div className="border-l-4 border-orange-500 bg-gradient-to-r from-slate-50/80 to-white px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-base font-bold text-slate-800 flex items-center gap-2.5">
+                  <BookOpen className="h-4.5 w-4.5 text-orange-600" />
                   Birth Certificate Particulars
                 </h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100">
-                  Section 2
+                <span className="text-[11px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-3 py-1 rounded-full border border-orange-100 shadow-sm">
+                  Section 2 of 3
                 </span>
               </div>
-              <div className="p-5 md:p-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="p-6 md:p-7 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
                   name="certificateHolder"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Name of Certificate Holder *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Name of Certificate Holder <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="Full name of child/holder" {...field} />
+                        <div className="relative group">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="Full name of child/holder"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -272,12 +359,14 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="dateOfBirth"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Date of Birth *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Date of Birth <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <div className="relative group">
+                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500 pointer-events-none" />
                           <Input
-                            className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10"
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
                             type="date"
                             value={getSafeDateString(field.value)}
                             onChange={(e) => {
@@ -287,7 +376,7 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                           />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -296,14 +385,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="fatherName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Father&apos;s Name *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Father&apos;s Name <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="Father's full name" {...field} />
+                        <div className="relative group">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="Father's full name"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -312,14 +407,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="motherName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Mother&apos;s Name *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Mother&apos;s Name <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="Mother's full name" {...field} />
+                        <div className="relative group">
+                          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="Mother's full name"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -328,14 +429,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="address"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-xs font-semibold text-slate-700">Address *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Address <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. Vill- Kismatdapat, P.O.- Trimohini, Dakshin Dinajpur" {...field} />
+                        <div className="relative group">
+                          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. Vill- Kismatdapat, P.O.- Trimohini, Dakshin Dinajpur"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -344,14 +451,20 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="registrationNo"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Registration Number *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Registration Number <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. 159/June 06" {...field} />
+                        <div className="relative group">
+                          <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. 159/June 06"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -360,12 +473,14 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="dateOfRegistration"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Date of Registration / Issue *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Date of Registration / Issue <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+                        <div className="relative group">
+                          <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500 pointer-events-none" />
                           <Input
-                            className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10"
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
                             type="date"
                             value={getSafeDateString(field.value)}
                             onChange={(e) => {
@@ -375,7 +490,7 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                           />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -384,78 +499,92 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="placeOfRegistration"
                   render={({ field }) => (
                     <FormItem className="md:col-span-2">
-                      <FormLabel className="text-xs font-semibold text-slate-700">Place of Registration *</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Place of Registration <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                          <Input className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm h-10 transition-colors" placeholder="e.g. No. 3 Dhalpara Gram Panchayat" {...field} />
+                        <div className="relative group">
+                          <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Input
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 h-11 rounded-xl"
+                            placeholder="e.g. No. 3 Dhalpara Gram Panchayat"
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
             </div>
 
-            {/* Verification Status & Remarks */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all hover:shadow-md">
-              <div className="border-l-4 border-orange-500 bg-slate-50/50 px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-orange-600" />
+            {/* Verification & Remarks */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200 hover:shadow-md">
+              <div className="border-l-4 border-orange-500 bg-gradient-to-r from-slate-50/80 to-white px-6 py-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <h2 className="text-base font-bold text-slate-800 flex items-center gap-2.5">
+                  <Shield className="h-4.5 w-4.5 text-orange-600" />
                   Verification & Authenticity
                 </h2>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-2.5 py-0.5 rounded-full border border-orange-100">
-                  Section 3
+                <span className="text-[11px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-3 py-1 rounded-full border border-orange-100 shadow-sm">
+                  Section 3 of 3
                 </span>
               </div>
-              <div className="p-5 md:p-6 space-y-6">
+              <div className="p-6 md:p-7 space-y-7">
                 <FormField
                   control={form.control}
                   name="verificationResult"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Verification Result *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Verification Result <span className="text-orange-500 text-base">*</span>
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
-                          <SelectTrigger className="bg-white border-slate-200 focus:ring-orange-500 h-11 rounded-xl">
-                            <SelectValue placeholder="Select verification result" />
+                          <SelectTrigger className="bg-white border-slate-200 focus:ring-2 focus:ring-orange-500/30 focus:border-orange-500 h-11 rounded-xl transition-all duration-200">
+                            <SelectValue placeholder="Select verification result">
+                              {selectedVerification && (
+                                <div className="flex items-center gap-2">
+                                  <span className={`h-2.5 w-2.5 rounded-full ${verificationDisplay.dotClass} shadow-sm`} />
+                                  <span className={`text-sm font-medium ${verificationDisplay.textClass}`}>
+                                    {verificationDisplay.label}
+                                  </span>
+                                </div>
+                              )}
+                            </SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="border-slate-200 rounded-xl">
-                          <SelectItem value="GENUINE" className="py-2.5 rounded-lg">
+                          <SelectItem value="GENUINE" className="py-3 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <span className="h-2.5 w-2.5 rounded-full bg-green-500 shrink-0 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-green-500 shrink-0 shadow-md" />
                               <div className="text-left">
-                                <span className="font-bold text-slate-800 block text-xs">Genuine & Authentic</span>
-                                <span className="text-[10px] text-muted-foreground block">Matched and traced in the official register</span>
+                                <span className="font-bold text-slate-800 block text-sm">Genuine & Authentic</span>
+                                <span className="text-xs text-muted-foreground block">Matched and traced in the official register</span>
                               </div>
                             </div>
                           </SelectItem>
-                          <SelectItem value="NOT_GENUINE" className="py-2.5 rounded-lg">
+                          <SelectItem value="NOT_GENUINE" className="py-3 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <span className="h-2.5 w-2.5 rounded-full bg-red-500 shrink-0 shadow-[0_0_8px_rgba(239,68,68,0.4)]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-red-500 shrink-0 shadow-md" />
                               <div className="text-left">
-                                <span className="font-bold text-slate-800 block text-xs">Not Genuine / Authentic</span>
-                                <span className="text-[10px] text-muted-foreground block">Not found or mismatches the official register</span>
+                                <span className="font-bold text-slate-800 block text-sm">Not Genuine / Authentic</span>
+                                <span className="text-xs text-muted-foreground block">Not found or mismatches the official register</span>
                               </div>
                             </div>
                           </SelectItem>
-                          <SelectItem value="NOT_AVAILABLE" className="py-2.5 rounded-lg">
+                          <SelectItem value="NOT_AVAILABLE" className="py-3 rounded-lg">
                             <div className="flex items-center gap-3">
-                              <span className="h-2.5 w-2.5 rounded-full bg-amber-500 shrink-0 shadow-[0_0_8px_rgba(245,158,11,0.4)]" />
+                              <span className="h-2.5 w-2.5 rounded-full bg-amber-500 shrink-0 shadow-md" />
                               <div className="text-left">
-                                <span className="font-bold text-slate-800 block text-xs">Register Not Available</span>
-                                <span className="text-[10px] text-muted-foreground block">Office register is missing or not available</span>
+                                <span className="font-bold text-slate-800 block text-sm">Register Not Available</span>
+                                <span className="text-xs text-muted-foreground block">Office register is missing or not available</span>
                               </div>
                             </div>
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -464,14 +593,21 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
                   name="remarks"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-slate-700">Verification Remarks (Optional)</FormLabel>
+                      <FormLabel className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                        Verification Remarks <span className="text-slate-400 text-xs font-normal">(Optional)</span>
+                      </FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <FileText className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                          <Textarea className="pl-9 bg-slate-50/30 border-slate-200 focus-visible:ring-orange-500 text-sm transition-colors rounded-xl" placeholder="Enter any extra findings or verification notes..." rows={3} {...field} />
+                        <div className="relative group">
+                          <FileText className="absolute left-3 top-3.5 h-4 w-4 text-slate-400 transition-colors group-focus-within:text-orange-500" />
+                          <Textarea
+                            className="pl-9 bg-slate-50/50 border-slate-200 focus-visible:ring-2 focus-visible:ring-orange-500/30 focus-visible:border-orange-500 transition-all duration-200 rounded-xl resize-none"
+                            placeholder="Enter any extra findings, discrepancies, or verification notes..."
+                            rows={3}
+                            {...field}
+                          />
                         </div>
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <FormMessage className="text-xs text-red-500 mt-1" />
                     </FormItem>
                   )}
                 />
@@ -479,26 +615,40 @@ export default function BirthVerificationForm({ initialData, onSuccess, onCancel
             </div>
 
             {/* Form Actions */}
-            <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-8 border-t border-slate-100 sticky bottom-4 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-md -mx-2 px-4 mt-6">
               {onCancel && (
-                <Button type="button" variant="outline" onClick={onCancel} disabled={isPending} className="border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors rounded-xl h-10 px-5 text-sm">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={onCancel}
+                  disabled={isPending}
+                  className="w-full sm:w-auto border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 rounded-xl h-11 px-6 text-sm font-medium"
+                >
                   Cancel
                 </Button>
               )}
-              <Button type="submit" className="bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-sm hover:shadow-md transition-all active:scale-[0.98] rounded-xl h-10 px-6 text-sm font-semibold flex items-center gap-2" disabled={isPending}>
+              <Button
+                type="submit"
+                className="w-full sm:w-auto bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] rounded-xl h-11 px-8 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
+                disabled={isPending}
+              >
                 {isPending ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4.5 w-4.5 animate-spin" />
                     Submitting...
                   </>
                 ) : (
                   <>
-                    <Check className="h-4 w-4" />
+                    <Check className="h-4.5 w-4.5" />
                     {initialData ? "Update Report" : "Save & Submit"}
                   </>
                 )}
               </Button>
             </div>
+
+            <p className="text-xs text-center text-slate-400 pt-4 border-t border-slate-100 mt-4">
+              All fields marked with <span className="text-orange-500 font-bold">*</span> are required. Please double-check before submission.
+            </p>
           </form>
         </Form>
       </CardContent>
