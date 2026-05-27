@@ -17,7 +17,7 @@ export const birthVerificationReportSchema = z.object({
   
   // Certificate particulars
   certificateHolder: z.string().min(2, "Certificate holder name must be at least 2 characters"),
-  motherName: z.string().min(2, "Mother's name must be at least 2 characters"),
+  motherName: z.string().optional(),
   fatherName: z.string().min(2, "Father's name must be at least 2 characters"),
   address: z.string().min(5, "Address must be at least 5 characters"),
   dateOfBirth: z.date({

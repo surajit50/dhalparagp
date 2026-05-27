@@ -43,7 +43,7 @@ export async function createBirthVerificationReport(
         toZone: validatedData.toZone,
         subject: validatedData.subject,
         certificateHolder: validatedData.certificateHolder,
-        motherName: validatedData.motherName,
+        motherName: validatedData.motherName || "",
         fatherName: validatedData.fatherName,
         address: validatedData.address,
         dateOfBirth: validatedData.dateOfBirth,
@@ -52,7 +52,7 @@ export async function createBirthVerificationReport(
         placeOfRegistration: validatedData.placeOfRegistration,
         verificationResult: validatedData.verificationResult,
         remarks: validatedData.remarks || null,
-        status: isDraft ? "DRAFT" : "PENDING",
+        status: isDraft ? "DRAFT" : "APPROVED",
         createdByUser: { connect: { id: userId } },
       },
     });
@@ -63,8 +63,8 @@ export async function createBirthVerificationReport(
     return {
       success: true,
       data: report,
-      message: isDraft 
-        ? "Birth verification report draft saved successfully" 
+      message: isDraft
+        ? "Birth verification report draft saved successfully"
         : "Birth verification report submitted successfully",
     };
   } catch (error) {
@@ -114,7 +114,7 @@ export async function getBirthVerificationReports(
     const whereClause: any = {};
 
     if (filters?.status) whereClause.status = filters.status;
-    
+
     if (filters?.certificateHolder) {
       whereClause.certificateHolder = {
         contains: filters.certificateHolder,
@@ -184,7 +184,7 @@ export async function updateBirthVerificationReport(
         toZone: validatedData.toZone,
         subject: validatedData.subject,
         certificateHolder: validatedData.certificateHolder,
-        motherName: validatedData.motherName,
+        motherName: validatedData.motherName || "",
         fatherName: validatedData.fatherName,
         address: validatedData.address,
         dateOfBirth: validatedData.dateOfBirth,
@@ -278,3 +278,53 @@ export async function deleteBirthVerificationReport(
     };
   }
 }
+
+export async function getNextGpMemoNo(year: number): Promise<ServerActionResult<string>> {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        message: "Unauthorized: Please login to continue",
+      };
+    }
+
+    const reports = await db.birthVerificationReport.findMany({
+      where: {
+        OR: [
+          { gpMemoNo: { endsWith: `/DGP\\(BV\\)/${year}` } },
+          { gpMemoNo: { endsWith: `/DGP/${year}` } }
+        ]
+      },
+      select: {
+        gpMemoNo: true,
+      },
+    });
+
+    let maxNum = 0;
+    for (const r of reports) {
+      const parts = r.gpMemoNo.split("/");
+      if (parts.length >= 2) {
+        const num = parseInt(parts[0], 10);
+        if (!isNaN(num) && num > maxNum) {
+          maxNum = num;
+        }
+      }
+    }
+
+    const nextNum = maxNum + 1;
+    return {
+      success: true,
+      data: `${nextNum}/DGP(BV)/${year}`,
+      message: "Next GP Outgoing Memo No. generated successfully",
+    };
+  } catch (error) {
+    console.error("Error generating next GP Outgoing Memo No.:", error);
+    return {
+      success: false,
+      message: "Failed to generate next GP Outgoing Memo No.",
+      errors: error instanceof Error ? { message: error.message } : undefined,
+    };
+  }
+}
+

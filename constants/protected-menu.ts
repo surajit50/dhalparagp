@@ -656,6 +656,8 @@ export const superAdminMenuItems: MenuItemProps[] = [
     createMenuItem("Change Password", ["superadmin"], `${BASE_URLS.superadmin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
   ]),
 
+  createMenuItem("Birth Verification Report", ["superadmin"], `${BASE_URLS.superadmin}/birth-verification`, FaRegFileAlt, COLORS.orange),
+
   createMenuItem("System Management", ["superadmin"], undefined, MdSettingsApplications, COLORS.gray, [
     createMenuItem("API Management", ["superadmin"], undefined, MdApi, COLORS.purple, [
       createMenuItem("Generate API Key", ["superadmin"], `${BASE_URLS.superadmin}/apiKeyGenerator`, FaKey, COLORS.purple),

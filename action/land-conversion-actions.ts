@@ -29,7 +29,7 @@ async function generateMemoNumber() {
 
   // Format: 001/DGP/2026  — sequential within the current year
   const maxCert = await db.landConversionCertificate.findFirst({
-    where: { memoNumber: { endsWith: `/DGP/(LC)/${year}` } },
+    where: { memoNumber: { endsWith: `/DGP\\(LC\\)/${year}` } },
     orderBy: { memoNumber: "desc" },
     select: { memoNumber: true },
   })
