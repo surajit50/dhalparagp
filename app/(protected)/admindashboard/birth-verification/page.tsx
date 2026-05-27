@@ -32,8 +32,11 @@ import {
 
 export default function BirthVerificationPage() {
   const { data: session } = useSession();
+  //superadmin and admin allow this
   const isSuperAdmin = session?.user?.role === "superadmin";
-
+  const isAdmin = session?.user?.role === "admin";
+  const allowActions = isSuperAdmin || isAdmin;
+  
   const [reports, setReports] = useState<any[]>([]);
   const [isPending, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState("list");
@@ -302,6 +305,19 @@ export default function BirthVerificationPage() {
         return (
           <div className="space-y-2 min-w-[160px]">
             <div className="flex items-center gap-1">
+              {/* show if approved */}
+              {allowActions && report.status === "APPROVED" && (
+                <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0 hover:bg-slate-100" onClick={() => handlePrint(report)}>
+                      <Download className="h-4 w-4 text-slate-500" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Download PDF</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>  
+              )}
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -356,7 +372,7 @@ export default function BirthVerificationPage() {
               </div>
             )}
 
-            {isSuperAdmin && report.status === "APPROVED" && (
+            {allowActions && report.status === "APPROVED" && (
               <div className="flex items-center gap-1 mt-1">
                 <Button 
                   size="sm" 
