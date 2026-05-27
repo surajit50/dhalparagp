@@ -33,9 +33,16 @@ export async function generateBirthReportPDF(data: BirthVerificationReportData) 
   const doc = new jsPDF({ unit: "pt", format: "a4" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = { left: 54, top: 54, right: 54, bottom: 54 }; // 0.75 in margins
+  const margin = { left: 54, top: 54, right: 54, bottom: 54 };
   const contentWidth = pageWidth - margin.left - margin.right;
   let cursorY = margin.top;
+
+  // --- Draw Decorative Page Border ---
+  doc.setDrawColor(80, 80, 80);
+  doc.setLineWidth(1.5);
+  doc.rect(margin.left - 20, margin.top - 20, contentWidth + 40, pageHeight - margin.top - margin.bottom + 40);
+  doc.setLineWidth(0.5);
+  doc.rect(margin.left - 17, margin.top - 17, contentWidth + 34, pageHeight - margin.top - margin.bottom + 34);
 
   const addWrappedText = (
     text: string,
@@ -43,56 +50,73 @@ export async function generateBirthReportPDF(data: BirthVerificationReportData) 
     y: number,
     fontSize = 11,
     fontStyle = "normal",
-    align: "left" | "center" | "right" = "left"
+    align: "left" | "center" | "right" = "left",
+    lineHeight = 15
   ) => {
     doc.setFont("times", fontStyle);
     doc.setFontSize(fontSize);
     const lines = doc.splitTextToSize(text, contentWidth - (x - margin.left));
-    doc.text(lines, x, y, { align });
-    return y + lines.length * (fontSize + 4);
+    doc.text(lines, x, y, { align, lineHeightFactor: 1.5 });
+    return y + lines.length * lineHeight;
   };
 
-  // --- GP Letterhead (Word document style) ---
+  // --- Header ---
   doc.setFont("times", "bolditalic");
-  doc.setFontSize(12);
+  doc.setFontSize(14);
+  doc.setTextColor(30, 30, 30);
   doc.text("Office of The Pradhan", pageWidth / 2, cursorY, { align: "center" });
-  cursorY += 22;
+  cursorY += 24;
 
   doc.setFont("times", "bold");
-  doc.setFontSize(22);
+  doc.setFontSize(24);
+  doc.setTextColor(0, 0, 0);
   doc.text("No 3 Dhalpara Gram Panchayat", pageWidth / 2, cursorY, { align: "center" });
   cursorY += 18;
 
-  // Tiny building icon or text
-  doc.setFont("times", "bold");
-  doc.setFontSize(10);
-  doc.text("Trimohini, Hili, Dakshin Dinajpur", pageWidth / 2, cursorY, { align: "center" });
-  cursorY += 8;
+  doc.setFont("times", "normal");
+  doc.setFontSize(11);
+  doc.text("Trimohini, Hili, Dakshin Dinajpur, West Bengal", pageWidth / 2, cursorY, { align: "center" });
+  cursorY += 16;
 
   // Double horizontal separator line
+  doc.setDrawColor(0, 0, 0);
   doc.setLineWidth(1.5);
   doc.line(margin.left, cursorY, pageWidth - margin.right, cursorY);
   cursorY += 3;
   doc.setLineWidth(0.5);
   doc.line(margin.left, cursorY, pageWidth - margin.right, cursorY);
+  cursorY += 20;
+
+  // --- Report Title ---
+  doc.setFont("times", "bold");
+  doc.setFontSize(14);
+  doc.text("VERIFICATION REPORT", pageWidth / 2, cursorY, { align: "center" });
+  const titleWidth = doc.getTextWidth("VERIFICATION REPORT");
+  doc.setLineWidth(1);
+  doc.line((pageWidth - titleWidth) / 2, cursorY + 2, (pageWidth + titleWidth) / 2, cursorY + 2);
   cursorY += 25;
 
-  // --- Reference Details (GP Outgoing) ---
+  // --- Reference Details (Grey Box) ---
+  doc.setFillColor(245, 245, 245);
+  doc.setDrawColor(200, 200, 200);
+  doc.setLineWidth(0.5);
+  doc.rect(margin.left, cursorY, contentWidth, 30, "FD");
+
   doc.setFont("times", "bold");
   doc.setFontSize(11);
   const refText = `Ref No.: ${data.gpMemoNo}`;
   const dateFormatted = new Date(data.gpMemoDate).toLocaleDateString("en-GB");
   const dateText = `Date: ${dateFormatted}`;
 
-  doc.text(refText, margin.left, cursorY);
-  doc.text(dateText, pageWidth - margin.right - 100, cursorY);
-  cursorY += 25;
+  doc.text(refText, margin.left + 10, cursorY + 20);
+  doc.text(dateText, pageWidth - margin.right - 10, cursorY + 20, { align: "right" });
+  cursorY += 45;
 
   // --- Addressee ---
   doc.setFont("times", "normal");
   doc.text("To", margin.left, cursorY);
   cursorY += 15;
-  
+
   doc.setFont("times", "bold");
   doc.text(data.toAuthority, margin.left, cursorY);
   cursorY += 14;
@@ -100,24 +124,27 @@ export async function generateBirthReportPDF(data: BirthVerificationReportData) 
   cursorY += 25;
 
   // --- Subject ---
-  cursorY = addWrappedText(`Subject: ${data.subject}`, margin.left, cursorY, 11, "bold");
+  doc.setFont("times", "bold");
+  doc.text("Subject:", margin.left, cursorY);
+  doc.setFont("times", "normal");
+  const subjectLines = doc.splitTextToSize(data.subject, contentWidth - 50);
+  doc.text(subjectLines, margin.left + 50, cursorY);
+  cursorY += subjectLines.length * 15 + 10;
+
+  // --- Salutation & Body ---
+  doc.setFont("times", "bold");
+  doc.text("Sir / Madam,", margin.left, cursorY);
+  cursorY += 18;
+
+  const bodyText = `With reference to your Memo No. ${data.memoNo} Dated ${new Date(data.memoDate).toLocaleDateString("en-GB")}, regarding the subject cited above, I, the undersigned, Pradhan of No. 3 Dhalpara Gram Panchayat, hereby submit the verification report regarding the birth certificate furnished by the applicant.`;
+  cursorY = addWrappedText(bodyText, margin.left, cursorY, 11, "normal");
   cursorY += 12;
 
-  // --- Salutation ---
   doc.setFont("times", "bold");
-  doc.text("Sir,", margin.left, cursorY);
-  cursorY += 20;
-
-  // --- Body (referencing BDO / incoming letter details) ---
-  const bodyText = `With reference to your Ref No.: ${data.memoNo} Date: ${new Date(data.memoDate).toLocaleDateString("en-GB")}, regarding the subject cited above, I, the undersigned, Pradhan of No. 3 Dhalpara Gram Panchayat, hereby submit the verification report regarding the birth certificate furnished by the applicant.`;
-  cursorY = addWrappedText(bodyText, margin.left, cursorY, 11, "normal");
-  cursorY += 10;
-
-  doc.setFont("times", "normal");
   doc.text("The particulars of the certificate are as follows:", margin.left, cursorY);
-  cursorY += 20;
+  cursorY += 15;
 
-  // --- Particulars List (Bullet Points) ---
+  // --- Particulars List (Grid Table) ---
   const particulars = [
     { label: "Name of Certificate Holder", value: data.certificateHolder },
     { label: "Mother's Name", value: data.motherName },
@@ -129,68 +156,92 @@ export async function generateBirthReportPDF(data: BirthVerificationReportData) 
     { label: "Place of Registration", value: data.placeOfRegistration }
   ];
 
-  particulars.forEach(p => {
-    // Bullet point character
-    doc.setFont("times", "bold");
-    doc.text("•", margin.left + 15, cursorY);
-    
-    // Label
-    doc.text(`${p.label}:`, margin.left + 27, cursorY);
-    const labelWidth = doc.getTextWidth(`${p.label}: `);
-    
-    // Value
-    doc.setFont("times", "normal");
+  const tableStartY = cursorY;
+  const col1Width = 160;
+
+  doc.setDrawColor(180, 180, 180);
+  doc.setLineWidth(0.5);
+  doc.line(margin.left, cursorY, pageWidth - margin.right, cursorY);
+
+  particulars.forEach((p, i) => {
     const valText = p.value || "N/A";
-    const maxValWidth = contentWidth - 27 - labelWidth;
-    const valLines = doc.splitTextToSize(valText, maxValWidth);
-    doc.text(valLines, margin.left + 27 + labelWidth, cursorY);
-    
-    cursorY += valLines.length * 15;
+    doc.setFont("times", "normal");
+    const valLines = doc.splitTextToSize(valText, contentWidth - col1Width - 20);
+    const cellHeight = Math.max(22, valLines.length * 14 + 8);
+
+    // Background for alternate rows
+    if (i % 2 === 0) {
+      doc.setFillColor(252, 252, 252);
+      doc.rect(margin.left, cursorY, contentWidth, cellHeight, "F");
+    }
+
+    doc.setFont("times", "bold");
+    doc.text(p.label, margin.left + 8, cursorY + 15);
+
+    doc.setFont("times", "normal");
+    doc.text(valLines, margin.left + col1Width + 10, cursorY + 15);
+
+    cursorY += cellHeight;
+    doc.line(margin.left, cursorY, pageWidth - margin.right, cursorY);
   });
-  cursorY += 12;
+
+  // Vertical borders for the table
+  doc.line(margin.left, tableStartY, margin.left, cursorY);
+  doc.line(margin.left + col1Width, tableStartY, margin.left + col1Width, cursorY);
+  doc.line(pageWidth - margin.right, tableStartY, pageWidth - margin.right, cursorY);
+
+  cursorY += 20;
 
   // --- Certification Conclusion ---
+  doc.setFillColor(255, 255, 255);
   let certText = "";
   if (data.verificationResult === "GENUINE") {
-    certText = "This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been duly traced and verified with the official records maintained by this office and have been found to be genuine and authentic.";
+    certText = "Conclusion: This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been duly traced and verified with the official records maintained by this office and have been found to be GENUINE and AUTHENTIC.";
   } else if (data.verificationResult === "NOT_GENUINE") {
-    certText = "This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been checked and have been found to be not genuine and authentic.";
+    certText = "Conclusion: This is to certify that, upon verification of the Birth Register maintained at this Gram Panchayat, the particulars furnished in the said Birth Certificate have been checked and have been found to be NOT GENUINE and AUTHENTIC.";
   } else {
-    certText = "This is to certify that the particulars furnished in the said Birth Certificate could not be verified as the relevant Birth Register is not available in this office.";
+    certText = "Conclusion: This is to certify that the particulars furnished in the said Birth Certificate could not be verified as the relevant Birth Register is NOT AVAILABLE in this office.";
   }
+
+  // Highlight conclusion
+  doc.setFont("times", "bold");
   cursorY = addWrappedText(certText, margin.left, cursorY, 11, "bold");
   cursorY += 12;
 
   const forwardText = "This verification report is being forwarded to your office for necessary official confirmation and record.";
-  cursorY = addWrappedText(forwardText, margin.left, cursorY, 11, "normal");
+  cursorY = addWrappedText(forwardText, margin.left, cursorY, 11, "italic");
   cursorY += 45;
 
   // --- Signature Block & QR Code ---
-  const signatureX = pageWidth - margin.right - 180;
-  
   // Generate and draw QR Code for validation check
   try {
     const verifyUrl = `https://dhalparagp.in/verify-birth-report?id=${data.id}`;
     const qrDataUrl = await QRCode.toDataURL(verifyUrl, { margin: 1, width: 120 });
-    
-    // Draw QR code on the left side, aligned with signature block
-    const qrY = cursorY;
-    doc.addImage(qrDataUrl, "PNG", margin.left, qrY, 80, 80);
-    doc.setFont("times", "bolditalic");
+
+    // Draw QR code on the left side, boxed
+    const qrY = cursorY - 10;
+    doc.setDrawColor(200, 200, 200);
+    doc.rect(margin.left, qrY, 84, 94); // subtle box around QR
+    doc.addImage(qrDataUrl, "PNG", margin.left + 2, qrY + 2, 80, 80);
+    doc.setFont("times", "bold");
     doc.setFontSize(8);
-    doc.text("Scan to Verify Report", margin.left + 2, qrY + 90);
+    doc.text("SCAN TO VERIFY", margin.left + 42, qrY + 88, { align: "center" });
   } catch (err) {
     console.error("Error generating QR code in PDF:", err);
   }
 
+  const signatureCenterX = pageWidth - margin.right - 90;
+
   doc.setFont("times", "bold");
   doc.setFontSize(11);
-  doc.text("Yours faithfully,", signatureX, cursorY);
+  doc.text("Yours faithfully,", signatureCenterX, cursorY, { align: "center" });
   cursorY += 50;
 
-  doc.text("Pradhan", signatureX, cursorY);
+  doc.text("Pradhan", signatureCenterX, cursorY, { align: "center" });
   doc.setFont("times", "normal");
-  doc.text("No. 3 Dhalpara Gram Panchayat", signatureX, cursorY + 14);
+  doc.text("No. 3 Dhalpara Gram Panchayat", signatureCenterX, cursorY + 14, { align: "center" });
+
+
 
   // Open the PDF in a new tab
   const blobUrl = doc.output("bloburl");
