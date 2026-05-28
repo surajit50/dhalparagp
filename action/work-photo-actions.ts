@@ -16,11 +16,17 @@ export async function uploadWorkPhoto(data: {
   fileType: string;
   latitude?: number;
   longitude?: number;
+  user?: any;
 }) {
   try {
-    const session = await auth();
+    let sessionUser = data.user;
+    if (!sessionUser) {
+      const session = await auth();
+      sessionUser = session?.user;
+    }
+
     // Allow upload for agency, maybe staff/admin too.
-    if (!session?.user) {
+    if (!sessionUser) {
       return { success: false, error: "Unauthorized" };
     }
 
@@ -38,9 +44,9 @@ export async function uploadWorkPhoto(data: {
     // Save to database
     // We should probably find the bidagencyId of the user if they are an agency
     let bidagencyId = undefined;
-    if (session.user.role === "agency" && session.user.agencyDetailsId) {
+    if (sessionUser.role === "agency" && sessionUser.agencyDetailsId) {
       const bidagency = await db.bidagency.findUnique({
-        where: { agencyDetailsId: session.user.agencyDetailsId },
+        where: { agencyDetailsId: sessionUser.agencyDetailsId },
       });
       if (bidagency) {
         bidagencyId = bidagency.id;

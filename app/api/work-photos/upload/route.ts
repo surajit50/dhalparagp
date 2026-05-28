@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadWorkPhoto } from "@/action/work-photo-actions";
+import { verifyJWT } from "@/lib/jwt";
+import { auth } from "@/auth";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,6 +18,27 @@ export async function OPTIONS() {
 
 export async function POST(req: NextRequest) {
   try {
+    let user = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      const decoded = verifyJWT(token);
+      if (decoded) {
+        user = decoded;
+      }
+    }
+
+    if (!user) {
+      const session = await auth();
+      if (session?.user) {
+        user = session.user;
+      }
+    }
+
+    if (!user) {
+      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401, headers: corsHeaders });
+    }
+
     const data = await req.json();
 
     const { worksDetailId, status, base64Image, fileName, fileType, latitude, longitude } = data;
@@ -31,7 +54,8 @@ export async function POST(req: NextRequest) {
       fileName: fileName || `work_${worksDetailId}_${Date.now()}`,
       fileType: fileType || "image/jpeg",
       latitude,
-      longitude
+      longitude,
+      user
     });
 
     if (!result.success) {

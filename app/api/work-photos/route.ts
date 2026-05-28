@@ -1,11 +1,28 @@
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
+import { verifyJWT } from "@/lib/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) {
+    let user = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      const decoded = verifyJWT(token);
+      if (decoded) {
+        user = decoded;
+      }
+    }
+
+    if (!user) {
+      const session = await auth();
+      if (session?.user) {
+        user = session.user;
+      }
+    }
+
+    if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -15,8 +32,8 @@ export async function GET(req: NextRequest) {
     const year = searchParams.get("year");
 
     const isAdmin =
-      session.user.role === "admin" || session.user.role === "superadmin";
-    const isAgency = session.user.role === "agency";
+      user.role === "admin" || user.role === "superadmin";
+    const isAgency = user.role === "agency";
 
     // Agency can only query a specific worksDetailId (their own work)
     if (!isAdmin && !(isAgency && worksDetailId)) {

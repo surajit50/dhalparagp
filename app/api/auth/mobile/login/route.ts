@@ -166,6 +166,7 @@ export async function POST(request: NextRequest) {
       email: existingUser.email,
       name: existingUser.name,
       role: existingUser.role,
+      agencyDetailsId: existingUser.agencyDetailsId,
       isTwoFactorEnabled: existingUser.isTwoFactorEnabled,
       platform: 'mobile',
       iat: Math.floor(Date.now() / 1000)
