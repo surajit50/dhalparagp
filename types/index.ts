@@ -561,3 +561,6 @@ export type TubewellBillWithRelations = Prisma.TubewellBillGetPayload<{
     };
   };
 }>;
+
+
+
