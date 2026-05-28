@@ -35,6 +35,7 @@ export async function GET() {
             AggrementModel: true,
           },
         },
+
         AwardofContract: {
           include: {
             workorderdetails: {

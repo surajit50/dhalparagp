@@ -1,5 +1,18 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 
 // Configure Cloudinary
 cloudinary.config({
@@ -10,13 +23,15 @@ cloudinary.config({
 
 export async function POST(request: Request) {
   try {
+
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
     if (!file) {
       return NextResponse.json(
         { error: "No file uploaded" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -44,12 +59,12 @@ export async function POST(request: Request) {
     return NextResponse.json({
       fileUrl: (result as any).secure_url,
       publicId: (result as any).public_id,
-    });
+    }, { headers: corsHeaders });
   } catch (error) {
     console.error("File upload error:", error);
     return NextResponse.json(
       { error: "Failed to upload file" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 } 
