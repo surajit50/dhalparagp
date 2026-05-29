@@ -111,9 +111,10 @@ export default function EditActionPlanForm({
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl><SelectTrigger><SelectValue placeholder="Select Year" /></SelectTrigger></FormControl>
                     <SelectContent>
-                      <SelectItem value="2024-2025">2024-2025</SelectItem>
-                      <SelectItem value="2025-2026">2025-2026</SelectItem>
-                      <SelectItem value="2026-2027">2026-2027</SelectItem>
+                      <SelectItem value="2024-25">2024-25</SelectItem>
+                      <SelectItem value="2025-26">2025-26</SelectItem>
+                      <SelectItem value="2026-27">2026-27</SelectItem>
+                      <SelectItem value="2027-28">2027-28</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
