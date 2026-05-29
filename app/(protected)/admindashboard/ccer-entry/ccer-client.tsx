@@ -14,7 +14,6 @@ import { CcerRowForm } from "@/components/form/ccer-row-form";
 type RowData = {
   id?: string;
   fundName: string;
-  openingBalance: number;
   receipts: number;
   arthoOParikalpana: number;
   krishi: number;
@@ -51,7 +50,8 @@ export default function CcerClient() {
       // Add a header row pseudo-object (we use a special flag for rendering)
       initialRows.push({
         fundName: group.category,
-        openingBalance: 0, receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
+        
+        receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
         siksha: 0, janaswasthya: 0, nariOSishuUnnoyan: 0, samajkalyan: 0, silpa: 0, parikathamo: 0,
         isHeader: true, // we need to add this to the type
       } as any);
@@ -63,7 +63,8 @@ export default function CcerClient() {
         } else {
           initialRows.push({
             fundName: fund,
-            openingBalance: 0, receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
+           
+            receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
             siksha: 0, janaswasthya: 0, nariOSishuUnnoyan: 0, samajkalyan: 0, silpa: 0, parikathamo: 0
           });
         }
@@ -95,7 +96,7 @@ export default function CcerClient() {
 
   const addRow = () => {
     setRows([...rows, {
-      fundName: "", openingBalance: 0, receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
+      fundName: "", receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
       siksha: 0, janaswasthya: 0, nariOSishuUnnoyan: 0, samajkalyan: 0, silpa: 0, parikathamo: 0
     }]);
   };
