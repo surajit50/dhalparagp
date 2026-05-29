@@ -10,6 +10,7 @@ export const STATUTORY_FUNDS = [
       "Mission Nirmal Bangla ( MNB)/ Swarcha Bharat Mission",
       "Community Health Care & Management Innitiative (CHCMI)/NRHM",
       "National Rural Livelihood Mission (NRLM)",
+      "APAS Fund",
       "Sahay Fund",
       "Hariyali",
       "Village Water & Sanitation Committee (VWSC)",
