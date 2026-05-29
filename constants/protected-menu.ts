@@ -272,6 +272,30 @@ export const adminMenuItems: MenuItemProps[] = [
     createMenuItem("Change Password", ["admin", "superadmin"], `${BASE_URLS.admin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
   ]),
 
+  // GP Plan Book
+  createMenuItem("GP Plan Book", ["admin"], undefined, MdDoc, COLORS.teal, [
+    // Budget Entry Forms
+    createMenuItem("Budget Entry Forms", ["admin"], undefined, FaChevronCircleRight, COLORS.green, [
+      createMenuItem("CCER Budget Entry", ["admin"], `${BASE_URLS.admin}/ccer-entry`, FaChevronCircleRight, COLORS.green),
+    ]),
+
+    // Budget Print Section
+    createMenuItem("Budget Print Section", ["admin"], undefined, FaChevronCircleRight, COLORS.blue, [
+      createMenuItem("Form-35 (Artho o Parikalpana)", ["admin"], `${BASE_URLS.admin}/reports/form-35-artho`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Form-35 (KoPSB)", ["admin"], `${BASE_URLS.admin}/reports/form-35-kopsb`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Form-35 (SJ)", ["admin"], `${BASE_URLS.admin}/reports/form-35-sj`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Form-35(NoSU&Sk)", ["admin"], `${BASE_URLS.admin}/reports/form-35-nosu`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Form-35(SP)", ["admin"], `${BASE_URLS.admin}/reports/form-35-sp`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Sector wise Budget", ["admin"], `${BASE_URLS.admin}/reports/upasamiti-plan`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Form-36 (Receipts)", ["admin"], `${BASE_URLS.admin}/reports/form-36`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("Form-36 (Expenditure)", ["admin"], `${BASE_URLS.admin}/reports/form-36-expenditure`, FaChevronCircleRight, COLORS.orange),
+      createMenuItem("Form-37 (Notice)", ["admin"], `${BASE_URLS.admin}/reports/form-37`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Form-38", ["admin"], `${BASE_URLS.admin}/reports/form-38`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("SDG", ["admin"], `${BASE_URLS.admin}/reports/sdg`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("Diagram", ["admin"], `${BASE_URLS.admin}/reports/diagram`, FaChevronCircleRight, COLORS.cyan),
+    ]),
+  ]),
+
   // Project & Works Management
   // Project & Works Management
   createMenuItem("Project Management", ["admin"], undefined, MdWork, COLORS.blue, [
@@ -305,7 +329,10 @@ export const adminMenuItems: MenuItemProps[] = [
         createMenuItem("Estimate Templates", ["admin"], `${BASE_URLS.admin}/work-manage/estimate-preparation/templates`, FaChevronCircleRight, COLORS.purple),
       ]),
     ]),
-    createMenuItem("Approved Action Plans", ["admin"], `${BASE_URLS.admin}/approvedactionplan`, MdListAlt, COLORS.green),
+    createMenuItem("Approved Action Plans", ["admin"], undefined, MdListAlt, COLORS.green, [
+      createMenuItem("Annual Plan Form", ["admin"], `${BASE_URLS.admin}/approvedactionplan`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Upasamiti Wise Report", ["admin"], `${BASE_URLS.admin}/reports/upasamiti-plan`, FaChevronCircleRight, COLORS.orange),
+    ]),
   ]),
 
   // Certificates & Documents

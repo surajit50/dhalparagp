@@ -57,6 +57,16 @@ function transformToActionPlan(row: any): z.infer<typeof actionplanschema> {
   const scFund = Number(cleanRow.scFund) || 0;
   const stFund = Number(cleanRow.stFund) || 0;
 
+  // Normalize upasamiti
+  let upasamiti: any = undefined;
+  const rawUpasamiti = cleanRow.upasamiti || cleanRow.Upasamiti;
+  if (rawUpasamiti) {
+    const validUpasamitis = ["Janasastha", "Nari_O_Sishu", "Samajkalyan", "Krishi", "Pranisampad_Bikash", "Silpa", "Parikathama", "Annayna_o_Bividho"];
+    // simple exact match or case-insensitive match
+    const found = validUpasamitis.find(v => v.toLowerCase() === String(rawUpasamiti).toLowerCase());
+    if (found) upasamiti = found;
+  }
+
   return {
     financialYear: String(cleanRow.financialYear || ""),
     themeName: String(cleanRow.themeName || ""),
@@ -73,6 +83,7 @@ function transformToActionPlan(row: any): z.infer<typeof actionplanschema> {
     scFund,
     stFund,
     fundType,
+    upasamiti,
   };
 }
 

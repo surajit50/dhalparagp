@@ -40,6 +40,7 @@ export const actionplanschema = z.object({
     required_error: "Please select a fund type",
     invalid_type_error: "Fund type must be Tied or Untied",
   }),
+  upasamiti: z.enum(["Janasastha", "Nari_O_Sishu", "Samajkalyan", "Krishi", "Pranisampad_Bikash", "Silpa", "Parikathama", "Annayna_o_Bividho"]).optional(),
 });
 
 export type ActionPlanDetailsProps = z.infer<typeof actionplanschema>;

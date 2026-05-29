@@ -1,5 +1,5 @@
 import EditActionPlanForm from "@/components/form/edit-action-plan-form";
-import Modal from "@/components/Modal";
+
 import { db } from "@/lib/db";
 import { ActionPlanDetailsProps } from "@/schema/actionplan";
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
@@ -10,9 +10,9 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
     },
   })) as ActionPlanDetailsProps;
   return (
-    <Modal>
+    <div className="container mx-auto p-4">
       <EditActionPlanForm initialData={actionplanform} id={id} />
-    </Modal>
+    </div>
   );
 };
 

@@ -43,6 +43,17 @@ enum UserStatus {
   inactive
 }
 
+enum UpasamitiName {
+  Janasastha
+  Nari_O_Sishu
+  Samajkalyan
+  Krishi
+  Pranisampad_Bikash
+  Silpa
+  Parikathama
+  Annayna_o_Bividho
+}
+
 enum Designation {
   Executive_Assistant
   Nirman_Sahayak
@@ -385,10 +396,10 @@ model AgencyDetails {
 }
 
 model ApprovedActionPlanDetails {
-  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  id                  String         @id @default(auto()) @map("_id") @db.ObjectId
   financialYear       String
   themeName           String
-  activityCode        String  @unique
+  activityCode        String         @unique
   activityName        String
   activityDescription String
   activityFor         String
@@ -400,8 +411,9 @@ model ApprovedActionPlanDetails {
   generalFund         Int
   scFund              Int
   stFund              Int
-  isPublish           Boolean @default(false)
+  isPublish           Boolean        @default(false)
   fundType            String?
+  upasamiti           UpasamitiName?
 
   WorksDetail    WorksDetail[]
   AggrementModel AggrementModel[]
@@ -3774,44 +3786,44 @@ model MusterRoll {
 
 //
 model FundAvailability {
-  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
-  year                  String
-  schemeName            String
-  
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  year       String
+  schemeName String
+
   // A: Opening Balance
-  openingBalanceTied    Float    @default(0)
-  openingBalanceUntied  Float    @default(0)
-  openingBalanceTotal   Float    @default(0)
+  openingBalanceTied   Float @default(0)
+  openingBalanceUntied Float @default(0)
+  openingBalanceTotal  Float @default(0)
 
   // B: Direct Receipt
-  directReceiptTied     Float    @default(0)
-  directReceiptUntied   Float    @default(0)
-  directReceiptTotal    Float    @default(0)
+  directReceiptTied   Float @default(0)
+  directReceiptUntied Float @default(0)
+  directReceiptTotal  Float @default(0)
 
   // C: Auto Receipt
-  autoReceiptTied       Float    @default(0)
-  autoReceiptUntied     Float    @default(0)
-  autoReceiptTotal      Float    @default(0)
+  autoReceiptTied   Float @default(0)
+  autoReceiptUntied Float @default(0)
+  autoReceiptTotal  Float @default(0)
 
   // D: Expenditure
-  expenditureTied       Float    @default(0)
-  expenditureUntied     Float    @default(0)
-  expenditureTotal      Float    @default(0)
+  expenditureTied   Float @default(0)
+  expenditureUntied Float @default(0)
+  expenditureTotal  Float @default(0)
 
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BirthVerificationReport {
-  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
-  memoNo              String    // E.g., CAF066804290826 (Reference letter/memo)
-  memoDate            DateTime  // Reference Date (e.g. 14/05/2026)
-  gpMemoNo            String    // GP Outgoing Memo No, e.g. 1/DGP/2026
-  gpMemoDate          DateTime  // GP Outgoing Memo Date
-  toAuthority         String    @default("The District Informatics Officer (DIO)")
-  toZone              String    @default("Hili Zone, Dakshin Dinajpur")
-  subject             String    @default("Verification Report on Birth Certificate")
-  
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  memoNo      String // E.g., CAF066804290826 (Reference letter/memo)
+  memoDate    DateTime // Reference Date (e.g. 14/05/2026)
+  gpMemoNo    String // GP Outgoing Memo No, e.g. 1/DGP/2026
+  gpMemoDate  DateTime // GP Outgoing Memo Date
+  toAuthority String   @default("The District Informatics Officer (DIO)")
+  toZone      String   @default("Hili Zone, Dakshin Dinajpur")
+  subject     String   @default("Verification Report on Birth Certificate")
+
   // Certificate particulars
   certificateHolder   String
   motherName          String
@@ -3820,18 +3832,52 @@ model BirthVerificationReport {
   dateOfBirth         DateTime
   registrationNo      String
   dateOfRegistration  DateTime
-  placeOfRegistration String    @default("No. 3 Dhalpara Gram Panchayat")
+  placeOfRegistration String   @default("No. 3 Dhalpara Gram Panchayat")
   // Verification details
-  verificationResult  String    @default("GENUINE") // GENUINE, NOT_GENUINE, NOT_AVAILABLE
+  verificationResult  String   @default("GENUINE") // GENUINE, NOT_GENUINE, NOT_AVAILABLE
   remarks             String?
-  
+
   // Metadata
-  status              String    @default("PENDING") // PENDING, APPROVED, REJECTED
-  createdBy           String    @db.ObjectId
-  createdByUser       User      @relation(fields: [createdBy], references: [id])
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  status        String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdBy     String   @db.ObjectId
+  createdByUser User     @relation(fields: [createdBy], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("birth_verification_reports")
 }
 
+model CcerActuals {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear     String
+  fundName          String
+  receipts          Int      @default(0)
+  arthoOParikalpana Int      @default(0)
+  krishi            Int      @default(0)
+  pranisampadBikash Int      @default(0)
+  siksha            Int      @default(0)
+  janaswasthya      Int      @default(0)
+  nariOSishuUnnoyan Int      @default(0)
+  samajkalyan       Int      @default(0)
+  silpa             Int      @default(0)
+  parikathamo       Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@unique([financialYear, fundName])
+}
+
+model Form36Budget {
+  id                  String  @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear       String
+  fundName            String
+  precedingYearActual Float   @default(0)
+  currentYearEstimate Float   @default(0)
+  nextYearEstimate    Float   @default(0)
+  remarks             String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([financialYear, fundName])
+}

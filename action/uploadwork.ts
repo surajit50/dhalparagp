@@ -53,6 +53,7 @@ export async function createschme(values: z.infer<typeof actionplanschema>) {
         scFund: values.scFund,
         stFund: values.stFund,
         fundType: values.fundType,
+        upasamiti: values.upasamiti,
       },
     });
     return { skipped: false, scheme };
