@@ -9,6 +9,8 @@ export async function saveCcerActual(data: z.infer<typeof ccerSchema>) {
   try {
     const validatedData = ccerSchema.parse(data);
 
+    const { openingBalance, ...createData } = validatedData;
+
     // Upsert based on financialYear and fundName
     await db.ccerActuals.upsert({
       where: {
@@ -18,7 +20,6 @@ export async function saveCcerActual(data: z.infer<typeof ccerSchema>) {
         },
       },
       update: {
-
         receipts: validatedData.receipts,
         arthoOParikalpana: validatedData.arthoOParikalpana,
         krishi: validatedData.krishi,
@@ -30,7 +31,7 @@ export async function saveCcerActual(data: z.infer<typeof ccerSchema>) {
         silpa: validatedData.silpa,
         parikathamo: validatedData.parikathamo,
       },
-      create: validatedData,
+      create: createData,
     });
 
     revalidatePath("/admindashboard/ccer-entry");
