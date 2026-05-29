@@ -71,7 +71,7 @@ export default function EditActionPlanForm({
         title: "Action Plan Updated",
         description: "Your action plan has been successfully updated.",
       });
-      router.push("/admindashboard/work-manage");
+      router.push("/admindashboard/work-manage/view)");
     } catch (error) {
       toast({
         title: "Error",
