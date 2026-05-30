@@ -56,6 +56,10 @@ function transformToActionPlan(row: any): z.infer<typeof actionplanschema> {
   const generalFund = Number(cleanRow.generalFund) || 0;
   const scFund = Number(cleanRow.scFund) || 0;
   const stFund = Number(cleanRow.stFund) || 0;
+  const beneficiariesSC = Number(cleanRow.beneficiariesSC) || 0;
+  const beneficiariesST = Number(cleanRow.beneficiariesST) || 0;
+  const beneficiariesGen = Number(cleanRow.beneficiariesGen) || 0;
+  const totalUnit = Number(cleanRow.totalUnit) || 0;
 
   // Normalize upasamiti
   let upasamiti: any = undefined;
@@ -84,6 +88,10 @@ function transformToActionPlan(row: any): z.infer<typeof actionplanschema> {
     stFund,
     fundType,
     upasamiti,
+    beneficiariesSC,
+    beneficiariesST,
+    beneficiariesGen,
+    totalUnit,
   };
 }
 
