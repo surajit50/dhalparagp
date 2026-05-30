@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DataTable } from "@/components/data-table";
 import { ApprovedActionPlanDetails, WorksDetail, UpasamitiName } from "@prisma/client";
 
 type ActionPlanWithWorks = ApprovedActionPlanDetails & {
@@ -37,12 +38,12 @@ async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDeta
   return res.json();
 }
 
-interface InlineEditTableProps {
+interface InlineEditActionPlanTableProps {
   data: ActionPlanWithWorks[];
-  onDataChange?: () => void; // callback to refresh data after update
+  onDataChange?: () => void;
 }
 
-export function InlineEditActionPlanTable({ data, onDataChange }: InlineEditTableProps) {
+export function InlineEditActionPlanTable({ data, onDataChange }: InlineEditActionPlanTableProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState<Partial<ApprovedActionPlanDetails>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -91,7 +92,6 @@ export function InlineEditActionPlanTable({ data, onDataChange }: InlineEditTabl
     setIsSaving(true);
     try {
       await updateActionPlan(id, editFormData);
-      // Refresh data after successful update
       if (onDataChange) onDataChange();
       cancelEditing();
     } catch (error) {
@@ -106,7 +106,6 @@ export function InlineEditActionPlanTable({ data, onDataChange }: InlineEditTabl
     setEditFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Define columns with inline editing logic
   const columns: ColumnDef<ActionPlanWithWorks>[] = [
     {
       id: "slNo",
@@ -663,11 +662,6 @@ export function InlineEditActionPlanTable({ data, onDataChange }: InlineEditTabl
       },
     },
   ];
-
-  // You need to import DataTable from your project
-  // For completeness, assume we have a DataTable component that accepts columns and data
-  // If you don't have one, you can use @/components/data-table
-  import { DataTable } from "@/components/data-table";
 
   return <DataTable columns={columns} data={data} />;
 }
