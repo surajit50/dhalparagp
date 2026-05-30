@@ -54,6 +54,18 @@ export async function createschme(values: z.infer<typeof actionplanschema>) {
         stFund: values.stFund,
         fundType: values.fundType,
         upasamiti: values.upasamiti,
+        focusArea: values.focusArea,
+        workType: values.workType,
+        componentType: values.componentType,
+        gramSansad: values.gramSansad,
+        sdgs: values.sdgs,
+        beneficiariesSC: values.beneficiariesSC,
+        beneficiariesST: values.beneficiariesST,
+        beneficiariesGen: values.beneficiariesGen,
+        unitType: values.unitType,
+        totalUnit: values.totalUnit,
+        implementedBy: values.implementedBy,
+        remarks: values.remarks,
       },
     });
     return { skipped: false, scheme };

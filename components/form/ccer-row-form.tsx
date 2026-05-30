@@ -12,6 +12,7 @@ import { ccerSchema } from "@/schema/ccer";
 import { z } from "zod";
 import { saveCcerActual, deleteCcerActual } from "@/action/ccer-actions";
 import { toast } from "sonner";
+import { getFundDisplayName, STATUTORY_FUNDS } from "@/constants/funds";
 
 interface CcerRowFormProps {
   index: number;
@@ -32,6 +33,11 @@ export function CcerRowForm({
 }: CcerRowFormProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isEditing, setIsEditing] = useState(!initialData.id);
+
+  const osrCategory = STATUTORY_FUNDS.find(c => c.category.startsWith("(B)"));
+  const isOsrCategory = osrCategory ? osrCategory.funds.includes(initialData.fundName) : false;
+  const isOwnFund = initialData.fundName === "Own Fund";
+  const isOtherOsr = isOsrCategory && !isOwnFund;
 
   const form = useForm<z.infer<typeof ccerSchema>>({
     resolver: zodResolver(ccerSchema),
@@ -124,11 +130,21 @@ export function CcerRowForm({
         </TableCell>
         
         <TableCell className="p-1 border-r border-gray-200">
-          <FormField control={form.control} name="fundName" render={({ field }) => (
-            <FormItem className="space-y-0"><FormControl>
-              <Input {...field} readOnly={!isEditing} className={getInputClassName(false)} placeholder="Fund name..." />
-            </FormControl></FormItem>
-          )} />
+          <FormField control={form.control} name="fundName" render={({ field }) => {
+            const isFundReadOnly = !isEditing || !!initialData.fundName;
+            return (
+              <FormItem className="space-y-0"><FormControl>
+                <Input 
+                  {...field} 
+                  value={isFundReadOnly ? getFundDisplayName(field.value) : field.value}
+                  readOnly={isFundReadOnly} 
+                  className={getInputClassName(false)} 
+                  title={getFundDisplayName(field.value)}
+                  placeholder="Fund name..." 
+                />
+              </FormControl></FormItem>
+            );
+          }} />
         </TableCell>
 
         <TableCell className="p-1 border-r border-gray-200 bg-gray-50/50">
@@ -141,16 +157,24 @@ export function CcerRowForm({
 
         {['arthoOParikalpana', 'krishi', 'pranisampadBikash', 'siksha', 'janaswasthya', 'nariOSishuUnnoyan', 'samajkalyan', 'silpa', 'parikathamo'].map((fieldName) => (
           <TableCell key={fieldName} className="p-1 border-r border-gray-200">
-            <FormField control={form.control} name={fieldName as any} render={({ field }) => (
-              <FormItem className="space-y-0"><FormControl>
-                <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} readOnly={!isEditing} className={getInputClassName()} />
-              </FormControl></FormItem>
-            )} />
+            {isOtherOsr ? (
+              <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+            ) : (
+              <FormField control={form.control} name={fieldName as any} render={({ field }) => (
+                <FormItem className="space-y-0"><FormControl>
+                  <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} readOnly={!isEditing} className={getInputClassName()} />
+                </FormControl></FormItem>
+              )} />
+            )}
           </TableCell>
         ))}
 
-        <TableCell className="p-2 border-r border-gray-200 text-right font-bold text-[11px] tabular-nums bg-green-50/50 text-green-800">
-          ₹ {calculateTotal(currentValues).toLocaleString("en-IN")}
+        <TableCell className="p-1 border-r border-gray-200 text-right font-bold text-[11px] tabular-nums bg-green-50/50 text-green-800">
+          {isOtherOsr ? (
+            <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+          ) : (
+            `₹ ${calculateTotal(currentValues).toLocaleString("en-IN")}`
+          )}
         </TableCell>
 
         <TableCell className="p-1 text-center">

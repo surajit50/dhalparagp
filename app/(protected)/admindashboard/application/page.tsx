@@ -63,6 +63,11 @@ function prepareDataForBulkCreate(parsedData: any[]): z.infer<typeof actionplans
       scFund,
       stFund,
       fundType,
+      beneficiariesSC: Number(cleanRow.beneficiariesSC) || 0,
+      beneficiariesST: Number(cleanRow.beneficiariesST) || 0,
+      beneficiariesGen: Number(cleanRow.beneficiariesGen) || 0,
+      totalUnit: Number(cleanRow.totalUnit) || 0,
+      implementedBy: cleanRow.implementedBy ? String(cleanRow.implementedBy) : undefined,
     };
   });
 }

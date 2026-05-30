@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { ActionPlanDetailsProps, actionplanschema } from "@/schema/actionplan";
 import { updateActionPlan } from "@/action/fetchApprovedActionPlans";
-import { STATUTORY_FUNDS } from "@/constants/funds";
+import { SCHEME_FUNDS } from "@/constants/funds";
 import { cn } from "@/lib/utils";
 
 export default function EditActionPlanForm({
@@ -36,9 +36,20 @@ export default function EditActionPlanForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Default fallback for fundType if missing in older data
   if (!initialData.fundType) initialData.fundType = "Tied";
   if (!initialData.upasamiti) initialData.upasamiti = "Annayna_o_Bividho";
+  if (!initialData.focusArea) initialData.focusArea = "";
+  if (!initialData.workType) initialData.workType = "";
+  if (!initialData.componentType) initialData.componentType = "";
+  if (!initialData.gramSansad) initialData.gramSansad = "";
+  if (!initialData.sdgs) initialData.sdgs = "";
+  if (!initialData.unitType) initialData.unitType = "";
+  if (!initialData.implementedBy) initialData.implementedBy = "";
+  if (!initialData.remarks) initialData.remarks = "";
+  if (initialData.beneficiariesSC === null || initialData.beneficiariesSC === undefined) initialData.beneficiariesSC = 0;
+  if (initialData.beneficiariesST === null || initialData.beneficiariesST === undefined) initialData.beneficiariesST = 0;
+  if (initialData.beneficiariesGen === null || initialData.beneficiariesGen === undefined) initialData.beneficiariesGen = 0;
+  if (initialData.totalUnit === null || initialData.totalUnit === undefined) initialData.totalUnit = 0;
 
   const form = useForm<z.infer<typeof actionplanschema>>({
     resolver: zodResolver(actionplanschema),
@@ -260,7 +271,7 @@ export default function EditActionPlanForm({
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl><SelectTrigger className="bg-white"><SelectValue placeholder="Select Scheme" /></SelectTrigger></FormControl>
                         <SelectContent>
-                          {STATUTORY_FUNDS.map((group, idx) => (
+                          {SCHEME_FUNDS.map((group, idx) => (
                             <SelectGroup key={idx}>
                               <SelectLabel className="font-bold text-gray-900 bg-gray-100">{group.category}</SelectLabel>
                               {group.funds.map((fund) => (
@@ -363,6 +374,111 @@ export default function EditActionPlanForm({
                 </div>
               </div>
 
+            </CardContent>
+          </Card>
+
+          {/* Section 4: Additional Details & Beneficiaries */}
+          <Card className="border-t-4 border-t-orange-600 shadow-md">
+            <CardHeader className="bg-gray-50/50 pb-4">
+              <CardTitle className="text-xl flex items-center gap-2 text-orange-800">
+                <FileText className="h-5 w-5" /> Additional Details & Beneficiaries
+              </CardTitle>
+              <CardDescription>Extra fields required for the plan book and beneficiary tracking.</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <FormField control={form.control} name="focusArea" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Focus Area</FormLabel>
+                    <FormControl><Input placeholder="Enter Focus Area" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="workType" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Work Type</FormLabel>
+                    <FormControl><Input placeholder="Enter Work Type" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="componentType" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Component Type</FormLabel>
+                    <FormControl><Input placeholder="Enter Component Type" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="gramSansad" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gram Sansad</FormLabel>
+                    <FormControl><Input placeholder="Enter Gram Sansad" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="sdgs" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>SDGs</FormLabel>
+                    <FormControl><Input placeholder="Enter SDGs" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="implementedBy" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Implemented By</FormLabel>
+                    <FormControl><Input placeholder="Enter Implementer" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-end mt-6 bg-orange-50/50 p-4 rounded-lg border border-orange-100">
+                <div className="md:col-span-4 font-bold text-orange-900 border-b pb-2 mb-2">Beneficiaries & Units</div>
+                
+                <FormField control={form.control} name="beneficiariesSC" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expected SC</FormLabel>
+                    <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="beneficiariesST" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expected ST</FormLabel>
+                    <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="beneficiariesGen" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expected Gen</FormLabel>
+                    <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div></div>
+                
+                <FormField control={form.control} name="unitType" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit Type</FormLabel>
+                    <FormControl><Input placeholder="e.g. Nos, Meter" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="totalUnit" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Unit</FormLabel>
+                    <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value) || 0)} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="remarks" render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Remarks</FormLabel>
+                    <FormControl><Input placeholder="Enter any remarks" {...field} className="focus-visible:ring-orange-500" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+              </div>
             </CardContent>
           </Card>
 

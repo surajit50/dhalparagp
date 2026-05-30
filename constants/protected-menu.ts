@@ -277,6 +277,7 @@ export const adminMenuItems: MenuItemProps[] = [
     // Budget Entry Forms
     createMenuItem("Budget Entry Forms", ["admin"], undefined, FaChevronCircleRight, COLORS.green, [
       createMenuItem("CCER Budget Entry", ["admin"], `${BASE_URLS.admin}/ccer-entry`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Budget Entry", ["admin"], `${BASE_URLS.admin}/reports/budget-entry`, FaChevronCircleRight, COLORS.green),
     ]),
 
     // Budget Print Section
@@ -305,6 +306,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Meeting Reports", ["admin"], `${BASE_URLS.admin}/meeting-manage/reports`, MdAssessment, COLORS.orange),
     ]),
     createMenuItem("Operations", ["admin"], undefined, MdWork, COLORS.red, [
+      createMenuItem("Add Action Plan", ["admin"], `${BASE_URLS.admin}/work-manage/add`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Action Plans", ["admin"], `${BASE_URLS.admin}/work-manage/view`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("Work Status Tracking", ["admin"], `${BASE_URLS.admin}/manage-tender/work-status-change`, FaChevronCircleRight, COLORS.indigo),
       createMenuItem("Fund Status", ["admin"], `${BASE_URLS.admin}/fundstatus`, FaChevronCircleRight, COLORS.red),

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { UpasamitiName } from "@prisma/client";
 
 export const actionplanschema = z.object({
   financialYear: z.string().min(4, {
@@ -40,7 +41,19 @@ export const actionplanschema = z.object({
     required_error: "Please select a fund type",
     invalid_type_error: "Fund type must be Tied or Untied",
   }),
-  upasamiti: z.enum(["Janasastha", "Nari_O_Sishu", "Samajkalyan", "Krishi", "Pranisampad_Bikash", "Silpa", "Parikathama", "Annayna_o_Bividho"]).optional(),
+  upasamiti: z.nativeEnum(UpasamitiName).optional(),
+  focusArea: z.string().optional(),
+  workType: z.string().optional(),
+  componentType: z.string().optional(),
+  gramSansad: z.string().optional(),
+  sdgs: z.string().optional(),
+  beneficiariesSC: z.coerce.number().int().nonnegative().default(0),
+  beneficiariesST: z.coerce.number().int().nonnegative().default(0),
+  beneficiariesGen: z.coerce.number().int().nonnegative().default(0),
+  unitType: z.string().optional(),
+  totalUnit: z.coerce.number().int().nonnegative().default(0),
+  implementedBy: z.string().optional(),
+  remarks: z.string().optional(),
 });
 
 export type ActionPlanDetailsProps = z.infer<typeof actionplanschema>;

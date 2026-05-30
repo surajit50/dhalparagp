@@ -2,8 +2,13 @@
 
 import { db } from "@/lib/db";
 import { form36Schema } from "@/schema/form36";
+import { normalizeFundName } from "@/types/budget-row";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+
+// ---------------------------------------------------------------------------
+// Save
+// ---------------------------------------------------------------------------
 
 export async function saveForm36Budget(data: z.infer<typeof form36Schema>) {
   try {
@@ -36,73 +41,79 @@ export async function saveForm36Budget(data: z.infer<typeof form36Schema>) {
     return { success: true, data: result };
   } catch (error) {
     console.error("Error saving Form-36 budget data:", error);
-    
+
     if (error instanceof z.ZodError) {
-      return { 
-        success: false, 
-        error: `Validation failed: ${error.errors.map(e => e.message).join(", ")}` 
+      return {
+        success: false,
+        error: `Validation failed: ${error.errors.map((e) => e.message).join(", ")}`,
       };
     }
-    
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "Failed to save data" 
+
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to save data",
     };
   }
 }
+
+// ---------------------------------------------------------------------------
+// Fetch
+// ---------------------------------------------------------------------------
 
 export async function getForm36Budget(financialYear: string) {
   try {
     const data = await db.form36Budget.findMany({
-      where: {
-        financialYear: financialYear.trim(),
-      },
-      orderBy: { fundName: "asc" },
+      where: { financialYear: financialYear.trim() },
+      // Order by creation so restored rows respect the STATUTORY_FUNDS structure
+      orderBy: { createdAt: "asc" },
     });
     return { success: true, data };
   } catch (error) {
     console.error("Error fetching Form-36 budget data:", error);
-    return { 
-      success: false, 
+    return {
+      success: false,
       error: error instanceof Error ? error.message : "Failed to fetch data",
-      data: [] 
+      data: [],
     };
   }
 }
 
+// ---------------------------------------------------------------------------
+// Auto-fill
+// ---------------------------------------------------------------------------
+
 export async function getForm36AutoFillData(currentFinancialYear: string) {
   try {
     const startYear = parseInt(currentFinancialYear.split("-")[0]);
-    const precedingYear = `${startYear - 1}-${(startYear).toString().slice(2)}`;
-    const nextYear = `${startYear + 1}-${(startYear + 2).toString().slice(2)}`;
+    const precedingYear = `${startYear - 1}-${startYear}`;
+    const nextYear = `${startYear + 1}-${startYear + 2}`;
 
-    const ccerActuals = await db.ccerActuals.findMany({
-      where: { financialYear: precedingYear }
-    });
+    const [ccerActuals, budgetCurrent, budgetNext] = await Promise.all([
+      db.ccerActuals.findMany({ where: { financialYear: precedingYear } }),
+      db.budgetEntry.findMany({
+        where: { financialYear: currentFinancialYear, budgetType: "CURRENT_YEAR" },
+      }),
+      db.budgetEntry.findMany({
+        where: { financialYear: currentFinancialYear, budgetType: "NEXT_YEAR" },
+      }),
+    ]);
 
-    const actionPlans = await db.approvedActionPlanDetails.findMany({
-      where: {
-        financialYear: { in: [currentFinancialYear, nextYear] }
-      }
-    });
+    // Map ccer receipts by fund name
+    const ccerMap = new Map<string, number>();
+    for (const c of ccerActuals) {
+      ccerMap.set(c.fundName, (ccerMap.get(c.fundName) ?? 0) + (c.receipts ?? 0));
+    }
 
-    const actionPlansCurrent = actionPlans.filter(p => p.financialYear === currentFinancialYear);
-    const actionPlansNext = actionPlans.filter(p => p.financialYear === nextYear);
+    const estimateMapCurrent = new Map<string, number>();
+    for (const b of budgetCurrent) {
+      estimateMapCurrent.set(b.fundName, (estimateMapCurrent.get(b.fundName) ?? 0) + (b.receipts ?? 0));
+    }
 
-    const ccerMap = new Map();
-    ccerActuals.forEach(c => ccerMap.set(c.fundName, c.receipts));
-
-    const estimateMapCurrent = new Map();
-    actionPlansCurrent.forEach(p => {
-      const fund = p.schemeName || "Unknown";
-      estimateMapCurrent.set(fund, (estimateMapCurrent.get(fund) || 0) + (p.estimatedCost || 0));
-    });
-
-    const estimateMapNext = new Map();
-    actionPlansNext.forEach(p => {
-      const fund = p.schemeName || "Unknown";
-      estimateMapNext.set(fund, (estimateMapNext.get(fund) || 0) + (p.estimatedCost || 0));
-    });
+    const estimateMapNext = new Map<string, number>();
+    for (const b of budgetNext) {
+      // Using receipts as the plan value estimate for next year
+      estimateMapNext.set(b.fundName, (estimateMapNext.get(b.fundName) ?? 0) + (b.receipts ?? 0));
+    }
 
     return {
       success: true,
@@ -111,14 +122,15 @@ export async function getForm36AutoFillData(currentFinancialYear: string) {
         nextYear,
         ccerMap: Object.fromEntries(ccerMap),
         estimateMapCurrent: Object.fromEntries(estimateMapCurrent),
-        estimateMapNext: Object.fromEntries(estimateMapNext)
-      }
+        estimateMapNext: Object.fromEntries(estimateMapNext),
+      },
     };
   } catch (error) {
     console.error("Error auto-filling Form-36 budget data:", error);
-    return { 
-      success: false, 
-      error: error instanceof Error ? error.message : "Failed to auto-fill data" 
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to auto-fill data",
     };
   }
 }

@@ -1,29 +1,56 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Construction } from 'lucide-react';
+import { db } from '@/lib/db';
+import { Form35Table } from '@/components/reports/form-35-table';
+import YearFilter from '../upasamiti-plan/year-filter';
 
-export default function form35sjPage() {
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function Form35SJPage({ searchParams }: PageProps) {
+  const resolved = await searchParams;
+  const financialYearFilter = resolved?.financialYear as string;
+
+  const distinctYears = await db.approvedActionPlanDetails.findMany({
+    select: { financialYear: true },
+    distinct: ["financialYear"],
+    orderBy: { financialYear: "desc" },
+  });
+  const yearsList = distinctYears.map((y) => y.financialYear).filter(Boolean);
+  const selectedYear = financialYearFilter || yearsList[0] || "2025-2026";
+
+  const parts = selectedYear.split("-");
+  const start = parseInt(parts[0]);
+  const isShortFormat = parts.length > 1 && parts[1].length === 2;
+  const formatEnd = (y: number) => isShortFormat ? y.toString().substring(2) : y.toString();
+  const currentYearLabel = !isNaN(start) ? `${start - 1}-${formatEnd(start)}` : "Current";
+  const nextYearLabel = selectedYear;
+
+  const currentBudgets = await db.budgetEntry.findMany({
+    where: { financialYear: selectedYear, budgetType: "CURRENT_YEAR" }
+  });
+
+  const nextBudgets = await db.budgetEntry.findMany({
+    where: { financialYear: selectedYear, budgetType: "NEXT_YEAR" }
+  });
+
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Under Construction</h2>
+    <div className="flex flex-col gap-4 p-4 w-full">
+      <div className="flex justify-end">
+        <YearFilter years={yearsList} />
       </div>
-      <Card className="border-t-4 border-t-orange-500">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-orange-600">
-            <Construction className="h-6 w-6" />
-            FORM 35 SJ Report
-          </CardTitle>
-          <CardDescription>
-            This page is currently being built.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-600">
-            The data and layout for the <strong>FORM 35 SJ</strong> report will be available here soon.
-          </p>
-        </CardContent>
-      </Card>
+      <Form35Table
+        title="Siksha o Janasastha"
+        groups={[
+          { label: "Siksha", columnKey: "siksha" },
+          { label: "Janasastha", columnKey: "janaswasthya" }
+        ]}
+        currentBudgets={currentBudgets}
+        nextBudgets={nextBudgets}
+        selectedYear={selectedYear}
+        currentYearLabel={currentYearLabel}
+        nextYearLabel={nextYearLabel}
+      />
     </div>
   );
 }

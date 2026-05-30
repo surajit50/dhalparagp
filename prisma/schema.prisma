@@ -415,6 +415,19 @@ model ApprovedActionPlanDetails {
   fundType            String?
   upasamiti           UpasamitiName?
 
+  focusArea           String?
+  workType            String?
+  componentType       String?
+  gramSansad          String?
+  sdgs                String?
+  beneficiariesSC     Int?      @default(0)
+  beneficiariesST     Int?      @default(0)
+  beneficiariesGen    Int?      @default(0)
+  unitType            String?
+  totalUnit           Int?      @default(0)
+  implementedBy       String?
+  remarks             String?
+
   WorksDetail    WorksDetail[]
   AggrementModel AggrementModel[]
 }
@@ -3865,6 +3878,32 @@ model CcerActuals {
   updatedAt         DateTime @updatedAt
 
   @@unique([financialYear, fundName])
+}
+
+enum BudgetType {
+  CURRENT_YEAR
+  NEXT_YEAR
+}
+
+model BudgetEntry {
+  id                String     @id @default(auto()) @map("_id") @db.ObjectId
+  financialYear     String
+  budgetType        BudgetType
+  fundName          String
+  receipts          Int        @default(0)
+  arthoOParikalpana Int        @default(0)
+  krishi            Int        @default(0)
+  pranisampadBikash Int        @default(0)
+  siksha            Int        @default(0)
+  janaswasthya      Int        @default(0)
+  nariOSishuUnnoyan Int        @default(0)
+  samajkalyan       Int        @default(0)
+  silpa             Int        @default(0)
+  parikathamo       Int        @default(0)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  @@unique([financialYear, budgetType, fundName])
 }
 
 model Form36Budget {

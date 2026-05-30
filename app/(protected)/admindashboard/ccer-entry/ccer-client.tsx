@@ -167,9 +167,15 @@ export default function CcerClient() {
                   if ((row as any).isHeader) {
                     return (
                       <TableRow key={i} className="bg-blue-100 hover:bg-blue-100">
-                        <TableCell colSpan={14} className="p-2 border-b border-gray-300 font-bold text-blue-900 text-xs">
+                        <TableCell colSpan={2} className="p-2 border-r border-b border-gray-300 font-bold text-blue-900 text-[11px]">
                           {row.fundName}
                         </TableCell>
+                        {Array.from({ length: 11 }).map((_, idx) => (
+                          <TableCell key={idx} className="p-1 border-r border-b border-gray-300">
+                            <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+                          </TableCell>
+                        ))}
+                        <TableCell className="p-1 border-b border-gray-300"></TableCell>
                       </TableRow>
                     );
                   }
