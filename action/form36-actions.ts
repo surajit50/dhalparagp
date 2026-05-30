@@ -86,15 +86,16 @@ export async function getForm36AutoFillData(currentFinancialYear: string) {
   try {
     const startYear = parseInt(currentFinancialYear.split("-")[0]);
     const precedingYear = `${startYear - 1}-${startYear}`;
-    const nextYear = `${startYear + 1}-${startYear + 2}`;
+    const nextYear1 = `${startYear + 1}-${startYear + 2}`;
+    const nextYear2 = `${startYear + 1}-${(startYear + 2).toString().slice(2)}`;
 
-    const [ccerActuals, budgetCurrent, budgetNext] = await Promise.all([
+    const [ccerActuals, budgetCurrent, plans] = await Promise.all([
       db.ccerActuals.findMany({ where: { financialYear: precedingYear } }),
       db.budgetEntry.findMany({
         where: { financialYear: currentFinancialYear, budgetType: "CURRENT_YEAR" },
       }),
-      db.budgetEntry.findMany({
-        where: { financialYear: currentFinancialYear, budgetType: "NEXT_YEAR" },
+      db.approvedActionPlanDetails.findMany({
+        where: { financialYear: { in: [nextYear1, nextYear2] } },
       }),
     ]);
 
@@ -110,16 +111,16 @@ export async function getForm36AutoFillData(currentFinancialYear: string) {
     }
 
     const estimateMapNext = new Map<string, number>();
-    for (const b of budgetNext) {
-      // Using receipts as the plan value estimate for next year
-      estimateMapNext.set(b.fundName, (estimateMapNext.get(b.fundName) ?? 0) + (b.receipts ?? 0));
+    for (const plan of plans) {
+      const shortFundName = normalizeFundName(plan.schemeName);
+      estimateMapNext.set(shortFundName, (estimateMapNext.get(shortFundName) ?? 0) + (plan.estimatedCost ?? 0));
     }
 
     return {
       success: true,
       data: {
         precedingYear,
-        nextYear,
+        nextYear: nextYear1,
         ccerMap: Object.fromEntries(ccerMap),
         estimateMapCurrent: Object.fromEntries(estimateMapCurrent),
         estimateMapNext: Object.fromEntries(estimateMapNext),

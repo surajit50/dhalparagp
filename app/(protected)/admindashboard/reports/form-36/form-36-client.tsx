@@ -50,11 +50,11 @@ type OpeningBalance = { preceding: number; current: number; next: number };
 // ---------------------------------------------------------------------------
 
 const YEARS = [
-  "2023-2024",
-  "2024-2025",
-  "2025-2026",
-  "2026-2027",
-  "2027-2028",
+  "2022-23",
+  "2023-24",
+  "2024-25",
+  "2025-26",
+  "2026-27",
 ];
 
 const NUMERIC_FIELDS: NumericField[] = [
@@ -80,7 +80,7 @@ const fmt = (n: number) =>
 // ---------------------------------------------------------------------------
 
 export default function Form36Client() {
-  const [selectedYear, setSelectedYear] = useState(YEARS[2]);
+  const [selectedYear, setSelectedYear] = useState(YEARS[1]);
   const [rows, setRows] = useState<RowData[]>([]);
   const [openingBalance, setOpeningBalance] = useState<OpeningBalance>({
     preceding: 0,
