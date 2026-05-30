@@ -58,7 +58,11 @@ function transformExcelRow(row: any): z.infer<typeof actionplanschema> {
   const generalFund = Number(cleanRow.generalFund) || 0;
   const scFund = Number(cleanRow.scFund) || 0;
   const stFund = Number(cleanRow.stFund) || 0;
-  
+  const beneficiariesSC = Number(cleanRow.beneficiariesSC) || 0;
+  const beneficiariesST = Number(cleanRow.beneficiariesST) || 0;
+  const beneficiariesGen = Number(cleanRow.beneficiariesGen) || 0;
+  const totalUnit = Number(cleanRow.totalUnit) || 0;
+
   return {
     financialYear: String(cleanRow.financialYear || ""),
     themeName: String(cleanRow.themeName || ""),
@@ -75,6 +79,10 @@ function transformExcelRow(row: any): z.infer<typeof actionplanschema> {
     scFund,
     stFund,
     fundType,
+    beneficiariesSC,
+    beneficiariesST,
+    beneficiariesGen,
+    totalUnit,
   };
 }
 
