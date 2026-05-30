@@ -319,21 +319,21 @@ export default function Form36Client() {
   return (
     <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
       {/* Toolbar */}
-      <div className="p-4 border-b bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="p-5 border-b bg-gradient-to-r from-gray-50 to-white flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-48">
+          <div className="w-56 shadow-sm rounded-md">
             <Select
               value={selectedYear}
               onValueChange={setSelectedYear}
               disabled={isLoading}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white border-gray-200 focus:ring-orange-500">
                 <SelectValue placeholder="Select Year" />
               </SelectTrigger>
               <SelectContent>
                 {YEARS.map((y) => (
-                  <SelectItem key={y} value={y}>
-                    {y}
+                  <SelectItem key={y} value={y} className="cursor-pointer">
+                    Financial Year {y}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -344,9 +344,9 @@ export default function Form36Client() {
             variant="outline"
             onClick={fetchBudget}
             disabled={isLoading}
-            className="gap-2"
+            className="gap-2 bg-white hover:bg-gray-50 border-gray-200 text-gray-700 shadow-sm transition-all"
           >
-            <RotateCcw className="h-4 w-4" />
+            <RotateCcw className={`h-4 w-4 ${isLoading ? "animate-spin text-gray-400" : "text-gray-500"}`} />
             Refresh
           </Button>
 
@@ -354,7 +354,7 @@ export default function Form36Client() {
             variant="secondary"
             onClick={autoFillEstimates}
             disabled={isLoading || isAutoFilling}
-            className="gap-2 bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-200"
+            className="gap-2 bg-blue-50 text-blue-700 hover:bg-blue-100 hover:shadow border border-blue-200 transition-all font-medium"
           >
             {isAutoFilling ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -368,7 +368,7 @@ export default function Form36Client() {
         <Button
           onClick={saveAll}
           disabled={isLoading}
-          className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+          className="gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow hover:shadow-md transition-all font-medium px-6"
         >
           {isLoading ? (
             <Loader2 className="h-4 w-4 animate-spin" />

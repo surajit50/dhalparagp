@@ -169,71 +169,101 @@ export default async function ReportsPage({
             </Card>
           </div>
 
-          {/* Report Types Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reportTypes.map((report, index) => (
-              <Link key={index} href={report.href}>
-                <Card className="hover:shadow-lg transition-shadow duration-300 cursor-pointer">
-                  <CardHeader
-                    className={`bg-gradient-to-r ${report.color} text-white rounded-t-lg`}
-                  >
-                    <CardTitle className="text-lg">{report.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="p-6">
-                    <p className="text-gray-600 mb-4">{report.description}</p>
+          {/* Report Categories Section */}
+          <div className="space-y-12">
+            
+            {/* Analytics & Insights */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-8 w-1 bg-orange-600 rounded-full"></div>
+                <h2 className="text-2xl font-bold text-gray-800">Analytics & Insights</h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {reportTypes.map((report, index) => (
+                  <Link key={index} href={report.href}>
+                    <Card className="h-full hover:-translate-y-1 hover:shadow-xl transition-all duration-300 cursor-pointer border-0 bg-white shadow-md rounded-xl overflow-hidden group">
+                      <div className={`h-2 w-full bg-gradient-to-r ${report.color}`}></div>
+                      <CardHeader className="bg-gray-50/50 pb-4">
+                        <CardTitle className="text-lg text-gray-800 font-semibold group-hover:text-orange-600 transition-colors">{report.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="p-5">
+                        <p className="text-gray-500 text-sm mb-5 min-h-[40px]">{report.description}</p>
+                        {report.stats && (
+                          <div className="space-y-3 bg-gray-50 rounded-lg p-4 border border-gray-100">
+                            {report.stats.total !== undefined && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-500 font-medium">Total</span>
+                                <span className="font-bold text-gray-800">{report.stats.total}</span>
+                              </div>
+                            )}
+                            {report.stats.pending !== undefined && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-500 font-medium">Pending</span>
+                                <span className="font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">{report.stats.pending}</span>
+                              </div>
+                            )}
+                            {report.stats.approved !== undefined && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-500 font-medium">Approved</span>
+                                <span className="font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded">{report.stats.approved}</span>
+                              </div>
+                            )}
+                            {report.stats.totalBudget !== undefined && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-500 font-medium">Budget</span>
+                                <span className="font-bold text-gray-800">₹{report.stats.totalBudget.toLocaleString()}</span>
+                              </div>
+                            )}
+                            {report.stats.utilizationRate !== undefined && (
+                              <div className="flex justify-between items-center text-sm">
+                                <span className="text-gray-500 font-medium">Utilization</span>
+                                <span className="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{report.stats.utilizationRate}%</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        <div className="mt-5 flex items-center text-sm font-semibold text-gray-400 group-hover:text-orange-600 transition-colors">
+                          View Report <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-                    {report.stats && (
-                      <div className="space-y-2">
-                        {report.stats.total !== undefined && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Total:</span>
-                            <span className="font-medium">
-                              {report.stats.total}
-                            </span>
-                          </div>
-                        )}
-                        {report.stats.pending !== undefined && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Pending:</span>
-                            <span className="font-medium text-orange-600">
-                              {report.stats.pending}
-                            </span>
-                          </div>
-                        )}
-                        {report.stats.approved !== undefined && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Approved:</span>
-                            <span className="font-medium text-green-600">
-                              {report.stats.approved}
-                            </span>
-                          </div>
-                        )}
-                        {report.stats.totalBudget !== undefined && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Budget:</span>
-                            <span className="font-medium">
-                              ₹{report.stats.totalBudget.toLocaleString()}
-                            </span>
-                          </div>
-                        )}
-                        {report.stats.utilizationRate !== undefined && (
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Utilization:</span>
-                            <span className="font-medium">
-                              {report.stats.utilizationRate}%
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    )}
+            {/* Statutory Forms */}
+            <div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="h-8 w-1 bg-blue-600 rounded-full"></div>
+                <h2 className="text-2xl font-bold text-gray-800">Gram Panchayat Statutory Forms</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[
+                  { title: "Form 35 (Artho)", href: "/admindashboard/reports/form-35-artho", color: "from-blue-500 to-indigo-600" },
+                  { title: "Form 35 (Krishi)", href: "/admindashboard/reports/form-35-kopsb", color: "from-green-500 to-emerald-600" },
+                  { title: "Form 35 (Nari & Sishu)", href: "/admindashboard/reports/form-35-nosu", color: "from-pink-500 to-rose-600" },
+                  { title: "Form 35 (Samaj)", href: "/admindashboard/reports/form-35-sj", color: "from-purple-500 to-violet-600" },
+                  { title: "Form 35 (Shilpa)", href: "/admindashboard/reports/form-35-sp", color: "from-amber-500 to-orange-600" },
+                  { title: "Form 36 (Budget)", href: "/admindashboard/reports/form-36", color: "from-slate-700 to-gray-900" },
+                  { title: "Form 37 (Expenditure)", href: "/admindashboard/reports/form-37", color: "from-red-500 to-rose-700" },
+                  { title: "Form 38 (Monthly Cash)", href: "/admindashboard/reports/form-38", color: "from-teal-500 to-cyan-700" },
+                ].map((form, index) => (
+                  <Link key={index} href={form.href}>
+                    <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-gray-200 group">
+                      <CardContent className="p-0 flex items-stretch">
+                        <div className={`w-3 bg-gradient-to-b ${form.color} rounded-l-xl`}></div>
+                        <div className="p-4 flex-1 flex justify-between items-center bg-white rounded-r-xl group-hover:bg-gray-50/50 transition-colors">
+                          <span className="font-semibold text-gray-700 group-hover:text-black">{form.title}</span>
+                          <span className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all">→</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-                    <div className="mt-4 text-orange-600 text-sm font-medium">
-                      View Report →
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
           </div>
 
           {/* Recent Activity */}
