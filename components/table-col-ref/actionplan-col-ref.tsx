@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Pencil, Calculator, BookOpen, FileText } from "lucide-react";
+import {
+  ArrowUpDown, Pencil, Calculator, BookOpen, FileText,
+  AlertCircle, CheckCircle2, Layers, TrendingUp
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -14,6 +17,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "@/components/ui/select";
 import {
   Sheet,
@@ -26,6 +31,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { DataTable } from "@/components/data-table";
 import { ApprovedActionPlanDetails, WorksDetail, UpasamitiName } from "@prisma/client";
+import { SCHEME_FUNDS, getFundDisplayName } from "@/constants/funds";
+import { toast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 type ActionPlanWithWorks = ApprovedActionPlanDetails & {
   WorksDetail: (WorksDetail & {
@@ -37,24 +45,31 @@ type ActionPlanWithWorks = ApprovedActionPlanDetails & {
   })[];
 };
 
+// Extend the Prisma type to include our new fields (they exist in DB but not in generated types yet)
+interface ExtendedActionPlan extends ActionPlanWithWorks {
+  assetServiceVprp?: string;
+  implStatus?: string;
+}
+
 async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDetails>) {
   const res = await fetch(`/api/actionplans/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Update failed");
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Update failed");
+  }
   return res.json();
 }
 
 // ----------------------------- CONSTANTS ---------------------------------
 const FINANCIAL_YEARS = ["2023-24", "2024-25", "2025-26"];
-const FUND_TYPES = ["General", "SCSP", "TSP", "15th FC", "5th SFC", "MGNREGS"];
-const SECTORS = ["Education", "Health", "Roads", "Water", "Agriculture"];
-const SCHEME_NAMES = ["PMGSY", "NRLM", "PMKSY", "PMAY"];
+const SECTORS = ["Education", "Health", "Roads", "Water", "Agriculture", "Sanitation", "Infrastructure"];
 const WORK_TYPES = ["Construction", "Renovation", "Repair", "Supply"];
-const COMPONENT_TYPES = ["Building", "Bridge", "Culvert", "Pipeline"];
-const ACTIVITY_FOR_OPTIONS = ["Community", "Individual", "Group"];
+const COMPONENT_TYPES = ["Building", "Bridge", "Culvert", "Pipeline", "Road", "Waterbody"];
+const ACTIVITY_FOR_OPTIONS = ["Community", "Individual", "Group", "Institution"];
 
 // Themes with numbers (display and value)
 const THEMES_WITH_NUMBERS = [
@@ -69,31 +84,31 @@ const THEMES_WITH_NUMBERS = [
   { number: "Theme_9", name: "Women Friendly Village" },
 ];
 
-// New options from your screenshots
-const ASSET_SERVICE_VPRP_OPTIONS = ["Assets", "Service", "VPRP"];
+const ASSET_SERVICE_VPRP_OPTIONS = ["Assets", "Service", "VPRP"] as const;
 const IMPLEMENTATION_STATUS_OPTIONS = [
   "New/Fresh",
   "Operational",
   "Maintenance, Upgradation",
   "Operational, Maintenance",
-];
+] as const;
+
+// Convert SCHEME_FUNDS into a flat list of scheme names for Select
+const ALL_SCHEMES = SCHEME_FUNDS.flatMap(group => group.funds);
 
 // ----------------------------- COMPONENT ---------------------------------
 interface InlineEditActionPlanTableProps {
-  data: ActionPlanWithWorks[];
+  data: ExtendedActionPlan[];
 }
 
 export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTableProps) {
   const router = useRouter();
-  const [editingPlan, setEditingPlan] = useState<ActionPlanWithWorks | null>(null);
-  const [formData, setFormData] = useState<Partial<ApprovedActionPlanDetails> & {
-    assetServiceVprp?: string;
-    implStatus?: string;
-  }>({});
+  const [editingPlan, setEditingPlan] = useState<ExtendedActionPlan | null>(null);
+  const [formData, setFormData] = useState<Partial<ExtendedActionPlan>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const openEditSheet = (plan: ActionPlanWithWorks) => {
+  const openEditSheet = (plan: ExtendedActionPlan) => {
     setEditingPlan(plan);
     setFormData({
       activityCode: plan.activityCode,
@@ -125,26 +140,44 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       implementedBy: plan.implementedBy,
       remarks: plan.remarks,
       isPublish: plan.isPublish,
-      assetServiceVprp: (plan as any).assetServiceVprp || "",
-      implStatus: (plan as any).implStatus || "",
+      assetServiceVprp: plan.assetServiceVprp || "",
+      implStatus: plan.implStatus || "",
     });
+    setSaveError(null);
     setSheetOpen(true);
   };
 
-  const handleFieldChange = (field: keyof typeof formData, value: any) => {
+  const handleFieldChange = (field: keyof ExtendedActionPlan, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setSaveError(null);
   };
+
+  // Fund validation
+  const general = formData.generalFund || 0;
+  const sc = formData.scFund || 0;
+  const st = formData.stFund || 0;
+  const estimatedCost = formData.estimatedCost || 0;
+  const totalFund = general + sc + st;
+  const isFundMatched = totalFund === estimatedCost && estimatedCost > 0;
+  const fundDifference = estimatedCost - totalFund;
 
   const handleSave = async () => {
     if (!editingPlan) return;
+    if (estimatedCost > 0 && !isFundMatched) {
+      setSaveError(`Total funds (₹${totalFund.toLocaleString("en-IN")}) do not match Estimated Cost (₹${estimatedCost.toLocaleString("en-IN")}). Difference: ₹${Math.abs(fundDifference).toLocaleString("en-IN")}`);
+      toast({ title: "Fund Mismatch", description: saveError, variant: "destructive" });
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updateActionPlan(editingPlan.id, formData);
+      toast({ title: "Success", description: "Action plan updated successfully." });
       router.refresh();
       setSheetOpen(false);
     } catch (error) {
       console.error("Save failed", error);
-      alert("Failed to save changes");
+      toast({ title: "Error", description: "Failed to save changes. Please try again.", variant: "destructive" });
     } finally {
       setIsSaving(false);
     }
@@ -158,7 +191,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
   };
 
   // ----------------------------- COLUMNS ----------------------------------
-  const columns: ColumnDef<ActionPlanWithWorks>[] = [
+  const columns: ColumnDef<ExtendedActionPlan>[] = [
     {
       id: "slNo",
       header: "SL No.",
@@ -217,7 +250,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
     {
       accessorKey: "locationofAsset",
-      header: "Location of Asset",
+      header: "Location",
       cell: ({ row }) => <div>{row.original.locationofAsset || "-"}</div>,
     },
     {
@@ -251,13 +284,13 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
     {
       accessorKey: "totalduration",
-      header: "Total Duration",
+      header: "Duration",
       cell: ({ row }) => <div>{row.original.totalduration || "-"}</div>,
     },
     {
       accessorKey: "schemeName",
-      header: "Scheme Name",
-      cell: ({ row }) => <div>{row.original.schemeName || "-"}</div>,
+      header: "Scheme",
+      cell: ({ row }) => <div className="max-w-[200px] truncate" title={getFundDisplayName(row.original.schemeName ?? "")}>{row.original.schemeName || "-"}</div>,
     },
     {
       accessorKey: "upasamiti",
@@ -276,7 +309,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
     {
       accessorKey: "componentType",
-      header: "Component Type",
+      header: "Component",
       cell: ({ row }) => <div>{row.original.componentType || "-"}</div>,
     },
     {
@@ -342,17 +375,16 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
           <Badge variant="outline" className="text-amber-600">Draft</Badge>
         ),
     },
-    // New columns for Asset/Service/VPRP and Implementation Status
     {
       accessorKey: "assetServiceVprp",
       header: "Type",
-      cell: ({ row }) => <div>{(row.original as any).assetServiceVprp || "-"}</div>,
+      cell: ({ row }) => <Badge variant="outline">{row.original.assetServiceVprp || "-"}</Badge>,
     },
     {
       accessorKey: "implStatus",
       header: "Status",
       cell: ({ row }) => {
-        const status = (row.original as any).implStatus;
+        const status = row.original.implStatus;
         let variant: "default" | "secondary" | "outline" = "secondary";
         if (status === "New/Fresh") variant = "default";
         if (status === "Operational") variant = "default";
@@ -364,8 +396,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       id: "progress",
       header: "Progress",
       cell: ({ row }) => {
-        const plan = row.original;
-        const firstWork = plan.WorksDetail?.[0];
+        const firstWork = row.original.WorksDetail?.[0];
         const hasEstimate = (firstWork?._count?.workEstimateItems || 0) > 0;
         const hasMB = (firstWork?._count?.workMeasurementBooks || 0) > 0;
         const hasBillAbstract = (firstWork?._count?.workBillAbstracts || 0) > 0;
@@ -397,357 +428,391 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
   ];
 
-  // ----------------------------- EDIT SHEET ----------------------------------
+  // ----------------------------- EDIT SHEET (Grouped Sections) ----------------------------------
   return (
     <>
       <DataTable columns={columns} data={data} />
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto">
+        <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Edit Activity</SheetTitle>
+            <SheetTitle>Edit Action Plan Activity</SheetTitle>
           </SheetHeader>
 
-          <div className="grid grid-cols-2 gap-4 py-4">
-            {/* Activity Name (full width) */}
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="activityName">Activity Name</Label>
-              <Input
-                id="activityName"
-                value={formData.activityName || ""}
-                onChange={(e) => handleFieldChange("activityName", e.target.value)}
-              />
+          <div className="py-6 space-y-6">
+            {/* Section: Basic Info */}
+            <div className="border-l-4 border-blue-500 pl-4 space-y-4">
+              <h3 className="text-lg font-semibold">Basic Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="activityName">Activity Name *</Label>
+                  <Input
+                    id="activityName"
+                    value={formData.activityName || ""}
+                    onChange={(e) => handleFieldChange("activityName", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="activityCode">Activity Code</Label>
+                  <Input
+                    id="activityCode"
+                    value={formData.activityCode || ""}
+                    onChange={(e) => handleFieldChange("activityCode", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="financialYear">Financial Year</Label>
+                  <Select value={formData.financialYear || ""} onValueChange={(v) => handleFieldChange("financialYear", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select year" /></SelectTrigger>
+                    <SelectContent>
+                      {FINANCIAL_YEARS.map((year) => (
+                        <SelectItem key={year} value={year}>{year}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="themeName">Theme</Label>
+                  <Select value={formData.themeName || ""} onValueChange={(v) => handleFieldChange("themeName", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select theme" /></SelectTrigger>
+                    <SelectContent>
+                      {THEMES_WITH_NUMBERS.map((theme) => (
+                        <SelectItem key={theme.number} value={theme.name}>
+                          {theme.number} – {theme.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor="activityDescription">Description</Label>
+                  <Textarea
+                    id="activityDescription"
+                    value={formData.activityDescription || ""}
+                    onChange={(e) => handleFieldChange("activityDescription", e.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Activity Code */}
-            <div className="space-y-2">
-              <Label htmlFor="activityCode">Activity Code</Label>
-              <Input
-                id="activityCode"
-                value={formData.activityCode || ""}
-                onChange={(e) => handleFieldChange("activityCode", e.target.value)}
-              />
+            {/* Section: Classification */}
+            <div className="border-l-4 border-purple-500 pl-4 space-y-4">
+              <h3 className="text-lg font-semibold">Classification</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="sector">Sector</Label>
+                  <Select value={formData.sector || ""} onValueChange={(v) => handleFieldChange("sector", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select sector" /></SelectTrigger>
+                    <SelectContent>
+                      {SECTORS.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="upasamiti">Upasamiti</Label>
+                  <Select value={formData.upasamiti || ""} onValueChange={(v) => handleFieldChange("upasamiti", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select Upasamiti" /></SelectTrigger>
+                    <SelectContent>
+                      {Object.values(UpasamitiName).map((name) => (
+                        <SelectItem key={name} value={name}>{name.replace(/_/g, " ")}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="activityFor">Target Audience</Label>
+                  <Select value={formData.activityFor || ""} onValueChange={(v) => handleFieldChange("activityFor", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                    <SelectContent>
+                      {ACTIVITY_FOR_OPTIONS.map((o) => (
+                        <SelectItem key={o} value={o}>{o}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="workType">Work Type</Label>
+                  <Select value={formData.workType || ""} onValueChange={(v) => handleFieldChange("workType", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>
+                      {WORK_TYPES.map((w) => (
+                        <SelectItem key={w} value={w}>{w}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="componentType">Component Type</Label>
+                  <Select value={formData.componentType || ""} onValueChange={(v) => handleFieldChange("componentType", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select component" /></SelectTrigger>
+                    <SelectContent>
+                      {COMPONENT_TYPES.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="locationofAsset">Location of Asset</Label>
+                  <Input
+                    id="locationofAsset"
+                    value={formData.locationofAsset || ""}
+                    onChange={(e) => handleFieldChange("locationofAsset", e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Financial Year */}
-            <div className="space-y-2">
-              <Label htmlFor="financialYear">Financial Year</Label>
-              <Select value={formData.financialYear || ""} onValueChange={(v) => handleFieldChange("financialYear", v)}>
-                <SelectTrigger><SelectValue placeholder="Select year" /></SelectTrigger>
-                <SelectContent>
-                  {FINANCIAL_YEARS.map((year) => (
-                    <SelectItem key={year} value={year}>{year}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Section: Funding */}
+            <div className="border-l-4 border-green-500 pl-4 space-y-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">Funding & Budget</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="schemeName">Scheme Source</Label>
+                  <Select value={formData.schemeName || ""} onValueChange={(v) => handleFieldChange("schemeName", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select scheme" /></SelectTrigger>
+                    <SelectContent className="max-h-80">
+                      {SCHEME_FUNDS.map((group, idx) => (
+                        <SelectGroup key={idx}>
+                          <SelectLabel className="font-bold bg-muted px-2 py-1 sticky top-0">{group.category}</SelectLabel>
+                          {group.funds.map((fund) => (
+                            <SelectItem key={fund} value={fund}>{getFundDisplayName(fund)}</SelectItem>
+                          ))}
+                        </SelectGroup>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fundType">Fund Type</Label>
+                  <Select value={formData.fundType || ""} onValueChange={(v) => handleFieldChange("fundType", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select fund type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Tied">Tied</SelectItem>
+                      <SelectItem value="Untied">Untied</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="estimatedCost">Total Estimated Cost (₹)</Label>
+                  <Input
+                    id="estimatedCost"
+                    type="number"
+                    value={formData.estimatedCost || 0}
+                    onChange={(e) => handleFieldChange("estimatedCost", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="totalduration">Total Duration</Label>
+                  <Input
+                    id="totalduration"
+                    value={formData.totalduration || ""}
+                    onChange={(e) => handleFieldChange("totalduration", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="generalFund">General Fund (₹)</Label>
+                  <Input
+                    id="generalFund"
+                    type="number"
+                    value={formData.generalFund || 0}
+                    onChange={(e) => handleFieldChange("generalFund", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="scFund">SC Fund (₹)</Label>
+                  <Input
+                    id="scFund"
+                    type="number"
+                    value={formData.scFund || 0}
+                    onChange={(e) => handleFieldChange("scFund", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="stFund">ST Fund (₹)</Label>
+                  <Input
+                    id="stFund"
+                    type="number"
+                    value={formData.stFund || 0}
+                    onChange={(e) => handleFieldChange("stFund", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+              </div>
+              {/* Fund Validation Status */}
+              {estimatedCost > 0 && (
+                <div className={cn(
+                  "p-3 rounded-md flex items-center justify-between",
+                  isFundMatched ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+                )}>
+                  <div className="text-sm">
+                    <span className="font-medium">Fund Distribution:</span>{' '}
+                    ₹{totalFund.toLocaleString("en-IN")} allocated of ₹{estimatedCost.toLocaleString("en-IN")}
+                  </div>
+                  {isFundMatched ? (
+                    <Badge className="bg-green-600"><CheckCircle2 className="h-3 w-3 mr-1" /> Matched</Badge>
+                  ) : (
+                    <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Short by ₹{Math.abs(fundDifference).toLocaleString("en-IN")}</Badge>
+                  )}
+                </div>
+              )}
             </div>
 
-            {/* Theme Name with numbers */}
-            <div className="space-y-2">
-              <Label htmlFor="themeName">Theme Name</Label>
-              <Select value={formData.themeName || ""} onValueChange={(v) => handleFieldChange("themeName", v)}>
-                <SelectTrigger><SelectValue placeholder="Select theme" /></SelectTrigger>
-                <SelectContent>
-                  {THEMES_WITH_NUMBERS.map((theme) => (
-                    <SelectItem key={theme.number} value={theme.name}>
-                      {theme.number} – {theme.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Section: New Fields (Asset/Service/VPRP + Status) */}
+            <div className="border-l-4 border-indigo-500 pl-4 space-y-4">
+              <h3 className="text-lg font-semibold">Monitoring & Classification</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="assetServiceVprp" className="flex items-center gap-1"><Layers className="h-4 w-4" /> Asset / Service / VPRP</Label>
+                  <Select value={formData.assetServiceVprp || ""} onValueChange={(v) => handleFieldChange("assetServiceVprp", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>
+                      {ASSET_SERVICE_VPRP_OPTIONS.map((opt) => (
+                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="implStatus" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /> Implementation Status</Label>
+                  <Select value={formData.implStatus || ""} onValueChange={(v) => handleFieldChange("implStatus", v)}>
+                    <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                    <SelectContent>
+                      {IMPLEMENTATION_STATUS_OPTIONS.map((opt) => (
+                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
-            {/* Activity For */}
-            <div className="space-y-2">
-              <Label htmlFor="activityFor">Activity For</Label>
-              <Select value={formData.activityFor || ""} onValueChange={(v) => handleFieldChange("activityFor", v)}>
-                <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                <SelectContent>
-                  {ACTIVITY_FOR_OPTIONS.map((o) => (
-                    <SelectItem key={o} value={o}>{o}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Section: Beneficiaries & Units */}
+            <div className="border-l-4 border-orange-500 pl-4 space-y-4">
+              <h3 className="text-lg font-semibold">Beneficiaries & Units</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="beneficiariesSC">Beneficiaries (SC)</Label>
+                  <Input
+                    id="beneficiariesSC"
+                    type="number"
+                    value={formData.beneficiariesSC || 0}
+                    onChange={(e) => handleFieldChange("beneficiariesSC", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="beneficiariesST">Beneficiaries (ST)</Label>
+                  <Input
+                    id="beneficiariesST"
+                    type="number"
+                    value={formData.beneficiariesST || 0}
+                    onChange={(e) => handleFieldChange("beneficiariesST", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="beneficiariesGen">Beneficiaries (Gen)</Label>
+                  <Input
+                    id="beneficiariesGen"
+                    type="number"
+                    value={formData.beneficiariesGen || 0}
+                    onChange={(e) => handleFieldChange("beneficiariesGen", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="unitType">Unit Type</Label>
+                  <Input
+                    id="unitType"
+                    value={formData.unitType || ""}
+                    onChange={(e) => handleFieldChange("unitType", e.target.value)}
+                    placeholder="e.g. Nos, Meters"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="totalUnit">Total Unit</Label>
+                  <Input
+                    id="totalUnit"
+                    type="number"
+                    value={formData.totalUnit || 0}
+                    onChange={(e) => handleFieldChange("totalUnit", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Sector */}
-            <div className="space-y-2">
-              <Label htmlFor="sector">Sector</Label>
-              <Select value={formData.sector || ""} onValueChange={(v) => handleFieldChange("sector", v)}>
-                <SelectTrigger><SelectValue placeholder="Select sector" /></SelectTrigger>
-                <SelectContent>
-                  {SECTORS.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Scheme Name */}
-            <div className="space-y-2">
-              <Label htmlFor="schemeName">Scheme Name</Label>
-              <Select value={formData.schemeName || ""} onValueChange={(v) => handleFieldChange("schemeName", v)}>
-                <SelectTrigger><SelectValue placeholder="Select scheme" /></SelectTrigger>
-                <SelectContent>
-                  {SCHEME_NAMES.map((s) => (
-                    <SelectItem key={s} value={s}>{s}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Fund Type */}
-            <div className="space-y-2">
-              <Label htmlFor="fundType">Fund Type</Label>
-              <Select value={formData.fundType || ""} onValueChange={(v) => handleFieldChange("fundType", v)}>
-                <SelectTrigger><SelectValue placeholder="Select fund" /></SelectTrigger>
-                <SelectContent>
-                  {FUND_TYPES.map((f) => (
-                    <SelectItem key={f} value={f}>{f}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Upasamiti */}
-            <div className="space-y-2">
-              <Label htmlFor="upasamiti">Upasamiti</Label>
-              <Select value={formData.upasamiti || ""} onValueChange={(v) => handleFieldChange("upasamiti", v)}>
-                <SelectTrigger><SelectValue placeholder="Select Upasamiti" /></SelectTrigger>
-                <SelectContent>
-                  {Object.values(UpasamitiName).map((name) => (
-                    <SelectItem key={name} value={name}>{name.replace(/_/g, " ")}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Work Type */}
-            <div className="space-y-2">
-              <Label htmlFor="workType">Work Type</Label>
-              <Select value={formData.workType || ""} onValueChange={(v) => handleFieldChange("workType", v)}>
-                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                <SelectContent>
-                  {WORK_TYPES.map((w) => (
-                    <SelectItem key={w} value={w}>{w}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Component Type */}
-            <div className="space-y-2">
-              <Label htmlFor="componentType">Component Type</Label>
-              <Select value={formData.componentType || ""} onValueChange={(v) => handleFieldChange("componentType", v)}>
-                <SelectTrigger><SelectValue placeholder="Select component" /></SelectTrigger>
-                <SelectContent>
-                  {COMPONENT_TYPES.map((c) => (
-                    <SelectItem key={c} value={c}>{c}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Asset / Service / VPRP (new) */}
-            <div className="space-y-2">
-              <Label htmlFor="assetServiceVprp">Asset / Service / VPRP</Label>
-              <Select value={formData.assetServiceVprp || ""} onValueChange={(v) => handleFieldChange("assetServiceVprp", v)}>
-                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                <SelectContent>
-                  {ASSET_SERVICE_VPRP_OPTIONS.map((opt) => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Implementation Status (new) */}
-            <div className="space-y-2">
-              <Label htmlFor="implStatus">Implementation Status</Label>
-              <Select value={formData.implStatus || ""} onValueChange={(v) => handleFieldChange("implStatus", v)}>
-                <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
-                <SelectContent>
-                  {IMPLEMENTATION_STATUS_OPTIONS.map((opt) => (
-                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Number fields */}
-            <div className="space-y-2">
-              <Label htmlFor="estimatedCost">Est. Cost (₹)</Label>
-              <Input
-                id="estimatedCost"
-                type="number"
-                value={formData.estimatedCost || 0}
-                onChange={(e) => handleFieldChange("estimatedCost", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="generalFund">General Fund (₹)</Label>
-              <Input
-                id="generalFund"
-                type="number"
-                value={formData.generalFund || 0}
-                onChange={(e) => handleFieldChange("generalFund", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="scFund">SC Fund (₹)</Label>
-              <Input
-                id="scFund"
-                type="number"
-                value={formData.scFund || 0}
-                onChange={(e) => handleFieldChange("scFund", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="stFund">ST Fund (₹)</Label>
-              <Input
-                id="stFund"
-                type="number"
-                value={formData.stFund || 0}
-                onChange={(e) => handleFieldChange("stFund", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="beneficiariesSC">Beneficiaries (SC)</Label>
-              <Input
-                id="beneficiariesSC"
-                type="number"
-                value={formData.beneficiariesSC || 0}
-                onChange={(e) => handleFieldChange("beneficiariesSC", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="beneficiariesST">Beneficiaries (ST)</Label>
-              <Input
-                id="beneficiariesST"
-                type="number"
-                value={formData.beneficiariesST || 0}
-                onChange={(e) => handleFieldChange("beneficiariesST", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="beneficiariesGen">Beneficiaries (Gen)</Label>
-              <Input
-                id="beneficiariesGen"
-                type="number"
-                value={formData.beneficiariesGen || 0}
-                onChange={(e) => handleFieldChange("beneficiariesGen", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="totalUnit">Total Unit</Label>
-              <Input
-                id="totalUnit"
-                type="number"
-                value={formData.totalUnit || 0}
-                onChange={(e) => handleFieldChange("totalUnit", parseInt(e.target.value) || 0)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="unitType">Unit Type</Label>
-              <Input
-                id="unitType"
-                value={formData.unitType || ""}
-                onChange={(e) => handleFieldChange("unitType", e.target.value)}
-              />
-            </div>
-
-            {/* Text fields */}
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="locationofAsset">Location of Asset</Label>
-              <Input
-                id="locationofAsset"
-                value={formData.locationofAsset || ""}
-                onChange={(e) => handleFieldChange("locationofAsset", e.target.value)}
-              />
-            </div>
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="activityDescription">Description</Label>
-              <Textarea
-                id="activityDescription"
-                value={formData.activityDescription || ""}
-                onChange={(e) => handleFieldChange("activityDescription", e.target.value)}
-                rows={3}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="focusArea">Focus Area</Label>
-              <Input
-                id="focusArea"
-                value={formData.focusArea || ""}
-                onChange={(e) => handleFieldChange("focusArea", e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="gramSansad">Gram Sansad</Label>
-              <Input
-                id="gramSansad"
-                value={formData.gramSansad || ""}
-                onChange={(e) => handleFieldChange("gramSansad", e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="sdgs">SDGs</Label>
-              <Input
-                id="sdgs"
-                value={formData.sdgs || ""}
-                onChange={(e) => handleFieldChange("sdgs", e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="totalduration">Total Duration</Label>
-              <Input
-                id="totalduration"
-                value={formData.totalduration || ""}
-                onChange={(e) => handleFieldChange("totalduration", e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="implementedBy">Implemented By</Label>
-              <Input
-                id="implementedBy"
-                value={formData.implementedBy || ""}
-                onChange={(e) => handleFieldChange("implementedBy", e.target.value)}
-              />
-            </div>
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="remarks">Remarks</Label>
-              <Textarea
-                id="remarks"
-                value={formData.remarks || ""}
-                onChange={(e) => handleFieldChange("remarks", e.target.value)}
-                rows={2}
-              />
-            </div>
-
-            {/* Published status */}
-            <div className="space-y-2">
-              <Label htmlFor="isPublish">Status</Label>
-              <Select
-                value={formData.isPublish ? "true" : "false"}
-                onValueChange={(v) => handleFieldChange("isPublish", v === "true")}
-              >
-                <SelectTrigger><SelectValue placeholder="Published?" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Published</SelectItem>
-                  <SelectItem value="false">Draft</SelectItem>
-                </SelectContent>
-              </Select>
+            {/* Section: Additional Info */}
+            <div className="border-l-4 border-gray-500 pl-4 space-y-4">
+              <h3 className="text-lg font-semibold">Additional Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="focusArea">Focus Area</Label>
+                  <Input
+                    id="focusArea"
+                    value={formData.focusArea || ""}
+                    onChange={(e) => handleFieldChange("focusArea", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gramSansad">Gram Sansad</Label>
+                  <Input
+                    id="gramSansad"
+                    value={formData.gramSansad || ""}
+                    onChange={(e) => handleFieldChange("gramSansad", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="sdgs">SDGs</Label>
+                  <Input
+                    id="sdgs"
+                    value={formData.sdgs || ""}
+                    onChange={(e) => handleFieldChange("sdgs", e.target.value)}
+                    placeholder="e.g. 1,2,3"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="implementedBy">Implemented By</Label>
+                  <Input
+                    id="implementedBy"
+                    value={formData.implementedBy || ""}
+                    onChange={(e) => handleFieldChange("implementedBy", e.target.value)}
+                  />
+                </div>
+                <div className="col-span-2 space-y-2">
+                  <Label htmlFor="remarks">Remarks</Label>
+                  <Textarea
+                    id="remarks"
+                    value={formData.remarks || ""}
+                    onChange={(e) => handleFieldChange("remarks", e.target.value)}
+                    rows={2}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="isPublish">Publication Status</Label>
+                  <Select
+                    value={formData.isPublish ? "true" : "false"}
+                    onValueChange={(v) => handleFieldChange("isPublish", v === "true")}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Published?" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="true">Published</SelectItem>
+                      <SelectItem value="false">Draft</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
           </div>
 
-          <SheetFooter className="mt-4">
+          <SheetFooter className="mt-6 gap-2">
             <SheetClose asChild>
               <Button variant="outline">Cancel</Button>
             </SheetClose>
-            <Button onClick={handleSave} disabled={isSaving}>
+            <Button onClick={handleSave} disabled={isSaving || (estimatedCost > 0 && !isFundMatched)}>
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </SheetFooter>
+          {saveError && <p className="text-sm text-red-600 mt-2">{saveError}</p>}
         </SheetContent>
       </Sheet>
     </>
