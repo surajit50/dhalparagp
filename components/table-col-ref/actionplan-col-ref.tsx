@@ -47,16 +47,38 @@ async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDeta
   return res.json();
 }
 
-// Example static options – adjust based on your actual domain
+// ----------------------------- CONSTANTS ---------------------------------
 const FINANCIAL_YEARS = ["2023-24", "2024-25", "2025-26"];
 const FUND_TYPES = ["General", "SCSP", "TSP", "15th FC", "5th SFC", "MGNREGS"];
-const SECTORS = ["Education", "Health", "Roads", "Water", "Agriculture"]; // add yours
-const THEME_NAMES = ["Infrastructure", "Livelihood", "Social Security", "Health"]; // add yours
-const SCHEME_NAMES = ["PMGSY", "NRLM", "PMKSY", "PMAY"]; // add yours
+const SECTORS = ["Education", "Health", "Roads", "Water", "Agriculture"];
+const SCHEME_NAMES = ["PMGSY", "NRLM", "PMKSY", "PMAY"];
 const WORK_TYPES = ["Construction", "Renovation", "Repair", "Supply"];
 const COMPONENT_TYPES = ["Building", "Bridge", "Culvert", "Pipeline"];
 const ACTIVITY_FOR_OPTIONS = ["Community", "Individual", "Group"];
 
+// Themes with numbers (display and value)
+const THEMES_WITH_NUMBERS = [
+  { number: "Theme_1", name: "Poverty Free and Enhanced Livelihoods Village" },
+  { number: "Theme_2", name: "Healthy Village" },
+  { number: "Theme_3", name: "Child Friendly Village" },
+  { number: "Theme_4", name: "Water Sufficient Village" },
+  { number: "Theme_5", name: "Clean and Green Village" },
+  { number: "Theme_6", name: "Self sufficient Infrastructure in Village" },
+  { number: "Theme_7", name: "Socially Just and Socially Secured Village" },
+  { number: "Theme_8", name: "Village with Good Governance" },
+  { number: "Theme_9", name: "Women Friendly Village" },
+];
+
+// New options from your screenshots
+const ASSET_SERVICE_VPRP_OPTIONS = ["Assets", "Service", "VPRP"];
+const IMPLEMENTATION_STATUS_OPTIONS = [
+  "New/Fresh",
+  "Operational",
+  "Maintenance, Upgradation",
+  "Operational, Maintenance",
+];
+
+// ----------------------------- COMPONENT ---------------------------------
 interface InlineEditActionPlanTableProps {
   data: ActionPlanWithWorks[];
 }
@@ -64,7 +86,10 @@ interface InlineEditActionPlanTableProps {
 export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTableProps) {
   const router = useRouter();
   const [editingPlan, setEditingPlan] = useState<ActionPlanWithWorks | null>(null);
-  const [formData, setFormData] = useState<Partial<ApprovedActionPlanDetails>>({});
+  const [formData, setFormData] = useState<Partial<ApprovedActionPlanDetails> & {
+    assetServiceVprp?: string;
+    implStatus?: string;
+  }>({});
   const [isSaving, setIsSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -100,11 +125,13 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       implementedBy: plan.implementedBy,
       remarks: plan.remarks,
       isPublish: plan.isPublish,
+      assetServiceVprp: (plan as any).assetServiceVprp || "",
+      implStatus: (plan as any).implStatus || "",
     });
     setSheetOpen(true);
   };
 
-  const handleFieldChange = (field: keyof ApprovedActionPlanDetails, value: any) => {
+  const handleFieldChange = (field: keyof typeof formData, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -123,7 +150,14 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     }
   };
 
-  // ---------- Column definitions (read‑only view) ----------
+  // Helper to display theme with number in table
+  const formatTheme = (themeName: string | null) => {
+    if (!themeName) return "-";
+    const found = THEMES_WITH_NUMBERS.find(t => t.name === themeName);
+    return found ? `${found.number} – ${found.name}` : themeName;
+  };
+
+  // ----------------------------- COLUMNS ----------------------------------
   const columns: ColumnDef<ActionPlanWithWorks>[] = [
     {
       id: "slNo",
@@ -152,7 +186,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       accessorKey: "activityDescription",
       header: "Description",
       cell: ({ row }) => (
-        <div className="max-w-[300px] text-sm text-muted-foreground line-clamp-2" title={row.original.activityDescription}>
+        <div className="max-w-[300px] text-sm text-muted-foreground line-clamp-2" title={row.original.activityDescription ?? ""}>
           {row.original.activityDescription}
         </div>
       ),
@@ -168,8 +202,8 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
     {
       accessorKey: "themeName",
-      header: "Theme Name",
-      cell: ({ row }) => <div>{row.original.themeName || "-"}</div>,
+      header: "Theme",
+      cell: ({ row }) => <div>{formatTheme(row.original.themeName)}</div>,
     },
     {
       accessorKey: "activityFor",
@@ -254,7 +288,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       accessorKey: "sdgs",
       header: "SDGs",
       cell: ({ row }) => (
-        <div className="max-w-[150px] truncate" title={row.original.sdgs || ""}>
+        <div className="max-w-[150px] truncate" title={row.original.sdgs ?? ""}>
           {row.original.sdgs || "-"}
         </div>
       ),
@@ -293,7 +327,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       accessorKey: "remarks",
       header: "Remarks",
       cell: ({ row }) => (
-        <div className="max-w-[200px] text-sm text-muted-foreground line-clamp-2" title={row.original.remarks || ""}>
+        <div className="max-w-[200px] text-sm text-muted-foreground line-clamp-2" title={row.original.remarks ?? ""}>
           {row.original.remarks || "-"}
         </div>
       ),
@@ -307,6 +341,24 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         ) : (
           <Badge variant="outline" className="text-amber-600">Draft</Badge>
         ),
+    },
+    // New columns for Asset/Service/VPRP and Implementation Status
+    {
+      accessorKey: "assetServiceVprp",
+      header: "Type",
+      cell: ({ row }) => <div>{(row.original as any).assetServiceVprp || "-"}</div>,
+    },
+    {
+      accessorKey: "implStatus",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = (row.original as any).implStatus;
+        let variant: "default" | "secondary" | "outline" = "secondary";
+        if (status === "New/Fresh") variant = "default";
+        if (status === "Operational") variant = "default";
+        if (status?.includes("Maintenance")) variant = "outline";
+        return <Badge variant={variant}>{status || "-"}</Badge>;
+      },
     },
     {
       id: "progress",
@@ -345,7 +397,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
   ];
 
-  // ---------- Editable Sheet ----------
+  // ----------------------------- EDIT SHEET ----------------------------------
   return (
     <>
       <DataTable columns={columns} data={data} />
@@ -357,7 +409,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
           </SheetHeader>
 
           <div className="grid grid-cols-2 gap-4 py-4">
-            {/* Row 1 */}
+            {/* Activity Name (full width) */}
             <div className="col-span-2 space-y-2">
               <Label htmlFor="activityName">Activity Name</Label>
               <Input
@@ -366,6 +418,8 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("activityName", e.target.value)}
               />
             </div>
+
+            {/* Activity Code */}
             <div className="space-y-2">
               <Label htmlFor="activityCode">Activity Code</Label>
               <Input
@@ -375,6 +429,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               />
             </div>
 
+            {/* Financial Year */}
             <div className="space-y-2">
               <Label htmlFor="financialYear">Financial Year</Label>
               <Select value={formData.financialYear || ""} onValueChange={(v) => handleFieldChange("financialYear", v)}>
@@ -387,18 +442,22 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Theme Name with numbers */}
             <div className="space-y-2">
               <Label htmlFor="themeName">Theme Name</Label>
               <Select value={formData.themeName || ""} onValueChange={(v) => handleFieldChange("themeName", v)}>
                 <SelectTrigger><SelectValue placeholder="Select theme" /></SelectTrigger>
                 <SelectContent>
-                  {THEME_NAMES.map((t) => (
-                    <SelectItem key={t} value={t}>{t}</SelectItem>
+                  {THEMES_WITH_NUMBERS.map((theme) => (
+                    <SelectItem key={theme.number} value={theme.name}>
+                      {theme.number} – {theme.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
+            {/* Activity For */}
             <div className="space-y-2">
               <Label htmlFor="activityFor">Activity For</Label>
               <Select value={formData.activityFor || ""} onValueChange={(v) => handleFieldChange("activityFor", v)}>
@@ -411,6 +470,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Sector */}
             <div className="space-y-2">
               <Label htmlFor="sector">Sector</Label>
               <Select value={formData.sector || ""} onValueChange={(v) => handleFieldChange("sector", v)}>
@@ -423,6 +483,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Scheme Name */}
             <div className="space-y-2">
               <Label htmlFor="schemeName">Scheme Name</Label>
               <Select value={formData.schemeName || ""} onValueChange={(v) => handleFieldChange("schemeName", v)}>
@@ -435,6 +496,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Fund Type */}
             <div className="space-y-2">
               <Label htmlFor="fundType">Fund Type</Label>
               <Select value={formData.fundType || ""} onValueChange={(v) => handleFieldChange("fundType", v)}>
@@ -447,6 +509,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Upasamiti */}
             <div className="space-y-2">
               <Label htmlFor="upasamiti">Upasamiti</Label>
               <Select value={formData.upasamiti || ""} onValueChange={(v) => handleFieldChange("upasamiti", v)}>
@@ -459,6 +522,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Work Type */}
             <div className="space-y-2">
               <Label htmlFor="workType">Work Type</Label>
               <Select value={formData.workType || ""} onValueChange={(v) => handleFieldChange("workType", v)}>
@@ -471,6 +535,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </Select>
             </div>
 
+            {/* Component Type */}
             <div className="space-y-2">
               <Label htmlFor="componentType">Component Type</Label>
               <Select value={formData.componentType || ""} onValueChange={(v) => handleFieldChange("componentType", v)}>
@@ -478,6 +543,32 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 <SelectContent>
                   {COMPONENT_TYPES.map((c) => (
                     <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Asset / Service / VPRP (new) */}
+            <div className="space-y-2">
+              <Label htmlFor="assetServiceVprp">Asset / Service / VPRP</Label>
+              <Select value={formData.assetServiceVprp || ""} onValueChange={(v) => handleFieldChange("assetServiceVprp", v)}>
+                <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                <SelectContent>
+                  {ASSET_SERVICE_VPRP_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Implementation Status (new) */}
+            <div className="space-y-2">
+              <Label htmlFor="implStatus">Implementation Status</Label>
+              <Select value={formData.implStatus || ""} onValueChange={(v) => handleFieldChange("implStatus", v)}>
+                <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
+                <SelectContent>
+                  {IMPLEMENTATION_STATUS_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -493,7 +584,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("estimatedCost", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="generalFund">General Fund (₹)</Label>
               <Input
@@ -503,7 +593,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("generalFund", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="scFund">SC Fund (₹)</Label>
               <Input
@@ -513,7 +602,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("scFund", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="stFund">ST Fund (₹)</Label>
               <Input
@@ -523,7 +611,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("stFund", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="beneficiariesSC">Beneficiaries (SC)</Label>
               <Input
@@ -533,7 +620,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("beneficiariesSC", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="beneficiariesST">Beneficiaries (ST)</Label>
               <Input
@@ -543,7 +629,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("beneficiariesST", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="beneficiariesGen">Beneficiaries (Gen)</Label>
               <Input
@@ -553,7 +638,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("beneficiariesGen", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="totalUnit">Total Unit</Label>
               <Input
@@ -563,7 +647,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 onChange={(e) => handleFieldChange("totalUnit", parseInt(e.target.value) || 0)}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="unitType">Unit Type</Label>
               <Input
@@ -640,6 +723,8 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 rows={2}
               />
             </div>
+
+            {/* Published status */}
             <div className="space-y-2">
               <Label htmlFor="isPublish">Status</Label>
               <Select
