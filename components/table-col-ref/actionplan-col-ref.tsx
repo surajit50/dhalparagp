@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import {
   ArrowUpDown, Pencil, Calculator, BookOpen, FileText,
-  AlertCircle, CheckCircle2, Layers, TrendingUp
+  AlertCircle, CheckCircle2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,12 +45,6 @@ type ActionPlanWithWorks = ApprovedActionPlanDetails & {
   })[];
 };
 
-// Extend the Prisma type to include our new fields (they exist in DB but not in generated types yet)
-interface ExtendedActionPlan extends ActionPlanWithWorks {
-  assetServiceVprp?: string;
-  implStatus?: string;
-}
-
 async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDetails>) {
   const res = await fetch(`/api/actionplans/${id}`, {
     method: "PATCH",
@@ -71,7 +65,7 @@ const WORK_TYPES = ["Construction", "Renovation", "Repair", "Supply"];
 const COMPONENT_TYPES = ["Building", "Bridge", "Culvert", "Pipeline", "Road", "Waterbody"];
 const ACTIVITY_FOR_OPTIONS = ["Community", "Individual", "Group", "Institution"];
 
-// Themes with numbers (display and value)
+// Themes with numbers
 const THEMES_WITH_NUMBERS = [
   { number: "Theme_1", name: "Poverty Free and Enhanced Livelihoods Village" },
   { number: "Theme_2", name: "Healthy Village" },
@@ -84,31 +78,19 @@ const THEMES_WITH_NUMBERS = [
   { number: "Theme_9", name: "Women Friendly Village" },
 ];
 
-const ASSET_SERVICE_VPRP_OPTIONS = ["Assets", "Service", "VPRP"] as const;
-const IMPLEMENTATION_STATUS_OPTIONS = [
-  "New/Fresh",
-  "Operational",
-  "Maintenance, Upgradation",
-  "Operational, Maintenance",
-] as const;
-
-// Convert SCHEME_FUNDS into a flat list of scheme names for Select
-const ALL_SCHEMES = SCHEME_FUNDS.flatMap(group => group.funds);
-
 // ----------------------------- COMPONENT ---------------------------------
 interface InlineEditActionPlanTableProps {
-  data: ExtendedActionPlan[];
+  data: ActionPlanWithWorks[];
 }
 
 export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTableProps) {
   const router = useRouter();
-  const [editingPlan, setEditingPlan] = useState<ExtendedActionPlan | null>(null);
-  const [formData, setFormData] = useState<Partial<ExtendedActionPlan>>({});
+  const [editingPlan, setEditingPlan] = useState<ActionPlanWithWorks | null>(null);
+  const [formData, setFormData] = useState<Partial<ApprovedActionPlanDetails>>({});
   const [isSaving, setIsSaving] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
-  const openEditSheet = (plan: ExtendedActionPlan) => {
+  const openEditSheet = (plan: ActionPlanWithWorks) => {
     setEditingPlan(plan);
     setFormData({
       activityCode: plan.activityCode,
@@ -140,16 +122,12 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       implementedBy: plan.implementedBy,
       remarks: plan.remarks,
       isPublish: plan.isPublish,
-      assetServiceVprp: plan.assetServiceVprp || "",
-      implStatus: plan.implStatus || "",
     });
-    setSaveError(null);
     setSheetOpen(true);
   };
 
-  const handleFieldChange = (field: keyof ExtendedActionPlan, value: any) => {
+  const handleFieldChange = (field: keyof ApprovedActionPlanDetails, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    setSaveError(null);
   };
 
   // Fund validation
@@ -164,8 +142,11 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
   const handleSave = async () => {
     if (!editingPlan) return;
     if (estimatedCost > 0 && !isFundMatched) {
-      setSaveError(`Total funds (₹${totalFund.toLocaleString("en-IN")}) do not match Estimated Cost (₹${estimatedCost.toLocaleString("en-IN")}). Difference: ₹${Math.abs(fundDifference).toLocaleString("en-IN")}`);
-      toast({ title: "Fund Mismatch", description: saveError, variant: "destructive" });
+      toast({
+        title: "Fund Mismatch",
+        description: `Total funds (₹${totalFund.toLocaleString("en-IN")}) do not match Estimated Cost (₹${estimatedCost.toLocaleString("en-IN")}). Difference: ₹${Math.abs(fundDifference).toLocaleString("en-IN")}.`,
+        variant: "destructive",
+      });
       return;
     }
 
@@ -191,7 +172,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
   };
 
   // ----------------------------- COLUMNS ----------------------------------
-  const columns: ColumnDef<ExtendedActionPlan>[] = [
+  const columns: ColumnDef<ActionPlanWithWorks>[] = [
     {
       id: "slNo",
       header: "SL No.",
@@ -376,23 +357,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         ),
     },
     {
-      accessorKey: "assetServiceVprp",
-      header: "Type",
-      cell: ({ row }) => <Badge variant="outline">{row.original.assetServiceVprp || "-"}</Badge>,
-    },
-    {
-      accessorKey: "implStatus",
-      header: "Status",
-      cell: ({ row }) => {
-        const status = row.original.implStatus;
-        let variant: "default" | "secondary" | "outline" = "secondary";
-        if (status === "New/Fresh") variant = "default";
-        if (status === "Operational") variant = "default";
-        if (status?.includes("Maintenance")) variant = "outline";
-        return <Badge variant={variant}>{status || "-"}</Badge>;
-      },
-    },
-    {
       id: "progress",
       header: "Progress",
       cell: ({ row }) => {
@@ -428,7 +392,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
   ];
 
-  // ----------------------------- EDIT SHEET (Grouped Sections) ----------------------------------
+  // ----------------------------- EDIT SHEET (Organised Sections) ----------------------------------
   return (
     <>
       <DataTable columns={columns} data={data} />
@@ -568,7 +532,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
 
             {/* Section: Funding */}
             <div className="border-l-4 border-green-500 pl-4 space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">Funding & Budget</h3>
+              <h3 className="text-lg font-semibold">Funding & Budget</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="schemeName">Scheme Source</Label>
@@ -658,35 +622,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                   )}
                 </div>
               )}
-            </div>
-
-            {/* Section: New Fields (Asset/Service/VPRP + Status) */}
-            <div className="border-l-4 border-indigo-500 pl-4 space-y-4">
-              <h3 className="text-lg font-semibold">Monitoring & Classification</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="assetServiceVprp" className="flex items-center gap-1"><Layers className="h-4 w-4" /> Asset / Service / VPRP</Label>
-                  <Select value={formData.assetServiceVprp || ""} onValueChange={(v) => handleFieldChange("assetServiceVprp", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                    <SelectContent>
-                      {ASSET_SERVICE_VPRP_OPTIONS.map((opt) => (
-                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="implStatus" className="flex items-center gap-1"><TrendingUp className="h-4 w-4" /> Implementation Status</Label>
-                  <Select value={formData.implStatus || ""} onValueChange={(v) => handleFieldChange("implStatus", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
-                    <SelectContent>
-                      {IMPLEMENTATION_STATUS_OPTIONS.map((opt) => (
-                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
             </div>
 
             {/* Section: Beneficiaries & Units */}
@@ -812,7 +747,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               {isSaving ? "Saving..." : "Save Changes"}
             </Button>
           </SheetFooter>
-          {saveError && <p className="text-sm text-red-600 mt-2">{saveError}</p>}
         </SheetContent>
       </Sheet>
     </>
