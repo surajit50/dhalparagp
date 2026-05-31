@@ -696,32 +696,29 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
             {/* Section: Funding */}
             <div className="border-l-4 border-green-500 pl-4 space-y-4">
               <h3 className="text-lg font-semibold">Funding & Budget</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="schemeName">Scheme Source</Label>
-                  <Select
-                    value={formData.schemeName || ""}
-                    onValueChange={(v) => handleFieldChange("schemeName", v)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select scheme" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-80">
-                      {SCHEME_FUNDS.map((group, idx) => (
-                        <SelectGroup key={idx}>
-                          <SelectLabel className="font-bold bg-muted px-2 py-1 sticky top-0">
-                            {group.category}
-                          </SelectLabel>
-                          {group.funds.map((fund) => (
-                            <SelectItem key={fund} value={fund}>
-                              {getFundDisplayName(fund)}
-                            </SelectItem>
+              
+                  <FormField control={form.control} name="schemeName" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Scheme Source</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger className="bg-white"><SelectValue placeholder="Select Scheme" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          {SCHEME_FUNDS.map((group, idx) => (
+                            <SelectGroup key={idx}>
+                              <SelectLabel className="font-bold text-gray-900 bg-gray-100">{group.category}</SelectLabel>
+                              {group.funds.map((fund) => (
+                                <SelectItem key={fund} value={fund}>{fund}</SelectItem>
+                              ))}
+                            </SelectGroup>
                           ))}
-                        </SelectGroup>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} /> 
                 </div>
+
+                   
                 <div className="space-y-2">
                   <Label htmlFor="fundType">Fund Type</Label>
                   <Select
