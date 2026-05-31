@@ -4,8 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  ArrowUpDown, Pencil, Calculator, BookOpen, FileText,
-  AlertCircle, CheckCircle2
+  ArrowUpDown,
+  Pencil,
+  Calculator,
+  BookOpen,
+  FileText,
+  AlertCircle,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -60,12 +66,26 @@ async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDeta
 
 // ----------------------------- CONSTANTS ---------------------------------
 const FINANCIAL_YEARS = ["2023-24", "2024-25", "2025-26"];
-const SECTORS = ["Education", "Health", "Roads", "Water", "Agriculture", "Sanitation", "Infrastructure"];
+const SECTORS = [
+  "Education",
+  "Health",
+  "Roads",
+  "Water",
+  "Agriculture",
+  "Sanitation",
+  "Infrastructure",
+];
 const WORK_TYPES = ["Construction", "Renovation", "Repair", "Supply"];
-const COMPONENT_TYPES = ["Building", "Bridge", "Culvert", "Pipeline", "Road", "Waterbody"];
+const COMPONENT_TYPES = [
+  "Building",
+  "Bridge",
+  "Culvert",
+  "Pipeline",
+  "Road",
+  "Waterbody",
+];
 const ACTIVITY_FOR_OPTIONS = ["Community", "Individual", "Group", "Institution"];
 
-// Themes with numbers
 const THEMES_WITH_NUMBERS = [
   { number: "Theme_1", name: "Poverty Free and Enhanced Livelihoods Village" },
   { number: "Theme_2", name: "Healthy Village" },
@@ -130,7 +150,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Fund validation
+  // Fund validation for edit sheet
   const general = formData.generalFund || 0;
   const sc = formData.scFund || 0;
   const st = formData.stFund || 0;
@@ -144,7 +164,11 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     if (estimatedCost > 0 && !isFundMatched) {
       toast({
         title: "Fund Mismatch",
-        description: `Total funds (₹${totalFund.toLocaleString("en-IN")}) do not match Estimated Cost (₹${estimatedCost.toLocaleString("en-IN")}). Difference: ₹${Math.abs(fundDifference).toLocaleString("en-IN")}.`,
+        description: `Total funds (₹${totalFund.toLocaleString(
+          "en-IN"
+        )}) do not match Estimated Cost (₹${estimatedCost.toLocaleString(
+          "en-IN"
+        )}). Difference: ₹${Math.abs(fundDifference).toLocaleString("en-IN")}.`,
         variant: "destructive",
       });
       return;
@@ -158,17 +182,27 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       setSheetOpen(false);
     } catch (error) {
       console.error("Save failed", error);
-      toast({ title: "Error", description: "Failed to save changes. Please try again.", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to save changes. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Helper to display theme with number in table
   const formatTheme = (themeName: string | null) => {
     if (!themeName) return "-";
-    const found = THEMES_WITH_NUMBERS.find(t => t.name === themeName);
+    const found = THEMES_WITH_NUMBERS.find((t) => t.name === themeName);
     return found ? `${found.number} – ${found.name}` : themeName;
+  };
+
+  // Helper to compute shortfall for a row
+  const computeShortfall = (plan: ActionPlanWithWorks) => {
+    const est = plan.estimatedCost || 0;
+    const total = (plan.generalFund || 0) + (plan.scFund || 0) + (plan.stFund || 0);
+    return est - total;
   };
 
   // ----------------------------- COLUMNS ----------------------------------
@@ -179,13 +213,21 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       cell: ({ row, table }) => {
         const pageIndex = table.getState().pagination?.pageIndex ?? 0;
         const pageSize = table.getState().pagination?.pageSize ?? 10;
-        return <div className="text-muted-foreground font-medium text-center">{pageIndex * pageSize + row.index + 1}</div>;
+        return (
+          <div className="text-muted-foreground font-medium text-center">
+            {pageIndex * pageSize + row.index + 1}
+          </div>
+        );
       },
     },
     {
       accessorKey: "activityCode",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0 hover:bg-transparent">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 hover:bg-transparent"
+        >
           Activity Code <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -194,13 +236,18 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     {
       accessorKey: "activityName",
       header: "Activity Name",
-      cell: ({ row }) => <div className="font-medium min-w-[200px]">{row.original.activityName}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium min-w-[200px]">{row.original.activityName}</div>
+      ),
     },
     {
       accessorKey: "activityDescription",
       header: "Description",
       cell: ({ row }) => (
-        <div className="max-w-[300px] text-sm text-muted-foreground line-clamp-2" title={row.original.activityDescription ?? ""}>
+        <div
+          className="max-w-[300px] text-sm text-muted-foreground line-clamp-2"
+          title={row.original.activityDescription ?? ""}
+        >
           {row.original.activityDescription}
         </div>
       ),
@@ -208,7 +255,11 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     {
       accessorKey: "financialYear",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0 hover:bg-transparent">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 hover:bg-transparent"
+        >
           Financial Year <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
@@ -237,26 +288,68 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     {
       accessorKey: "estimatedCost",
       header: ({ column }) => (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="px-0 hover:bg-transparent">
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="px-0 hover:bg-transparent"
+        >
           Est. Cost (₹) <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div className="font-semibold text-right">₹{row.original.estimatedCost?.toLocaleString("en-IN") || 0}</div>,
+      cell: ({ row }) => (
+        <div className="font-semibold text-right">
+          ₹{row.original.estimatedCost?.toLocaleString("en-IN") || 0}
+        </div>
+      ),
     },
     {
       accessorKey: "generalFund",
       header: "General Fund (₹)",
-      cell: ({ row }) => <div className="text-right">₹{row.original.generalFund?.toLocaleString("en-IN") || 0}</div>,
+      cell: ({ row }) => (
+        <div className="text-right">
+          ₹{row.original.generalFund?.toLocaleString("en-IN") || 0}
+        </div>
+      ),
     },
     {
       accessorKey: "scFund",
       header: "SC Fund (₹)",
-      cell: ({ row }) => <div className="text-right">₹{row.original.scFund?.toLocaleString("en-IN") || 0}</div>,
+      cell: ({ row }) => (
+        <div className="text-right">₹{row.original.scFund?.toLocaleString("en-IN") || 0}</div>
+      ),
     },
     {
       accessorKey: "stFund",
       header: "ST Fund (₹)",
-      cell: ({ row }) => <div className="text-right">₹{row.original.stFund?.toLocaleString("en-IN") || 0}</div>,
+      cell: ({ row }) => (
+        <div className="text-right">₹{row.original.stFund?.toLocaleString("en-IN") || 0}</div>
+      ),
+    },
+    {
+      id: "fundShortfall",
+      header: "Fund Shortfall (₹)",
+      cell: ({ row }) => {
+        const shortfall = computeShortfall(row.original);
+        if (shortfall === 0) {
+          return (
+            <Badge variant="outline" className="bg-green-50 text-green-700">
+              Matched
+            </Badge>
+          );
+        } else if (shortfall > 0) {
+          return (
+            <Badge variant="destructive" className="bg-red-100 text-red-800 hover:bg-red-100">
+              <AlertCircle className="h-3 w-3 mr-1" /> ₹{shortfall.toLocaleString("en-IN")} short
+            </Badge>
+          );
+        } else {
+          return (
+            <Badge variant="outline" className="bg-amber-50 text-amber-700">
+              <AlertTriangle className="h-3 w-3 mr-1" /> Over-allocated by ₹{Math.abs(shortfall).toLocaleString("en-IN")}
+            </Badge>
+          );
+        }
+      },
     },
     {
       accessorKey: "fundType",
@@ -271,7 +364,14 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     {
       accessorKey: "schemeName",
       header: "Scheme",
-      cell: ({ row }) => <div className="max-w-[200px] truncate" title={getFundDisplayName(row.original.schemeName ?? "")}>{row.original.schemeName || "-"}</div>,
+      cell: ({ row }) => (
+        <div
+          className="max-w-[200px] truncate"
+          title={getFundDisplayName(row.original.schemeName ?? "")}
+        >
+          {row.original.schemeName || "-"}
+        </div>
+      ),
     },
     {
       accessorKey: "upasamiti",
@@ -341,7 +441,10 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       accessorKey: "remarks",
       header: "Remarks",
       cell: ({ row }) => (
-        <div className="max-w-[200px] text-sm text-muted-foreground line-clamp-2" title={row.original.remarks ?? ""}>
+        <div
+          className="max-w-[200px] text-sm text-muted-foreground line-clamp-2"
+          title={row.original.remarks ?? ""}
+        >
           {row.original.remarks || "-"}
         </div>
       ),
@@ -353,7 +456,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         row.original.isPublish ? (
           <Badge className="bg-green-100 text-green-700">Published</Badge>
         ) : (
-          <Badge variant="outline" className="text-amber-600">Draft</Badge>
+          <Badge variant="outline" className="text-amber-600">
+            Draft
+          </Badge>
         ),
     },
     {
@@ -367,13 +472,19 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
 
         return (
           <div className="flex flex-col gap-1.5 min-w-[100px]">
-            <Badge variant={hasEstimate ? "default" : "outline"} className={hasEstimate ? "bg-orange-500" : ""}>
+            <Badge
+              variant={hasEstimate ? "default" : "outline"}
+              className={hasEstimate ? "bg-orange-500" : ""}
+            >
               <Calculator className="h-3 w-3 mr-1" /> {hasEstimate ? "Estimate" : "No Est."}
             </Badge>
             <Badge variant={hasMB ? "default" : "outline"} className={hasMB ? "bg-purple-500" : ""}>
               <BookOpen className="h-3 w-3 mr-1" /> {hasMB ? "MB" : "No MB"}
             </Badge>
-            <Badge variant={hasBillAbstract ? "default" : "outline"} className={hasBillAbstract ? "bg-green-500" : ""}>
+            <Badge
+              variant={hasBillAbstract ? "default" : "outline"}
+              className={hasBillAbstract ? "bg-green-500" : ""}
+            >
               <FileText className="h-3 w-3 mr-1" /> {hasBillAbstract ? "Bill" : "No Bill"}
             </Badge>
           </div>
@@ -384,7 +495,12 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       id: "actions",
       header: "Actions",
       cell: ({ row }) => (
-        <Button size="sm" variant="outline" onClick={() => openEditSheet(row.original)} className="h-8 px-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => openEditSheet(row.original)}
+          className="h-8 px-2"
+        >
           <Pencil className="h-3.5 w-3.5 mr-1" />
           Edit
         </Button>
@@ -392,7 +508,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
     },
   ];
 
-  // ----------------------------- EDIT SHEET (Organised Sections) ----------------------------------
+  // ----------------------------- EDIT SHEET ----------------------------------
   return (
     <>
       <DataTable columns={columns} data={data} />
@@ -426,19 +542,31 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="financialYear">Financial Year</Label>
-                  <Select value={formData.financialYear || ""} onValueChange={(v) => handleFieldChange("financialYear", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select year" /></SelectTrigger>
+                  <Select
+                    value={formData.financialYear || ""}
+                    onValueChange={(v) => handleFieldChange("financialYear", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select year" />
+                    </SelectTrigger>
                     <SelectContent>
                       {FINANCIAL_YEARS.map((year) => (
-                        <SelectItem key={year} value={year}>{year}</SelectItem>
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="themeName">Theme</Label>
-                  <Select value={formData.themeName || ""} onValueChange={(v) => handleFieldChange("themeName", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select theme" /></SelectTrigger>
+                  <Select
+                    value={formData.themeName || ""}
+                    onValueChange={(v) => handleFieldChange("themeName", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select theme" />
+                    </SelectTrigger>
                     <SelectContent>
                       {THEMES_WITH_NUMBERS.map((theme) => (
                         <SelectItem key={theme.number} value={theme.name}>
@@ -466,55 +594,90 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="sector">Sector</Label>
-                  <Select value={formData.sector || ""} onValueChange={(v) => handleFieldChange("sector", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select sector" /></SelectTrigger>
+                  <Select
+                    value={formData.sector || ""}
+                    onValueChange={(v) => handleFieldChange("sector", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select sector" />
+                    </SelectTrigger>
                     <SelectContent>
                       {SECTORS.map((s) => (
-                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                        <SelectItem key={s} value={s}>
+                          {s}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="upasamiti">Upasamiti</Label>
-                  <Select value={formData.upasamiti || ""} onValueChange={(v) => handleFieldChange("upasamiti", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select Upasamiti" /></SelectTrigger>
+                  <Select
+                    value={formData.upasamiti || ""}
+                    onValueChange={(v) => handleFieldChange("upasamiti", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Upasamiti" />
+                    </SelectTrigger>
                     <SelectContent>
                       {Object.values(UpasamitiName).map((name) => (
-                        <SelectItem key={name} value={name}>{name.replace(/_/g, " ")}</SelectItem>
+                        <SelectItem key={name} value={name}>
+                          {name.replace(/_/g, " ")}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="activityFor">Target Audience</Label>
-                  <Select value={formData.activityFor || ""} onValueChange={(v) => handleFieldChange("activityFor", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
+                  <Select
+                    value={formData.activityFor || ""}
+                    onValueChange={(v) => handleFieldChange("activityFor", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
                     <SelectContent>
                       {ACTIVITY_FOR_OPTIONS.map((o) => (
-                        <SelectItem key={o} value={o}>{o}</SelectItem>
+                        <SelectItem key={o} value={o}>
+                          {o}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="workType">Work Type</Label>
-                  <Select value={formData.workType || ""} onValueChange={(v) => handleFieldChange("workType", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <Select
+                    value={formData.workType || ""}
+                    onValueChange={(v) => handleFieldChange("workType", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
                     <SelectContent>
                       {WORK_TYPES.map((w) => (
-                        <SelectItem key={w} value={w}>{w}</SelectItem>
+                        <SelectItem key={w} value={w}>
+                          {w}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="componentType">Component Type</Label>
-                  <Select value={formData.componentType || ""} onValueChange={(v) => handleFieldChange("componentType", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select component" /></SelectTrigger>
+                  <Select
+                    value={formData.componentType || ""}
+                    onValueChange={(v) => handleFieldChange("componentType", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select component" />
+                    </SelectTrigger>
                     <SelectContent>
                       {COMPONENT_TYPES.map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -536,14 +699,23 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="schemeName">Scheme Source</Label>
-                  <Select value={formData.schemeName || ""} onValueChange={(v) => handleFieldChange("schemeName", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select scheme" /></SelectTrigger>
+                  <Select
+                    value={formData.schemeName || ""}
+                    onValueChange={(v) => handleFieldChange("schemeName", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select scheme" />
+                    </SelectTrigger>
                     <SelectContent className="max-h-80">
                       {SCHEME_FUNDS.map((group, idx) => (
                         <SelectGroup key={idx}>
-                          <SelectLabel className="font-bold bg-muted px-2 py-1 sticky top-0">{group.category}</SelectLabel>
+                          <SelectLabel className="font-bold bg-muted px-2 py-1 sticky top-0">
+                            {group.category}
+                          </SelectLabel>
                           {group.funds.map((fund) => (
-                            <SelectItem key={fund} value={fund}>{getFundDisplayName(fund)}</SelectItem>
+                            <SelectItem key={fund} value={fund}>
+                              {getFundDisplayName(fund)}
+                            </SelectItem>
                           ))}
                         </SelectGroup>
                       ))}
@@ -552,8 +724,13 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="fundType">Fund Type</Label>
-                  <Select value={formData.fundType || ""} onValueChange={(v) => handleFieldChange("fundType", v)}>
-                    <SelectTrigger><SelectValue placeholder="Select fund type" /></SelectTrigger>
+                  <Select
+                    value={formData.fundType || ""}
+                    onValueChange={(v) => handleFieldChange("fundType", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select fund type" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="Tied">Tied</SelectItem>
                       <SelectItem value="Untied">Untied</SelectItem>
@@ -566,7 +743,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     id="estimatedCost"
                     type="number"
                     value={formData.estimatedCost || 0}
-                    onChange={(e) => handleFieldChange("estimatedCost", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("estimatedCost", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -583,7 +762,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     id="generalFund"
                     type="number"
                     value={formData.generalFund || 0}
-                    onChange={(e) => handleFieldChange("generalFund", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("generalFund", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -607,18 +788,28 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </div>
               {/* Fund Validation Status */}
               {estimatedCost > 0 && (
-                <div className={cn(
-                  "p-3 rounded-md flex items-center justify-between",
-                  isFundMatched ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
-                )}>
+                <div
+                  className={cn(
+                    "p-3 rounded-md flex items-center justify-between",
+                    isFundMatched
+                      ? "bg-green-50 border border-green-200"
+                      : "bg-red-50 border border-red-200"
+                  )}
+                >
                   <div className="text-sm">
-                    <span className="font-medium">Fund Distribution:</span>{' '}
-                    ₹{totalFund.toLocaleString("en-IN")} allocated of ₹{estimatedCost.toLocaleString("en-IN")}
+                    <span className="font-medium">Fund Distribution:</span> ₹
+                    {totalFund.toLocaleString("en-IN")} allocated of ₹
+                    {estimatedCost.toLocaleString("en-IN")}
                   </div>
                   {isFundMatched ? (
-                    <Badge className="bg-green-600"><CheckCircle2 className="h-3 w-3 mr-1" /> Matched</Badge>
+                    <Badge className="bg-green-600">
+                      <CheckCircle2 className="h-3 w-3 mr-1" /> Matched
+                    </Badge>
                   ) : (
-                    <Badge variant="destructive"><AlertCircle className="h-3 w-3 mr-1" /> Short by ₹{Math.abs(fundDifference).toLocaleString("en-IN")}</Badge>
+                    <Badge variant="destructive">
+                      <AlertCircle className="h-3 w-3 mr-1" /> Short by ₹
+                      {Math.abs(fundDifference).toLocaleString("en-IN")}
+                    </Badge>
                   )}
                 </div>
               )}
@@ -634,7 +825,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     id="beneficiariesSC"
                     type="number"
                     value={formData.beneficiariesSC || 0}
-                    onChange={(e) => handleFieldChange("beneficiariesSC", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("beneficiariesSC", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -643,7 +836,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     id="beneficiariesST"
                     type="number"
                     value={formData.beneficiariesST || 0}
-                    onChange={(e) => handleFieldChange("beneficiariesST", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("beneficiariesST", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -652,7 +847,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     id="beneficiariesGen"
                     type="number"
                     value={formData.beneficiariesGen || 0}
-                    onChange={(e) => handleFieldChange("beneficiariesGen", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("beneficiariesGen", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -670,7 +867,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     id="totalUnit"
                     type="number"
                     value={formData.totalUnit || 0}
-                    onChange={(e) => handleFieldChange("totalUnit", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("totalUnit", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
               </div>
@@ -728,7 +927,9 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     value={formData.isPublish ? "true" : "false"}
                     onValueChange={(v) => handleFieldChange("isPublish", v === "true")}
                   >
-                    <SelectTrigger><SelectValue placeholder="Published?" /></SelectTrigger>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Published?" />
+                    </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="true">Published</SelectItem>
                       <SelectItem value="false">Draft</SelectItem>
