@@ -653,10 +653,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               <Pencil className="h-3.5 w-3.5 mr-1" />
               Edit
             </Button>
-            <Button size="sm" variant="destructive" className="h-8 px-2">
-              <Trash2 className="h-3.5 w-3.5 mr-1" />
-              Delete
-            </Button>
+            
           </div>
         );
       },
