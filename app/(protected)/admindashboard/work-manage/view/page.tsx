@@ -22,13 +22,7 @@ async function ActionPlansContent() {
       </div>
 
       <div className="bg-white dark:bg-zinc-900 rounded-2xl border shadow-sm p-6">
-        <InlineEditActionPlanTable 
-          data={actionPlans} 
-          onDataChange={() => {
-            // Optional: refresh server component data. 
-            // You might need to use router.refresh() or revalidatePath
-          }} 
-        />
+        <InlineEditActionPlanTable data={actionPlans} />
       </div>
     </div>
   );
