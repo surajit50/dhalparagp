@@ -693,32 +693,37 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
               </div>
             </div>
 
-            {/* Section: Funding */}
+            {/* Section: Funding & Budget */}
             <div className="border-l-4 border-green-500 pl-4 space-y-4">
               <h3 className="text-lg font-semibold">Funding & Budget</h3>
-              
-                  <FormField control={form.control} name="schemeName" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Scheme Source</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger className="bg-white"><SelectValue placeholder="Select Scheme" /></SelectTrigger></FormControl>
-                        <SelectContent>
-                          {SCHEME_FUNDS.map((group, idx) => (
-                            <SelectGroup key={idx}>
-                              <SelectLabel className="font-bold text-gray-900 bg-gray-100">{group.category}</SelectLabel>
-                              {group.funds.map((fund) => (
-                                <SelectItem key={fund} value={fund}>{fund}</SelectItem>
-                              ))}
-                            </SelectGroup>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Scheme Name - Grouped Select */}
+                <div className="space-y-2">
+                  <Label htmlFor="schemeName">Scheme Source</Label>
+                  <Select
+                    value={formData.schemeName || ""}
+                    onValueChange={(v) => handleFieldChange("schemeName", v)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Scheme" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {SCHEME_FUNDS.map((group, idx) => (
+                        <SelectGroup key={idx}>
+                          <SelectLabel className="font-bold text-gray-900 bg-gray-100">
+                            {group.category}
+                          </SelectLabel>
+                          {group.funds.map((fund) => (
+                            <SelectItem key={fund} value={fund}>
+                              {fund}
+                            </SelectItem>
                           ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} /> 
+                        </SelectGroup>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                   
                 <div className="space-y-2">
                   <Label htmlFor="fundType">Fund Type</Label>
                   <Select
@@ -734,6 +739,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     </SelectContent>
                   </Select>
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="estimatedCost">Total Estimated Cost (₹)</Label>
                   <Input
@@ -745,6 +751,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     }
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="totalduration">Total Duration</Label>
                   <Input
@@ -753,6 +760,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     onChange={(e) => handleFieldChange("totalduration", e.target.value)}
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="generalFund">General Fund (₹)</Label>
                   <Input
@@ -764,25 +772,32 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
                     }
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="scFund">SC Fund (₹)</Label>
                   <Input
                     id="scFund"
                     type="number"
                     value={formData.scFund || 0}
-                    onChange={(e) => handleFieldChange("scFund", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("scFund", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="stFund">ST Fund (₹)</Label>
                   <Input
                     id="stFund"
                     type="number"
                     value={formData.stFund || 0}
-                    onChange={(e) => handleFieldChange("stFund", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      handleFieldChange("stFund", parseInt(e.target.value) || 0)
+                    }
                   />
                 </div>
               </div>
+
               {/* Fund Validation Status */}
               {estimatedCost > 0 && (
                 <div
