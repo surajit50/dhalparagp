@@ -174,37 +174,21 @@ export const FUND_FULL_NAMES: Record<string, string> = {
  * (e.g., "16th CFC", "17 CFC", "6th SFC", "7 SFC").
  */
 export function getFundDisplayName(key: string): string {
-  // First check explicit mapping
-  if (FUND_FULL_NAMES[key]) {
-    return FUND_FULL_NAMES[key];
-  }
+  if (FUND_FULL_NAMES[key]) return FUND_FULL_NAMES[key];
 
-  // Handle numbered CFC: e.g., "16th CFC", "16 CFC", "17th CFC"
   const cfcMatch = key.match(/^(\d+)(?:th)?\s+CFC$/i);
-  if (cfcMatch) {
-    return "Central Finance Commission (CFC)";
-  }
+  if (cfcMatch) return "Central Finance Commission (CFC)";
 
-  // Handle numbered SFC: e.g., "5th SFC", "6th SFC", "7 SFC"
   const sfcMatch = key.match(/^(\d+)(?:th)?\s+SFC$/i);
-  if (sfcMatch) {
-    return "Performance Based Grant (SFC)";
-  }
+  if (sfcMatch) return "Performance Based Grant (SFC)";
 
-  // Fallback: return the original key
   return key;
 }
 
-// SCHEME_FUNDS: maps categories but replaces all own-source funds with "Own Fund"
+// SCHEME_FUNDS: used for dropdown in the component (maps own sources to "Own Fund")
 export const SCHEME_FUNDS = STATUTORY_FUNDS.map((cat) => {
   if (cat.category.startsWith("(B)")) {
     return { category: cat.category, funds: ["Own Fund"] };
   }
   return cat;
 });
-
-// Pre‑transformed version with display names for Scheme Source values
-export const SCHEME_FUNDS_WITH_DISPLAY_NAMES = SCHEME_FUNDS.map((cat) => ({
-  category: cat.category,
-  funds: cat.funds.map((fund) => getFundDisplayName(fund)),
-}));
