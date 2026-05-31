@@ -4,11 +4,11 @@ export const STATUTORY_FUNDS = [
     funds: [
       "MGNREGS",
       "15th CFC",
-      "16th CFC",   // added
-      "17th CFC",   // added
+      "16th CFC",
+      "17th CFC",
       "5th SFC",
-      "6th SFC",    // added
-      "7th SFC",    // added
+      "6th SFC",
+      "7th SFC",
       "PBG-CFC",
       "UBUP",
       "MNB/SBM",
@@ -168,13 +168,6 @@ export const FUND_FULL_NAMES: Record<string, string> = {
     "Misc. Receipt, if any, not classified above",
 };
 
-export const SCHEME_FUNDS = STATUTORY_FUNDS.map((cat) => {
-  if (cat.category.startsWith("(B)")) {
-    return { category: cat.category, funds: ["Own Fund"] };
-  }
-  return cat;
-});
-
 /**
  * Returns the full display name for a fund key, falling back to the key itself.
  * Supports dynamic matching for numbered CFC and SFC entries
@@ -201,3 +194,17 @@ export function getFundDisplayName(key: string): string {
   // Fallback: return the original key
   return key;
 }
+
+// SCHEME_FUNDS: maps categories but replaces all own-source funds with "Own Fund"
+export const SCHEME_FUNDS = STATUTORY_FUNDS.map((cat) => {
+  if (cat.category.startsWith("(B)")) {
+    return { category: cat.category, funds: ["Own Fund"] };
+  }
+  return cat;
+});
+
+// Pre‑transformed version with display names for Scheme Source values
+export const SCHEME_FUNDS_WITH_DISPLAY_NAMES = SCHEME_FUNDS.map((cat) => ({
+  category: cat.category,
+  funds: cat.funds.map((fund) => getFundDisplayName(fund)),
+}));
