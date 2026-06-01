@@ -188,7 +188,7 @@ export default function LandDetailsSection() {
                                     option.code === field.value ? "opacity-100" : "opacity-0"
                                   )}
                                 />
-                                {option.name}
+                                 {option.name}-{option.bn}
                               </CommandItem>
                             ))}
                           </CommandGroup>
@@ -248,7 +248,7 @@ export default function LandDetailsSection() {
                                     option.code === field.value ? "opacity-100" : "opacity-0"
                                   )}
                                 />
-                                {option.name}
+                                {option.name}-{option.bn}
                               </CommandItem>
                             ))}
                           </CommandGroup>

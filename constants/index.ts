@@ -2201,73 +2201,365 @@ export const supplytermand = [
 ];
 
 export * from "./pond-lease-terms";
-export const LAND_CLASSIFICATIONS = [
-  { code: "BASTU", name: "Bastu", category: "Homestead" },
-  { code: "COMMERCIAL_BASTU", name: "Commercial Bastu", category: "Homestead" },
-  { code: "VITI", name: "Viti", category: "Homestead" },
+export interface LandClassification {
+  code: string;
+  name: string;
+  bn: string;
+  category:
+    | "Homestead"
+    | "Agricultural"
+    | "Commercial"
+    | "Plantation"
+    | "Water Body"
+    | "Riverine"
+    | "Forest"
+    | "Road"
+    | "Grazing"
+    | "Market"
+    | "Religious"
+    | "Institutional"
+    | "Government"
+    | "Infrastructure"
+    | "Industrial"
+    | "Public Utility"
+    | "Burial Ground"
+    | "Cremation Ground"
+    | "Miscellaneous";
+}
 
-  { code: "SALI", name: "Sali", category: "Agricultural" },
-  { code: "SHALI", name: "Shali", category: "Agricultural" },
-  { code: "SUNA", name: "Suna", category: "Agricultural" },
-  { code: "AUSH", name: "Aush", category: "Agricultural" },
-  { code: "AMAN", name: "Aman", category: "Agricultural" },
-  { code: "RABI", name: "Rabi", category: "Agricultural" },
-  { code: "PATIT", name: "Patit", category: "Agricultural" },
-  { code: "DANGA", name: "Danga", category: "Agricultural" },
+export const LAND_CLASSIFICATIONS: LandClassification[] = [
+  // =========================
+  // HOMESTEAD
+  // =========================
+  { code: "BASTU", name: "Bastu", bn: "বাস্তু", category: "Homestead" },
+  { code: "VITI", name: "Viti", bn: "ভিটি", category: "Homestead" },
 
-  { code: "BAGAN", name: "Bagan", category: "Plantation" },
-  { code: "ORCHARD", name: "Orchard", category: "Plantation" },
-  { code: "TEA", name: "Tea Garden", category: "Plantation" },
+  // =========================
+  // COMMERCIAL
+  // =========================
+  {
+    code: "COMMERCIAL_BASTU",
+    name: "Commercial Bastu",
+    bn: "বাণিজ্যিক বাস্তু",
+    category: "Commercial",
+  },
+  {
+    code: "SHOP",
+    name: "Shop",
+    bn: "দোকান",
+    category: "Commercial",
+  },
+  {
+    code: "MARKET_COMPLEX",
+    name: "Market Complex",
+    bn: "বিপণী কমপ্লেক্স",
+    category: "Commercial",
+  },
+  {
+    code: "GODOWN",
+    name: "Godown",
+    bn: "গুদাম",
+    category: "Commercial",
+  },
+  {
+    code: "BUSINESS_PREMISES",
+    name: "Business Premises",
+    bn: "ব্যবসায়িক প্রতিষ্ঠান",
+    category: "Commercial",
+  },
+  {
+    code: "PETROL_PUMP",
+    name: "Petrol Pump",
+    bn: "পেট্রোল পাম্প",
+    category: "Commercial",
+  },
+  {
+    code: "HOTEL",
+    name: "Hotel / Lodge",
+    bn: "হোটেল / লজ",
+    category: "Commercial",
+  },
 
-  { code: "PUKUR", name: "Pukur", category: "Water Body" },
-  { code: "DOBA", name: "Doba", category: "Water Body" },
-  { code: "KHAL", name: "Khal", category: "Water Body" },
-  { code: "NADI", name: "Nadi", category: "Water Body" },
-  { code: "BEEL", name: "Beel", category: "Water Body" },
-  { code: "JALKAR", name: "Jalkar", category: "Water Body" },
+  // =========================
+  // AGRICULTURAL
+  // =========================
+  { code: "SHALI", name: "Shali", bn: "শালি", category: "Agricultural" },
+  { code: "SALI", name: "Sali", bn: "শালী", category: "Agricultural" },
+  { code: "AUSH", name: "Aush", bn: "আউশ", category: "Agricultural" },
+  { code: "AMAN", name: "Aman", bn: "আমন", category: "Agricultural" },
+  { code: "BORO", name: "Boro", bn: "বোরো", category: "Agricultural" },
+  { code: "RABI", name: "Rabi", bn: "রবি", category: "Agricultural" },
+  { code: "PATIT", name: "Patit", bn: "পতিত", category: "Agricultural" },
+  { code: "DANGA", name: "Danga", bn: "ডাঙ্গা", category: "Agricultural" },
+  { code: "DALA", name: "Dala", bn: "দলা", category: "Agricultural" },
+  { code: "BAID", name: "Baid", bn: "বাইদ", category: "Agricultural" },
+  { code: "TANR", name: "Tanr", bn: "টাঁড়", category: "Agricultural" },
+  { code: "ATI", name: "Ati", bn: "আটি", category: "Agricultural" },
+  { code: "KANALI", name: "Kanali", bn: "কানালি", category: "Agricultural" },
+  { code: "SUNA", name: "Suna", bn: "সুনা", category: "Agricultural" },
+  { code: "SEED_BED", name: "Seed Bed", bn: "বীজতলা", category: "Agricultural" },
+  { code: "BETEL", name: "Betel Land", bn: "বরজ", category: "Agricultural" },
+  { code: "GRASS", name: "Grass Land", bn: "ঘাস জমি", category: "Agricultural" },
 
-  { code: "CHAR", name: "Char", category: "Riverine" },
-  { code: "WETLAND", name: "Wetland", category: "Water Body" },
+  // =========================
+  // PLANTATION
+  // =========================
+  { code: "BAGAN", name: "Bagan", bn: "বাগান", category: "Plantation" },
+  {
+    code: "ORCHARD",
+    name: "Orchard",
+    bn: "ফলবাগান",
+    category: "Plantation",
+  },
+  { code: "TEA", name: "Tea Garden", bn: "চা বাগান", category: "Plantation" },
+  {
+    code: "MANGO",
+    name: "Mango Orchard",
+    bn: "আমবাগান",
+    category: "Plantation",
+  },
+  {
+    code: "COCONUT",
+    name: "Coconut Garden",
+    bn: "নারকেল বাগান",
+    category: "Plantation",
+  },
+  {
+    code: "BAMBOO",
+    name: "Bamboo Grove",
+    bn: "বাঁশবাগান",
+    category: "Plantation",
+  },
 
-  { code: "JUNGLE", name: "Jungle", category: "Forest" },
-  { code: "FOREST", name: "Forest", category: "Forest" },
+  // =========================
+  // WATER BODY
+  // =========================
+  { code: "PUKUR", name: "Pukur", bn: "পুকুর", category: "Water Body" },
+  {
+    code: "PUKUR_PAR",
+    name: "Pukur Par",
+    bn: "পুকুরপাড়",
+    category: "Water Body",
+  },
+  { code: "DOBA", name: "Doba", bn: "ডোবা", category: "Water Body" },
+  { code: "KHAL", name: "Khal", bn: "খাল", category: "Water Body" },
+  { code: "NADI", name: "Nadi", bn: "নদী", category: "Water Body" },
+  { code: "BEEL", name: "Beel", bn: "বিল", category: "Water Body" },
+  { code: "JALKAR", name: "Jalkar", bn: "জলকর", category: "Water Body" },
+  {
+    code: "TANK",
+    name: "Tank Fishery",
+    bn: "মাছের ঘের",
+    category: "Water Body",
+  },
+  {
+    code: "WETLAND",
+    name: "Wetland",
+    bn: "জলাভূমি",
+    category: "Water Body",
+  },
 
-  { code: "RASTA", name: "Rasta", category: "Road" },
-  { code: "SARAK", name: "Sarak", category: "Road" },
-  { code: "FOOTPATH", name: "Footpath", category: "Road" },
+  // =========================
+  // RIVERINE
+  // =========================
+  { code: "CHAR", name: "Char", bn: "চর", category: "Riverine" },
 
-  { code: "GOCHARAN", name: "Gocharan", category: "Grazing" },
+  // =========================
+  // FOREST
+  // =========================
+  { code: "JUNGLE", name: "Jungle", bn: "জঙ্গল", category: "Forest" },
+  { code: "FOREST", name: "Forest", bn: "বনভূমি", category: "Forest" },
 
-  { code: "HAT", name: "Hat", category: "Market" },
-  { code: "BAZAR", name: "Bazar", category: "Market" },
+  // =========================
+  // ROAD
+  // =========================
+  { code: "RASTA", name: "Rasta", bn: "রাস্তা", category: "Road" },
+  { code: "SARAK", name: "Sarak", bn: "সড়ক", category: "Road" },
+  {
+    code: "FOOTPATH",
+    name: "Footpath",
+    bn: "পদচারী পথ",
+    category: "Road",
+  },
+  { code: "BRIDGE", name: "Bridge", bn: "সেতু", category: "Road" },
 
-  { code: "SMASHAN", name: "Smashan", category: "Cremation Ground" },
-  { code: "KABARSTAN", name: "Kabarstan", category: "Burial Ground" },
+  // =========================
+  // GRAZING
+  // =========================
+  {
+    code: "GOCHARAN",
+    name: "Gocharan",
+    bn: "গোচারণ",
+    category: "Grazing",
+  },
 
-  { code: "TEMPLE", name: "Temple", category: "Religious" },
-  { code: "MOSQUE", name: "Mosque", category: "Religious" },
-  { code: "CHURCH", name: "Church", category: "Religious" },
-  { code: "RELIGIOUS", name: "Religious Institution", category: "Religious" },
+  // =========================
+  // MARKET
+  // =========================
+  { code: "HAT", name: "Hat", bn: "হাট", category: "Market" },
+  { code: "BAZAR", name: "Bazar", bn: "বাজার", category: "Market" },
 
-  { code: "SCHOOL", name: "School", category: "Institutional" },
-  { code: "COLLEGE", name: "College", category: "Institutional" },
-  { code: "HEALTH", name: "Health Centre", category: "Institutional" },
-  { code: "ANGANWADI", name: "Anganwadi Centre", category: "Institutional" },
+  // =========================
+  // CREMATION & BURIAL
+  // =========================
+  {
+    code: "SMASHAN",
+    name: "Smashan",
+    bn: "শ্মশান",
+    category: "Cremation Ground",
+  },
+  {
+    code: "KABARSTAN",
+    name: "Kabarstan",
+    bn: "কবরস্থান",
+    category: "Burial Ground",
+  },
 
-  { code: "OFFICE", name: "Government Office", category: "Government" },
-  { code: "KHAS", name: "Khas Land", category: "Government" },
-  { code: "VESTED", name: "Vested Land", category: "Government" },
+  // =========================
+  // RELIGIOUS
+  // =========================
+  {
+    code: "TEMPLE",
+    name: "Temple",
+    bn: "মন্দির",
+    category: "Religious",
+  },
+  {
+    code: "MOSQUE",
+    name: "Mosque",
+    bn: "মসজিদ",
+    category: "Religious",
+  },
+  {
+    code: "CHURCH",
+    name: "Church",
+    bn: "গির্জা",
+    category: "Religious",
+  },
+  {
+    code: "RELIGIOUS",
+    name: "Religious Institution",
+    bn: "ধর্মীয় প্রতিষ্ঠান",
+    category: "Religious",
+  },
 
-  { code: "RAILWAY", name: "Railway", category: "Infrastructure" },
-  { code: "BUS_STAND", name: "Bus Stand", category: "Infrastructure" },
+  // =========================
+  // INSTITUTIONAL
+  // =========================
+  {
+    code: "SCHOOL",
+    name: "School",
+    bn: "বিদ্যালয়",
+    category: "Institutional",
+  },
+  {
+    code: "COLLEGE",
+    name: "College",
+    bn: "মহাবিদ্যালয়",
+    category: "Institutional",
+  },
+  {
+    code: "HEALTH",
+    name: "Health Centre",
+    bn: "স্বাস্থ্য কেন্দ্র",
+    category: "Institutional",
+  },
+  {
+    code: "ANGANWADI",
+    name: "Anganwadi Centre",
+    bn: "অঙ্গনওয়াড়ি কেন্দ্র",
+    category: "Institutional",
+  },
 
-  { code: "INDUSTRIAL", name: "Industrial", category: "Industrial" },
-  { code: "FACTORY", name: "Factory", category: "Industrial" },
-  { code: "BRICK_FIELD", name: "Brick Field", category: "Industrial" },
+  // =========================
+  // GOVERNMENT
+  // =========================
+  {
+    code: "KHAS",
+    name: "Khas Land",
+    bn: "খাস জমি",
+    category: "Government",
+  },
+  {
+    code: "VESTED",
+    name: "Vested Land",
+    bn: "ন্যস্ত জমি",
+    category: "Government",
+  },
+  {
+    code: "OFFICE",
+    name: "Government Office",
+    bn: "সরকারি অফিস",
+    category: "Government",
+  },
 
-  { code: "PARK", name: "Park", category: "Public Utility" },
-  { code: "PLAYGROUND", name: "Playground", category: "Public Utility" },
-  { code: "COMMUNITY_HALL", name: "Community Hall", category: "Public Utility" },
+  // =========================
+  // INFRASTRUCTURE
+  // =========================
+  {
+    code: "RAILWAY",
+    name: "Railway",
+    bn: "রেলওয়ে",
+    category: "Infrastructure",
+  },
+  {
+    code: "BUS_STAND",
+    name: "Bus Stand",
+    bn: "বাস স্ট্যান্ড",
+    category: "Infrastructure",
+  },
 
-  { code: "OTHER", name: "Other", category: "Miscellaneous" },
+  // =========================
+  // INDUSTRIAL
+  // =========================
+  {
+    code: "INDUSTRIAL",
+    name: "Industrial",
+    bn: "শিল্প এলাকা",
+    category: "Industrial",
+  },
+  {
+    code: "FACTORY",
+    name: "Factory",
+    bn: "কারখানা",
+    category: "Industrial",
+  },
+  {
+    code: "BRICK_FIELD",
+    name: "Brick Field",
+    bn: "ইটভাটা",
+    category: "Industrial",
+  },
+
+  // =========================
+  // PUBLIC UTILITY
+  // =========================
+  {
+    code: "PARK",
+    name: "Park",
+    bn: "উদ্যান",
+    category: "Public Utility",
+  },
+  {
+    code: "PLAYGROUND",
+    name: "Playground",
+    bn: "খেলার মাঠ",
+    category: "Public Utility",
+  },
+  {
+    code: "COMMUNITY_HALL",
+    name: "Community Hall",
+    bn: "কমিউনিটি হল",
+    category: "Public Utility",
+  },
+
+  // =========================
+  // MISC
+  // =========================
+  {
+    code: "OTHER",
+    name: "Other",
+    bn: "অন্যান্য",
+    category: "Miscellaneous",
+  },
 ];
