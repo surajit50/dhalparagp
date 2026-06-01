@@ -151,7 +151,7 @@ export default function LandDetailsSection() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-700 font-medium">
-                    Present Land Use *
+                    Present Status *
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
@@ -177,7 +177,7 @@ export default function LandDetailsSection() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-700 font-medium">
-                    Proposed Land Use *
+                    Proposed Status *
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
