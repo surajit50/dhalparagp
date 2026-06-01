@@ -2206,25 +2206,25 @@ export interface LandClassification {
   name: string;
   bn: string;
   category:
-    | "Homestead"
-    | "Agricultural"
-    | "Commercial"
-    | "Plantation"
-    | "Water Body"
-    | "Riverine"
-    | "Forest"
-    | "Road"
-    | "Grazing"
-    | "Market"
-    | "Religious"
-    | "Institutional"
-    | "Government"
-    | "Infrastructure"
-    | "Industrial"
-    | "Public Utility"
-    | "Burial Ground"
-    | "Cremation Ground"
-    | "Miscellaneous";
+  | "Homestead"
+  | "Agricultural"
+  | "Commercial"
+  | "Plantation"
+  | "Water Body"
+  | "Riverine"
+  | "Forest"
+  | "Road"
+  | "Grazing"
+  | "Market"
+  | "Religious"
+  | "Institutional"
+  | "Government"
+  | "Infrastructure"
+  | "Industrial"
+  | "Public Utility"
+  | "Burial Ground"
+  | "Cremation Ground"
+  | "Miscellaneous";
 }
 
 export const LAND_CLASSIFICATIONS: LandClassification[] = [
@@ -2300,6 +2300,7 @@ export const LAND_CLASSIFICATIONS: LandClassification[] = [
   { code: "SEED_BED", name: "Seed Bed", bn: "বীজতলা", category: "Agricultural" },
   { code: "BETEL", name: "Betel Land", bn: "বরজ", category: "Agricultural" },
   { code: "GRASS", name: "Grass Land", bn: "ঘাস জমি", category: "Agricultural" },
+  { code: "SEED_FARM", name: "Seed Farm", bn: "বীজ খামার", category: "Agricultural" },
 
   // =========================
   // PLANTATION
