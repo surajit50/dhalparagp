@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -17,26 +18,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { LandConversionApplicationInput } from "@/schema/land-conversion";
 import { LAND_CLASSIFICATIONS, villagenameOption } from "@/constants/index";
-
-const presentLandUseOptions = [
-  { value: "agriculture", label: "Agriculture" },
-  { value: "residential", label: "Residential" },
-  { value: "commercial", label: "Commercial" },
-  { value: "industrial", label: "Industrial" },
-] as const;
-
-const proposedLandUseOptions = [
-  { value: "residential", label: "Residential" },
-  { value: "commercial", label: "Commercial" },
-  { value: "industrial", label: "Industrial" },
-  { value: "institutional", label: "Institutional" },
-] as const;
 
 export default function LandDetailsSection() {
   const { control, setValue } =
     useFormContext<LandConversionApplicationInput>();
+
+  const [presentOpen, setPresentOpen] = useState(false);
+  const [proposedOpen, setProposedOpen] = useState(false);
 
   const handleMouzaChange = (value: string) => {
     const selectedVillage = villagenameOption.find((v) => v.value === value);
@@ -149,24 +144,58 @@ export default function LandDetailsSection() {
               control={control}
               name="presentLandUse"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-slate-700 font-medium pb-2">
                     Present Status *
                   </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
-                        <SelectValue placeholder="Select present land use" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {LAND_CLASSIFICATIONS.map((option) => (
-                        <SelectItem key={option.code} value={option.code}>
-                          {option.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={presentOpen} onOpenChange={setPresentOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={presentOpen}
+                          className={cn(
+                            "h-11 w-full justify-between bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500 font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? LAND_CLASSIFICATIONS.find((opt) => opt.code === field.value)?.name
+                            : "Select present land use"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search present land use..." />
+                        <CommandList>
+                          <CommandEmpty>No land use found.</CommandEmpty>
+                          <CommandGroup>
+                            {LAND_CLASSIFICATIONS.map((option) => (
+                              <CommandItem
+                                key={option.code}
+                                value={option.name}
+                                onSelect={() => {
+                                  field.onChange(option.code);
+                                  setPresentOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    option.code === field.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {option.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
@@ -175,24 +204,58 @@ export default function LandDetailsSection() {
               control={control}
               name="proposedLandUse"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-slate-700 font-medium pb-2">
                     Proposed Status *
                   </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
-                        <SelectValue placeholder="Select proposed land use" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {LAND_CLASSIFICATIONS.map((option) => (
-                        <SelectItem key={option.code} value={option.code}>
-                          {option.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={proposedOpen} onOpenChange={setProposedOpen}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={proposedOpen}
+                          className={cn(
+                            "h-11 w-full justify-between bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500 font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? LAND_CLASSIFICATIONS.find((opt) => opt.code === field.value)?.name
+                            : "Select proposed land use"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search proposed land use..." />
+                        <CommandList>
+                          <CommandEmpty>No land use found.</CommandEmpty>
+                          <CommandGroup>
+                            {LAND_CLASSIFICATIONS.map((option) => (
+                              <CommandItem
+                                key={option.code}
+                                value={option.name}
+                                onSelect={() => {
+                                  field.onChange(option.code);
+                                  setProposedOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    option.code === field.value ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {option.name}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage className="text-xs" />
                 </FormItem>
               )}
@@ -203,3 +266,4 @@ export default function LandDetailsSection() {
     </Card>
   );
 }
+

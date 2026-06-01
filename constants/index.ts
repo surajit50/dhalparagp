@@ -2203,6 +2203,7 @@ export const supplytermand = [
 export * from "./pond-lease-terms";
 export const LAND_CLASSIFICATIONS = [
   { code: "BASTU", name: "Bastu", category: "Homestead" },
+  { code: "COMMERCIAL_BASTU", name: "Commercial Bastu", category: "Homestead" },
   { code: "VITI", name: "Viti", category: "Homestead" },
 
   { code: "SALI", name: "Sali", category: "Agricultural" },

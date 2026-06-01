@@ -1512,3 +1512,70 @@ export async function getIssuedNOCByNo(certificateNo: string): Promise<
     return { success: false, error: "Failed to verify certificate" }
   }
 }
+
+// ─── DASHBOARD STATS ─────────────────────────────────────────────────────────
+
+export async function getLandConversionDashboardStats(): Promise<ActionResult<{
+  total: number;
+  pendingVerification: number;
+  pendingInspection: number;
+  pendingApproval: number;
+  approved: number;
+  rejected: number;
+}>> {
+  try {
+    const counts = await db.landConversionApplication.groupBy({
+      by: ['status'],
+      _count: {
+        id: true,
+      },
+    });
+
+    let total = 0;
+    let pendingVerification = 0;
+    let pendingInspection = 0;
+    let pendingApproval = 0;
+    let approved = 0;
+    let rejected = 0;
+
+    counts.forEach((c) => {
+      const count = c._count.id;
+      total += count;
+      switch (c.status) {
+        case LandConversionStatus.SUBMITTED:
+        case LandConversionStatus.VERIFICATION_PENDING:
+          pendingVerification += count;
+          break;
+        case LandConversionStatus.INSPECTION_PENDING:
+          pendingInspection += count;
+          break;
+        case LandConversionStatus.APPROVAL_PENDING:
+          pendingApproval += count;
+          break;
+        case LandConversionStatus.APPROVED:
+          approved += count;
+          break;
+        case LandConversionStatus.VERIFICATION_REJECTED:
+        case LandConversionStatus.INSPECTION_REJECTED:
+        case LandConversionStatus.REJECTED:
+          rejected += count;
+          break;
+      }
+    });
+
+    return {
+      success: true,
+      data: {
+        total,
+        pendingVerification,
+        pendingInspection,
+        pendingApproval,
+        approved,
+        rejected,
+      }
+    };
+  } catch (error) {
+    console.error("Error fetching dashboard stats:", error);
+    return { success: false, error: "Failed to fetch dashboard statistics" };
+  }
+}
