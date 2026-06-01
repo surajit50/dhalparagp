@@ -196,7 +196,7 @@ async function generateNocPdf(noc: IssuedNOC) {
   doc.setFont("times", "bold");
   doc.setFontSize(10);
   doc.setTextColor(0, 0, 0);
-  doc.text("TO WHOMSOEVER IT MAY CONCERN", pw / 2, y, { align: "center" });
+  doc.text("TO WHOM IT MAY CONCERN", pw / 2, y, { align: "center" });
   y += 7;
 
   // ─── BODY PARAGRAPHS ─────────────────────────────────────────
@@ -235,8 +235,8 @@ async function generateNocPdf(noc: IssuedNOC) {
     y += 5;
 
     // Column widths summing exactly to tw (170 mm)
-    const cols = ["#", "Mouza", "JL No", "Khatian", "Plot No", "Area (Dec)", "Present Use", "Proposed Use"];
-    const cw   = [8, 25, 14, 22, 18, 18, 32.5, 32.5]; // total = 170
+    const cols = ["#", "Mouza", "JL No", "Khatian", "Plot No", "Area (Dec)", "Present Status", "Proposed Status"];
+    const cw   = [8, 35, 14, 22, 16, 16, 30, 30]; // total = 170
     const rh   = 7;
 
     // Header row – dark background
