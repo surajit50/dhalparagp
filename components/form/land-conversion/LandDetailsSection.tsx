@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LandConversionApplicationInput } from "@/schema/land-conversion";
-import { villagenameOption } from "@/constants/index";
+import { LAND_CLASSIFICATIONS, villagenameOption } from "@/constants/index";
 
 const presentLandUseOptions = [
   { value: "agriculture", label: "Agriculture" },
@@ -160,9 +160,9 @@ export default function LandDetailsSection() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {presentLandUseOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                      {LAND_CLASSIFICATIONS.map((option) => (
+                        <SelectItem key={option.code} value={option.code}>
+                          {option.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -186,9 +186,9 @@ export default function LandDetailsSection() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {proposedLandUseOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                      {LAND_CLASSIFICATIONS.map((option) => (
+                        <SelectItem key={option.code} value={option.code}>
+                          {option.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
