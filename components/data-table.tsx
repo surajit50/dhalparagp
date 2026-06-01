@@ -10,8 +10,16 @@ import {
   type SortingState,
   getFilteredRowModel,
   getPaginationRowModel,
+  type VisibilityState,
 } from "@tanstack/react-table"
 import * as XLSX from "xlsx"
+
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -27,6 +35,7 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Settings2,
 } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
@@ -48,6 +57,7 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = useState("")
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
   const table = useReactTable({
     data,
@@ -59,10 +69,12 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       globalFilter,
       rowSelection,
+      columnVisibility,
     },
     enableRowSelection: true,
   })
@@ -100,12 +112,38 @@ export function DataTable<TData, TValue>({
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
           {renderBulkActions && renderBulkActions(table)}
           
-          <span className="text-sm text-muted-foreground hidden sm:block">
+          <span className="text-sm text-muted-foreground hidden sm:block whitespace-nowrap">
             {table.getFilteredRowModel().rows.length} records
           </span>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="gap-2 rounded-lg">
+                <Settings2 className="h-4 w-4" />
+                <span className="hidden sm:inline">View</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[220px] max-h-[350px] overflow-y-auto custom-scrollbar">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id.replace(/([A-Z])/g, " $1").trim()}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button
             onClick={handleExcelExport}
@@ -113,7 +151,7 @@ export function DataTable<TData, TValue>({
             className="gap-2 rounded-lg"
           >
             <FileDown className="h-4 w-4" />
-            Export
+            <span className="hidden sm:inline">Export</span>
           </Button>
         </div>
       </div>

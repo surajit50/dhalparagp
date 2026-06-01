@@ -12,6 +12,8 @@ import {
   AlertCircle,
   CheckCircle2,
   AlertTriangle,
+  CalendarDays,
+  FileQuestion,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +54,7 @@ type ActionPlanWithWorks = ApprovedActionPlanDetails & {
 };
 
 async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDetails>) {
-  const res = await fetch(`/api/actionplans/${id}`, {
+  const res = await fetch(`/api/approved-action-plans/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -105,6 +107,7 @@ interface InlineEditActionPlanTableProps {
 
 export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTableProps) {
   const router = useRouter();
+  const [selectedYear, setSelectedYear] = useState<string>("");
   const [editingPlan, setEditingPlan] = useState<ActionPlanWithWorks | null>(null);
   const [formData, setFormData] = useState<Partial<ApprovedActionPlanDetails>>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -252,19 +255,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         </div>
       ),
     },
-    {
-      accessorKey: "financialYear",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="px-0 hover:bg-transparent"
-        >
-          Financial Year <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => <Badge variant="outline">{row.original.financialYear}</Badge>,
-    },
+    
     {
       accessorKey: "themeName",
       header: "Theme",
@@ -302,29 +293,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         </div>
       ),
     },
-    {
-      accessorKey: "generalFund",
-      header: "General Fund (₹)",
-      cell: ({ row }) => (
-        <div className="text-right">
-          ₹{row.original.generalFund?.toLocaleString("en-IN") || 0}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "scFund",
-      header: "SC Fund (₹)",
-      cell: ({ row }) => (
-        <div className="text-right">₹{row.original.scFund?.toLocaleString("en-IN") || 0}</div>
-      ),
-    },
-    {
-      accessorKey: "stFund",
-      header: "ST Fund (₹)",
-      cell: ({ row }) => (
-        <div className="text-right">₹{row.original.stFund?.toLocaleString("en-IN") || 0}</div>
-      ),
-    },
+    
     {
       id: "fundShortfall",
       header: "Fund Shortfall (₹)",
@@ -378,119 +347,10 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       header: "Upasamiti",
       cell: ({ row }) => <div>{row.original.upasamiti?.replace(/_/g, " ") || "-"}</div>,
     },
-    {
-      accessorKey: "focusArea",
-      header: "Focus Area",
-      cell: ({ row }) => <div>{row.original.focusArea || "-"}</div>,
-    },
-    {
-      accessorKey: "workType",
-      header: "Work Type",
-      cell: ({ row }) => <div>{row.original.workType || "-"}</div>,
-    },
-    {
-      accessorKey: "componentType",
-      header: "Component",
-      cell: ({ row }) => <div>{row.original.componentType || "-"}</div>,
-    },
-    {
-      accessorKey: "gramSansad",
-      header: "Gram Sansad",
-      cell: ({ row }) => <div>{row.original.gramSansad || "-"}</div>,
-    },
-    {
-      accessorKey: "sdgs",
-      header: "SDGs",
-      cell: ({ row }) => (
-        <div className="max-w-[150px] truncate" title={row.original.sdgs ?? ""}>
-          {row.original.sdgs || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "beneficiariesSC",
-      header: "Beneficiaries (SC)",
-      cell: ({ row }) => <div className="text-right">{row.original.beneficiariesSC || 0}</div>,
-    },
-    {
-      accessorKey: "beneficiariesST",
-      header: "Beneficiaries (ST)",
-      cell: ({ row }) => <div className="text-right">{row.original.beneficiariesST || 0}</div>,
-    },
-    {
-      accessorKey: "beneficiariesGen",
-      header: "Beneficiaries (Gen)",
-      cell: ({ row }) => <div className="text-right">{row.original.beneficiariesGen || 0}</div>,
-    },
-    {
-      accessorKey: "unitType",
-      header: "Unit Type",
-      cell: ({ row }) => <div>{row.original.unitType || "-"}</div>,
-    },
-    {
-      accessorKey: "totalUnit",
-      header: "Total Unit",
-      cell: ({ row }) => <div className="text-right">{row.original.totalUnit || 0}</div>,
-    },
-    {
-      accessorKey: "implementedBy",
-      header: "Implemented By",
-      cell: ({ row }) => <div>{row.original.implementedBy || "-"}</div>,
-    },
-    {
-      accessorKey: "remarks",
-      header: "Remarks",
-      cell: ({ row }) => (
-        <div
-          className="max-w-[200px] text-sm text-muted-foreground line-clamp-2"
-          title={row.original.remarks ?? ""}
-        >
-          {row.original.remarks || "-"}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "isPublish",
-      header: "Published",
-      cell: ({ row }) =>
-        row.original.isPublish ? (
-          <Badge className="bg-green-100 text-green-700">Published</Badge>
-        ) : (
-          <Badge variant="outline" className="text-amber-600">
-            Draft
-          </Badge>
-        ),
-    },
-    {
-      id: "progress",
-      header: "Progress",
-      cell: ({ row }) => {
-        const firstWork = row.original.WorksDetail?.[0];
-        const hasEstimate = (firstWork?._count?.workEstimateItems || 0) > 0;
-        const hasMB = (firstWork?._count?.workMeasurementBooks || 0) > 0;
-        const hasBillAbstract = (firstWork?._count?.workBillAbstracts || 0) > 0;
-
-        return (
-          <div className="flex flex-col gap-1.5 min-w-[100px]">
-            <Badge
-              variant={hasEstimate ? "default" : "outline"}
-              className={hasEstimate ? "bg-orange-500" : ""}
-            >
-              <Calculator className="h-3 w-3 mr-1" /> {hasEstimate ? "Estimate" : "No Est."}
-            </Badge>
-            <Badge variant={hasMB ? "default" : "outline"} className={hasMB ? "bg-purple-500" : ""}>
-              <BookOpen className="h-3 w-3 mr-1" /> {hasMB ? "MB" : "No MB"}
-            </Badge>
-            <Badge
-              variant={hasBillAbstract ? "default" : "outline"}
-              className={hasBillAbstract ? "bg-green-500" : ""}
-            >
-              <FileText className="h-3 w-3 mr-1" /> {hasBillAbstract ? "Bill" : "No Bill"}
-            </Badge>
-          </div>
-        );
-      },
-    },
+    
+    
+    
+    
     {
       id: "actions",
       header: "Actions",
@@ -509,9 +369,54 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
   ];
 
   // ----------------------------- EDIT SHEET ----------------------------------
+  const filteredData = selectedYear ? data.filter(d => d.financialYear === selectedYear) : [];
+
   return (
-    <>
-      <DataTable columns={columns} data={data} />
+    <div className="space-y-8">
+      {/* Financial Year Selector */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/5 dark:via-purple-500/5 dark:to-pink-500/5 p-6 rounded-2xl border border-indigo-100 dark:border-zinc-800 transition-all duration-300 hover:shadow-md">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="bg-white dark:bg-zinc-900 p-3 rounded-xl shadow-sm border border-indigo-50 dark:border-zinc-800 text-indigo-600 dark:text-indigo-400">
+            <CalendarDays className="w-6 h-6" />
+          </div>
+          <div>
+            <Label className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              Financial Year
+            </Label>
+            <p className="text-sm text-muted-foreground mt-0.5">Select a year to view the filtered data</p>
+          </div>
+        </div>
+        
+        <Select value={selectedYear} onValueChange={setSelectedYear}>
+          <SelectTrigger className="w-full sm:w-[280px] h-12 bg-white dark:bg-zinc-900 border-indigo-100 dark:border-zinc-700 shadow-sm rounded-xl text-base font-medium focus:ring-indigo-500 transition-all">
+            <SelectValue placeholder="Choose financial year..." />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl border-indigo-100 dark:border-zinc-800 shadow-lg">
+            {FINANCIAL_YEARS.map((year) => (
+              <SelectItem key={year} value={year} className="rounded-lg my-1 cursor-pointer hover:bg-indigo-50 dark:hover:bg-zinc-800 py-2.5">
+                {year}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {selectedYear ? (
+        <div className="animate-in slide-in-from-bottom-4 fade-in duration-500">
+          <DataTable columns={columns} data={filteredData} />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-24 px-4 border-2 border-dashed border-indigo-100 dark:border-zinc-800 rounded-3xl bg-indigo-50/30 dark:bg-zinc-900/30 animate-in fade-in duration-500">
+          <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl shadow-sm border border-indigo-50 dark:border-zinc-800 mb-6 relative">
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-indigo-500 rounded-full animate-ping opacity-20" />
+            <FileQuestion className="w-12 h-12 text-indigo-400" strokeWidth={1.5} />
+          </div>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">No Year Selected</h3>
+          <p className="text-muted-foreground text-center max-w-md text-lg">
+            Please choose a financial year from the selector above to explore the approved action plans.
+          </p>
+        </div>
+      )}
 
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto">
@@ -962,6 +867,6 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
           </SheetFooter>
         </SheetContent>
       </Sheet>
-    </>
+    </div>
   );
 }

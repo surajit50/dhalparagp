@@ -6,7 +6,8 @@ export async function GET(
   context: any
 ) {
   try {
-    const id = context?.params?.id as string | undefined;
+    const params = await context.params;
+    const id = params?.id as string | undefined;
     if (!id) {
       return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
@@ -23,3 +24,27 @@ export async function GET(
   }
 }
 
+export async function PATCH(
+  request: Request,
+  context: any
+) {
+  try {
+    const params = await context.params;
+    const id = params?.id as string | undefined;
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
+
+    const data = await request.json();
+
+    const updatedPlan = await db.approvedActionPlanDetails.update({
+      where: { id },
+      data,
+    });
+
+    return NextResponse.json(updatedPlan);
+  } catch (error: any) {
+    console.error("/api/approved-action-plans/[id] PATCH error", error);
+    return NextResponse.json({ error: "Failed to update plan" }, { status: 500 });
+  }
+}

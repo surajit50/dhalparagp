@@ -4,12 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { columns, WarishApplication } from "./warish-columns";
 import { DataTable } from "@/components/data-table";
 import { Info, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
+import YearFilter from "./year-filter";
 
-const WarishRenewPage = async () => {
+const WarishRenewPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ year?: string }>;
+}) => {
   const today = new Date();
   const currentYear = today.getFullYear().toString();
+  
+  // Await searchParams as required in Next.js 15+
+  const params = await searchParams;
+  const selectedYear = params.year || "all";
 
-  const warishApplications = await db.warishApplication.findMany({
+  // Fetch unique years for the filter dropdown
+  const distinctYears = await db.warishApplication.findMany({
     where: {
       warishApplicationStatus: "approved",
       OR: [
@@ -17,9 +27,34 @@ const WarishRenewPage = async () => {
         { approvalYear: { not: currentYear } },
       ],
     },
+    select: { approvalYear: true },
+    distinct: ["approvalYear"],
+  });
+
+  const availableYears = distinctYears
+    .map((y) => y.approvalYear)
+    .filter((y): y is string => !!y)
+    .sort((a, b) => b.localeCompare(a));
+
+  const whereClause: any = {
+    warishApplicationStatus: "approved",
+    OR: [
+      { renewdate: { lte: today } },
+      { approvalYear: { not: currentYear } },
+    ],
+  };
+
+  if (selectedYear !== "all") {
+    whereClause.approvalYear = selectedYear;
+  }
+
+  const warishApplications = await db.warishApplication.findMany({
+    where: whereClause,
     select: {
       id: true,
       applicantName: true,
+      acknowlegment: true,
+      nameOfDeceased: true,
       warishRefNo: true,
       warishRefDate: true,
       renewdate: true,
@@ -34,6 +69,8 @@ const WarishRenewPage = async () => {
   const typedWarishApplications: WarishApplication[] = warishApplications.map(
     (app) => ({
       ...app,
+      acknowlegment: app.acknowlegment,
+      nameOfDeceased: app.nameOfDeceased,
       warishRefNo: app.warishRefNo || undefined,
       warishRefDate: app.warishRefDate || undefined,
       renewdate: app.renewdate || undefined,
@@ -55,7 +92,7 @@ const WarishRenewPage = async () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 Renewal Management
@@ -64,11 +101,16 @@ const WarishRenewPage = async () => {
                 Manage application renewals and track renewal status
               </p>
             </div>
-            <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
-              <RefreshCw className="h-5 w-5 text-orange-500" />
-              <span className="text-sm font-medium text-gray-700">
-                Last updated: {new Date().toLocaleTimeString()}
-              </span>
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <div className="bg-white px-4 py-2 rounded-lg shadow-sm">
+                <YearFilter years={availableYears} />
+              </div>
+              <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg shadow-sm">
+                <RefreshCw className="h-5 w-5 text-orange-500" />
+                <span className="text-sm font-medium text-gray-700">
+                  Last updated: {new Date().toLocaleTimeString()}
+                </span>
+              </div>
             </div>
           </div>
         </div>

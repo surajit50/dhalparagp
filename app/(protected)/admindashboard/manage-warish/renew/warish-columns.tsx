@@ -11,7 +11,10 @@ import { Calendar, User, FileText, RefreshCw, AlertTriangle, CheckCircle } from 
 
 export type WarishApplication = {
   id: string;
+
   applicantName: string;
+  nameOfDeceased:string;
+  acknowlegment: string;
   warishRefNo?: string | null;
   warishRefDate?: Date | null;
   renewdate?: Date | null;
@@ -162,6 +165,30 @@ export const columns: ColumnDef<WarishApplication>[] = [
           <p className="font-medium text-gray-900">{row.original.applicantName}</p>
           <p className="text-sm text-gray-500">Applicant</p>
         </div>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "acknowlegment",
+    header: "Acknowledgment Number",
+    cell: ({ row }) => (
+      <div className="flex items-center space-x-2">
+        <FileText className="h-4 w-4 text-gray-400" />
+        <span className="font-mono text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">
+          {row.original.acknowlegment}
+        </span>
+      </div>
+    ),
+  },
+   {
+    accessorKey: "acknowlegment",
+    header: "Deasead Name",
+    cell: ({ row }) => (
+      <div className="flex items-center space-x-2">
+        <FileText className="h-4 w-4 text-gray-400" />
+        <span className="font-mono text-sm bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">
+          {row.original.nameOfDeceased}
+        </span>
       </div>
     ),
   },
