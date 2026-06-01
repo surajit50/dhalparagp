@@ -286,7 +286,7 @@ export async function generateBirthReportPDF(data: BirthVerificationReportData) 
   doc.text("Yours faithfully,", signatureCenterX, cursorY, { align: "center" });
   cursorY += 50;
 
-  doc.text("Pradhan", signatureCenterX, cursorY, { align: "center" });
+  doc.text("Sub-Register", signatureCenterX, cursorY, { align: "center" });
   doc.setFont("times", "normal");
   doc.setFontSize(10);
   doc.setTextColor(COLORS.gray);
