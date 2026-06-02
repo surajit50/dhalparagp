@@ -8,15 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Search, Printer, FileText, Download } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Search, Printer, FileText, Download, Home, User, MapPin, Building, Calendar, FileCheck, CheckCircle2, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { villagenameOption } from "@/constants";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useRef, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import EnquiryReportPrintTemplate from "./EnquiryReportPrintTemplate";
 
 export default function EnquiryReportClient() {
   const searchParams = useSearchParams();
@@ -40,7 +39,7 @@ export default function EnquiryReportClient() {
   const [district, setDistrict] = useState("Dakshin Dinajpur");
   const [policeStation, setPoliceStation] = useState("Hili");
   const [gramPanchayat, setGramPanchayat] = useState("Dhalpara");
-  
+
   const getInitialDocs = (type: "combined" | "residence") => [
     { id: "aadhaar", label: "Aadhaar Card", checked: true, details: "", placeholder: "Aadhaar No..." },
     { id: "voter_card", label: "Voter ID Card", checked: false, details: "", placeholder: "EPIC No..." },
@@ -52,14 +51,12 @@ export default function EnquiryReportClient() {
   ];
 
   const [docs, setDocs] = useState(getInitialDocs("combined"));
-  
   const printRef = useRef<HTMLDivElement>(null);
 
   const handleSearch = async () => {
     if (!searchRefNo.trim()) return;
     setLoading(true);
     try {
-      // Escape special characters like '(' and ')' for MongoDB regex search
       const escapedRefNo = searchRefNo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const results = await searchWarishApplications({ certificateNo: escapedRefNo });
       if (results && results.length > 0) {
@@ -68,7 +65,6 @@ export default function EnquiryReportClient() {
         setFatherName(results[0].fatherName || results[0].spouseName || "");
         setVillageName(results[0].villageName || "");
         setPostOffice(results[0].postOffice || "");
-        // Also fetch any saved report for this application
         try {
           const savedReport = await getEnquiryReport(results[0].id);
           if (savedReport) {
@@ -114,7 +110,6 @@ export default function EnquiryReportClient() {
 
     if (refNoParam && !applicationData && !loading && !searchRefNo) {
       setSearchRefNo(refNoParam);
-      // Create a specific async IIFE to avoid using stale state in handleSearch
       const doSearch = async () => {
         setLoading(true);
         try {
@@ -162,7 +157,6 @@ export default function EnquiryReportClient() {
       };
       doSearch();
     } else if (reportIdParam && !loading) {
-      // Auto-load standalone report
       const doLoadStandalone = async () => {
         setLoading(true);
         try {
@@ -204,10 +198,7 @@ export default function EnquiryReportClient() {
     }
   }, [searchParams]);
 
-
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
   const [saving, setSaving] = useState(false);
 
@@ -250,17 +241,16 @@ export default function EnquiryReportClient() {
         orientation: "portrait",
         unit: "mm",
         format: "a4",
-        compress: true // Enable jsPDF compression
+        compress: true
       });
       const width = pdf.internal.pageSize.getWidth();
       const height = pdf.internal.pageSize.getHeight();
 
-      // Temporarily ensure it's visible for canvas
       const originalDisplay = printRef.current.style.display;
       printRef.current.style.display = "block";
 
       const canvas = await html2canvas(printRef.current, {
-        scale: 1.5, // Slightly lower scale to reduce memory and size, while keeping text sharp
+        scale: 1.5,
         useCORS: true,
         logging: false,
         backgroundColor: "#ffffff",
@@ -268,14 +258,12 @@ export default function EnquiryReportClient() {
 
       printRef.current.style.display = originalDisplay;
 
-      // Use JPEG with 0.8 quality instead of PNG to shrink file size significantly
       const imgData = canvas.toDataURL("image/jpeg", 0.8);
       const imgProps = pdf.getImageProperties(imgData);
       const ratio = imgProps.width / imgProps.height;
       const pdfHeight = height;
       const pdfWidth = height * ratio;
 
-      // Add image as JPEG and use the FAST compression alias
       pdf.addImage(imgData, "JPEG", (width - pdfWidth) / 2, 0, pdfWidth, pdfHeight, undefined, 'FAST');
       pdf.save(`Enquiry_Report_${applicationData?.acknowledgementNo || 'Generated'}.pdf`);
     } catch (error) {
@@ -307,57 +295,115 @@ export default function EnquiryReportClient() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
+    <div className="container mx-auto px-4 py-6 md:px-6 lg:py-10 space-y-8 print:space-y-0 print:p-0">
       {/* NO-PRINT SECTION: Controls and Form */}
       <div className="print:hidden space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground flex items-center gap-2">
-              <FileText className="h-8 w-8 text-blue-600" />
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent flex items-center gap-2">
+              <FileText className="h-7 w-7 text-blue-600" />
               Generate Enquiry Report
             </h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              Generate a Permanent Residence Enquiry Report or a Combined Report with Legal Heirs.
+            <p className="text-sm text-muted-foreground mt-1 max-w-xl">
+              Create a Permanent Residence Report or a combined report with Legal Heirs information.
             </p>
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Report Type & Search</CardTitle>
-            <CardDescription>Select report type and optionally search for a Warish Reference Number to auto-fill details (Combined only).</CardDescription>
+        {/* Report Type Selection Card */}
+        <Card className="border-0 shadow-lg overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-30 pointer-events-none" />
+          <CardHeader className="pb-2 relative z-10">
+            <CardTitle className="text-xl">Report Type</CardTitle>
+            <CardDescription>Select the type of report you need (Switching will reset the form)</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Report Type</Label>
-              <RadioGroup 
-                value={reportType} 
-                onValueChange={handleReportTypeChange}
-                className="flex flex-col sm:flex-row gap-4"
+          <CardContent className="space-y-6 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div 
+                className={`group relative p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer hover:shadow-md ${
+                  reportType === 'combined' 
+                    ? 'border-blue-500 bg-gradient-to-br from-blue-50/80 to-white shadow-md' 
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/10'
+                }`}
+                onClick={() => handleReportTypeChange('combined')}
               >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="combined" id="r-combined" />
-                  <Label htmlFor="r-combined">Combined (Residence & Warish)</Label>
+                {reportType === 'combined' && (
+                  <div className="absolute top-3 right-3">
+                    <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                  </div>
+                )}
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-xl transition-colors ${reportType === 'combined' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600'}`}>
+                    <FileText className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`font-semibold text-lg ${reportType === 'combined' ? 'text-blue-900' : 'text-gray-800'}`}>Combined Report</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Includes both Residence &amp; Warish details. Requires a valid Warish Reference Number.
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="residence" id="r-residence" />
-                  <Label htmlFor="r-residence">Permanent Residence Only</Label>
+              </div>
+
+              <div 
+                className={`group relative p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer hover:shadow-md ${
+                  reportType === 'residence' 
+                    ? 'border-blue-500 bg-gradient-to-br from-blue-50/80 to-white shadow-md' 
+                    : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/10'
+                }`}
+                onClick={() => handleReportTypeChange('residence')}
+              >
+                {reportType === 'residence' && (
+                  <div className="absolute top-3 right-3">
+                    <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                  </div>
+                )}
+                <div className="flex items-start gap-4">
+                  <div className={`p-3 rounded-xl transition-colors ${reportType === 'residence' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600'}`}>
+                    <Home className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className={`font-semibold text-lg ${reportType === 'residence' ? 'text-blue-900' : 'text-gray-800'}`}>Permanent Residence Only</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Generate a standalone Permanent Residence Report without Warish data.
+                    </p>
+                  </div>
                 </div>
-              </RadioGroup>
+              </div>
             </div>
 
             {reportType === 'combined' && (
-              <div className="space-y-2">
-                <Label>Enter Warish Reference Number</Label>
-                <div className="flex gap-4 max-w-md">
-                  <Input 
-                    placeholder="e.g. 095/DGP/(LH)/2025" 
-                    value={searchRefNo} 
-                    onChange={(e) => setSearchRefNo(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  />
-                  <Button onClick={handleSearch} disabled={loading || !searchRefNo}>
-                    {loading ? "Searching..." : <><Search className="w-4 h-4 mr-2" /> Search</>}
+              <div className="pt-4 border-t border-gray-100 animate-in fade-in-50 duration-300">
+                <div className="flex flex-col sm:flex-row gap-4 items-end">
+                  <div className="flex-1 space-y-2">
+                    <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                      <Search className="w-4 h-4 text-blue-500" />
+                      Warish Application Reference Number
+                    </Label>
+                    <Input 
+                      placeholder="e.g. 095/DGP/(LH)/2025" 
+                      value={searchRefNo} 
+                      onChange={(e) => setSearchRefNo(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition-shadow"
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleSearch} 
+                    disabled={loading || !searchRefNo} 
+                    className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 shadow-sm min-w-[130px]"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Searching
+                      </>
+                    ) : (
+                      <>
+                        <Search className="mr-2 h-4 w-4" />
+                        Search
+                      </>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -366,26 +412,41 @@ export default function EnquiryReportClient() {
         </Card>
 
         {(reportType === 'residence' || (reportType === 'combined' && applicationData)) && (
-          <Card className="border-blue-200 shadow-md">
-            <CardHeader className="bg-blue-50/50 border-b">
-              <CardTitle className="text-lg">Report Details</CardTitle>
+          <Card className="border-0 shadow-lg overflow-hidden transition-all duration-500">
+            <CardHeader className="bg-gradient-to-r from-blue-50/30 to-transparent border-b border-blue-100">
+              <CardTitle className="text-xl text-gray-800">Report Details</CardTitle>
             </CardHeader>
             <CardContent className="pt-6 space-y-8">
               
               {/* SECTION: Subject Details */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider border-b border-blue-100 pb-2">Applicant / Subject Details</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-blue-50/30 p-4 rounded-lg">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
+                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
+                    <User className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">Applicant / Subject Details</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                   <div className="space-y-2">
-                    <Label>Person Name</Label>
-                    <Input value={personName} onChange={(e) => setPersonName(e.target.value)} className="bg-white" />
+                    <Label className="text-gray-600 text-sm">Full Name</Label>
+                    <Input 
+                      value={personName} 
+                      onChange={(e) => setPersonName(e.target.value)} 
+                      placeholder="Enter full name"
+                      className="border-gray-200 focus:border-blue-400 transition-colors"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Father/Husband Name</Label>
-                    <Input value={fatherName} onChange={(e) => setFatherName(e.target.value)} className="bg-white" />
+                    <Label className="text-gray-600 text-sm">Father / Husband Name</Label>
+                    <Input 
+                      value={fatherName} 
+                      onChange={(e) => setFatherName(e.target.value)} 
+                      placeholder="Father's or husband's name"
+                      className="border-gray-200 focus:border-blue-400 transition-colors"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Village</Label>
+                    <Label className="text-gray-600 text-sm">Village</Label>
                     <Select 
                       value={villageName} 
                       onValueChange={(val) => {
@@ -397,7 +458,7 @@ export default function EnquiryReportClient() {
                         }
                       }}
                     >
-                      <SelectTrigger className="bg-white">
+                      <SelectTrigger className="border-gray-200 focus:border-blue-400">
                         <SelectValue placeholder="Select Village" />
                       </SelectTrigger>
                       <SelectContent>
@@ -410,114 +471,221 @@ export default function EnquiryReportClient() {
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label>Post Office</Label>
-                    <Input value={postOffice} onChange={(e) => setPostOffice(e.target.value)} className="bg-white" />
+                    <Label className="text-gray-600 text-sm flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5" /> Post Office
+                    </Label>
+                    <Input 
+                      value={postOffice} 
+                      onChange={(e) => setPostOffice(e.target.value)} 
+                      placeholder="Post office name"
+                      className="border-gray-200 focus:border-blue-400 transition-colors"
+                    />
                   </div>
                 </div>
               </div>
 
               {/* SECTION: Memo Details */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider border-b border-blue-100 pb-2">Memo & Reference Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
+                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
+                    <Calendar className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">Memo &amp; Reference Information</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                   <div className="space-y-2">
-                    <Label>Memo No</Label>
-                    <Input value={memoNo} onChange={(e) => setMemoNo(e.target.value)} placeholder="Leave blank for handwriting" />
+                    <Label className="text-gray-600 text-sm">Memo No.</Label>
+                    <Input 
+                      value={memoNo} 
+                      onChange={(e) => setMemoNo(e.target.value)} 
+                      placeholder="Leave blank for handwriting"
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Date</Label>
-                    <Input type="date" value={memoDate} onChange={(e) => setMemoDate(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">Memo Date</Label>
+                    <Input 
+                      type="date" 
+                      value={memoDate} 
+                      onChange={(e) => setMemoDate(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Reference Memo No</Label>
-                    <Input value={refMemoNo} onChange={(e) => setRefMemoNo(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">Reference Memo No.</Label>
+                    <Input 
+                      value={refMemoNo} 
+                      onChange={(e) => setRefMemoNo(e.target.value)} 
+                      placeholder="Reference memo number"
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Reference Memo Date</Label>
-                    <Input type="date" value={refMemoDate} onChange={(e) => setRefMemoDate(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">Reference Memo Date</Label>
+                    <Input 
+                      type="date" 
+                      value={refMemoDate} 
+                      onChange={(e) => setRefMemoDate(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                 </div>
               </div>
 
               {/* SECTION: Office Details */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider border-b border-blue-100 pb-2">Office Information</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
+                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
+                    <Building className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">Office Information</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
                   <div className="space-y-2">
-                    <Label>To (Title)</Label>
-                    <Input value={bdoTitle} onChange={(e) => setBdoTitle(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">To (Title)</Label>
+                    <Input 
+                      value={bdoTitle} 
+                      onChange={(e) => setBdoTitle(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Block Name</Label>
-                    <Input value={blockName} onChange={(e) => setBlockName(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">Block Name</Label>
+                    <Input 
+                      value={blockName} 
+                      onChange={(e) => setBlockName(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>District</Label>
-                    <Input value={district} onChange={(e) => setDistrict(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">District</Label>
+                    <Input 
+                      value={district} 
+                      onChange={(e) => setDistrict(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Police Station</Label>
-                    <Input value={policeStation} onChange={(e) => setPoliceStation(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">Police Station</Label>
+                    <Input 
+                      value={policeStation} 
+                      onChange={(e) => setPoliceStation(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                   <div className="space-y-2">
-                    <Label>Gram Panchayat</Label>
-                    <Input value={gramPanchayat} onChange={(e) => setGramPanchayat(e.target.value)} />
+                    <Label className="text-gray-600 text-sm">Gram Panchayat</Label>
+                    <Input 
+                      value={gramPanchayat} 
+                      onChange={(e) => setGramPanchayat(e.target.value)} 
+                      className="border-gray-200 focus:border-blue-400"
+                    />
                   </div>
                 </div>
               </div>
 
               {/* SECTION: Documents */}
               <div className="space-y-4">
-                <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider border-b border-blue-100 pb-2">Produced Documents</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
+                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
+                    <FileCheck className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">Produced Documents</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {docs.map((doc, i) => (
-                    <div key={doc.id} className="flex items-center space-x-2 bg-muted/30 p-2 rounded-md">
-                      <Checkbox 
-                        id={doc.id} 
-                        checked={doc.checked}
-                        onCheckedChange={(checked) => {
-                          const newDocs = [...docs];
-                          newDocs[i].checked = checked as boolean;
-                          setDocs(newDocs);
-                        }}
-                      />
-                      <label htmlFor={doc.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex-1">
-                        {doc.label}
-                      </label>
+                    <div 
+                      key={doc.id} 
+                      className={`relative group rounded-xl border-2 transition-all duration-200 cursor-pointer overflow-hidden ${
+                        doc.checked 
+                          ? 'border-blue-400 bg-blue-50/40 shadow-sm' 
+                          : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm'
+                      }`}
+                      onClick={() => {
+                        const newDocs = [...docs];
+                        newDocs[i].checked = !newDocs[i].checked;
+                        setDocs(newDocs);
+                      }}
+                    >
+                      <div className="p-4">
+                        <div className="flex items-start gap-3">
+                          <div className={`mt-0.5 p-1.5 rounded-lg transition-colors ${
+                            doc.checked ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600'
+                          }`}>
+                            <FileText className="w-4 h-4" />
+                          </div>
+                          <div className="flex-1 pr-6">
+                            <h4 className={`text-sm font-medium leading-tight ${doc.checked ? 'text-blue-900' : 'text-gray-800'}`}>
+                              {doc.label}
+                            </h4>
+                            {doc.checked && (
+                              <div className="mt-3 transition-all duration-200" onClick={(e) => e.stopPropagation()}>
+                                <Input 
+                                  className="h-9 text-sm bg-white border-blue-200 focus:border-blue-500 text-gray-700"
+                                  value={doc.details} 
+                                  onChange={(e) => {
+                                    const newDocs = [...docs];
+                                    newDocs[i].details = e.target.value;
+                                    setDocs(newDocs);
+                                  }} 
+                                  placeholder={doc.placeholder}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                       {doc.checked && (
-                        <Input 
-                          className="h-7 text-xs max-w-[200px]" 
-                          value={doc.details} 
-                          onChange={(e) => {
-                            const newDocs = [...docs];
-                            newDocs[i].details = e.target.value;
-                            setDocs(newDocs);
-                          }} 
-                          placeholder={doc.placeholder}
-                        />
+                        <div className="absolute top-2 right-2">
+                          <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                        </div>
                       )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="pt-4 border-t flex flex-col sm:flex-row justify-end gap-4 items-end">
-                <div className="flex-1">
+              <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
                   {!applicationData && reportType === 'residence' && (
-                    <p className="text-sm text-green-600">
-                      Note: This manual report will be saved as a standalone Permanent Residence certificate.
+                    <p className="text-sm text-green-700 bg-green-50 px-3 py-1.5 rounded-full inline-block">
+                      ℹ️ Standalone report will be saved as a Permanent Residence certificate.
                     </p>
                   )}
                 </div>
-                <div className="flex gap-4 flex-wrap justify-end">
-                  <Button onClick={handleSaveReport} size="lg" variant="secondary" disabled={saving}>
-                    {saving ? "Saving..." : "Save Details"}
+                <div className="flex gap-3 flex-wrap justify-end">
+                  <Button 
+                    onClick={handleSaveReport} 
+                    variant="outline" 
+                    size="lg"
+                    disabled={saving}
+                    className="border-gray-300 hover:bg-gray-50"
+                  >
+                    {saving ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving
+                      </>
+                    ) : (
+                      "Save Details"
+                    )}
                   </Button>
-                  <Button onClick={handleDownloadPDF} size="lg" variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50">
-                    <Download className="w-5 h-5 mr-2" /> Download PDF
+                  <Button 
+                    onClick={handleDownloadPDF} 
+                    size="lg" 
+                    variant="outline"
+                    className="text-blue-700 border-blue-300 hover:bg-blue-50"
+                  >
+                    <Download className="w-5 h-5 mr-2" />
+                    Download PDF
                   </Button>
-                  <Button onClick={handlePrint} size="lg" className="bg-green-600 hover:bg-green-700">
-                    <Printer className="w-5 h-5 mr-2" /> Print Report
+                  <Button 
+                    onClick={handlePrint} 
+                    size="lg" 
+                    className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
+                  >
+                    <Printer className="w-5 h-5 mr-2" />
+                    Print Report
                   </Button>
                 </div>
               </div>
@@ -527,111 +695,25 @@ export default function EnquiryReportClient() {
       </div>
 
       {/* PRINT ONLY SECTION: A4 Layout */}
-      {(reportType === 'residence' || (reportType === 'combined' && applicationData)) && (
-        <div 
-          className="hidden print:block absolute left-[-9999px] top-0 print:static print:left-auto" 
-          ref={printRef}
-        >
-          <div className="bg-white text-black w-[210mm] min-h-[297mm] p-8 mx-auto">
-          <style dangerouslySetInnerHTML={{__html: `
-            @media print {
-              @page { size: A4; margin: 20mm; }
-              body { background: white; }
-            }
-          `}} />
-          
-          <div className="font-serif text-[15px] leading-relaxed max-w-4xl mx-auto space-y-6">
-            
-            {/* Office Heading */}
-            <div className="text-center mb-4 border-b-2 pb-2" style={{ borderColor: "#1a4d8c" }}>
-              <div className="text-xl font-bold italic leading-none" style={{ color: "#1a4d8c" }}>Office of The Pradhan</div>
-              <div className="text-3xl font-bold leading-tight mt-1" style={{ color: "#1a4d8c" }}>No 3 Dhalpara Gram Panchayat</div>
-              <div className="text-sm text-gray-600 leading-tight mt-1">Trimohini, Hili, Dakshin Dinajpur, West Bengal</div>
-            </div>
-
-            <div className="flex justify-between mb-8">
-              <div>Memo No: {memoNo ? <span className="font-bold">{memoNo}</span> : "________________"}</div>
-              <div>Date: {memoDate ? <span className="font-bold">{format(new Date(memoDate), "dd/MM/yyyy")}</span> : "________________"}</div>
-            </div>
-
-            <div className="space-y-1 mb-8">
-              <div>To</div>
-              <div className="font-semibold">{bdoTitle}</div>
-              <div>{blockName}</div>
-              <div>{district}</div>
-            </div>
-
-            <div className="mb-6">
-              <span className="font-bold border-b border-black pb-0.5">Subject:</span>
-              <span className="font-bold ml-2">
-                {reportType === "combined" 
-                  ? `Enquiry Report Regarding Permanent Residence and Legal Heirs of Late ${personName}`
-                  : `Enquiry Report Regarding Permanent Residence of ${personName}`}
-              </span>
-            </div>
-
-            <div className="mb-6">
-              <span className="font-bold border-b border-black pb-0.5">Reference:</span>
-              <span className="ml-2">Memo No. {refMemoNo} dated {refMemoDate ? format(new Date(refMemoDate), "dd/MM/yyyy") : "____________"}</span>
-            </div>
-
-            <div>Sir,</div>
-
-            <p className="text-justify indent-8">
-              With reference to the memo cited above, an enquiry was conducted regarding the permanent residential status {reportType === "combined" && "and legal heirs "}of {reportType === "combined" && "Late "}<span className="font-bold">{personName}</span>, son/wife of {reportType === "combined" && ""}<span className="font-bold">{fatherName || "________________"}</span>.
-            </p>
-
-            <p className="text-justify indent-8">
-              Upon verification of the records available with this office, scrutiny of the documents produced, and local enquiry conducted in the locality, it has been found that {reportType === "combined" && "Late "}<span className="font-bold">{personName}</span> {reportType === "combined" ? "was" : "is"} a permanent resident of Village &ndash; {villageName || "________________"}, Gram Panchayat &ndash; {gramPanchayat}, Post Office &ndash; {postOffice || "________________"}, Police Station &ndash; {policeStation}, District &ndash; {district}.
-            </p>
-
-            <p className="text-justify">
-              The following documents were produced and verified during the enquiry:
-            </p>
-
-            <ol className="list-decimal pl-12 space-y-1">
-              {docs.filter(d => d.checked).map((doc, idx) => (
-                <li key={doc.id}>
-                  {doc.label} {doc.details ? `(${doc.details})` : ""}
-                </li>
-              ))}
-            </ol>
-
-            {reportType === "combined" && (
-              <>
-                <p className="text-justify">
-                  As per the documents produced, records available, and local enquiry conducted, the following persons have been identified as the legal heirs of Late <span className="font-bold">{applicationData.nameOfDeceased}</span>:
-                </p>
-
-                <ol className="list-decimal pl-12 space-y-1 mb-6">
-                  {applicationData.warishDetails?.map((heir: any, idx: number) => (
-                    <li key={heir.id || idx}>
-                      Shri/Smt. <span className="font-bold">{heir.name}</span> &ndash; {heir.relation}
-                    </li>
-                  ))}
-                </ol>
-              </>
-            )}
-
-            <p className="text-justify indent-8">
-              Based on the enquiry conducted and the records verified, this office is of the opinion that the above-mentioned particulars are found to be correct to the best of our knowledge and belief.
-            </p>
-
-            <p className="text-justify">
-              This report is submitted for your kind information and necessary action.
-            </p>
-
-            <div className="flex justify-end mt-16">
-              <div className="text-center">
-                <div className="mb-12">Yours faithfully,</div>
-                <div>(Signature)</div>
-              </div>
-            </div>
-
-          </div>
-          </div>
-        </div>
-      )}
+      <EnquiryReportPrintTemplate
+        reportType={reportType}
+        applicationData={applicationData}
+        printRef={printRef}
+        memoNo={memoNo}
+        memoDate={memoDate}
+        refMemoNo={refMemoNo}
+        refMemoDate={refMemoDate}
+        bdoTitle={bdoTitle}
+        blockName={blockName}
+        district={district}
+        policeStation={policeStation}
+        gramPanchayat={gramPanchayat}
+        personName={personName}
+        fatherName={fatherName}
+        villageName={villageName}
+        postOffice={postOffice}
+        docs={docs}
+      />
     </div>
   );
 }
