@@ -586,11 +586,14 @@ export default function EnquiryReportClient() {
 
               {/* SECTION: Documents */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
-                  <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
-                    <FileCheck className="w-4 h-4" />
+                <div className="flex flex-col gap-1 pb-2 border-b border-gray-200">
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
+                      <FileCheck className="w-4 h-4" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">Produced Documents</h3>
                   </div>
-                  <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">Produced Documents</h3>
+                  <p className="text-xs text-gray-500">Provide all relevant documents which are needed</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {docs.map((doc, i) => (
