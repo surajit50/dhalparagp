@@ -377,7 +377,12 @@ export default function NOCPrintPage() {
             memoNumber: n.certificate.memoNumber || "",
             applicantAddress: n.application.applicantAddress || "",
             landParcels: [primary, ...additional],
-            issueDate: new Date(n.certificate.issueDate).toLocaleDateString("en-IN"),
+            issueDate: (() => {
+              const d = new Date(n.certificate.issueDate);
+              const day = String(d.getDate()).padStart(2, "0");
+              const month = String(d.getMonth() + 1).padStart(2, "0");
+              return `${day}/${month}/${d.getFullYear()}`;
+            })(),
             expiryDate: "N/A",
             signatoryName: n.certificate.signatoryName || DEFAULT_SIGNATORY_NAME,
             signatoryDesignation: n.certificate.signatoryDesignation || DEFAULT_SIGNATORY_DESIGNATION,

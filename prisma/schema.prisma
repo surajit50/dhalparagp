@@ -279,9 +279,39 @@ model WarishApplication {
   warishdocumentverified    Boolean                     @default(false)
   digitallySigned           Boolean                     @default(false)
   WarishDocument            WarishDocument[]
+  EnquiryReport             EnquiryReport?
   WarishModificationRequest WarishModificationRequest[]
 
   @@index([applicantName, nameOfDeceased])
+}
+
+model EnquiryReport {
+  id                  String             @id @default(auto()) @map("_id") @db.ObjectId
+  warishApplication   WarishApplication? @relation(fields: [warishApplicationId], references: [id], onDelete: Cascade)
+  warishApplicationId String?            @unique @db.ObjectId
+  
+  // Standalone fields
+  personName          String?
+  fatherName          String?
+  villageName         String?
+  postOffice          String?
+  reportType          String             @default("combined")
+
+  memoNo              String?
+  memoDate            DateTime?
+  refMemoNo           String?
+  refMemoDate         DateTime?
+  
+  bdoTitle            String
+  blockName           String
+  district            String
+  policeStation       String
+  gramPanchayat       String
+  
+  docsDetails         Json               // Stores an array of { id, label, checked, details, placeholder }
+  
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
 }
 
 model WarishDetail {

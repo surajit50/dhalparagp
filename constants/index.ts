@@ -2224,6 +2224,7 @@ export interface LandClassification {
   | "Public Utility"
   | "Burial Ground"
   | "Cremation Ground"
+  | "Educational"
   | "Miscellaneous";
 }
 
@@ -2562,5 +2563,12 @@ export const LAND_CLASSIFICATIONS: LandClassification[] = [
     name: "Other",
     bn: "অন্যান্য",
     category: "Miscellaneous",
+
   },
+  {
+    code: "Madrasa", 
+    name: "Madrasa",
+    bn: "মাদ্রাসাহ",
+    category: "Educational",
+  }
 ];

@@ -27,7 +27,7 @@ import {
 async function generateMemoNumber() {
   const year = new Date().getFullYear().toString()
 
-  // Format: 001/DGP/2026  — sequential within the current year
+  // Format: 001/DGP(LC)/2026  — sequential within the current year
   const maxCert = await db.landConversionCertificate.findFirst({
     where: { memoNumber: { endsWith: `/DGP\\(LC\\)/${year}` } },
     orderBy: { memoNumber: "desc" },
@@ -37,7 +37,7 @@ async function generateMemoNumber() {
   const last = maxCert?.memoNumber?.split("/")[0] || "000"
   const next = (parseInt(last, 10) + 1).toString().padStart(3, "0")
 
-  return `${next}/DGP/${year}`
+  return `${next}/DGP(LC)/${year}`
 }
 
 

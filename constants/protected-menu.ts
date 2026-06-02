@@ -9,7 +9,7 @@ import {
   MdHome, MdAccountCircle, MdSecurity, MdAttachMoney, MdHelp, MdFolder,
   MdInsertChart, MdGavel, MdDescription as MdDoc, MdApartment, MdImage, MdBuild
 } from "react-icons/md";
-import { FaChevronCircleRight, FaChartBar, FaChevronDown, FaTruck, FaKey, FaMeetup, FaFileContract, FaRegFileAlt } from "react-icons/fa";
+import { FaChevronCircleRight, FaChartBar, FaChevronDown, FaTruck, FaKey, FaMeetup, FaFileContract, FaRegFileAlt, FaRegListAlt } from "react-icons/fa";
 import { HiDocumentDuplicate } from "react-icons/hi";
 
 // Type Definition with allowedRoles
@@ -65,7 +65,7 @@ const createMenuItem = (
   subMenuItems: subItems,
   allowedRoles: roles,
 });
-  
+
 export const publicUserMenuItems: MenuItemProps[] = [
   createMenuItem("Dashboard", ["user", "citizen"], `${BASE_URLS.user}/home`, MdDashboard, COLORS.blue),
 
@@ -148,6 +148,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Output", ["admin"], undefined, FaChevronDown, COLORS.green, [
       createMenuItem("Certificate Printing", ["admin"], `${baseUrl}/manage-warish/print`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Generate Certificate", ["admin"], `${baseUrl}/manage-warish/generate`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("Enquiry Report", ["admin"], `${baseUrl}/enquiry-report`, FaChevronCircleRight, COLORS.orange),
       createMenuItem("Renewal Processing", ["admin"], `${baseUrl}/manage-warish/renew`, FaChevronCircleRight, COLORS.blue),
     ]),
     createMenuItem("Monitoring", ["admin"], undefined, FaChevronDown, COLORS.cyan, [
@@ -156,6 +157,10 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
       createMenuItem("Correction Requests", ["admin"], `${baseUrl}/manage-warish/correction-requests`, FaChevronCircleRight, COLORS.red),
     ]),
   ]),
+  //Parmanent Residenrial and warish includ 
+
+
+
   createMenuItem("Land Conversion NOC", ["admin"], undefined, FaRegFileAlt, COLORS.green, [
     createMenuItem("New Application", ["admin"], `${baseUrl}/manage-land-conversion/application`, FaChevronCircleRight, COLORS.green),
     createMenuItem("Document Verification", ["admin"], `${baseUrl}/manage-land-conversion/verify`, FaChevronCircleRight, COLORS.teal),
@@ -322,7 +327,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Bill Deduction", ["admin"], `${BASE_URLS.admin}/work-manage/bill-deduction`, FaChevronCircleRight, COLORS.orange),
     ]),
     createMenuItem("Development Works", ["admin"], undefined, MdAssignmentTurnedIn, COLORS.orange, [
-     
+
       createMenuItem("Manage Estimate Types", ["admin"], `${BASE_URLS.admin}/development-works/manage-estimate-types`, FaChevronCircleRight, COLORS.cyan),
       createMenuItem("Estimate Library", ["admin"], undefined, MdLocalLibrary, COLORS.teal, [
         createMenuItem("Library Items", ["admin"], `${BASE_URLS.admin}/development-works/estimate-library`, FaChevronCircleRight, COLORS.blue),
@@ -405,6 +410,13 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Quotation Analytics", ["admin"], `${BASE_URLS.admin}/manage-qatation/analytics`, FaChevronCircleRight, COLORS.purple),
       createMenuItem("Print Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/orders/print-menu`, FaChevronCircleRight, COLORS.green),
     ]),
+  ]),
+
+  //varios Enqury Report
+
+  createMenuItem("Enquiry Report", ["admin"], undefined, FaRegListAlt, COLORS.green, [
+    createMenuItem("Permanent Residential", ["admin"], `${BASE_URLS.admin}/enquiry-report`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Reprint Reports", ["admin"], `${BASE_URLS.admin}/enquiry-report/reprint`, FaChevronCircleRight, COLORS.blue),
   ]),
 
   // Finance & Accounting
