@@ -306,7 +306,6 @@ export default function EnquiryReportClient() {
         if (savedReport) {
           const type = savedReport.reportType as "combined" | "residence";
           setReportType(type);
-          // Do NOT fetch warish application – not needed for standalone report
           reset({
             personName: savedReport.personName || "",
             fatherName: savedReport.fatherName || "",
@@ -323,7 +322,7 @@ export default function EnquiryReportClient() {
             gramPanchayat: savedReport.gramPanchayat || "Dhalpara",
             documents: savedReport.docsDetails as any[] || getDefaultDocs(type),
           });
-          setApplicationData(null); // No linked warish application
+          setApplicationData(null);
         }
       } catch (error) {
         console.error("Error loading standalone report:", error);
@@ -340,7 +339,7 @@ export default function EnquiryReportClient() {
     }
   }, [searchParams, reportType, applicationData, loading, searchRefNo, setValue, reset]);
 
-  // Document item component (inline to have access to form methods)
+  // Document item component
   const DocumentItem = ({ doc, index }: { doc: any; index: number }) => {
     const toggleChecked = () => {
       const newDocs = [...watchedDocuments];
@@ -858,8 +857,8 @@ export default function EnquiryReportClient() {
         printRef={printRef}
         memoNo={watch("memoNo")}
         memoDate={watch("memoDate")}
-        refMemoNo={watch("refMemoNo")}
-        refMemoDate={watch("refMemoDate")}
+        refMemoNo={watch("refMemoNo") || ""}
+        refMemoDate={watch("refMemoDate") || ""}
         bdoTitle={watch("bdoTitle")}
         blockName={watch("blockName")}
         district={watch("district")}
