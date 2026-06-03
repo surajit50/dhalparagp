@@ -178,23 +178,23 @@ export default function EnquiryReportClient() {
     setSaving(true);
     try {
       await saveEnquiryReport({
-        warishApplicationId: applicationData?.id,
-        personName: data.personName,
-        fatherName: data.fatherName,
-        villageName: data.villageName,
-        postOffice: data.postOffice,
-        reportType,
-        memoNo: data.memoNo,
-        memoDate: new Date(data.memoDate),
-        refMemoNo: data.refMemoNo,
-        refMemoDate: data.refMemoDate ? new Date(data.refMemoDate) : undefined,
-        bdoTitle: data.bdoTitle,
-        blockName: data.blockName,
-        district: data.district,
-        policeStation: data.policeStation,
-        gramPanchayat: data.gramPanchayat,
-        docsDetails: data.documents,
-      });
+  warishApplicationId: applicationData?.id,
+  personName: data.personName,
+  fatherName: data.fatherName,
+  villageName: data.villageName,
+  postOffice: data.postOffice,
+  reportType,
+  memoNo: data.memoNo,
+  memoDate: new Date(data.memoDate),
+  refMemoNo: data.refMemoNo || "",  // ✅ Fallback to empty string
+  refMemoDate: data.refMemoDate ? new Date(data.refMemoDate) : undefined,
+  bdoTitle: data.bdoTitle,
+  blockName: data.blockName,
+  district: data.district,
+  policeStation: data.policeStation,
+  gramPanchayat: data.gramPanchayat,
+  docsDetails: data.documents,
+});
       alert("Report details saved successfully!");
     } catch (error) {
       console.error("Error saving report:", error);
