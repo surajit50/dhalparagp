@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { searchWarishApplications } from "@/action/warishApplicationAction";
@@ -18,7 +18,7 @@ import { villagenameOption } from "@/constants";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import EnquiryReportPrintTemplate from "./EnquiryReportPrintTemplate";
 
 // Document item schema
@@ -79,7 +79,6 @@ const getDefaultFormValues = (type: "combined" | "residence"): EnquiryReportForm
 
 export default function EnquiryReportClient() {
   const searchParams = useSearchParams();
-  const router = useRouter();
   const printRef = useRef<HTMLDivElement>(null);
 
   const [reportType, setReportType] = useState<"combined" | "residence">("combined");
@@ -94,11 +93,11 @@ export default function EnquiryReportClient() {
     mode: "onChange",
   });
 
-  const { reset, setValue, getValues, watch, control } = form;
+  const { reset, setValue, watch, control } = form;
   const watchedDocuments = watch("documents");
-
-  // Update post office when village changes
   const watchVillageName = watch("villageName");
+
+  // Auto-update post office based on village selection
   useEffect(() => {
     if (watchVillageName === "Purbba Gobindapur") {
       setValue("postOffice", "Fatepur");
@@ -107,7 +106,7 @@ export default function EnquiryReportClient() {
     }
   }, [watchVillageName, setValue]);
 
-  // Handle report type change - reset entire form
+  // Handle report type change – reset form
   const handleReportTypeChange = (type: "combined" | "residence") => {
     setReportType(type);
     setSearchRefNo("");
@@ -115,7 +114,7 @@ export default function EnquiryReportClient() {
     reset(getDefaultFormValues(type));
   };
 
-  // Search application by reference number
+  // Search warish application by reference number
   const handleSearch = async () => {
     if (!searchRefNo.trim()) return;
     setLoading(true);
@@ -169,7 +168,7 @@ export default function EnquiryReportClient() {
     }
   };
 
-  // Save report
+  // Save report (validated by react-hook-form)
   const handleSaveReport = async (data: EnquiryReportFormValues) => {
     if (!applicationData && reportType !== 'residence') {
       alert("Please search for a Warish application first");
@@ -178,23 +177,23 @@ export default function EnquiryReportClient() {
     setSaving(true);
     try {
       await saveEnquiryReport({
-  warishApplicationId: applicationData?.id,
-  personName: data.personName,
-  fatherName: data.fatherName,
-  villageName: data.villageName,
-  postOffice: data.postOffice,
-  reportType,
-  memoNo: data.memoNo,
-  memoDate: new Date(data.memoDate),
-  refMemoNo: data.refMemoNo || "",  // ✅ Fallback to empty string
-  refMemoDate: data.refMemoDate ? new Date(data.refMemoDate) : undefined,
-  bdoTitle: data.bdoTitle,
-  blockName: data.blockName,
-  district: data.district,
-  policeStation: data.policeStation,
-  gramPanchayat: data.gramPanchayat,
-  docsDetails: data.documents,
-});
+        warishApplicationId: applicationData?.id,
+        personName: data.personName,
+        fatherName: data.fatherName,
+        villageName: data.villageName,
+        postOffice: data.postOffice,
+        reportType,
+        memoNo: data.memoNo,
+        memoDate: new Date(data.memoDate),
+        refMemoNo: data.refMemoNo || "", // empty string if undefined
+        refMemoDate: data.refMemoDate ? new Date(data.refMemoDate) : new Date(), // fallback to current date
+        bdoTitle: data.bdoTitle,
+        blockName: data.blockName,
+        district: data.district,
+        policeStation: data.policeStation,
+        gramPanchayat: data.gramPanchayat,
+        docsDetails: data.documents,
+      });
       alert("Report details saved successfully!");
     } catch (error) {
       console.error("Error saving report:", error);
@@ -248,7 +247,7 @@ export default function EnquiryReportClient() {
 
   const handlePrint = () => window.print();
 
-  // Load from URL params
+  // Load data from URL parameters (refNo or reportId)
   useEffect(() => {
     const refNoParam = searchParams.get("refNo");
     const reportIdParam = searchParams.get("reportId");
@@ -308,7 +307,7 @@ export default function EnquiryReportClient() {
           const type = savedReport.reportType as "combined" | "residence";
           setReportType(type);
           if (type === "combined" && savedReport.warishApplicationId) {
-            // Fetch application data if needed
+            // Optionally fetch application data if needed
             const results = await searchWarishApplications({ id: savedReport.warishApplicationId });
             if (results && results.length > 0) {
               setApplicationData(results[0]);
@@ -344,9 +343,9 @@ export default function EnquiryReportClient() {
     } else if (reportIdParam && !loading) {
       loadFromReportId(reportIdParam);
     }
-  }, [searchParams, reportType]);
+  }, [searchParams, reportType, applicationData, loading, searchRefNo, setValue, reset]);
 
-  // Document item component
+  // Document item component (inline to have access to form methods)
   const DocumentItem = ({ doc, index }: { doc: any; index: number }) => {
     const toggleChecked = () => {
       const newDocs = [...watchedDocuments];
