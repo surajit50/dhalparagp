@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, memo } from "react";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,6 +77,66 @@ const getDefaultFormValues = (type: "combined" | "residence"): EnquiryReportForm
   documents: getDefaultDocs(type),
 });
 
+// Extracted DocumentItem component with memoization
+const DocumentItem = memo(({ 
+  doc, 
+  index, 
+  onToggleChecked, 
+  onUpdateDetails 
+}: { 
+  doc: any; 
+  index: number; 
+  onToggleChecked: (index: number) => void;
+  onUpdateDetails: (index: number, details: string) => void;
+}) => {
+  return (
+    <div
+      className={`relative group rounded-xl border-2 transition-all duration-200 cursor-pointer overflow-hidden ${
+        doc.checked
+          ? "border-blue-400 bg-blue-50/40 shadow-sm"
+          : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm"
+      }`}
+      onClick={() => onToggleChecked(index)}
+    >
+      <div className="p-4">
+        <div className="flex items-start gap-3">
+          <div
+            className={`mt-0.5 p-1.5 rounded-lg transition-colors ${
+              doc.checked
+                ? "bg-blue-100 text-blue-700"
+                : "bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600"
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+          </div>
+          <div className="flex-1 pr-6">
+            <h4 className={`text-sm font-medium leading-tight ${doc.checked ? "text-blue-900" : "text-gray-800"}`}>
+              {doc.label}
+            </h4>
+            {doc.checked && (
+              <div className="mt-3 transition-all duration-200" onClick={(e) => e.stopPropagation()}>
+                <Input
+                  className="h-9 text-sm bg-white border-blue-200 focus:border-blue-500 text-gray-700"
+                  value={doc.details || ""}
+                  onChange={(e) => onUpdateDetails(index, e.target.value)}
+                  placeholder={doc.placeholder}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {doc.checked && (
+        <div className="absolute top-2 right-2">
+          <CheckCircle2 className="w-4 h-4 text-blue-600" />
+        </div>
+      )}
+    </div>
+  );
+});
+
+DocumentItem.displayName = 'DocumentItem';
+
 export default function EnquiryReportClient() {
   const searchParams = useSearchParams();
   const printRef = useRef<HTMLDivElement>(null);
@@ -113,6 +173,19 @@ export default function EnquiryReportClient() {
     setApplicationData(null);
     reset(getDefaultFormValues(type));
   };
+
+  // Document handlers with useCallback to avoid recreation
+  const handleToggleDocument = useCallback((index: number) => {
+    const newDocs = [...watchedDocuments];
+    newDocs[index] = { ...newDocs[index], checked: !newDocs[index].checked };
+    setValue("documents", newDocs);
+  }, [watchedDocuments, setValue]);
+
+  const handleUpdateDocumentDetails = useCallback((index: number, details: string) => {
+    const newDocs = [...watchedDocuments];
+    newDocs[index] = { ...newDocs[index], details };
+    setValue("documents", newDocs);
+  }, [watchedDocuments, setValue]);
 
   // Search warish application by reference number
   const handleSearch = async () => {
@@ -338,66 +411,6 @@ export default function EnquiryReportClient() {
       loadFromReportId(reportIdParam);
     }
   }, [searchParams, reportType, applicationData, loading, searchRefNo, setValue, reset]);
-
-  // Document item component
-  const DocumentItem = ({ doc, index }: { doc: any; index: number }) => {
-    const toggleChecked = () => {
-      const newDocs = [...watchedDocuments];
-      newDocs[index] = { ...newDocs[index], checked: !newDocs[index].checked };
-      setValue("documents", newDocs);
-    };
-
-    const updateDetails = (details: string) => {
-      const newDocs = [...watchedDocuments];
-      newDocs[index] = { ...newDocs[index], details };
-      setValue("documents", newDocs);
-    };
-
-    return (
-      <div
-        className={`relative group rounded-xl border-2 transition-all duration-200 cursor-pointer overflow-hidden ${
-          doc.checked
-            ? "border-blue-400 bg-blue-50/40 shadow-sm"
-            : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm"
-        }`}
-        onClick={toggleChecked}
-      >
-        <div className="p-4">
-          <div className="flex items-start gap-3">
-            <div
-              className={`mt-0.5 p-1.5 rounded-lg transition-colors ${
-                doc.checked
-                  ? "bg-blue-100 text-blue-700"
-                  : "bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600"
-              }`}
-            >
-              <FileText className="w-4 h-4" />
-            </div>
-            <div className="flex-1 pr-6">
-              <h4 className={`text-sm font-medium leading-tight ${doc.checked ? "text-blue-900" : "text-gray-800"}`}>
-                {doc.label}
-              </h4>
-              {doc.checked && (
-                <div className="mt-3 transition-all duration-200" onClick={(e) => e.stopPropagation()}>
-                  <Input
-                    className="h-9 text-sm bg-white border-blue-200 focus:border-blue-500 text-gray-700"
-                    value={doc.details || ""}
-                    onChange={(e) => updateDetails(e.target.value)}
-                    placeholder={doc.placeholder}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        {doc.checked && (
-          <div className="absolute top-2 right-2">
-            <CheckCircle2 className="w-4 h-4 text-blue-600" />
-          </div>
-        )}
-      </div>
-    );
-  };
 
   const showReportForm = reportType === "residence" || (reportType === "combined" && applicationData);
 
@@ -791,7 +804,13 @@ export default function EnquiryReportClient() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {watchedDocuments.map((doc, index) => (
-                        <DocumentItem key={doc.id} doc={doc} index={index} />
+                        <DocumentItem
+                          key={doc.id}
+                          doc={doc}
+                          index={index}
+                          onToggleChecked={handleToggleDocument}
+                          onUpdateDetails={handleUpdateDocumentDetails}
+                        />
                       ))}
                     </div>
                   </div>
