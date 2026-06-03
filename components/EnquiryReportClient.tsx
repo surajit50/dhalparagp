@@ -185,8 +185,8 @@ export default function EnquiryReportClient() {
         reportType,
         memoNo: data.memoNo,
         memoDate: new Date(data.memoDate),
-        refMemoNo: data.refMemoNo || "", // empty string if undefined
-        refMemoDate: data.refMemoDate ? new Date(data.refMemoDate) : new Date(), // fallback to current date
+        refMemoNo: data.refMemoNo || "",
+        refMemoDate: data.refMemoDate ? new Date(data.refMemoDate) : new Date(),
         bdoTitle: data.bdoTitle,
         blockName: data.blockName,
         district: data.district,
@@ -306,13 +306,7 @@ export default function EnquiryReportClient() {
         if (savedReport) {
           const type = savedReport.reportType as "combined" | "residence";
           setReportType(type);
-          if (type === "combined" && savedReport.warishApplicationId) {
-            // Optionally fetch application data if needed
-            const results = await searchWarishApplications({ id: savedReport.warishApplicationId });
-            if (results && results.length > 0) {
-              setApplicationData(results[0]);
-            }
-          }
+          // Do NOT fetch warish application – not needed for standalone report
           reset({
             personName: savedReport.personName || "",
             fatherName: savedReport.fatherName || "",
@@ -329,6 +323,7 @@ export default function EnquiryReportClient() {
             gramPanchayat: savedReport.gramPanchayat || "Dhalpara",
             documents: savedReport.docsDetails as any[] || getDefaultDocs(type),
           });
+          setApplicationData(null); // No linked warish application
         }
       } catch (error) {
         console.error("Error loading standalone report:", error);
