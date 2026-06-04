@@ -419,6 +419,12 @@ export const adminMenuItems: MenuItemProps[] = [
     createMenuItem("Reprint Reports", ["admin"], `${BASE_URLS.admin}/enquiry-report/reprint`, FaChevronCircleRight, COLORS.blue),
   ]),
 
+  // Content Management
+  createMenuItem("Blog Management", ["admin"], undefined, MdAnnouncement, COLORS.orange, [
+    createMenuItem("View All Posts", ["admin"], `${BASE_URLS.admin}/manage-blog`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Add Blog Post", ["admin"], `${BASE_URLS.admin}/manage-blog/add`, FaChevronCircleRight, COLORS.blue),
+  ]),
+
   // Finance & Accounting
   createMenuItem("Finance", ["admin"], undefined, MdMoney, COLORS.indigo, [
     createMenuItem("Transactions", ["admin"], undefined, FaChevronCircleRight, COLORS.indigo, [

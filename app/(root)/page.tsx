@@ -18,6 +18,9 @@ import {
 import LatestNewsUpdate from "@/components/latest-news-update";
 import { gpnameinshort } from "@/constants/gpinfor";
 import GramPanchayatStats from "@/components/GramPanchayatStats";
+import EGovernmentServices from "@/components/e-government-services";
+import UsefulLinksSection from "@/components/useful-links-section";
+import RecentBlogPosts from "@/components/recent-blog-posts";
 type AdminMessage = {
   id: string;
   title: string;
@@ -89,6 +92,7 @@ export default async function Home() {
                     src="https://res.cloudinary.com/dqkmkxgdo/image/upload/v1698161664/IMG_20231024_210228_dyy8dw.jpg"
                     alt="Prodhan"
                     fill
+                    sizes="(max-width: 768px) 128px, 160px"
                     className="object-cover"
                   />
                 </div>
@@ -179,6 +183,27 @@ export default async function Home() {
             </h2>
           </div>
           <LatestNewsUpdate />
+        </div>
+      </section>
+
+      {/* ================= E-GOVERNANCE & USEFUL LINKS ================= */}
+      <section className="bg-background border-t border-border">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="grid md:grid-cols-3 gap-8 items-start">
+            <div className="md:col-span-2">
+              <EGovernmentServices />
+            </div>
+            <div className="my-12 md:mt-12">
+              <UsefulLinksSection />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= RECENT BLOG POSTS ================= */}
+      <section className="bg-muted border-t border-border">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <RecentBlogPosts />
         </div>
       </section>
     </div>

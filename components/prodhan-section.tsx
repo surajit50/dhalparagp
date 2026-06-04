@@ -18,6 +18,7 @@ export default function ProdhanSection() {
               src="https://res.cloudinary.com/dqkmkxgdo/image/upload/v1698161664/IMG_20231024_210228_dyy8dw.jpg"
               alt="Prodhan's Photo"
               fill
+              sizes="192px"
               className="object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>

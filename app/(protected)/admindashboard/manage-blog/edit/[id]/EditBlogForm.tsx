@@ -7,9 +7,9 @@ import * as z from "zod";
 import Image from "next/image";
 import { ImagePlus, Pencil, Eye } from "lucide-react";
 import { toast } from "sonner";
-import { getSignedURL } from "@/action/uploadfile";
-import { createBlogPost } from "@/action/blog-actions";
+import { useRouter } from "next/navigation";
 
+import { updateBlogPost } from "@/action/blog-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,16 +40,17 @@ const formSchema = z.object({
   image: z.any().optional(),
 });
 
-export default function BlogForm() {
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+export default function EditBlogForm({ post }: { post: any }) {
+  const router = useRouter();
+  const [imagePreview, setImagePreview] = useState<string | null>(post.imageUrl || null);
   const [activeTab, setActiveTab] = useState("edit");
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      content: "",
+      title: post.title,
+      content: post.content,
     },
   });
 
@@ -89,7 +90,7 @@ export default function BlogForm() {
 
         const excerpt = values.content.substring(0, 100) + (values.content.length > 100 ? "..." : "");
 
-        const res = await createBlogPost({
+        const res = await updateBlogPost(post.id, {
           title: values.title,
           content: values.content,
           imageFile,
@@ -100,8 +101,7 @@ export default function BlogForm() {
           toast.error(res.error);
         } else {
           toast.success(res.success);
-          form.reset();
-          setImagePreview(null);
+          router.push('/admindashboard/manage-blog');
         }
       } catch (error) {
         toast.error("An unexpected error occurred");
@@ -113,7 +113,7 @@ export default function BlogForm() {
     <Card className="w-full max-w-3xl mx-auto shadow-lg">
       <CardHeader className="bg-primary text-primary-foreground">
         <CardTitle className="text-2xl font-bold">
-          Create a New Blog Post
+          Edit Blog Post
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
@@ -156,30 +156,31 @@ export default function BlogForm() {
                       <label
                         htmlFor="image-upload"
                         className={cn(
-                          "flex items-center justify-center w-40 h-40 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                          "flex items-center justify-center w-40 h-40 border-2 border-dashed rounded-lg cursor-pointer transition-colors overflow-hidden relative",
                           imagePreview
                             ? "border-primary"
                             : "border-gray-300 hover:border-gray-400"
                         )}
                       >
                         {imagePreview ? (
-                          <div className="relative w-full h-full">
-                            <Image
-                              src={imagePreview}
-                              alt="Preview"
-                              layout="fill"
-                              objectFit="cover"
-                              className="rounded-lg"
-                            />
-                          </div>
+                          <Image
+                            src={imagePreview}
+                            alt="Preview"
+                            layout="fill"
+                            objectFit="cover"
+                          />
                         ) : (
                           <ImagePlus className="w-12 h-12 text-gray-400" />
                         )}
                       </label>
-                      {field.value && (
+                      {field.value && field.value.name ? (
                         <p className="text-sm text-gray-500">
                           {field.value.name} (
                           {Math.round(field.value.size / 1024)} KB)
+                        </p>
+                      ) : (
+                        <p className="text-sm text-gray-500">
+                          Click to change the existing photo
                         </p>
                       )}
                     </div>
@@ -241,9 +242,12 @@ export default function BlogForm() {
                 </FormItem>
               )}
             />
-            <CardFooter className="px-0 flex justify-end">
-              <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={isPending}>
-                {isPending ? "Publishing..." : "Publish Blog Post"}
+            <CardFooter className="px-0 flex justify-end gap-2">
+              <Button type="button" variant="outline" size="lg" onClick={() => router.push('/admindashboard/manage-blog')}>
+                Cancel
+              </Button>
+              <Button type="submit" size="lg" disabled={isPending}>
+                {isPending ? "Saving..." : "Save Changes"}
               </Button>
             </CardFooter>
           </form>

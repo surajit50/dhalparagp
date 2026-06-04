@@ -74,6 +74,7 @@ const Header = () => {
               alt="Dhalpara Gram Panchayat Logo"
               sizes="(max-width: 768px) 50px, 70px"
               priority
+              style={{ width: "auto", height: "auto" }}
               className="object-contain"
             />
           </Link>

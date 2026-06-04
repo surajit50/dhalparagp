@@ -868,8 +868,11 @@ model adminMessage {
 model BlogPost {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   title     String
-  excerpt   String
+  excerpt   String?
   content   String
+  imageUrl  String?
+  imageKey  String?
+  published Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -49,7 +49,7 @@ interface DeleteResult {
  * @param file - File data including name, type and base64 encoded content
  * @returns Promise with upload result
  */
-export async function uploadToCloudinary(file: FileData): Promise<UploadResult> {
+export async function uploadToCloudinary(file: FileData, folderName: string = "notices"): Promise<UploadResult> {
   try {
     // Remove data URI prefix if present
     const base64Data = file.data.replace(/^data:.*?;base64,/, "");
@@ -60,7 +60,7 @@ export async function uploadToCloudinary(file: FileData): Promise<UploadResult> 
         `data:${file.type};base64,${base64Data}`,
         {
           resource_type: "auto",
-          folder: "notices",
+          folder: folderName,
           use_filename: true,
           unique_filename: true,
           overwrite: true,

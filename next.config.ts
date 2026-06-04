@@ -24,6 +24,7 @@ const nextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
+    qualities: [60, 75, 80],
   },
   webpack: (config: { resolve: { fallback: { fs: boolean; }; }; }, { }: any) => {
     config.resolve.fallback = { fs: false }

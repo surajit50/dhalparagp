@@ -101,8 +101,8 @@ export default function HeroImage() {
           alt={image.altname}
           fill
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          priority={i === INITIAL_INDEX}
-          quality={80}
+          priority
+          quality={60}
           className={`absolute inset-0 object-cover transition-all duration-500 ${
             i === state.index ? "opacity-100 scale-100" : "opacity-0 scale-105"
           }`}
