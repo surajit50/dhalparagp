@@ -30,7 +30,7 @@ const formSchema = z.object({
 })
 
 interface ProdhanFormProps {
-  initialData?: z.infer<typeof formSchema> | null;
+  initialData?: any;
 }
 
 export function ProdhanForm({ initialData }: ProdhanFormProps) {
