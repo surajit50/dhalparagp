@@ -512,6 +512,7 @@ export const adminMenuItems: MenuItemProps[] = [
         createMenuItem("Gallery Management", ["admin", "superadmin"], `${BASE_URLS.admin}/manage-gallery`, MdImage, COLORS.purple),
       ]),
       createMenuItem("Work Item Catalog", ["admin", "superadmin"], `${BASE_URLS.admin}/master/addworkitems`, FaChevronCircleRight, COLORS.green),
+      createMenuItem("GP Profile Settings", ["admin", "superadmin"], `${BASE_URLS.admin}/settings/gp-profile`, FaChevronCircleRight, COLORS.blue),
     ]),
     createMenuItem("Monitoring", ["admin", "superadmin"], undefined, FaChevronCircleRight, COLORS.cyan, [
       createMenuItem("Audit Logs", ["admin", "superadmin"], `${BASE_URLS.admin}/monitoring/audit-logs`, FaChevronCircleRight, COLORS.gray),

@@ -16,6 +16,7 @@ model GPProfile {
   gpnameinshort       String
   blockname           String
   gpshortname         String
+  prodhanMessage      String?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   linkageCertificates LinkageCertificate[]

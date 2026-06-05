@@ -1,6 +1,7 @@
 'use server';
 
 import { z } from 'zod';
+import { db } from "@/lib/db";
 
 // Replicate the same schema for server-side validation
 const formSchema = z.object({
@@ -11,6 +12,7 @@ const formSchema = z.object({
   gpnameinshort: z.string().min(2, "Short name must be at least 2 characters"),
   blockname: z.string().min(2, "Block name must be at least 2 characters"),
   gpshortname: z.string().min(2, "Short name must be at least 2 characters"),
+  prodhanMessage: z.string().optional(),
 });
 
 export async function saveGPProfile(data: z.infer<typeof formSchema>) {
@@ -18,11 +20,19 @@ export async function saveGPProfile(data: z.infer<typeof formSchema>) {
     // Server-side validation
     const validatedData = formSchema.parse(data);
     
-    // Database operation simulation (replace with your actual DB call)
-    console.log('Saving to database:', validatedData);
-    
-    // Actual database operation would look like:
-    // await db.gpProfile.upsert({ ...validatedData });
+    // Find existing profile
+    const existingProfile = await db.gPProfile.findFirst();
+
+    if (existingProfile) {
+      await db.gPProfile.update({
+        where: { id: existingProfile.id },
+        data: validatedData,
+      });
+    } else {
+      await db.gPProfile.create({
+        data: validatedData,
+      });
+    }
     
     return { 
       success: true, 

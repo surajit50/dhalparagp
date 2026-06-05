@@ -13,8 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { saveGPProfile } from '@/action/gp-profile';
 import { useToast } from "@/components/ui/use-toast";
+
 // Form validation schema
 const formSchema = z.object({
   gpname: z.string().min(2, "Name must be at least 2 characters"),
@@ -24,32 +26,46 @@ const formSchema = z.object({
   gpnameinshort: z.string().min(2, "Short name must be at least 2 characters"),
   blockname: z.string().min(2, "Block name must be at least 2 characters"),
   gpshortname: z.string().min(2, "Short name must be at least 2 characters"),
+  prodhanMessage: z.string().optional(),
 })
 
-export function ProdhanForm() {
+interface ProdhanFormProps {
+  initialData?: z.infer<typeof formSchema> | null;
+}
+
+export function ProdhanForm({ initialData }: ProdhanFormProps) {
+  const { toast } = useToast()
   // Initialize form with default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      gpname: "",
-      gpaddress: "",
-      nameinprodhan: "",
-      gpcode: "",
-      gpnameinshort: "",
-      blockname: "",
-      gpshortname: ""
+      gpname: initialData?.gpname || "",
+      gpaddress: initialData?.gpaddress || "",
+      nameinprodhan: initialData?.nameinprodhan || "",
+      gpcode: initialData?.gpcode || "",
+      gpnameinshort: initialData?.gpnameinshort || "",
+      blockname: initialData?.blockname || "",
+      gpshortname: initialData?.gpshortname || "",
+      prodhanMessage: initialData?.prodhanMessage || "",
     },
   })
 
   // Form submit handler
-  // Add this import at the top of your component file
-
-
-// Update the submit handler in your component
-async function onSubmit(values: z.infer<typeof formSchema>) {
-  const result = await saveGPProfile(values);
-  
-}
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const result = await saveGPProfile(values);
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: result.message,
+      })
+    } else {
+      toast({
+        title: "Error",
+        description: result.message,
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
     <Form {...form}>
@@ -90,6 +106,24 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
               <FormLabel>Name in Prodhan</FormLabel>
               <FormControl>
                 <Input placeholder="Enter name as in Prodhan" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="prodhanMessage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Prodhan Message</FormLabel>
+              <FormControl>
+                <Textarea 
+                  placeholder="Enter the welcome message for the landing page" 
+                  className="h-32"
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
