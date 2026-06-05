@@ -91,32 +91,32 @@ const DocumentItem = memo(({
 }) => {
   return (
     <div
-      className={`relative group rounded-xl border-2 transition-all duration-200 cursor-pointer overflow-hidden ${
+      className={`relative group rounded-xl border transition-all duration-300 cursor-pointer overflow-hidden ${
         doc.checked
-          ? "border-blue-400 bg-blue-50/40 shadow-sm"
-          : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-sm"
+          ? "border-indigo-400 bg-indigo-50/50 shadow-sm ring-1 ring-indigo-400/20"
+          : "border-gray-200 bg-white hover:border-indigo-300 hover:shadow-sm"
       }`}
       onClick={() => onToggleChecked(index)}
     >
       <div className="p-4">
         <div className="flex items-start gap-3">
           <div
-            className={`mt-0.5 p-1.5 rounded-lg transition-colors ${
+            className={`mt-0.5 p-2 rounded-lg transition-colors shadow-sm ${
               doc.checked
-                ? "bg-blue-100 text-blue-700"
-                : "bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600"
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-100 text-gray-500 group-hover:bg-indigo-50 group-hover:text-indigo-600"
             }`}
           >
             <FileText className="w-4 h-4" />
           </div>
           <div className="flex-1 pr-6">
-            <h4 className={`text-sm font-medium leading-tight ${doc.checked ? "text-blue-900" : "text-gray-800"}`}>
+            <h4 className={`text-sm font-semibold leading-tight ${doc.checked ? "text-indigo-900" : "text-gray-800"}`}>
               {doc.label}
             </h4>
             {doc.checked && (
-              <div className="mt-3 transition-all duration-200" onClick={(e) => e.stopPropagation()}>
+              <div className="mt-3 transition-all duration-200 animate-in fade-in slide-in-from-top-1" onClick={(e) => e.stopPropagation()}>
                 <Input
-                  className="h-9 text-sm bg-white border-blue-200 focus:border-blue-500 text-gray-700"
+                  className="h-9 text-sm bg-white border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 text-gray-800 placeholder:text-gray-400 shadow-sm"
                   value={doc.details || ""}
                   onChange={(e) => onUpdateDetails(index, e.target.value)}
                   placeholder={doc.placeholder}
@@ -127,8 +127,8 @@ const DocumentItem = memo(({
         </div>
       </div>
       {doc.checked && (
-        <div className="absolute top-2 right-2">
-          <CheckCircle2 className="w-4 h-4 text-blue-600" />
+        <div className="absolute top-3 right-3 animate-in zoom-in-50 duration-200">
+          <CheckCircle2 className="w-5 h-5 text-indigo-600 drop-shadow-sm" />
         </div>
       )}
     </div>
@@ -146,6 +146,8 @@ export default function EnquiryReportClient() {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [applicationData, setApplicationData] = useState<any>(null);
+  const [loadedReportId, setLoadedReportId] = useState("");
+  const [isReportSaved, setIsReportSaved] = useState(false);
 
   const form = useForm<EnquiryReportFormValues>({
     resolver: zodResolver(enquiryReportSchema),
@@ -161,7 +163,7 @@ export default function EnquiryReportClient() {
   useEffect(() => {
     if (watchVillageName === "Purbba Gobindapur") {
       setValue("postOffice", "Fatepur");
-    } else if (watchVillageName === "Uttar Dhalpara" || watchVillageName === "Dakshin Dhalpara") {
+    } else if (watchVillageName) {
       setValue("postOffice", "Trimohini");
     }
   }, [watchVillageName, setValue]);
@@ -171,6 +173,7 @@ export default function EnquiryReportClient() {
     setReportType(type);
     setSearchRefNo("");
     setApplicationData(null);
+    setIsReportSaved(false);
     reset(getDefaultFormValues(type));
   };
 
@@ -225,17 +228,23 @@ export default function EnquiryReportClient() {
               const extraDocs = savedDocs.filter(sd => !currentDocs.find(d => d.id === sd.id));
               setValue("documents", [...mergedDocs, ...extraDocs]);
             }
+            setIsReportSaved(true);
+          } else {
+            setIsReportSaved(false);
           }
         } catch (fetchErr) {
           console.error("Error fetching saved report:", fetchErr);
+          setIsReportSaved(false);
         }
       } else {
         alert("No application found with this Reference Number");
         setApplicationData(null);
+        setIsReportSaved(false);
       }
     } catch (error) {
       console.error("Error fetching application:", error);
       alert("Error fetching application details");
+      setIsReportSaved(false);
     } finally {
       setLoading(false);
     }
@@ -267,6 +276,7 @@ export default function EnquiryReportClient() {
         gramPanchayat: data.gramPanchayat,
         docsDetails: data.documents,
       });
+      setIsReportSaved(true);
       alert("Report details saved successfully!");
     } catch (error) {
       console.error("Error saving report:", error);
@@ -360,13 +370,20 @@ export default function EnquiryReportClient() {
                 const extraDocs = savedDocs.filter(sd => !currentDocs.find(d => d.id === sd.id));
                 setValue("documents", [...mergedDocs, ...extraDocs]);
               }
+              setIsReportSaved(true);
+            } else {
+              setIsReportSaved(false);
             }
           } catch (fetchErr) {
             console.error("Error fetching saved report:", fetchErr);
+            setIsReportSaved(false);
           }
+        } else {
+          setIsReportSaved(false);
         }
       } catch (error) {
         console.error(error);
+        setIsReportSaved(false);
       } finally {
         setLoading(false);
       }
@@ -396,9 +413,13 @@ export default function EnquiryReportClient() {
             documents: savedReport.docsDetails as any[] || getDefaultDocs(type),
           });
           setApplicationData(null);
+          setIsReportSaved(true);
+        } else {
+          setIsReportSaved(false);
         }
       } catch (error) {
         console.error("Error loading standalone report:", error);
+        setIsReportSaved(false);
       } finally {
         setLoading(false);
       }
@@ -407,66 +428,75 @@ export default function EnquiryReportClient() {
     if (refNoParam && !applicationData && !loading && !searchRefNo) {
       setSearchRefNo(refNoParam);
       loadFromRefNo(refNoParam);
-    } else if (reportIdParam && !loading) {
+    } else if (reportIdParam && !loading && loadedReportId !== reportIdParam) {
+      setLoadedReportId(reportIdParam);
       loadFromReportId(reportIdParam);
     }
-  }, [searchParams, reportType, applicationData, loading, searchRefNo, setValue, reset]);
+  }, [searchParams, reportType, applicationData, loading, searchRefNo, loadedReportId, setValue, reset]);
 
   const showReportForm = reportType === "residence" || (reportType === "combined" && applicationData);
 
   return (
-    <div className="container mx-auto px-4 py-6 md:px-6 lg:py-10 space-y-8 print:space-y-0 print:p-0">
+    <div className="container mx-auto px-4 py-6 md:px-8 lg:py-12 space-y-8 print:space-y-0 print:p-0 relative">
+      {/* Decorative Background Elements (No print) */}
+      <div className="print:hidden absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50/50 via-white to-white pointer-events-none" />
+      
       {/* NO-PRINT SECTION: Controls and Form */}
-      <div className="print:hidden space-y-6">
+      <div className="print:hidden space-y-8 max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent flex items-center gap-2">
-              <FileText className="h-7 w-7 text-blue-600" />
-              Generate Enquiry Report
+          <div className="space-y-1">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-indigo-700 via-blue-700 to-blue-500 bg-clip-text text-transparent flex items-center gap-3">
+              <div className="p-2.5 bg-blue-100/50 rounded-xl shadow-sm">
+                <FileText className="h-8 w-8 text-blue-600" />
+              </div>
+              Enquiry Report Generator
             </h1>
-            <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-              Create a Permanent Residence Report or a combined report with Legal Heirs information.
+            <p className="text-base text-muted-foreground max-w-2xl pl-[60px]">
+              Create a sophisticated Permanent Residence Report or a combined report with Legal Heirs information.
             </p>
           </div>
         </div>
 
         {/* Report Type Selection Card */}
-        <Card className="border-0 shadow-lg overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 opacity-30 pointer-events-none" />
-          <CardHeader className="pb-2 relative z-10">
-            <CardTitle className="text-xl">Report Type</CardTitle>
-            <CardDescription>Select the type of report you need (Switching will reset the form)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <Card className="border-0 shadow-xl ring-1 ring-gray-900/5 bg-white overflow-hidden rounded-2xl">
+          <CardContent className="p-6 md:p-8 space-y-8">
+            <div className="space-y-2">
+              <h2 className="text-xl font-semibold text-gray-900">Select Report Type</h2>
+              <p className="text-sm text-gray-500">Choose the appropriate report template. Switching will reset the current form data.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div
-                className={`group relative p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer hover:shadow-md ${
+                className={`group relative p-6 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden ${
                   reportType === "combined"
-                    ? "border-blue-500 bg-gradient-to-br from-blue-50/80 to-white shadow-md"
-                    : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/10"
+                    ? "border-indigo-500 ring-1 ring-indigo-500 bg-indigo-50/30 shadow-md"
+                    : "border-gray-200 bg-white hover:border-indigo-300 hover:shadow-sm"
                 }`}
                 onClick={() => handleReportTypeChange("combined")}
               >
+                {/* Background accent */}
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-2xl -mr-16 -mt-16 transition-opacity ${reportType === "combined" ? "opacity-100" : "opacity-0 group-hover:opacity-50"}`} />
+                
                 {reportType === "combined" && (
-                  <div className="absolute top-3 right-3">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                  <div className="absolute top-4 right-4 z-10">
+                    <CheckCircle2 className="w-6 h-6 text-indigo-600 drop-shadow-sm" />
                   </div>
                 )}
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-5 relative z-10">
                   <div
-                    className={`p-3 rounded-xl transition-colors ${
+                    className={`p-3.5 rounded-xl transition-colors shadow-sm ${
                       reportType === "combined"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600"
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-600 group-hover:bg-indigo-50 group-hover:text-indigo-600"
                     }`}
                   >
                     <FileText className="h-6 w-6" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`font-semibold text-lg ${reportType === "combined" ? "text-blue-900" : "text-gray-800"}`}>
+                  <div className="flex-1 pt-1">
+                    <h3 className={`font-semibold text-lg ${reportType === "combined" ? "text-indigo-900" : "text-gray-900"}`}>
                       Combined Report
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">
                       Includes both Residence &amp; Warish details. Requires a valid Warish Reference Number.
                     </p>
                   </div>
@@ -474,33 +504,35 @@ export default function EnquiryReportClient() {
               </div>
 
               <div
-                className={`group relative p-5 rounded-2xl border-2 transition-all duration-300 cursor-pointer hover:shadow-md ${
+                className={`group relative p-6 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden ${
                   reportType === "residence"
-                    ? "border-blue-500 bg-gradient-to-br from-blue-50/80 to-white shadow-md"
-                    : "border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50/10"
+                    ? "border-indigo-500 ring-1 ring-indigo-500 bg-indigo-50/30 shadow-md"
+                    : "border-gray-200 bg-white hover:border-indigo-300 hover:shadow-sm"
                 }`}
                 onClick={() => handleReportTypeChange("residence")}
               >
+                <div className={`absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full blur-2xl -mr-16 -mt-16 transition-opacity ${reportType === "residence" ? "opacity-100" : "opacity-0 group-hover:opacity-50"}`} />
+                
                 {reportType === "residence" && (
-                  <div className="absolute top-3 right-3">
-                    <CheckCircle2 className="w-5 h-5 text-blue-600" />
+                  <div className="absolute top-4 right-4 z-10">
+                    <CheckCircle2 className="w-6 h-6 text-indigo-600 drop-shadow-sm" />
                   </div>
                 )}
-                <div className="flex items-start gap-4">
+                <div className="flex items-start gap-5 relative z-10">
                   <div
-                    className={`p-3 rounded-xl transition-colors ${
+                    className={`p-3.5 rounded-xl transition-colors shadow-sm ${
                       reportType === "residence"
-                        ? "bg-blue-100 text-blue-700"
-                        : "bg-gray-100 text-gray-500 group-hover:bg-blue-50 group-hover:text-blue-600"
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-100 text-gray-600 group-hover:bg-indigo-50 group-hover:text-indigo-600"
                     }`}
                   >
                     <Home className="h-6 w-6" />
                   </div>
-                  <div className="flex-1">
-                    <h3 className={`font-semibold text-lg ${reportType === "residence" ? "text-blue-900" : "text-gray-800"}`}>
-                      Permanent Residence Only
+                  <div className="flex-1 pt-1">
+                    <h3 className={`font-semibold text-lg ${reportType === "residence" ? "text-indigo-900" : "text-gray-900"}`}>
+                      Permanent Residence
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-sm text-gray-500 mt-1.5 leading-relaxed">
                       Generate a standalone Permanent Residence Report without Warish data.
                     </p>
                   </div>
@@ -509,11 +541,11 @@ export default function EnquiryReportClient() {
             </div>
 
             {reportType === "combined" && (
-              <div className="pt-4 border-t border-gray-100 animate-in fade-in-50 duration-300">
-                <div className="flex flex-col sm:flex-row gap-4 items-end">
-                  <div className="flex-1 space-y-2">
-                    <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
-                      <Search className="w-4 h-4 text-blue-500" />
+              <div className="pt-6 border-t border-gray-100 animate-in fade-in-50 duration-300">
+                <div className="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100/50 flex flex-col sm:flex-row gap-4 items-end shadow-sm">
+                  <div className="flex-1 space-y-2.5 w-full">
+                    <Label className="text-sm font-semibold text-indigo-900 flex items-center gap-2">
+                      <Search className="w-4 h-4 text-indigo-600" />
                       Warish Application Reference Number
                     </Label>
                     <Input
@@ -521,23 +553,23 @@ export default function EnquiryReportClient() {
                       value={searchRefNo}
                       onChange={(e) => setSearchRefNo(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                      className="border-gray-300 focus:border-blue-500 focus:ring-blue-500 transition-shadow"
+                      className="h-11 bg-white border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm"
                     />
                   </div>
                   <Button
                     onClick={handleSearch}
                     disabled={loading || !searchRefNo}
-                    className="bg-blue-600 hover:bg-blue-700 transition-all duration-200 shadow-sm min-w-[130px]"
+                    className="h-11 px-8 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white transition-all duration-300 shadow-md hover:shadow-lg w-full sm:w-auto font-medium"
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Searching
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        Searching...
                       </>
                     ) : (
                       <>
-                        <Search className="mr-2 h-4 w-4" />
-                        Search
+                        <Search className="mr-2 h-5 w-5" />
+                        Find Application
                       </>
                     )}
                   </Button>
@@ -548,324 +580,184 @@ export default function EnquiryReportClient() {
         </Card>
 
         {showReportForm && (
-          <Card className="border-0 shadow-lg overflow-hidden transition-all duration-500">
-            <CardHeader className="bg-gradient-to-r from-blue-50/30 to-transparent border-b border-blue-100">
-              <CardTitle className="text-xl text-gray-800">Report Details</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-8">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSaveReport)} className="space-y-8">
+          <div className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSaveReport)} className="space-y-6">
+              
+                {/* Form Sections Grid Wrapper */}
+                <div className="grid grid-cols-1 gap-6">
+                
                   {/* SECTION: Subject Details */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
-                      <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
-                        <User className="w-4 h-4" />
+                  <Card className="border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="bg-gray-50/80 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                      <div className="p-2 bg-indigo-100/80 rounded-lg text-indigo-700 shadow-sm">
+                        <User className="w-5 h-5" />
                       </div>
-                      <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">
-                        Applicant / Subject Details
-                      </h3>
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">Applicant Details</h3>
+                        <p className="text-xs text-gray-500 font-medium">Subject information for the report</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                      <FormField
-                        control={control}
-                        name="personName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Full Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter full name" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="fatherName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Father / Husband Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Father's or husband's name" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="villageName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Village</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                              <FormControl>
-                                <SelectTrigger className="border-gray-200 focus:border-blue-400">
-                                  <SelectValue placeholder="Select Village" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {villagenameOption.map((v) => (
-                                  <SelectItem key={v.value} value={v.value}>
-                                    {v.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="postOffice"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm flex items-center gap-1.5">
-                              <MapPin className="w-3.5 h-3.5" /> Post Office
-                            </FormLabel>
-                            <FormControl>
-                              <Input placeholder="Post office name" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <FormField control={control} name="personName" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Full Name</FormLabel><FormControl><Input placeholder="Enter full name" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="fatherName" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Father/Husband Name</FormLabel><FormControl><Input placeholder="Father/Husband's name" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="villageName" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Village</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30"><SelectValue placeholder="Select Village" /></SelectTrigger></FormControl><SelectContent>{villagenameOption.map((v) => (<SelectItem key={v.value} value={v.value}>{v.label}</SelectItem>))}</SelectContent></Select><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="postOffice" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-gray-400" /> Post Office</FormLabel><FormControl><Input placeholder="Post office name" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   {/* SECTION: Memo Details */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
-                      <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
-                        <Calendar className="w-4 h-4" />
+                  <Card className="border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="bg-gray-50/80 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                      <div className="p-2 bg-blue-100/80 rounded-lg text-blue-700 shadow-sm">
+                        <Calendar className="w-5 h-5" />
                       </div>
-                      <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">
-                        Memo &amp; Reference Information
-                      </h3>
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">Reference Information</h3>
+                        <p className="text-xs text-gray-500 font-medium">Memo and reference tracking</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                      <FormField
-                        control={control}
-                        name="memoNo"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Memo No.</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Leave blank for handwriting" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="memoDate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Memo Date</FormLabel>
-                            <FormControl>
-                              <Input type="date" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="refMemoNo"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Reference Memo No.</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Reference memo number" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="refMemoDate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Reference Memo Date</FormLabel>
-                            <FormControl>
-                              <Input type="date" className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <FormField control={control} name="memoNo" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Memo No.</FormLabel><FormControl><Input placeholder="Auto-generated or leave blank" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="memoDate" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Memo Date</FormLabel><FormControl><Input type="date" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="refMemoNo" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Reference Memo No.</FormLabel><FormControl><Input placeholder="Optional reference" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="refMemoDate" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Reference Memo Date</FormLabel><FormControl><Input type="date" className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   {/* SECTION: Office Details */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 pb-2 border-b border-gray-200">
-                      <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
-                        <Building className="w-4 h-4" />
+                  <Card className="border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="bg-gray-50/80 px-6 py-4 border-b border-gray-100 flex items-center gap-3">
+                      <div className="p-2 bg-emerald-100/80 rounded-lg text-emerald-700 shadow-sm">
+                        <Building className="w-5 h-5" />
                       </div>
-                      <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">
-                        Office Information
-                      </h3>
+                      <div>
+                        <h3 className="text-base font-semibold text-gray-900">Office Addressee</h3>
+                        <p className="text-xs text-gray-500 font-medium">Destination office details</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-                      <FormField
-                        control={control}
-                        name="bdoTitle"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">To (Title)</FormLabel>
-                            <FormControl>
-                              <Input className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="blockName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Block Name</FormLabel>
-                            <FormControl>
-                              <Input className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="district"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">District</FormLabel>
-                            <FormControl>
-                              <Input className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="policeStation"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Police Station</FormLabel>
-                            <FormControl>
-                              <Input className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={control}
-                        name="gramPanchayat"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-gray-600 text-sm">Gram Panchayat</FormLabel>
-                            <FormControl>
-                              <Input className="border-gray-200 focus:border-blue-400" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                        <FormField control={control} name="bdoTitle" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">To (Title)</FormLabel><FormControl><Input className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="blockName" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Block Name</FormLabel><FormControl><Input className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="district" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">District</FormLabel><FormControl><Input className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="policeStation" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Police Station</FormLabel><FormControl><Input className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                        <FormField control={control} name="gramPanchayat" render={({ field }) => (
+                          <FormItem><FormLabel className="text-gray-700 font-medium">Gram Panchayat</FormLabel><FormControl><Input className="h-10 border-gray-200 focus:border-indigo-400 bg-gray-50/30" {...field} /></FormControl><FormMessage /></FormItem>
+                        )} />
+                      </div>
+                    </CardContent>
+                  </Card>
 
                   {/* SECTION: Documents */}
-                  <div className="space-y-4">
-                    <div className="flex flex-col gap-1 pb-2 border-b border-gray-200">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 bg-blue-100 rounded-lg text-blue-700">
-                          <FileCheck className="w-4 h-4" />
+                  <Card className="border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="bg-gray-50/80 px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-amber-100/80 rounded-lg text-amber-700 shadow-sm">
+                          <FileCheck className="w-5 h-5" />
                         </div>
-                        <h3 className="text-sm font-semibold text-blue-800 uppercase tracking-wider">
-                          Produced Documents
-                        </h3>
+                        <div>
+                          <h3 className="text-base font-semibold text-gray-900">Produced Documents</h3>
+                          <p className="text-xs text-gray-500 font-medium">Check and detail all relevant documents</p>
+                        </div>
                       </div>
-                      <p className="text-xs text-gray-500">Provide all relevant documents which are needed</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {watchedDocuments.map((doc, index) => (
-                        <DocumentItem
-                          key={doc.id}
-                          doc={doc}
-                          index={index}
-                          onToggleChecked={handleToggleDocument}
-                          onUpdateDetails={handleUpdateDocumentDetails}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                        {watchedDocuments.map((doc, index) => (
+                          <DocumentItem
+                            key={doc.id}
+                            doc={doc}
+                            index={index}
+                            onToggleChecked={handleToggleDocument}
+                            onUpdateDetails={handleUpdateDocumentDetails}
+                          />
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
 
-                  <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
+                <div className="sticky bottom-4 z-20 mt-8">
+                  <div className="bg-white/90 backdrop-blur-md p-4 rounded-2xl border border-gray-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="flex-1">
                       {!applicationData && reportType === "residence" && (
-                        <p className="text-sm text-green-700 bg-green-50 px-3 py-1.5 rounded-full inline-block">
-                          ℹ️ Standalone report will be saved as a Permanent Residence certificate.
-                        </p>
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-sm font-medium border border-emerald-100">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Standalone Residence Report</span>
+                        </div>
+                      )}
+                      {applicationData && reportType === "combined" && (
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium border border-indigo-100">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Linked to Warish Application</span>
+                        </div>
                       )}
                     </div>
-                    <div className="flex gap-3 flex-wrap justify-end">
+                    <div className="flex gap-3 w-full sm:w-auto">
                       <Button
                         type="button"
                         onClick={form.handleSubmit(handleSaveReport)}
                         variant="outline"
                         size="lg"
                         disabled={saving}
-                        className="border-gray-300 hover:bg-gray-50"
+                        className="flex-1 sm:flex-none border-gray-300 hover:bg-gray-50 h-12 px-6 rounded-xl font-semibold text-gray-700"
                       >
                         {saving ? (
                           <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                            Saving...
                           </>
                         ) : (
                           "Save Details"
                         )}
                       </Button>
-                      <Button
-                        type="button"
-                        onClick={handleDownloadPDF}
-                        size="lg"
-                        variant="outline"
-                        className="text-blue-700 border-blue-300 hover:bg-blue-50"
-                      >
-                        <Download className="w-5 h-5 mr-2" />
-                        Download PDF
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={handlePrint}
-                        size="lg"
-                        className="bg-green-600 hover:bg-green-700 text-white shadow-sm"
-                      >
-                        <Printer className="w-5 h-5 mr-2" />
-                        Print Report
-                      </Button>
+                      {isReportSaved && (
+                        <Button
+                          type="button"
+                          onClick={handleDownloadPDF}
+                          size="lg"
+                          className="flex-1 sm:flex-none h-12 px-6 rounded-xl font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all"
+                        >
+                          <Download className="w-5 h-5 mr-2" />
+                          Generate PDF
+                        </Button>
+                      )}
                     </div>
                   </div>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                </div>
+
+              </form>
+            </Form>
+          </div>
         )}
       </div>
 
@@ -875,9 +767,9 @@ export default function EnquiryReportClient() {
         applicationData={applicationData}
         printRef={printRef}
         memoNo={watch("memoNo")}
-        memoDate={watch("memoDate")}
+        memoDate={watch("memoDate") ? new Date(watch("memoDate")) : new Date()}
         refMemoNo={watch("refMemoNo") || ""}
-        refMemoDate={watch("refMemoDate") || ""}
+        refMemoDate={watch("refMemoDate") ? new Date(watch("refMemoDate") as string) : null}
         bdoTitle={watch("bdoTitle")}
         blockName={watch("blockName")}
         district={watch("district")}

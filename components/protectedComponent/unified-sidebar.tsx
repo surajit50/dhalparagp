@@ -45,8 +45,9 @@ const DASHBOARD_CONFIG: Record<Role, DashboardConfig> = {
   agency: { title: "Agency Portal", items: agencyMenuItems },
 };
 
-function isActivePath(pathname: string, link?: string): boolean {
+function isActivePath(pathname: string, link?: string, exact?: boolean): boolean {
   if (!link || link === "#") return false;
+  if (exact) return pathname === link;
   return pathname === link || pathname.startsWith(link + "/");
 }
 
@@ -65,14 +66,14 @@ function MenuItem({
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
-  const isActive = isActivePath(pathname, item.menuItemLink);
+  const isActive = isActivePath(pathname, item.menuItemLink, item.exact);
 
   const hasActiveChild =
     item.subMenuItems?.some(
       (sub) =>
-        isActivePath(pathname, sub.menuItemLink) ||
+        isActivePath(pathname, sub.menuItemLink, sub.exact) ||
         sub.subMenuItems?.some((subSub) =>
-          isActivePath(pathname, subSub.menuItemLink),
+          isActivePath(pathname, subSub.menuItemLink, subSub.exact),
         ),
     ) || false;
 

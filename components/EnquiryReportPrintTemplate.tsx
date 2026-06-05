@@ -1,14 +1,15 @@
 import React from "react";
 import { format } from "date-fns";
+import { gpaddress, gpname } from "@/constants/gpinfor";
 
 interface EnquiryReportPrintTemplateProps {
   reportType: "combined" | "residence";
   applicationData: any;
   printRef: React.RefObject<HTMLDivElement | null>;
   memoNo: string;
-  memoDate: string;
+  memoDate: Date;
   refMemoNo: string;
-  refMemoDate: string;
+  refMemoDate: Date | null;
   bdoTitle: string;
   blockName: string;
   district: string;
@@ -68,21 +69,21 @@ export default function EnquiryReportPrintTemplate({
               Office of The Pradhan
             </div>
             <div className="text-3xl font-bold leading-tight mt-1" style={{ color: "#1a4d8c" }}>
-              No 3 Dhalpara Gram Panchayat
+             {gpname}
             </div>
             <div className="text-sm text-gray-600 leading-tight mt-1">
-              Trimohini, Hili, Dakshin Dinajpur, West Bengal
+              {gpaddress}
             </div>
           </div>
 
           <div className="flex justify-between mb-8">
             <div>
-              Memo No: {memoNo ? <span className="font-bold">{memoNo}</span> : "________________"}
+              Memo No: {memoNo ? <span className="font-bold">{memoNo}/DGP/{memoDate ? memoDate.getFullYear() : "____"}</span> : "________________"}
             </div>
             <div>
               Date:{" "}
               {memoDate ? (
-                <span className="font-bold">{format(new Date(memoDate), "dd/MM/yyyy")}</span>
+                <span className="font-bold">{format(memoDate, "dd/MM/yyyy")}</span>
               ) : (
                 "________________"
               )}
@@ -109,7 +110,7 @@ export default function EnquiryReportPrintTemplate({
             <span className="font-bold border-b border-black pb-0.5">Reference:</span>
             <span className="ml-2">
               Memo No. {refMemoNo} dated{" "}
-              {refMemoDate ? format(new Date(refMemoDate), "dd/MM/yyyy") : "____________"}
+              {refMemoDate ? format(refMemoDate, "dd/MM/yyyy") : "____________"}
             </span>
           </div>
 

@@ -21,6 +21,7 @@ export type MenuItemProps = {
   submenu: boolean;
   subMenuItems: MenuItemProps[];
   allowedRoles: ("user" | "admin" | "staff" | "superadmin" | "agency" | "citizen")[];
+  exact?: boolean;
 };
 
 // Color Constants
@@ -55,7 +56,8 @@ const createMenuItem = (
   link?: string,
   Icon?: IconType,
   color: string = COLORS.blue,
-  subItems: MenuItemProps[] = []
+  subItems: MenuItemProps[] = [],
+  exact?: boolean
 ): MenuItemProps => ({
   menuItemText: text,
   menuItemLink: link,
@@ -64,6 +66,7 @@ const createMenuItem = (
   submenu: subItems.length > 0,
   subMenuItems: subItems,
   allowedRoles: roles,
+  exact,
 });
 
 export const publicUserMenuItems: MenuItemProps[] = [
@@ -148,7 +151,6 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Output", ["admin"], undefined, FaChevronDown, COLORS.green, [
       createMenuItem("Certificate Printing", ["admin"], `${baseUrl}/manage-warish/print`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Generate Certificate", ["admin"], `${baseUrl}/manage-warish/generate`, FaChevronCircleRight, COLORS.green),
-      createMenuItem("Enquiry Report", ["admin"], `${baseUrl}/enquiry-report`, FaChevronCircleRight, COLORS.orange),
       createMenuItem("Renewal Processing", ["admin"], `${baseUrl}/manage-warish/renew`, FaChevronCircleRight, COLORS.blue),
     ]),
     createMenuItem("Monitoring", ["admin"], undefined, FaChevronDown, COLORS.cyan, [
@@ -415,7 +417,7 @@ export const adminMenuItems: MenuItemProps[] = [
   //varios Enqury Report
 
   createMenuItem("Enquiry Report", ["admin"], undefined, FaRegListAlt, COLORS.green, [
-    createMenuItem("Permanent Residential", ["admin"], `${BASE_URLS.admin}/enquiry-report`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Permanent Residential", ["admin"], `${BASE_URLS.admin}/enquiry-report`, FaChevronCircleRight, COLORS.orange, [], true),
     createMenuItem("Reprint Reports", ["admin"], `${BASE_URLS.admin}/enquiry-report/reprint`, FaChevronCircleRight, COLORS.blue),
   ]),
 
