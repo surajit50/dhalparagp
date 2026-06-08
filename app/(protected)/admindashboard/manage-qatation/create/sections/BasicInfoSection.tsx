@@ -24,28 +24,29 @@ interface BasicInfoSectionProps {
 
 export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
   const quotationType = form.watch("quotationType");
+  const serviceCategory = form.watch("serviceCategory");
 
   const getTypeLabel = (type: string) => {
     switch (type) {
       case "WORK":
-        return "Works";
+        return "Works/Construction";
       case "SUPPLY":
-        return "Supply of Items";
-      case "SALE":
-        return "Sale of Old Items";
+        return "Supply of Items/Materials";
+      case "SERVICE":
+        return "Equipment/Services Hiring";
       default:
-        return "Supply of Items";
+        return "Supply of Items/Materials";
     }
   };
 
   const getWorkNameLabel = (type: string) => {
     switch (type) {
       case "WORK":
-        return "Name of Work/Service";
+        return "Name of Work/Project";
       case "SUPPLY":
         return "Name of Material/Item to Supply";
-      case "SALE":
-        return "Name of Item for Sale";
+      case "SERVICE":
+        return "Name of Service/Equipment";
       default:
         return "Name of Work/Material/Item";
     }
@@ -54,14 +55,26 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
   const getWorkNamePlaceholder = (type: string) => {
     switch (type) {
       case "WORK":
-        return "e.g. Building Maintenance Work";
+        return "e.g. Road Construction, Building Repair";
       case "SUPPLY":
-        return "e.g. Supply of HP Laptop";
-      case "SALE":
-        return "e.g. Old Tubewell Parts";
+        return "e.g. Supply of Cement, Steel Rods";
+      case "SERVICE":
+        return "e.g. JCB Hiring with Operator, Tractor with Trolley";
       default:
         return "Enter work/item name";
     }
+  };
+
+  const serviceCategoryOptions = {
+    JCB_HIRING: "JCB/JCG Machine Hiring",
+    TRACTOR_HIRING: "Tractor with Trolley Hiring",
+    WATER_TANKER: "Water Tanker Hiring",
+    VEHICLE_HIRING: "Vehicle Hiring",
+    GENERATOR_HIRING: "Generator Set Hiring",
+    SOUND_SYSTEM: "Sound System Hiring",
+    EQUIPMENT_MAINTENANCE: "Equipment/Vehicle Maintenance",
+    LABOR_ENGAGEMENT: "Labour/Manpower Engagement",
+    OTHER_SERVICE: "Other Service",
   };
 
   return (
@@ -113,9 +126,9 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="SUPPLY">Supply of Items</SelectItem>
-                  <SelectItem value="WORK">Works/Services</SelectItem>
-                  <SelectItem value="SALE">Sale of Old Items</SelectItem>
+                  <SelectItem value="SUPPLY">📦 Supply of Items/Materials</SelectItem>
+                  <SelectItem value="WORK">🏗️ Works/Construction</SelectItem>
+                  <SelectItem value="SERVICE">🔧 Equipment/Services Hiring</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -128,6 +141,36 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
             <strong>Type Selected:</strong> {getTypeLabel(quotationType)}
           </p>
         </div>
+
+        {quotationType === "SERVICE" && (
+          <FormField
+            name="serviceCategory"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Service Category</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value || ""}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select service category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {Object.entries(serviceCategoryOptions).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           name="workName"
@@ -146,17 +189,50 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
           )}
         />
 
+        {quotationType === "SERVICE" && (
+          <FormField
+            name="rateType"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Rate Type</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value || ""}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select rate type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="HOURLY">Per Hour</SelectItem>
+                    <SelectItem value="DAILY">Per Day</SelectItem>
+                    <SelectItem value="TRIP">Per Trip</SelectItem>
+                    <SelectItem value="MONTHLY">Per Month</SelectItem>
+                    <SelectItem value="FIXED">Fixed Rate</SelectItem>
+                    <SelectItem value="OTHER">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
         <FormField
           name="estimatedAmount"
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Estimated Amount (₹) *</FormLabel>
+              <FormLabel>
+                {quotationType === "SERVICE" ? "Estimated Total Amount (₹)" : "Estimated Amount (₹)"} *
+              </FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   {...field}
-                  placeholder="e.g. 100000"
+                  placeholder={quotationType === "SERVICE" ? "e.g. 10000" : "e.g. 100000"}
                   step="0.01"
                 />
               </FormControl>
@@ -164,6 +240,14 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
             </FormItem>
           )}
         />
+
+        {quotationType === "SERVICE" && (
+          <div className="bg-green-50 p-3 rounded border border-green-200">
+            <p className="text-sm text-green-800">
+              <strong>Note:</strong> For hiring services, specify the rate per hour/day/trip and the estimated total amount for the project duration.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
