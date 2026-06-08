@@ -1,12 +1,16 @@
 import { z } from "zod"
 
 /**
- * Enhanced Quotation Schema with comprehensive validation
+ * Enhanced Quotation Schema supporting:
+ * - SUPPLY: Material/Items procurement
+ * - WORK: Construction/Maintenance works
+ * - SERVICE: Equipment/Machinery/Vehicle hiring, Services engagement
  */
 export const quotationSchema = z.object({
-  quotationType: z.enum(["WORK", "SUPPLY", "SALE"], {
+  quotationType: z.enum(["SUPPLY", "WORK", "SERVICE"], {
     required_error: "Please select a quotation type",
   }),
+  
   nitNo: z
     .string()
     .min(1, "NIT/NIQ No. is required")
@@ -23,8 +27,8 @@ export const quotationSchema = z.object({
   
   workName: z
     .string()
-    .min(5, "Name of Work/Material/Item must be at least 5 characters")
-    .max(200, "Name of Work/Material/Item must be less than 200 characters"),
+    .min(5, "Name/Title must be at least 5 characters")
+    .max(200, "Name/Title must be less than 200 characters"),
   
   estimatedAmount: z
     .string()
@@ -114,6 +118,28 @@ export const quotationSchema = z.object({
     .max(100, "Unit must be less than 100 characters")
     .optional()
     .nullable(),
+
+  // Service-specific fields for hiring/services
+  rateType: z
+    .enum(["HOURLY", "DAILY", "TRIP", "MONTHLY", "FIXED", "OTHER"])
+    .optional()
+    .nullable(),
+  
+  serviceCategory: z
+    .enum([
+      "JCB_HIRING",
+      "TRACTOR_HIRING",
+      "WATER_TANKER",
+      "VEHICLE_HIRING",
+      "GENERATOR_HIRING",
+      "SOUND_SYSTEM",
+      "EQUIPMENT_MAINTENANCE",
+      "LABOR_ENGAGEMENT",
+      "OTHER_SERVICE"
+    ])
+    .optional()
+    .nullable(),
+
 }).refine(
   (data) => {
     // Opening date must be after submission date
@@ -156,7 +182,7 @@ export const updateQuotationSchema = quotationSchema.partial()
  */
 export const quotationFiltersSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED", "CLOSED", "CANCELLED"]).optional(),
-  quotationType: z.enum(["WORK", "SUPPLY", "SALE"]).optional(),
+  quotationType: z.enum(["SUPPLY", "WORK", "SERVICE"]).optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
   search: z.string().max(100).optional(),
@@ -170,3 +196,19 @@ export const quotationFiltersSchema = z.object({
 export type QuotationSchema = z.infer<typeof quotationSchema>
 export type UpdateQuotationSchema = z.infer<typeof updateQuotationSchema>
 export type QuotationFiltersSchema = z.infer<typeof quotationFiltersSchema>
+
+/**
+ * Helper types for different quotation categories
+ */
+export type QuotationType = "SUPPLY" | "WORK" | "SERVICE"
+export type RateType = "HOURLY" | "DAILY" | "TRIP" | "MONTHLY" | "FIXED" | "OTHER"
+export type ServiceCategory = 
+  | "JCB_HIRING"
+  | "TRACTOR_HIRING"
+  | "WATER_TANKER"
+  | "VEHICLE_HIRING"
+  | "GENERATOR_HIRING"
+  | "SOUND_SYSTEM"
+  | "EQUIPMENT_MAINTENANCE"
+  | "LABOR_ENGAGEMENT"
+  | "OTHER_SERVICE"
