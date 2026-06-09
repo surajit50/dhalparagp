@@ -129,7 +129,7 @@ export type ApiResponse<T = any> = {
 
 // Form Types
 export type QuotationFormData = {
-  quotationType: "WORK" | "SUPPLY" | "SALE"
+  quotationType: "WORK" | "SUPPLY" | "SALE" | "SERVICE"
   nitNo: string
   nitDate: string
   workName: string
@@ -138,13 +138,15 @@ export type QuotationFormData = {
   submissionTime: string
   openingDate: string
   openingTime: string
-  description?: string
-  eligibilityCriteria?: string
-  itemCondition?: string
-  specifications?: string
-  workLocation?: string
-  quantity?: string
-  unit?: string
+  description?: string | null
+  eligibilityCriteria?: string | null
+  itemCondition?: string | null
+  specifications?: string | null
+  workLocation?: string | null
+  quantity?: string | null
+  unit?: string | null
+  rateType?: string | null
+  serviceCategory?: string | null
 }
 
 export type OrderFormData = {
