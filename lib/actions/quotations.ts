@@ -119,7 +119,7 @@ export async function createQuotation(data: QuotationFormData, userId: string): 
         entityType: "Quotation",
         entityId: quotation.id,
         userId,
-        description: `Created quotation ${quotation.nitNo}`,
+        details: `Created quotation ${quotation.nitNo}`,
       },
     })
 
@@ -252,7 +252,7 @@ export async function updateQuotation(
         entityType: "Quotation",
         entityId: id,
         userId,
-        description: `Updated quotation ${quotation.nitNo}`,
+        details: `Updated quotation ${quotation.nitNo}`,
       },
     })
 
@@ -317,7 +317,7 @@ export async function deleteQuotation(id: string, userId: string): Promise<ApiRe
         entityType: "Quotation",
         entityId: id,
         userId,
-        description: `Deleted quotation ${existingQuotation.nitNo}`,
+        details: `Deleted quotation ${existingQuotation.nitNo}`,
       },
     })
 
@@ -414,7 +414,7 @@ export async function publishQuotation(id: string, userId: string): Promise<ApiR
         entityType: "Quotation",
         entityId: id,
         userId,
-        description: `Published quotation ${quotation.nitNo}`,
+        details: `Published quotation ${quotation.nitNo}`,
       },
     })
 
