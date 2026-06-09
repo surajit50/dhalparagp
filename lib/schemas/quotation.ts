@@ -6,8 +6,8 @@ import { z } from "zod"
  * - WORK: Construction/Maintenance works
  * - SERVICE: Equipment/Machinery/Vehicle hiring, Services engagement
  */
-export const quotationSchema = z.object({
-  quotationType: z.enum(["SUPPLY", "WORK", "SERVICE"], {
+export const baseQuotationSchema = z.object({
+  quotationType: z.enum(["SUPPLY", "WORK", "SERVICE", "SALE"], {
     required_error: "Please select a quotation type",
   }),
   
@@ -138,9 +138,9 @@ export const quotationSchema = z.object({
       "OTHER_SERVICE"
     ])
     .optional()
-    .nullable(),
+})
 
-}).refine(
+export const quotationSchema = baseQuotationSchema.refine(
   (data) => {
     // Opening date must be after submission date
     const submissionDate = new Date(data.submissionDate)
@@ -175,7 +175,7 @@ export const quotationSchema = z.object({
 /**
  * Update schema - all fields optional
  */
-export const updateQuotationSchema = quotationSchema.partial()
+export const updateQuotationSchema = baseQuotationSchema.partial()
 
 /**
  * Filters schema for querying quotations
