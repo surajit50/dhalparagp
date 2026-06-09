@@ -34,6 +34,8 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
         return "Supply of Items/Materials";
       case "SERVICE":
         return "Equipment/Services Hiring";
+      case "SALE":
+        return "Sale/Disposal of Scrap/Items";
       default:
         return "Supply of Items/Materials";
     }
@@ -47,6 +49,8 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
         return "Name of Material/Item to Supply";
       case "SERVICE":
         return "Name of Service/Equipment";
+      case "SALE":
+        return "Name of Item/Scrap for Sale";
       default:
         return "Name of Work/Material/Item";
     }
@@ -60,6 +64,8 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
         return "e.g. Supply of Cement, Steel Rods";
       case "SERVICE":
         return "e.g. JCB Hiring with Operator, Tractor with Trolley";
+      case "SALE":
+        return "e.g. Sale of Old Wooden Furniture, Scrap Iron, Dry Trees";
       default:
         return "Enter work/item name";
     }
@@ -129,6 +135,7 @@ export default function BasicInfoSection({ form }: BasicInfoSectionProps) {
                   <SelectItem value="SUPPLY">📦 Supply of Items/Materials</SelectItem>
                   <SelectItem value="WORK">🏗️ Works/Construction</SelectItem>
                   <SelectItem value="SERVICE">🔧 Equipment/Services Hiring</SelectItem>
+                  <SelectItem value="SALE">💰 Sale/Disposal of Scrap/Items</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />

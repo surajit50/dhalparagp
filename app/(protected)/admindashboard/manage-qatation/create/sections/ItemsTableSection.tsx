@@ -71,6 +71,7 @@ export default function ItemsTableSection({ form }: ItemsTableSectionProps) {
                       <FormControl>
                         <Input
                           {...field}
+                          value={field.value ?? ""}
                           placeholder="Qty"
                           className="border-0 focus-visible:ring-0"
                         />
@@ -88,6 +89,7 @@ export default function ItemsTableSection({ form }: ItemsTableSectionProps) {
                       <FormControl>
                         <Input
                           {...field}
+                          value={field.value ?? ""}
                           placeholder="Unit"
                           className="border-0 focus-visible:ring-0"
                         />

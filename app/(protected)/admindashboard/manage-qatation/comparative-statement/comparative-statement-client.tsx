@@ -41,6 +41,7 @@ import {
   AlertTriangle,
   Info,
   FileText,
+  ArrowLeft,
 } from "lucide-react";
 import {
   createComparativeStatement,
@@ -258,7 +259,16 @@ export function ComparativeStatementClient({
 
   if (quotations.length === 0) {
     return (
-      <Card>
+      <>
+        <div className="mb-6">
+          <Button variant="ghost" asChild className="mb-4">
+            <Link href="/admindashboard/manage-qatation">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Link>
+          </Button>
+        </div>
+        <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
             <BarChart3 className="h-6 w-6" />
@@ -297,11 +307,20 @@ export function ComparativeStatementClient({
           </div>
         </CardContent>
       </Card>
-    );
-  }
+    </>
+  );
+}
 
   return (
     <>
+      <div className="mb-6">
+        <Button variant="ghost" asChild className="mb-4">
+          <Link href="/admindashboard/manage-qatation">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Link>
+        </Button>
+      </div>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
@@ -681,7 +700,7 @@ export function ComparativeStatementClient({
                               onBidsAdded={() => window.location.reload()}
                             />
                             <Button size="sm" variant="outline" asChild>
-                              <Link href={`/quotations/view/${quotation.id}`}>
+                              <Link href={`/admindashboard/manage-qatation/view/${quotation.id}`}>
                                 <Eye className="h-4 w-4 mr-1" />
                                 View Details
                               </Link>

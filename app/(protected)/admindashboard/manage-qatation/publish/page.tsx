@@ -232,7 +232,7 @@ export default async function PublishQuotationPage() {
                               </Button>
                               <Button size="sm" variant="outline" asChild>
                                 <Link
-                                  href={`/admindashboard/manage-qatation/modify?id=${quotation.id}`}
+                                  href={`/admindashboard/manage-qatation/modify/${quotation.id}`}
                                 >
                                   <Edit className="h-4 w-4" />
                                 </Link>

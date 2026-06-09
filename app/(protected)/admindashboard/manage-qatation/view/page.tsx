@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ArrowLeft, Search, Eye, Edit, Trash2, FileText } from "lucide-react"
-import { getQuotations } from "@/lib/actions/quotations"
+import { getQuotations, deleteQuotation } from "@/lib/actions/quotations"
+import { useCurrentUser } from "@/hooks/use-current-user"
+import { useToast } from "@/components/ui/use-toast"
 
 // Replace mock data with state
 const ViewQuotationsPage = () => {
@@ -17,6 +19,46 @@ const ViewQuotationsPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredQuotations, setFilteredQuotations] = useState(quotations)
+  const user = useCurrentUser()
+  const { toast } = useToast()
+
+  const handleDelete = async (id: string) => {
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "User not authenticated. Please log in again.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (window.confirm("Are you sure you want to delete this quotation notice?")) {
+      try {
+        const result = await deleteQuotation(id, user.id)
+        if (result.success) {
+          toast({
+            title: "Success",
+            description: "Quotation deleted successfully",
+          })
+          setQuotations((prev) => prev.filter((q) => q.id !== id))
+          setFilteredQuotations((prev) => prev.filter((q) => q.id !== id))
+        } else {
+          toast({
+            title: "Error",
+            description: result.error || "Failed to delete quotation",
+            variant: "destructive",
+          })
+        }
+      } catch (err) {
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred while deleting",
+          variant: "destructive",
+        })
+        console.error("Delete error:", err)
+      }
+    }
+  }
 
   // Add data fetching
   useEffect(() => {
@@ -43,15 +85,15 @@ const ViewQuotationsPage = () => {
 
   // Update the search function to work with real data
   const handleSearch = (value: string) => {
-    setSearchTerm(value)
-    // For now, client-side filtering - you can move this to server-side later
+    setSearchTerm(value);
+    const lowerValue = value.toLowerCase();
     const filtered = quotations.filter(
       (quotation) =>
-        quotation.nitNo.toLowerCase().includes(value.toLowerCase()) ||
-        quotation.workName.toLowerCase().includes(value.toLowerCase()),
-    )
-    setFilteredQuotations(filtered)
-  }
+        (quotation.nitNo || "").toLowerCase().includes(lowerValue) ||
+        (quotation.workName || "").toLowerCase().includes(lowerValue)
+    );
+    setFilteredQuotations(filtered);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -70,7 +112,12 @@ const ViewQuotationsPage = () => {
     <div className="min-h-screen bg-muted/40 py-8">
       <div className="container mx-auto px-4">
         <div className="mb-6">
-        
+          <Button variant="ghost" asChild className="mb-4">
+            <Link href="/admindashboard/manage-qatation">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Dashboard
+            </Link>
+          </Button>
         </div>
 
         <Card>
@@ -93,7 +140,7 @@ const ViewQuotationsPage = () => {
                 />
               </div>
               <Button asChild>
-                <Link href="/quotations/create">Create New Quotation</Link>
+                <Link href="/admindashboard/manage-qatation/create">Create New Quotation</Link>
               </Button>
             </div>
 
@@ -171,6 +218,8 @@ const ViewQuotationsPage = () => {
                             size="sm"
                             variant="outline"
                             className="text-red-600 hover:text-red-700 bg-transparent"
+                            onClick={() => handleDelete(quotation.id)}
+                            disabled={quotation.status === "PUBLISHED"}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

@@ -402,7 +402,7 @@ export default async function CreateOrderPage() {
 
                           <Button asChild variant="ghost" size="sm">
                             <Link
-                              href={`/admindashboard/manage-qatation/${quotation.id}`}
+                              href={`/admindashboard/manage-qatation/view/${quotation.id}`}
                             >
                               View Details
                             </Link>
@@ -417,8 +417,8 @@ export default async function CreateOrderPage() {
 
             <div className="flex justify-between items-center mt-8 pt-6 border-t">
               <Button asChild variant="outline">
-                <Link href="/admindashboard/manage-qatation/view">
-                  ← Back to Quotations
+                <Link href="/admindashboard/manage-qatation">
+                  ← Back to Dashboard
                 </Link>
               </Button>
 

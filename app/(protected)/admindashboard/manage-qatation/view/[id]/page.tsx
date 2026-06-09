@@ -36,7 +36,14 @@ export default async function ViewQuotationPage({
         {/* Action Buttons - Hidden in print */}
         <div className="mb-6 print-hidden">
           <div className="flex justify-between items-center">
-            <div></div>
+            <div>
+              <Button variant="ghost" asChild>
+                <Link href="/admindashboard/manage-qatation/view">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to List
+                </Link>
+              </Button>
+            </div>
             <ClientActions quotation={quotation} />
           </div>
         </div>

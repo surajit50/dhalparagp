@@ -99,6 +99,50 @@ export default function TermsConditionsSection({ form }: TermsConditionsSectionP
           />
         )}
 
+        {quotationType === "SALE" && (
+          <>
+            <FormField
+              name="itemCondition"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condition of Items *</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      value={field.value || ""}
+                      placeholder="Describe the physical/working condition of the items (e.g. used, scrap, non-functional, damaged)..."
+                      rows={2}
+                      className="resize-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              name="workLocation"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location of Items / Inspection Venue</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      value={field.value || ""}
+                      placeholder="Provide details where items are stored and where they can be inspected before bidding..."
+                      rows={2}
+                      className="resize-none"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+
         {quotationType === "SERVICE" && (
           <div className="space-y-4">
             <FormField
@@ -216,15 +260,30 @@ export default function TermsConditionsSection({ form }: TermsConditionsSectionP
         <p className="text-sm text-yellow-800 font-semibold mb-2">Standard Terms & Conditions:</p>
         <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
           <li>Quotations must be submitted in sealed envelope</li>
-          <li>Rates must include all taxes and incidental charges</li>
+          {quotationType === "SALE" ? (
+            <li>Rates must include all applicable taxes and loading charges</li>
+          ) : (
+            <li>Rates must include all taxes and incidental charges</li>
+          )}
           <li>Authority reserves right to accept/reject quotations</li>
-          <li>Payment as per fund availability and satisfactory completion</li>
+          {quotationType === "SALE" ? (
+            <li>Payment of the full bid amount must be made prior to lifting/delivery of items</li>
+          ) : (
+            <li>Payment as per fund availability and satisfactory completion</li>
+          )}
           {quotationType === "SERVICE" && (
             <>
               <li>Equipment must be in good working condition</li>
               <li>Valid insurance certificate to be provided</li>
               <li>Service to be provided as and when required</li>
               <li>Operator/Staff availability as per requirement</li>
+            </>
+          )}
+          {quotationType === "SALE" && (
+            <>
+              <li>Items will be sold on 'As Is Where Is' basis</li>
+              <li>Interested bidders can inspect the items at the specified location during office hours</li>
+              <li>Items must be removed/lifted by the buyer at their own cost within 3 days of payment</li>
             </>
           )}
         </ul>

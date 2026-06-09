@@ -2,11 +2,11 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { useToast } from "@/components/ui/use-toast";
-import { createQuotation, publishQuotation } from "@/lib/actions/quotations";
+import { updateQuotation, publishQuotation } from "@/lib/actions/quotations";
 import { quotationSchema } from "@/lib/schemas/quotation";
 import type { QuotationSchema } from "@/lib/schemas/quotation";
 import { Button } from "@/components/ui/button";
@@ -15,59 +15,63 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Form } from "@/components/ui/form";
 import { ArrowLeft, Save, Send, AlertCircle, CheckCircle } from "lucide-react";
 import Link from "next/link";
-import BasicInfoSection from "./sections/BasicInfoSection";
-import ItemsTableSection from "./sections/ItemsTableSection";
-import DatesAndTimesSection from "./sections/DatesAndTimesSection";
-import TermsConditionsSection from "./sections/TermsConditionsSection";
-import RequiredDocumentsSection from "./sections/RequiredDocumentsSection";
 
-type QuotationFormType = QuotationSchema;
+import BasicInfoSection from "@/app/(protected)/admindashboard/manage-qatation/create/sections/BasicInfoSection";
+import ItemsTableSection from "@/app/(protected)/admindashboard/manage-qatation/create/sections/ItemsTableSection";
+import DatesAndTimesSection from "@/app/(protected)/admindashboard/manage-qatation/create/sections/DatesAndTimesSection";
+import TermsConditionsSection from "@/app/(protected)/admindashboard/manage-qatation/create/sections/TermsConditionsSection";
+import RequiredDocumentsSection from "@/app/(protected)/admindashboard/manage-qatation/create/sections/RequiredDocumentsSection";
 
-export default function CreateQuotationForm() {
+type EditQuotationFormProps = {
+  quotation: any;
+};
+
+export default function EditQuotationForm({ quotation }: EditQuotationFormProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const quotationType = (searchParams.get("type")?.toUpperCase() as "WORK" | "SUPPLY" | "SALE") || "SUPPLY";
-  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const user = useCurrentUser();
   const { toast } = useToast();
 
-  const form = useForm<QuotationFormType>({
+  const form = useForm<QuotationSchema>({
     resolver: zodResolver(quotationSchema),
     mode: "onChange",
     defaultValues: {
-      quotationType,
-      nitNo: "",
-      nitDate: new Date().toISOString().split("T")[0],
-      workName: "",
-      estimatedAmount: "",
-      submissionDate: "",
-      submissionTime: "15:00",
-      openingDate: "",
-      openingTime: "11:00",
-      description: "",
-      eligibilityCriteria: "",
-      itemCondition: "",
-      specifications: "",
-      workLocation: "",
-      quantity: "",
-      unit: "",
+      quotationType: quotation.quotationType || "SUPPLY",
+      nitNo: quotation.nitNo || "",
+      nitDate: quotation.nitDate ? new Date(quotation.nitDate).toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+      workName: quotation.workName || "",
+      estimatedAmount: quotation.estimatedAmount?.toString() || "",
+      submissionDate: quotation.submissionDate ? new Date(quotation.submissionDate).toISOString().split("T")[0] : "",
+      submissionTime: quotation.submissionTime || "15:00",
+      openingDate: quotation.openingDate ? new Date(quotation.openingDate).toISOString().split("T")[0] : "",
+      openingTime: quotation.openingTime || "11:00",
+      description: quotation.description || "",
+      eligibilityCriteria: quotation.eligibilityCriteria || "",
+      itemCondition: quotation.itemCondition || "",
+      specifications: quotation.specifications || "",
+      workLocation: quotation.workLocation || "",
+      quantity: quotation.quantity || "",
+      unit: quotation.unit || "",
+      rateType: quotation.rateType || null,
+      serviceCategory: quotation.serviceCategory || null,
     },
   });
 
-  // Auto-set opening date to be after submission date
+  // Auto-set opening date if submission date changes
   useEffect(() => {
-    const submissionDate = form.watch("submissionDate");
-    if (submissionDate) {
-      const nextDay = new Date(submissionDate);
-      nextDay.setDate(nextDay.getDate() + 1);
-      form.setValue("openingDate", nextDay.toISOString().split("T")[0]);
-    }
+    const subscription = form.watch((value, { name }) => {
+      if (name === "submissionDate" && value.submissionDate) {
+        const nextDay = new Date(value.submissionDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        form.setValue("openingDate", nextDay.toISOString().split("T")[0]);
+      }
+    });
+    return () => subscription.unsubscribe();
   }, [form]);
 
-  const onSubmit = async (data: QuotationFormType) => {
+  const onSubmit = async (data: QuotationSchema) => {
     if (!user?.id) {
       setError("User not authenticated. Please log in again.");
       return;
@@ -78,22 +82,22 @@ export default function CreateQuotationForm() {
     setSuccess(null);
 
     try {
-      const result = await createQuotation(data, user.id);
+      const result = await updateQuotation(quotation.id, data, user.id);
       if (result.success) {
-        setSuccess("Quotation saved as draft successfully!");
+        setSuccess("Quotation updated successfully!");
         toast({
           title: "Success",
-          description: "Quotation saved as draft successfully!",
+          description: "Quotation updated successfully!",
         });
 
         setTimeout(() => {
-          router.push("/admindashboard/manage-qatation/publish");
+          router.push("/admindashboard/manage-qatation/view");
         }, 1500);
       } else {
-        setError(result.error || "Failed to save quotation");
+        setError(result.error || "Failed to update quotation");
         toast({
           title: "Error",
-          description: result.error || "Failed to save quotation",
+          description: result.error || "Failed to update quotation",
           variant: "destructive",
         });
       }
@@ -105,13 +109,13 @@ export default function CreateQuotationForm() {
         description: errorMessage,
         variant: "destructive",
       });
-      console.error("Error saving quotation:", error);
+      console.error("Error updating quotation:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const onPublish = async (data: QuotationFormType) => {
+  const onPublish = async (data: QuotationSchema) => {
     if (!user?.id) {
       setError("User not authenticated. Please log in again.");
       return;
@@ -122,9 +126,9 @@ export default function CreateQuotationForm() {
     setSuccess(null);
 
     try {
-      const createResult = await createQuotation(data, user.id);
-      if (createResult.success && createResult.data) {
-        const publishResult = await publishQuotation(createResult.data.id, user.id);
+      const updateResult = await updateQuotation(quotation.id, data, user.id);
+      if (updateResult.success) {
+        const publishResult = await publishQuotation(quotation.id, user.id);
         if (publishResult.success) {
           setSuccess("Quotation published successfully!");
           toast({
@@ -144,10 +148,10 @@ export default function CreateQuotationForm() {
           });
         }
       } else {
-        setError(createResult.error || "Failed to create quotation");
+        setError(updateResult.error || "Failed to save quotation updates");
         toast({
           title: "Error",
-          description: createResult.error || "Failed to create quotation",
+          description: updateResult.error || "Failed to save quotation updates",
           variant: "destructive",
         });
       }
@@ -165,35 +169,12 @@ export default function CreateQuotationForm() {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-muted/40 py-8">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-md mx-auto">
-            <CardContent className="pt-6">
-              <div className="text-center">
-                <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                <p className="text-lg font-medium">Authentication Required</p>
-                <p className="text-muted-foreground mb-4">
-                  Please log in to create a quotation.
-                </p>
-                <Button asChild>
-                  <Link href="/auth/login">Login</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-muted/40 py-8">
       <div className="container mx-auto px-4">
         <div className="mb-6">
           <Button variant="ghost" asChild className="mb-4">
-            <Link href="/admindashboard/manage-qatation">
+            <Link href="/admindashboard/manage-qatation/view">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Quotations
             </Link>
@@ -203,15 +184,14 @@ export default function CreateQuotationForm() {
         <Card className="max-w-5xl mx-auto">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center text-primary">
-              Create Quotation Notice (NIT/NIQ)
+              Modify Quotation Notice (NIT/NIQ)
             </CardTitle>
             <CardDescription className="text-center">
-              Official Quotation Notice Format - Gram Panchayat
+              Edit Quotation Notice Details - {quotation.nitNo}
             </CardDescription>
           </CardHeader>
 
           <CardContent>
-            {/* Status Messages */}
             {error && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
@@ -228,22 +208,12 @@ export default function CreateQuotationForm() {
 
             <Form {...form}>
               <form className="space-y-6">
-                {/* Basic Information Section */}
                 <BasicInfoSection form={form} />
-
-                {/* Items Table Section */}
                 <ItemsTableSection form={form} />
-
-                {/* Dates and Times Section */}
                 <DatesAndTimesSection form={form} />
-
-                {/* Terms & Conditions Section */}
                 <TermsConditionsSection form={form} />
-
-                {/* Required Documents Section */}
                 <RequiredDocumentsSection />
 
-                {/* Action Buttons */}
                 <div className="flex justify-end gap-4 pt-6 border-t">
                   <Button
                     type="button"
@@ -253,7 +223,7 @@ export default function CreateQuotationForm() {
                     className="px-8"
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    {isLoading ? "Saving..." : "Save as Draft"}
+                    {isLoading ? "Saving..." : "Save Draft Updates"}
                   </Button>
                   <Button
                     type="button"
@@ -262,7 +232,7 @@ export default function CreateQuotationForm() {
                     className="px-8"
                   >
                     <Send className="h-4 w-4 mr-2" />
-                    {isLoading ? "Publishing..." : "Publish Notice"}
+                    {isLoading ? "Publishing..." : "Publish Updates"}
                   </Button>
                 </div>
               </form>

@@ -31,6 +31,11 @@ const serviceDocuments = [
   { id: "operator-cert", label: "Operator Certification/License" },
 ];
 
+const saleDocuments = [
+  { id: "security-deposit-receipt", label: "Proof of Earnest Money Deposit (EMD) / Security Deposit Receipt" },
+  { id: "gst-cert", label: "GST Registration Certificate (if applicable)" },
+];
+
 export default function RequiredDocumentsSection() {
   const form = useFormContext();
   const quotationType = form.watch("quotationType");
@@ -43,6 +48,8 @@ export default function RequiredDocumentsSection() {
         return [...commonDocuments, ...workDocuments];
       case "SERVICE":
         return [...commonDocuments, ...serviceDocuments];
+      case "SALE":
+        return [...commonDocuments, ...saleDocuments];
       default:
         return commonDocuments;
     }
@@ -56,6 +63,8 @@ export default function RequiredDocumentsSection() {
         return "Contractors must provide the following documents with their quotation:";
       case "SERVICE":
         return "Service providers/Equipment owners must provide the following documents with their quotation:";
+      case "SALE":
+        return "Bidders must provide the following documents with their quotation for sale of items:";
       default:
         return "Suppliers must provide the following documents with their quotation:";
     }
@@ -71,6 +80,14 @@ export default function RequiredDocumentsSection() {
           "Sign and stamp all pages of quotation",
           "Submit all required documents together with quotation",
           "Equipment/Vehicle registration and insurance proof mandatory",
+        ];
+      case "SALE":
+        return [
+          "Submit bid in sealed envelope superscribed with quotation title and NIT No.",
+          "Quote rates inclusive of all applicable taxes (GST, etc.) and loading charges",
+          "Items sold on 'AS IS WHERE IS' basis",
+          "Successful bidder must deposit full amount before lifting/removing items",
+          "Sign and stamp all pages of bid documents",
         ];
       default:
         return [
@@ -88,7 +105,7 @@ export default function RequiredDocumentsSection() {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold text-primary border-b pb-2">
-        Required Documents from {quotationType === "WORK" ? "Contractors" : quotationType === "SERVICE" ? "Service Providers" : "Suppliers"}
+        Required Documents from {quotationType === "WORK" ? "Contractors" : quotationType === "SERVICE" ? "Service Providers" : quotationType === "SALE" ? "Bidders" : "Suppliers"}
       </h3>
 
       <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
