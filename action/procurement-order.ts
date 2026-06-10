@@ -57,3 +57,21 @@ export async function getOrders() {
     return []
   }
 }
+
+export async function getQuotationForOrder(quotationId: string) {
+  try {
+    return await db.procurementQuotation.findUnique({
+      where: { id: quotationId },
+      include: {
+        category: true,
+        bidders: {
+          where: { rank: 1 },
+          include: { agency: true }
+        }
+      }
+    })
+  } catch (error) {
+    console.error("Error fetching quotation for order:", error)
+    return null
+  }
+}

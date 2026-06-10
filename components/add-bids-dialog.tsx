@@ -29,7 +29,7 @@ import { Plus, Minus } from "lucide-react";
 import {
   addBidsToQuotation,
   getAvailableBidders,
-} from "@/lib/actions/add-bids";
+} from "@/action/procurement-bid";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface Bidder {
@@ -95,7 +95,17 @@ export function AddBidsDialog({ quotation, onBidsAdded }: AddBidsDialogProps) {
     setIsLoading(true);
     try {
       const result = await getAvailableBidders();
-      if (result.success) setBidders(result.data || []);
+      if (result.success) {
+        // Transform API response to match Bidder interface by mapping fields
+        const transformedBidders: Bidder[] = (result.data || []).map((apiBidder: any) => ({
+          id: apiBidder.id,
+          name: apiBidder.name,
+          type: apiBidder.agencyType, // Map agencyType to Bidder.type
+          contactPerson: apiBidder.proprietorName || '', // Map proprietorName to contactPerson
+          phone: apiBidder.mobileNumber || '', // Map mobileNumber to phone
+        }));
+        setBidders(transformedBidders);
+      }
       else throw new Error();
     } catch {
       toast({

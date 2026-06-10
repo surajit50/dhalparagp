@@ -74,3 +74,55 @@ export async function getBiddersByQuotation(quotationId: string) {
     return []
   }
 }
+
+export async function getAvailableBidders() {
+  try {
+    const agencies = await db.agencyDetails.findMany({
+      orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        agencyType:true,
+        proprietorName: true,
+        contactDetails: true,
+      }
+    })
+    return { success: true, data: agencies }
+  } catch (error) {
+    console.error("Error fetching available bidders:", error)
+    return { success: false, error: "Failed to fetch bidders" }
+  }
+}
+
+export async function addBidsToQuotation(quotationId: string, bids: { bidderId: string, amount: number, remarks?: string }[], userId?: string) {
+  try {
+    // 1. Delete existing bids for this quotation if any (to avoid duplicates on retry)
+    // UserId is passed for compatibility with the component, but not currently used in the schema
+    
+    await db.$transaction(async (tx) => {
+      for (const bid of bids) {
+        if (!bid.bidderId || !bid.amount) continue;
+        
+        await tx.procurementBidder.create({
+          data: {
+            quotationId,
+            agencyId: bid.bidderId,
+            bidAmount: bid.amount,
+            remarks: bid.remarks
+          }
+        })
+      }
+    })
+
+    // 2. Auto-rank bidders
+    await rankBidders(quotationId)
+
+    revalidatePath(`/admindashboard/manage-quotation/bidders`)
+    revalidatePath(`/admindashboard/manage-quotation/view`)
+    
+    return { success: true }
+  } catch (error) {
+    console.error("Error adding batch bids:", error)
+    return { success: false, error: "Failed to save bids" }
+  }
+}
