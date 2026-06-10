@@ -122,6 +122,7 @@ model User {
   linkageApplications          LinkageApplication[]
   noticeAcknowledgments        NoticeAcknowledgment[]
   samabyathiApplications       SamabyathiApplication[]
+  procurementQuotations        ProcurementQuotation[]
 }
 
 model Account {
@@ -290,29 +291,29 @@ model EnquiryReport {
   id                  String             @id @default(auto()) @map("_id") @db.ObjectId
   warishApplication   WarishApplication? @relation(fields: [warishApplicationId], references: [id], onDelete: Cascade)
   warishApplicationId String?            @unique @db.ObjectId
-  
-  // Standalone fields
-  personName          String?
-  fatherName          String?
-  villageName         String?
-  postOffice          String?
-  reportType          String             @default("combined")
 
-  memoNo              String?
-  memoDate            DateTime?
-  refMemoNo           String?
-  refMemoDate         DateTime?
-  
-  bdoTitle            String
-  blockName           String
-  district            String
-  policeStation       String
-  gramPanchayat       String
-  
-  docsDetails         Json               // Stores an array of { id, label, checked, details, placeholder }
-  
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
+  // Standalone fields
+  personName  String?
+  fatherName  String?
+  villageName String?
+  postOffice  String?
+  reportType  String  @default("combined")
+
+  memoNo      String?
+  memoDate    DateTime?
+  refMemoNo   String?
+  refMemoDate DateTime?
+
+  bdoTitle      String
+  blockName     String
+  district      String
+  policeStation String
+  gramPanchayat String
+
+  docsDetails Json // Stores an array of { id, label, checked, details, placeholder }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model WarishDetail {
@@ -408,22 +409,24 @@ enum AgencyType {
 }
 
 model AgencyDetails {
-  id             String      @id @default(auto()) @map("_id") @db.ObjectId
-  name           String      @unique
-  agencyType     AgencyType  @default(INDIVIDUAL)
-  proprietorName String? // Added for farm agencies
-  mobileNumber   String?
-  email          String?
-  pan            String?
-  tin            String?
-  gst            String?
-  contactDetails String
-  cooperative    Boolean     @default(false)
-  Bidagency      Bidagency[]
-  Bid            Bid[]
-  Order          Order[]
-  users          User[]
-  Notice         Notice[]
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  name               String              @unique
+  agencyType         AgencyType          @default(INDIVIDUAL)
+  proprietorName     String? // Added for farm agencies
+  mobileNumber       String?
+  email              String?
+  pan                String?
+  tin                String?
+  gst                String?
+  contactDetails     String
+  cooperative        Boolean             @default(false)
+  Bidagency          Bidagency[]
+  Bid                Bid[]
+  Order              Order[]
+  users              User[]
+  Notice             Notice[]
+  procurementBidders ProcurementBidder[]
+  procurementOrders  ProcurementOrder[]
 }
 
 model ApprovedActionPlanDetails {
@@ -446,18 +449,18 @@ model ApprovedActionPlanDetails {
   fundType            String?
   upasamiti           UpasamitiName?
 
-  focusArea           String?
-  workType            String?
-  componentType       String?
-  gramSansad          String?
-  sdgs                String?
-  beneficiariesSC     Int?      @default(0)
-  beneficiariesST     Int?      @default(0)
-  beneficiariesGen    Int?      @default(0)
-  unitType            String?
-  totalUnit           Int?      @default(0)
-  implementedBy       String?
-  remarks             String?
+  focusArea        String?
+  workType         String?
+  componentType    String?
+  gramSansad       String?
+  sdgs             String?
+  beneficiariesSC  Int?    @default(0)
+  beneficiariesST  Int?    @default(0)
+  beneficiariesGen Int?    @default(0)
+  unitType         String?
+  totalUnit        Int?    @default(0)
+  implementedBy    String?
+  remarks          String?
 
   WorksDetail    WorksDetail[]
   AggrementModel AggrementModel[]
@@ -1872,6 +1875,11 @@ model Quotation {
   itemCondition       String?
   workLocation        String?
   eligibilityCriteria String?
+  rateType            String?
+  serviceCategory     String?
+  fundSource          String?
+  emdAmount           Float?
+  tenderFee           Float?
   status              QuotationStatus @default(DRAFT)
   publishedAt         DateTime?
   createdAt           DateTime        @default(now())
@@ -1896,6 +1904,8 @@ model Bid {
   rank        Int?
   isSelected  Boolean  @default(false)
   remarks     String?
+  isEmdPaid   Boolean  @default(false)
+  emdDetails  String?
 
   // Relations
   quotationId     String        @db.ObjectId
@@ -1986,6 +1996,7 @@ enum QuotationType {
   WORK
   SUPPLY
   SALE
+  SERVICE
 }
 
 enum QuotationStatus {
@@ -3912,6 +3923,244 @@ model CcerActuals {
   updatedAt         DateTime @updatedAt
 
   @@unique([financialYear, fundName])
+}
+
+// ============================================================================
+// AI-POWERED PROCUREMENT MANAGEMENT SYSTEM MODELS
+// ============================================================================
+
+model ProcurementCategory {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   @unique
+  description String?
+  icon        String?
+  color       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  fields     ProcurementField[]
+  quotations ProcurementQuotation[]
+
+  @@map("procurement_categories")
+}
+
+model ProcurementField {
+  id         String              @id @default(auto()) @map("_id") @db.ObjectId
+  categoryId String              @db.ObjectId
+  category   ProcurementCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  label    String
+  name     String // snake_case name for the field
+  type     String // text, number, date, select, textarea
+  options  String[] // For select type
+  required Boolean  @default(false)
+  order    Int      @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_fields")
+}
+
+model ProcurementQuotation {
+  id         String              @id @default(auto()) @map("_id") @db.ObjectId
+  nitNo      String              @unique
+  nitDate    DateTime
+  categoryId String              @db.ObjectId
+  category   ProcurementCategory @relation(fields: [categoryId], references: [id])
+
+  workName        String
+  description     String?
+  estimatedAmount Float
+  submissionDate  DateTime
+  submissionTime  String
+  openingDate     DateTime
+  openingTime     String
+
+  // Dynamic fields values stored as JSON
+  dynamicData Json? // { "vehicle_type": "JCB", "hours": 6 }
+
+  status      QuotationStatus @default(DRAFT)
+  publishedAt DateTime?
+
+  items                ProcurementItem[]
+  bidders              ProcurementBidder[]
+  comparativeStatement ProcurementComparativeStatement?
+  order                ProcurementOrder?
+
+  createdById String @db.ObjectId
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_quotations")
+}
+
+model ProcurementItem {
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
+  quotationId String               @db.ObjectId
+  quotation   ProcurementQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  description String
+  quantity    Float
+  unit        String
+  rate        Float?
+  amount      Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_items")
+}
+
+model ProcurementBidder {
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
+  quotationId String               @db.ObjectId
+  quotation   ProcurementQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  agencyId String        @db.ObjectId
+  agency   AgencyDetails @relation(fields: [agencyId], references: [id])
+
+  bidAmount   Float
+  rank        Int? // 1 for L1, 2 for L2, etc.
+  isQualified Boolean @default(true)
+  remarks     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_bidders")
+}
+
+model ProcurementComparativeStatement {
+  id          String               @id @default(auto()) @map("_id") @db.ObjectId
+  quotationId String               @unique @db.ObjectId
+  quotation   ProcurementQuotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  preparedDate DateTime  @default(now())
+  remarks      String?
+  approvedBy   String?
+  approvedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_comparative_statements")
+}
+
+model ProcurementOrder {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderNo   String   @unique
+  orderDate DateTime
+  orderType String // WORK, SUPPLY, SERVICE
+
+  quotationId String               @unique @db.ObjectId
+  quotation   ProcurementQuotation @relation(fields: [quotationId], references: [id])
+
+  agencyId String        @db.ObjectId
+  agency   AgencyDetails @relation(fields: [agencyId], references: [id])
+
+  amount Float
+  status OrderStatus @default(PENDING)
+
+  deliveryDate DateTime?
+  terms        String?
+
+  bills       ProcurementBill[]
+  vouchers    ProcurementVoucher[]
+  certificate ProcurementCompletionCertificate?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_orders")
+}
+
+model ProcurementBill {
+  id      String           @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String           @db.ObjectId
+  order   ProcurementOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  billNo    String   @unique
+  billDate  DateTime
+  billType  String // SUPPLIER, CONTRACTOR, LABOUR, RUNNING, FINAL
+  amount    Float
+  taxAmount Float    @default(0)
+  netAmount Float
+
+  status BillStatus @default(DRAFT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_bills")
+}
+
+model ProcurementVoucher {
+  id      String           @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String           @db.ObjectId
+  order   ProcurementOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  voucherNo     String   @unique
+  voucherDate   DateTime
+  amount        Float
+  particulars   String
+  headOfAccount String?
+  paymentMethod String // CASH, CHEQUE, ONLINE
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_vouchers")
+}
+
+model ProcurementCompletionCertificate {
+  id      String           @id @default(auto()) @map("_id") @db.ObjectId
+  orderId String           @unique @db.ObjectId
+  order   ProcurementOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  certNo              String   @unique
+  certDate            DateTime
+  completionDate      DateTime
+  qualitySatisfactory Boolean  @default(true)
+  remarks             String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_completion_certificates")
+}
+
+model ProcurementRegisterEntry {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  type        String // STOCK, ASSET, SERVICE
+  date        DateTime
+  description String
+  quantity    Float?
+  unit        String?
+  value       Float?
+  referenceNo String? // Bill No or Order No
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_register_entries")
+}
+
+model ProcurementSignature {
+  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  role         String // Pradhan, Secretary, etc.
+  userName     String
+  designation  String
+  signatureUrl String? // Image URL or base64
+  isActive     Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("procurement_signatures")
 }
 
 enum BudgetType {

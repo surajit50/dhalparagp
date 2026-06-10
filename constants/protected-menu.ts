@@ -398,6 +398,7 @@ export const adminMenuItems: MenuItemProps[] = [
       ]),
     ]),
     createMenuItem("Quotation Management", ["admin"], undefined, FaChevronCircleRight, COLORS.green, [
+      createMenuItem("Manage Categories", ["admin"], `${BASE_URLS.admin}/manage-qatation/categories`, FaChevronCircleRight, COLORS.orange),
       createMenuItem("Create Quotation", ["admin"], `${BASE_URLS.admin}/manage-qatation/create`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("View Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/view`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Publish Quotations", ["admin"], `${BASE_URLS.admin}/manage-qatation/publish`, FaChevronCircleRight, COLORS.purple),

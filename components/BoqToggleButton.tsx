@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { toggleBoqPrepared } from "@/lib/actions/works";
+import { toggleBoqPrepared } from "@/action/works";
 import { CheckCircle, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"; // or any toast library

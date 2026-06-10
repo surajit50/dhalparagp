@@ -1,246 +1,126 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
+import { FileText, Download, Eye, MoreVertical, CheckCircle, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ArrowLeft, Search, Eye, Edit, Trash2, FileText } from "lucide-react"
-import { getQuotations, deleteQuotation } from "@/lib/actions/quotations"
-import { useCurrentUser } from "@/hooks/use-current-user"
-import { useToast } from "@/components/ui/use-toast"
+import { getQuotations } from "@/action/procurement-quotation"
+import { format } from "date-fns"
+import { generateNiqPdf } from "@/utils/procurement-pdf-generator"
 
-// Replace mock data with state
-const ViewQuotationsPage = () => {
+export default function ViewQuotationsPage() {
   const [quotations, setQuotations] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredQuotations, setFilteredQuotations] = useState(quotations)
-  const user = useCurrentUser()
-  const { toast } = useToast()
 
-  const handleDelete = async (id: string) => {
-    if (!user?.id) {
-      toast({
-        title: "Error",
-        description: "User not authenticated. Please log in again.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    if (window.confirm("Are you sure you want to delete this quotation notice?")) {
-      try {
-        const result = await deleteQuotation(id, user.id)
-        if (result.success) {
-          toast({
-            title: "Success",
-            description: "Quotation deleted successfully",
-          })
-          setQuotations((prev) => prev.filter((q) => q.id !== id))
-          setFilteredQuotations((prev) => prev.filter((q) => q.id !== id))
-        } else {
-          toast({
-            title: "Error",
-            description: result.error || "Failed to delete quotation",
-            variant: "destructive",
-          })
-        }
-      } catch (err) {
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred while deleting",
-          variant: "destructive",
-        })
-        console.error("Delete error:", err)
-      }
-    }
-  }
-
-  // Add data fetching
   useEffect(() => {
-    const fetchQuotations = async () => {
-      setLoading(true)
-      try {
-        const result = await getQuotations()
-        if (result.success) {
-          setQuotations(result.data || [])
-          setFilteredQuotations(result.data || []) // Initialize filteredQuotations with all data
-        } else {
-          setError(result.error || "Failed to fetch quotations")
-        }
-      } catch (error) {
-        setError("An unexpected error occurred")
-        console.error("Error fetching quotations:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchQuotations()
   }, [])
 
-  // Update the search function to work with real data
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    const lowerValue = value.toLowerCase();
-    const filtered = quotations.filter(
-      (quotation) =>
-        (quotation.nitNo || "").toLowerCase().includes(lowerValue) ||
-        (quotation.workName || "").toLowerCase().includes(lowerValue)
-    );
-    setFilteredQuotations(filtered);
-  };
+  async function fetchQuotations() {
+    setLoading(true)
+    const data = await getQuotations()
+    setQuotations(data)
+    setLoading(false)
+  }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Draft":
-        return "bg-yellow-100 text-yellow-800"
-      case "Published":
-        return "bg-green-100 text-green-800"
-      case "Closed":
-        return "bg-gray-100 text-gray-800"
-      default:
-        return "bg-orange-100 text-orange-800"
-    }
+  const handleDownloadPdf = async (q: any) => {
+    const pdf = await generateNiqPdf({
+      gpName: "No. 3 Dhalpara Gram Panchayat",
+      gpAddress: "P.O. Dhalpara, Dist. Dakshin Dinajpur",
+      nitNo: q.nitNo,
+      nitDate: format(new Date(q.nitDate), "dd/MM/yyyy"),
+      workName: q.workName,
+      items: q.items,
+      submissionDeadline: format(new Date(q.submissionDate), "dd/MM/yyyy HH:mm"),
+      openingDate: format(new Date(q.openingDate), "dd/MM/yyyy HH:mm"),
+    })
+    
+    const blob = new Blob([pdf.buffer], { type: "application/pdf" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `NIQ_${q.nitNo.replace(/\//g, '_')}.pdf`
+    a.click()
   }
 
   return (
-    <div className="min-h-screen bg-muted/40 py-8">
-      <div className="container mx-auto px-4">
-        <div className="mb-6">
-          <Button variant="ghost" asChild className="mb-4">
-            <Link href="/admindashboard/manage-qatation">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Link>
-          </Button>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">View Quotations</h1>
+          <p className="text-muted-foreground">Monitor and manage all issued NIQs</p>
         </div>
+      </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold flex items-center gap-2">
-              <FileText className="h-6 w-6" />
-              View All Quotations
-            </CardTitle>
-            <CardDescription>Manage and view all quotation notices</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center mb-6">
-              <div className="relative w-72">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search by NIT No. or Work Name..."
-                  value={searchTerm}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Button asChild>
-                <Link href="/admindashboard/manage-qatation/create">Create New Quotation</Link>
-              </Button>
-            </div>
-
-            {loading && (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Loading quotations...</p>
-              </div>
+      <div className="border rounded-lg bg-white overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/50 border-b font-medium">
+            <tr>
+              <th className="p-4 text-left">NIT No & Date</th>
+              <th className="p-4 text-left">Category</th>
+              <th className="p-4 text-left">Work Name</th>
+              <th className="p-4 text-left">Estimated Amt</th>
+              <th className="p-4 text-left">Bidders</th>
+              <th className="p-4 text-left">Status</th>
+              <th className="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="p-8 text-center">Loading quotations...</td>
+              </tr>
+            ) : quotations.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="p-8 text-center text-muted-foreground">No quotations found.</td>
+              </tr>
+            ) : (
+              quotations.map((q) => (
+                <tr key={q.id} className="border-b last:border-0 hover:bg-muted/30">
+                  <td className="p-4">
+                    <div className="font-bold">{q.nitNo}</div>
+                    <div className="text-xs text-muted-foreground">{format(new Date(q.nitDate), "dd MMM yyyy")}</div>
+                  </td>
+                  <td className="p-4">
+                    <Badge variant="outline">{q.category.name}</Badge>
+                  </td>
+                  <td className="p-4 max-w-xs truncate">
+                    {q.workName}
+                  </td>
+                  <td className="p-4 font-medium">
+                    ₹{q.estimatedAmount.toLocaleString()}
+                  </td>
+                  <td className="p-4">
+                    <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none">
+                      {q._count.bidders} Bids
+                    </Badge>
+                  </td>
+                  <td className="p-4">
+                    {q.status === 'PUBLISHED' ? (
+                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none">
+                        <CheckCircle className="h-3 w-3 mr-1" /> Published
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 border-none">
+                        <Clock className="h-3 w-3 mr-1" /> Draft
+                      </Badge>
+                    )}
+                  </td>
+                  <td className="p-4 text-right space-x-2">
+                    <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => handleDownloadPdf(q)}>
+                      <Download className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="icon" className="h-8 w-8">
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                  </td>
+                </tr>
+              ))
             )}
-
-            {error && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                <p className="text-red-600 text-sm">{error}</p>
-              </div>
-            )}
-
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>NIT/NIQ No.</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Work/Item Name</TableHead>
-                    <TableHead>Quantity</TableHead>
-                    <TableHead>Estimated Amount</TableHead>
-                    <TableHead>Submission Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredQuotations.map((quotation) => (
-                    <TableRow key={quotation.id}>
-                      <TableCell className="font-medium">{quotation.nitNo}</TableCell>
-                      <TableCell>{new Date(quotation.nitDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Badge
-                          className={
-                            quotation.quotationType === "WORK"
-                              ? "bg-orange-100 text-orange-800"
-                              : quotation.quotationType === "SUPPLY"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-orange-100 text-orange-800"
-                          }
-                        >
-                          {quotation.quotationType === "WORK"
-                            ? "Work"
-                            : quotation.quotationType === "SUPPLY"
-                              ? "Supply"
-                              : "SALE"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>{quotation.workName}</TableCell>
-                      <TableCell>
-                        {quotation.quantity && quotation.unit ? `${quotation.quantity} ${quotation.unit}` : "-"}
-                      </TableCell>
-                      <TableCell>₹{quotation.estimatedAmount.toLocaleString()}</TableCell>
-                      <TableCell>{new Date(quotation.submissionDate).toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <Badge className={getStatusColor(quotation.status)}>{quotation.status}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" asChild>
-                            <Link href={`/admindashboard/manage-qatation/view/${quotation.id}`}>
-                              <Eye className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button size="sm" variant="outline" asChild>
-                            <Link href={`/admindashboard/manage-qatation/modify/${quotation.id}`}>
-                              <Edit className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-red-600 hover:text-red-700 bg-transparent"
-                            onClick={() => handleDelete(quotation.id)}
-                            disabled={quotation.status === "PUBLISHED"}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-
-            {filteredQuotations.length === 0 && !loading && !error && (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">No quotations found matching your search.</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+          </tbody>
+        </table>
       </div>
     </div>
   )
 }
-
-export default ViewQuotationsPage

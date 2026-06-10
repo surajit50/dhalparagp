@@ -133,7 +133,7 @@ export type QuotationFormData = {
   nitNo: string
   nitDate: string
   workName: string
-  estimatedAmount: string
+  estimatedAmount?: string | null
   submissionDate: string
   submissionTime: string
   openingDate: string
