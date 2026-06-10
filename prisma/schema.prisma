@@ -123,6 +123,7 @@ model User {
   noticeAcknowledgments        NoticeAcknowledgment[]
   samabyathiApplications       SamabyathiApplication[]
   procurementQuotations        ProcurementQuotation[]
+  procurementOrders            ProcurementOrder[]
 }
 
 model Account {
@@ -4071,6 +4072,9 @@ model ProcurementOrder {
   bills       ProcurementBill[]
   vouchers    ProcurementVoucher[]
   certificate ProcurementCompletionCertificate?
+
+  createdById String @db.ObjectId
+  createdBy   User   @relation(fields: [createdById], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
