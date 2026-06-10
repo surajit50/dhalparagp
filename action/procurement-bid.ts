@@ -17,7 +17,7 @@ export async function addBidder(quotationId: string, data: { agencyId: string, b
     // Auto-rank bidders
     await rankBidders(quotationId)
 
-    revalidatePath(`/admindashboard/manage-qatation/bidders`)
+    revalidatePath(`/admindashboard/manage-quotation/bidders`)
     return { success: true, data: bidder }
   } catch (error) {
     console.error("Error adding bidder:", error)
@@ -54,7 +54,7 @@ export async function generateComparativeStatement(quotationId: string, remarks?
       data: { status: "CLOSED" } // Or a new status like EVALUATED
     })
 
-    revalidatePath(`/admindashboard/manage-qatation/comparative-statement`)
+    revalidatePath(`/admindashboard/manage-quotation/comparative-statement`)
     return { success: true, data: statement }
   } catch (error) {
     console.error("Error generating comparative statement:", error)

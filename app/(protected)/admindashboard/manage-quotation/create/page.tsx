@@ -160,7 +160,7 @@ export default function CreateQuotationPage() {
         title: "Quotation Created",
         description: "NIT has been saved successfully.",
       });
-      router.push("/admindashboard/manage-qatation/view");
+      router.push("/admindashboard/manage-quotation/view");
     } else {
       toast({
         title: "Error",

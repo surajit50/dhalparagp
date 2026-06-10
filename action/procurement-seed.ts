@@ -69,7 +69,7 @@ export async function seedGPCategories() {
         })
       }
     }
-    revalidatePath("/admindashboard/manage-qatation/categories")
+    revalidatePath("/admindashboard/manage-quotation/categories")
     return { success: true }
   } catch (error) {
     console.error("Error seeding categories:", error)

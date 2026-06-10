@@ -53,7 +53,7 @@ export async function createQuotation(data: any) {
       }
     })
 
-    revalidatePath("/admindashboard/manage-qatation/view")
+    revalidatePath("/admindashboard/manage-quotation/view")
     return { success: true, data: quotation }
   } catch (error) {
     console.error("Error creating quotation:", error)

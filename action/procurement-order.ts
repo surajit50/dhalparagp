@@ -31,7 +31,7 @@ export async function createProcurementOrder(data: {
       data: { status: "CLOSED" }
     })
 
-    revalidatePath("/admindashboard/manage-qatation/orders")
+    revalidatePath("/admindashboard/manage-quotation/orders")
     return { success: true, data: order }
   } catch (error) {
     console.error("Error creating order:", error)

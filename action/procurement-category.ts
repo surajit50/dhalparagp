@@ -47,7 +47,7 @@ export async function createProcurementCategory(data: z.infer<typeof CategorySch
     const category = await db.procurementCategory.create({
       data: validated,
     })
-    revalidatePath("/admindashboard/manage-qatation/categories")
+    revalidatePath("/admindashboard/manage-quotation/categories")
     return { success: true, data: category }
   } catch (error) {
     console.error("Error creating category:", error)
@@ -62,7 +62,7 @@ export async function updateProcurementCategory(id: string, data: z.infer<typeof
       where: { id },
       data: validated,
     })
-    revalidatePath("/admindashboard/manage-qatation/categories")
+    revalidatePath("/admindashboard/manage-quotation/categories")
     return { success: true, data: category }
   } catch (error) {
     console.error("Error updating category:", error)
@@ -75,7 +75,7 @@ export async function deleteProcurementCategory(id: string) {
     await db.procurementCategory.delete({
       where: { id },
     })
-    revalidatePath("/admindashboard/manage-qatation/categories")
+    revalidatePath("/admindashboard/manage-quotation/categories")
     return { success: true }
   } catch (error) {
     console.error("Error deleting category:", error)
@@ -92,7 +92,7 @@ export async function addProcurementField(categoryId: string, data: z.infer<type
         categoryId,
       },
     })
-    revalidatePath("/admindashboard/manage-qatation/categories")
+    revalidatePath("/admindashboard/manage-quotation/categories")
     return { success: true, data: field }
   } catch (error) {
     console.error("Error adding field:", error)
@@ -105,7 +105,7 @@ export async function deleteProcurementField(fieldId: string) {
     await db.procurementField.delete({
       where: { id: fieldId },
     })
-    revalidatePath("/admindashboard/manage-qatation/categories")
+    revalidatePath("/admindashboard/manage-quotation/categories")
     return { success: true }
   } catch (error) {
     console.error("Error deleting field:", error)
