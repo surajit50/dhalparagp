@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, UserPlus, FileText, CheckCircle, Search } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, UserPlus, FileText, CheckCircle, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -32,71 +32,111 @@ import { getQuotations } from "@/action/procurement-quotation";
 import { addBidder, getBiddersByQuotation } from "@/action/procurement-bid";
 import { getAllAgencies } from "@/action/procurement-agency";
 
+interface Quotation {
+  id: string;
+  nitNo: string;
+  workName: string;
+  category: { name: string };
+  estimatedAmount: number;
+  _count: { bidders: number };
+}
+
+interface Agency {
+  id: string;
+  name: string;
+}
+
+interface NewBid {
+  agencyId: string;
+  bidAmount: number;
+  remarks: string;
+}
+
 export default function BiddersPage() {
-  const [quotations, setQuotations] = useState<any[]>([]);
-  const [agencies, setAgencies] = useState<any[]>([]);
-  const [selectedQuotation, setSelectedQuotation] = useState<any>(null);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
+  const [agencies, setAgencies] = useState<Agency[]>([]);
+  const [selectedQuotation, setSelectedQuotation] = useState<Quotation | null>(null);
   const [bidders, setBidders] = useState<any[]>([]);
   const [isAddBidderOpen, setIsAddBidderOpen] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [newBid, setNewBid] = useState({
+  const [addingBidder, setAddingBidder] = useState(false);
+  const [newBid, setNewBid] = useState<NewBid>({
     agencyId: "",
     bidAmount: 0,
     remarks: "",
   });
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
-    setLoading(true);
-    const qData = await getQuotations();
-    setQuotations(qData);
-
-    // Fetch agencies - I should have a server action for this
-    // For now, I'll assume I can fetch them or use a placeholder
-    // I'll create the action in the next step
-    setLoading(false);
-  }
-
-  // Fetch agencies from a server action
-  useEffect(() => {
-    const fetchAgencies = async () => {
-      const data = await getAllAgencies();
-      setAgencies(data);
-    };
-    fetchAgencies();
-  }, []);
-
-  const handleOpenBidders = async (quotation: any) => {
-    setSelectedQuotation(quotation);
-    const bData = await getBiddersByQuotation(quotation.id);
-    setBidders(bData);
-  };
-
-  const handleAddBidder = async () => {
-    if (!newBid.agencyId || !newBid.bidAmount) return;
-
-    const result = await addBidder(selectedQuotation.id, newBid);
-    if (result.success) {
-      toast({
-        title: "Bidder Added",
-        description: "The bid has been recorded and ranked.",
-      });
-      const bData = await getBiddersByQuotation(selectedQuotation.id);
-      setBidders(bData);
-      setIsAddBidderOpen(false);
-      setNewBid({ agencyId: "", bidAmount: 0, remarks: "" });
-    } else {
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [qData, aData] = await Promise.all([
+        getQuotations(),
+        getAllAgencies(),
+      ]);
+      setQuotations(qData);
+      setAgencies(aData);
+    } catch (error) {
       toast({
         title: "Error",
-        description: result.error,
+        description: "Failed to load data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const handleOpenBidders = useCallback(async (quotation: Quotation) => {
+    try {
+      setSelectedQuotation(quotation);
+      const bData = await getBiddersByQuotation(quotation.id);
+      setBidders(bData);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load bidders",
         variant: "destructive",
       });
     }
-  };
+  }, [toast]);
+
+  const handleAddBidder = useCallback(async () => {
+    if (!selectedQuotation || !newBid.agencyId || !newBid.bidAmount) return;
+
+    try {
+      setAddingBidder(true);
+      const result = await addBidder(selectedQuotation.id, newBid);
+      if (result.success) {
+        toast({
+          title: "Bidder Added",
+          description: "The bid has been recorded and ranked.",
+        });
+        const bData = await getBiddersByQuotation(selectedQuotation.id);
+        setBidders(bData);
+        setIsAddBidderOpen(false);
+        setNewBid({ agencyId: "", bidAmount: 0, remarks: "" });
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add bidder",
+        variant: "destructive",
+      });
+    } finally {
+      setAddingBidder(false);
+    }
+  }, [selectedQuotation, newBid, toast]);
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -250,18 +290,13 @@ export default function BiddersPage() {
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
               <Label>Select Agency</Label>
-              <Select
-                onValueChange={(val) => setNewBid({ ...newBid, agencyId: val })}
-                value={newBid.agencyId}
-              >
+              <Select onValueChange={(val) => setNewBid({ ...newBid, agencyId: val })} value={newBid.agencyId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Agency" />
                 </SelectTrigger>
                 <SelectContent>
                   {agencies.map((agency) => (
-                    <SelectItem key={agency.id} value={agency.id}>
-                      {agency.name}
-                    </SelectItem>
+                    <SelectItem key={agency.id} value={agency.id}>{agency.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -291,7 +326,16 @@ export default function BiddersPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleAddBidder}>Save Bid</Button>
+            <Button onClick={handleAddBidder} disabled={addingBidder}>
+              {addingBidder ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save Bid"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

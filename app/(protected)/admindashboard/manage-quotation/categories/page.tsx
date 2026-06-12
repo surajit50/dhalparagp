@@ -1,7 +1,32 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, Edit, Trash, Settings2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Plus, Edit, Trash, Settings2, Loader2 } from "lucide-react";
+
+interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  fields: any[];
+}
+
+interface NewCategory {
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+}
+
+interface NewField {
+  label: string;
+  name: string;
+  type: string;
+  required: boolean;
+  options: string;
+  order: number;
+}
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,18 +67,23 @@ import { seedGPCategories } from "@/action/procurement-seed";
 import { Badge } from "@/components/ui/badge";
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
   const [isFieldDialogOpen, setIsFieldDialogOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const [newCategory, setNewCategory] = useState({
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [savingCategory, setSavingCategory] = useState(false);
+  const [addingField, setAddingField] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [newCategory, setNewCategory] = useState<NewCategory>({
     name: "",
     description: "",
     icon: "",
     color: "",
   });
-  const [newField, setNewField] = useState({
+  const [newField, setNewField] = useState<NewField>({
     label: "",
     name: "",
     type: "text",
@@ -63,123 +93,185 @@ export default function CategoriesPage() {
   });
   const { toast } = useToast();
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      setLoading(true);
+      const data = await getProcurementCategories();
+      setCategories(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load categories",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast]);
+
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
-  async function fetchCategories() {
-    setLoading(true);
-    const data = await getProcurementCategories();
-    setCategories(data);
-    setLoading(false);
-  }
-
-  async function handleSaveCategory() {
+  const handleSaveCategory = useCallback(async () => {
     if (!newCategory.name) return;
 
-    let result;
-    if (selectedCategory) {
-      result = await updateProcurementCategory(
-        selectedCategory.id,
-        newCategory,
-      );
-    } else {
-      result = await createProcurementCategory(newCategory);
-    }
+    try {
+      setSavingCategory(true);
+      let result;
+      if (selectedCategory) {
+        result = await updateProcurementCategory(
+          selectedCategory.id,
+          newCategory,
+        );
+      } else {
+        result = await createProcurementCategory(newCategory);
+      }
 
-    if (result.success) {
-      toast({
-        title: `Category ${selectedCategory ? "updated" : "created"} successfully`,
-      });
-      setIsCategoryDialogOpen(false);
-      setSelectedCategory(null);
-      setNewCategory({ name: "", description: "", icon: "", color: "" });
-      fetchCategories();
-    } else {
+      if (result.success) {
+        toast({
+          title: `Category ${selectedCategory ? "updated" : "created"} successfully`,
+        });
+        setIsCategoryDialogOpen(false);
+        setSelectedCategory(null);
+        setNewCategory({ name: "", description: "", icon: "", color: "" });
+        fetchCategories();
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: result.error,
+        description: "Failed to save category",
         variant: "destructive",
       });
+    } finally {
+      setSavingCategory(false);
     }
-  }
+  }, [newCategory, selectedCategory, fetchCategories, toast]);
 
-  async function handleDeleteCategory(id: string) {
-    if (
-      !confirm(
-        "Are you sure? This will delete all fields and quotations in this category.",
+  const handleDeleteCategory = useCallback(
+    async (id: string) => {
+      if (
+        !confirm(
+          "Are you sure? This will delete all fields and quotations in this category.",
+        )
       )
-    )
-      return;
-    const result = await deleteProcurementCategory(id);
-    if (result.success) {
-      toast({ title: "Category deleted" });
-      fetchCategories();
-    }
-  }
+        return;
+      try {
+        const result = await deleteProcurementCategory(id);
+        if (result.success) {
+          toast({ title: "Category deleted" });
+          fetchCategories();
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete category",
+          variant: "destructive",
+        });
+      }
+    },
+    [fetchCategories, toast],
+  );
 
-  async function handleAddField() {
-    if (!newField.label || !newField.name) return;
+  const handleAddField = useCallback(async () => {
+    if (!selectedCategory || !newField.label || !newField.name) return;
 
-    const fieldData = {
-      label: newField.label,
-      name: newField.name,
-      type: newField.type,
-      required: newField.required,
-      order: newField.order,
-      options: newField.options
-        ? newField.options.split(",").map((o) => o.trim())
-        : [],
-    };
+    try {
+      setAddingField(true);
+      const fieldData = {
+        label: newField.label,
+        name: newField.name,
+        type: newField.type,
+        required: newField.required,
+        order: newField.order,
+        options: newField.options
+          ? newField.options.split(",").map((o) => o.trim())
+          : [],
+      };
 
-    const result = await addProcurementField(selectedCategory.id, fieldData);
-    if (result.success) {
-      toast({ title: "Field added successfully" });
-      setIsFieldDialogOpen(false);
-      setNewField({
-        label: "",
-        name: "",
-        type: "text",
-        required: false,
-        options: "",
-        order: 0,
-      });
-      fetchCategories();
-    } else {
+      const result = await addProcurementField(selectedCategory.id, fieldData);
+      if (result.success) {
+        toast({ title: "Field added successfully" });
+        setIsFieldDialogOpen(false);
+        setNewField({
+          label: "",
+          name: "",
+          type: "text",
+          required: false,
+          options: "",
+          order: 0,
+        });
+        fetchCategories();
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: result.error,
+        description: "Failed to add field",
         variant: "destructive",
       });
+    } finally {
+      setAddingField(false);
     }
-  }
+  }, [selectedCategory, newField, fetchCategories, toast]);
 
-  async function handleDeleteField(id: string) {
-    const result = await deleteProcurementField(id);
-    if (result.success) {
-      toast({ title: "Field deleted" });
-      fetchCategories();
-    }
-  }
+  const handleDeleteField = useCallback(
+    async (id: string) => {
+      try {
+        const result = await deleteProcurementField(id);
+        if (result.success) {
+          toast({ title: "Field deleted" });
+          fetchCategories();
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete field",
+          variant: "destructive",
+        });
+      }
+    },
+    [fetchCategories, toast],
+  );
 
-  async function handleSeedCategories() {
-    setLoading(true);
-    const result = await seedGPCategories();
-    if (result.success) {
-      toast({
-        title: "GP Categories Initialized",
-        description: "Standard Gram Panchayat categories have been added.",
-      });
-      fetchCategories();
-    } else {
+  const handleSeedCategories = useCallback(async () => {
+    try {
+      setSeeding(true);
+      const result = await seedGPCategories();
+      if (result.success) {
+        toast({
+          title: "GP Categories Initialized",
+          description: "Standard Gram Panchayat categories have been added.",
+        });
+        fetchCategories();
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: result.error,
+        description: "Failed to seed categories",
         variant: "destructive",
       });
+    } finally {
+      setSeeding(false);
     }
-    setLoading(false);
-  }
+  }, [fetchCategories, toast]);
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -194,9 +286,16 @@ export default function CategoriesPage() {
           <Button
             variant="outline"
             onClick={handleSeedCategories}
-            disabled={loading}
+            disabled={loading || seeding}
           >
-            Initialize GP Categories
+            {seeding ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Initializing...
+              </>
+            ) : (
+              "Initialize GP Categories"
+            )}
           </Button>
           <Button
             onClick={() => {
@@ -360,7 +459,16 @@ export default function CategoriesPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleSaveCategory}>Save</Button>
+            <Button onClick={handleSaveCategory} disabled={savingCategory}>
+              {savingCategory ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -442,7 +550,16 @@ export default function CategoriesPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button onClick={handleAddField}>Add Field</Button>
+            <Button onClick={handleAddField} disabled={addingField}>
+              {addingField ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Adding...
+                </>
+              ) : (
+                "Add Field"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

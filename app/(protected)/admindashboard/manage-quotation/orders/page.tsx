@@ -1,27 +1,45 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { FileText, Truck, CheckCircle, Clock, Plus, IndianRupee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { getOrders } from "@/action/procurement-order"
+import { useToast } from "@/components/ui/use-toast"
 import { format } from "date-fns"
 
+interface Order {
+  id: string
+  orderNo: string
+  orderDate: string
+  orderType: "WORK" | "SUPPLY" | "SERVICE"
+  amount: number
+  status: string
+  quotation: { workName: string }
+  agency: { name: string }
+}
+
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<any[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+  const { toast } = useToast()
+
+  const fetchOrders = useCallback(async () => {
+    try {
+      setLoading(true)
+      const data = await getOrders()
+      setOrders(data)
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to load orders", variant: "destructive" })
+    } finally {
+      setLoading(false)
+    }
+  }, [toast])
 
   useEffect(() => {
     fetchOrders()
-  }, [])
-
-  async function fetchOrders() {
-    setLoading(true)
-    const data = await getOrders()
-    setOrders(data)
-    setLoading(false)
-  }
+  }, [fetchOrders])
 
   return (
     <div className="container mx-auto py-6 space-y-6">

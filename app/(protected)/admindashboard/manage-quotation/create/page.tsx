@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash, Sparkles, Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,16 +28,48 @@ import { processAiProcurement } from "@/action/procurement-ai";
 import { seedGPCategories } from "@/action/procurement-seed";
 import { format } from "date-fns";
 
+interface Item {
+  description: string;
+  quantity: number;
+  unit: string;
+  rate: number;
+  amount: number;
+}
+
+interface FormData {
+  nitNo: string;
+  nitDate: Date;
+  categoryId: string;
+  workName: string;
+  description: string;
+  estimatedAmount: number;
+  submissionDate: Date;
+  submissionTime: string;
+  openingDate: Date;
+  openingTime: string;
+  dynamicData: Record<string, any>;
+  items: Item[];
+}
+
+interface Category {
+  id: string;
+  name: string;
+  fields: any[];
+}
+
 export default function CreateQuotationPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nitNo: "",
     nitDate: new Date(),
     categoryId: "",
@@ -48,128 +80,173 @@ export default function CreateQuotationPage() {
     submissionTime: "14:00",
     openingDate: new Date(),
     openingTime: "15:00",
-    dynamicData: {} as any,
+    dynamicData: {},
     items: [{ description: "", quantity: 1, unit: "Nos", rate: 0, amount: 0 }],
   });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
-  async function fetchCategories() {
-    const data = await getProcurementCategories();
-    setCategories(data);
-  }
-
-  const handleSeed = async () => {
-    setLoading(true);
-    const result = await seedGPCategories();
-    if (result.success) {
-      toast({ title: "GP Categories Initialized" });
-      fetchCategories();
-    }
-    setLoading(false);
-  };
-
-  const handleCategoryChange = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    setSelectedCategory(category);
-    setFormData({
-      ...formData,
-      categoryId,
-      dynamicData: {}, // Reset dynamic data when category changes
-    });
-  };
-
-  const handleAiProcess = async () => {
-    if (!aiPrompt) return;
-    setAiLoading(true);
-    const result = await processAiProcurement(aiPrompt);
-    if (result.success) {
-      const aiData = result.data;
-      const category = categories.find((c) => c.id === aiData.categoryId);
-      setSelectedCategory(category);
-
-      setFormData((prev) => ({
-        ...prev,
-        categoryId: aiData.categoryId,
-        workName: aiData.workName,
-        items:
-          aiData.items.length > 0
-            ? aiData.items.map((it: any) => ({
-                ...it,
-                rate: 0,
-                amount: 0,
-              }))
-            : prev.items,
-        estimatedAmount: aiData.estimatedAmount || prev.estimatedAmount,
-        dynamicData: aiData.dynamicData || {},
-      }));
-
-      toast({
-        title: "AI Generation Successful",
-        description: "Fields have been populated.",
-      });
-    } else {
-      toast({
-        title: "AI Error",
-        description: result.error,
-        variant: "destructive",
-      });
-    }
-    setAiLoading(false);
-  };
-
-  const addItem = () => {
-    setFormData({
-      ...formData,
-      items: [
-        ...formData.items,
-        { description: "", quantity: 1, unit: "Nos", rate: 0, amount: 0 },
-      ],
-    });
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = formData.items.filter((_, i) => i !== index);
-    setFormData({ ...formData, items: newItems });
-  };
-
-  const handleItemChange = (index: number, field: string, value: any) => {
-    const newItems = [...formData.items];
-    newItems[index] = { ...newItems[index], [field]: value };
-    if (field === "quantity" || field === "rate") {
-      newItems[index].amount =
-        (newItems[index].quantity || 0) * (newItems[index].rate || 0);
-    }
-    setFormData({ ...formData, items: newItems });
-  };
-
-  const handleDynamicChange = (name: string, value: any) => {
-    setFormData({
-      ...formData,
-      dynamicData: { ...formData.dynamicData, [name]: value },
-    });
-  };
-
-  const handleSubmit = async () => {
-    setLoading(true);
-    const result = await createQuotation(formData);
-    if (result.success) {
-      toast({
-        title: "Quotation Created",
-        description: "NIT has been saved successfully.",
-      });
-      router.push("/admindashboard/manage-quotation/view");
-    } else {
+  const fetchCategories = useCallback(async () => {
+    try {
+      const data = await getProcurementCategories();
+      setCategories(data);
+    } catch (error) {
       toast({
         title: "Error",
-        description: result.error,
+        description: "Failed to load categories",
         variant: "destructive",
       });
     }
-    setLoading(false);
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
+
+  const handleSeed = useCallback(async () => {
+    try {
+      setLoading(true);
+      const result = await seedGPCategories();
+      if (result.success) {
+        toast({ title: "GP Categories Initialized" });
+        fetchCategories();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to seed categories",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchCategories, toast]);
+
+  const handleCategoryChange = useCallback(
+    (categoryId: string) => {
+      const category = categories.find((c) => c.id === categoryId);
+      setSelectedCategory(category || null);
+      setFormData((prev) => ({
+        ...prev,
+        categoryId,
+        dynamicData: {}, // Reset dynamic data when category changes
+      }));
+    },
+    [categories],
+  );
+
+  const handleAiProcess = useCallback(async () => {
+    if (!aiPrompt) return;
+    try {
+      setAiLoading(true);
+      const result = await processAiProcurement(aiPrompt);
+      if (result.success) {
+        const aiData = result.data;
+        const category = categories.find((c) => c.id === aiData.categoryId);
+        setSelectedCategory(category || null);
+
+        setFormData((prev) => ({
+          ...prev,
+          categoryId: aiData.categoryId,
+          workName: aiData.workName,
+          items:
+            aiData.items.length > 0
+              ? aiData.items.map((it: any) => ({
+                  ...it,
+                  rate: 0,
+                  amount: 0,
+                }))
+              : prev.items,
+          estimatedAmount: aiData.estimatedAmount || prev.estimatedAmount,
+          dynamicData: aiData.dynamicData || {},
+        }));
+
+        toast({
+          title: "AI Generation Successful",
+          description: "Fields have been populated.",
+        });
+      } else {
+        toast({
+          title: "AI Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process AI request",
+        variant: "destructive",
+      });
+    } finally {
+      setAiLoading(false);
+    }
+  }, [aiPrompt, categories, toast]);
+
+  const addItem = useCallback(() => {
+    setFormData((prev) => ({
+      ...prev,
+      items: [
+        ...prev.items,
+        { description: "", quantity: 1, unit: "Nos", rate: 0, amount: 0 },
+      ],
+    }));
+  }, []);
+
+  const removeItem = useCallback((index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
+  }, []);
+
+  const handleItemChange = useCallback(
+    (index: number, field: keyof Item, value: any) => {
+      setFormData((prev) => {
+        const newItems = [...prev.items];
+        newItems[index] = { ...newItems[index], [field]: value };
+        if (field === "quantity" || field === "rate") {
+          newItems[index].amount =
+            (newItems[index].quantity || 0) * (newItems[index].rate || 0);
+        }
+        return { ...prev, items: newItems };
+      });
+    },
+    [],
+  );
+
+  const handleDynamicChange = useCallback((name: string, value: any) => {
+    setFormData((prev) => ({
+      ...prev,
+      dynamicData: { ...prev.dynamicData, [name]: value },
+    }));
+  }, []);
+
+  const handleSubmit = useCallback(async () => {
+    try {
+      setSubmitting(true);
+      const result = await createQuotation(formData);
+      if (result.success) {
+        toast({
+          title: "Quotation Created",
+          description: "NIT has been saved successfully.",
+        });
+        router.push("/admindashboard/manage-quotation/view");
+      } else {
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create quotation",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  }, [formData, router, toast]);
 
   return (
     <div className="container mx-auto py-6 space-y-6 pb-20">
@@ -539,9 +616,9 @@ export default function CreateQuotationPage() {
             className="w-full h-12 text-lg"
             size="lg"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={submitting}
           >
-            {loading ? (
+            {submitting ? (
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             ) : (
               <Save className="mr-2 h-5 w-5" />
