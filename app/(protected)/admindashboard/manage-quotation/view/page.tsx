@@ -27,15 +27,15 @@ import { useToast } from "@/components/ui/use-toast";
 interface Quotation {
   id: string;
   nitNo: string;
-  nitDate: string;
+  nitDate: Date;
   workName: string;
   category: { name: string };
   estimatedAmount: number;
   _count: { bidders: number };
   status: string;
   items: any[];
-  submissionDate: string;
-  openingDate: string;
+  submissionDate: Date;
+  openingDate: Date;
 }
 
 export default function ViewQuotationsPage() {
@@ -72,14 +72,14 @@ export default function ViewQuotationsPage() {
           gpName: "No. 3 Dhalpara Gram Panchayat",
           gpAddress: "P.O. Dhalpara, Dist. Dakshin Dinajpur",
           nitNo: q.nitNo,
-          nitDate: format(new Date(q.nitDate), "dd/MM/yyyy"),
+          nitDate: format(q.nitDate, "dd/MM/yyyy"),
           workName: q.workName,
           items: q.items,
           submissionDeadline: format(
-            new Date(q.submissionDate),
+            q.submissionDate,
             "dd/MM/yyyy HH:mm",
           ),
-          openingDate: format(new Date(q.openingDate), "dd/MM/yyyy HH:mm"),
+          openingDate: format(q.openingDate, "dd/MM/yyyy HH:mm"),
         });
 
         const blob = new Blob([pdf.buffer], { type: "application/pdf" });
@@ -151,7 +151,7 @@ export default function ViewQuotationsPage() {
                   <td className="p-4">
                     <div className="font-bold">{q.nitNo}</div>
                     <div className="text-xs text-muted-foreground">
-                      {format(new Date(q.nitDate), "dd MMM yyyy")}
+                      {format(q.nitDate, "dd MMM yyyy")}
                     </div>
                   </td>
                   <td className="p-4">
