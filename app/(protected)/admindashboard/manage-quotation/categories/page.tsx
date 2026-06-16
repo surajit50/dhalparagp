@@ -6,9 +6,9 @@ import { Plus, Edit, Trash, Settings2, Loader2 } from "lucide-react";
 interface Category {
   id: string;
   name: string;
-  description?: string;
-  icon?: string;
-  color?: string;
+  description?: string | null;
+  icon?: string | null;
+  color?: string | null;
   fields: any[];
 }
 
@@ -320,7 +320,7 @@ export default function CategoriesPage() {
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <div className="space-y-1">
                 <CardTitle className="text-xl flex items-center gap-2">
-                  <span style={{ color: category.color }}>
+                  <span style={{ color: category.color ?? undefined }}>
                     {category.icon || "📁"}
                   </span>
                   {category.name}

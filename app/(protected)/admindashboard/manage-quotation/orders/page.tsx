@@ -12,8 +12,8 @@ import { format } from "date-fns"
 interface Order {
   id: string
   orderNo: string
-  orderDate: string
-  orderType: "WORK" | "SUPPLY" | "SERVICE"
+  orderDate: Date | string
+  orderType: string
   amount: number
   status: string
   quotation: { workName: string }

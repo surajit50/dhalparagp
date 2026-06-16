@@ -48,7 +48,7 @@ import { format } from "date-fns";
 interface Quotation {
   id: string;
   nitNo: string;
-  nitDate: string;
+  nitDate: Date | string;
   workName: string;
   category: { name: string };
   comparativeStatement?: any;
@@ -285,7 +285,7 @@ export default function PublishedQuotationsPage() {
                   <Select
                     value={orderData.orderType}
                     onValueChange={(val) =>
-                      setOrderData({ ...orderData, orderType: val })
+                      setOrderData({ ...orderData, orderType: val as "WORK" | "SUPPLY" | "SERVICE" })
                     }
                   >
                     <SelectTrigger>
