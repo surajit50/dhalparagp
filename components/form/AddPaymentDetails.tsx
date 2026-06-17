@@ -379,14 +379,6 @@ export function AddPaymentDetailsForm({
                             selected={field.value}
                             onSelect={(date) => {
                               field.onChange(date);
-                              form.setValue(
-                                "eGramVoucherDate",
-                                date || new Date(),
-                              );
-                              form.setValue(
-                                "gpmsVoucherDate",
-                                date || new Date(),
-                              );
                             }}
                             disabled={(date) =>
                               date > new Date() || date < new Date("1900-01-01")

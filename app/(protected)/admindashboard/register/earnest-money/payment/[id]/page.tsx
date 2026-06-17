@@ -2,11 +2,9 @@ import { db } from "@/lib/db";
 import React from "react";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/utils/utils";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, CreditCard, FileText, Plus, Printer } from "lucide-react";
-import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { EMDActionsHeader } from "./EMDActionsHeader";
 
 interface PageProps {
   params: Promise<{
@@ -48,28 +46,7 @@ const page = async ({ params }: PageProps) => {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={`/admindashboard/register/earnest-money`}>
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-bold">Payment Details</h1>
-        </div>
-        <Button asChild>
-          <Link href={`/admindashboard/register/earnest-money/payment/${id}/add`}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Payment
-          </Link>
-        </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/admindashboard/register/earnest-money/payment/${id}/print`}>
-            <Printer className="mr-2 h-4 w-4" />
-            Print Receipt
-          </Link>
-        </Button>
-      </div>
+      <EMDActionsHeader id={id} status={emd.paymentstatus} />
 
       <div className="grid gap-6">
         <Card>

@@ -5,8 +5,8 @@ import { IndeterminateCheckbox } from "@/components/ui/indeterminate-checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { updateIncomeTaxPayment } from "@/action/update-income-tax"
-import type { IncomeTaxRegister, PaymentMethod, PaymentDetails, WorksDetail, ApprovedActionPlanDetails } from "@prisma/client"
+import { updateGstPayment } from "@/action/update-gst"
+import type { TdsCgst, TdsSgst, PaymentMethod, PaymentDetails, WorksDetail, ApprovedActionPlanDetails } from "@prisma/client"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -16,8 +16,9 @@ import { ShowNitDetails } from "@/components/ShowNitDetails"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 
-type IncomeTaxRegisterWithDetails = IncomeTaxRegister & {
+type GstRegisterWithDetails = TdsCgst & {
   PaymentDetails: (PaymentDetails & {
+    lessTdsSgst: TdsSgst | null
     WorksDetail: WorksDetail & {
       ApprovedActionPlanDetails: ApprovedActionPlanDetails | null
       nitDetails?: any
@@ -26,8 +27,8 @@ type IncomeTaxRegisterWithDetails = IncomeTaxRegister & {
   })[]
 }
 
-interface TaxTableProps {
-  data: IncomeTaxRegisterWithDetails[]
+interface GstTableProps {
+  data: GstRegisterWithDetails[]
 }
 
 const formatCurrency = (amount: number) => {
@@ -38,7 +39,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-export function TaxTable({ data }: TaxTableProps) {
+export function GstTable({ data }: GstTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>()
   const [chequeNumber, setChequeNumber] = useState("")
@@ -88,32 +89,37 @@ export function TaxTable({ data }: TaxTableProps) {
     [data, selectedFund, statusFilter, searchQuery]
   )
 
-  const unpaidEntries = useMemo(() => filteredData.filter(entry => !entry.paid), [filteredData])
-  const allUnpaidSelected = useMemo(() => unpaidEntries.length > 0 && unpaidEntries.every(entry => selectedIds.includes(entry.id)), [unpaidEntries, selectedIds])
+  const unpaidEntries = filteredData.filter(entry => !entry.paid)
+  const allUnpaidSelected = unpaidEntries.length > 0 && unpaidEntries.every(entry => selectedIds.includes(entry.id))
 
   // Metrics
   const metrics = useMemo(() => {
     let totalTax = 0
     let paidTax = 0
     let unpaidTax = 0
-    let unpaidCount = 0
 
     filteredData.forEach(entry => {
-      totalTax += entry.incomeTaaxAmount
+      const cgst = entry.tdscgstAmt
+      const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
+      const totalGst = cgst + sgst
+
+      totalTax += totalGst
       if (entry.paid) {
-        paidTax += entry.incomeTaaxAmount
+        paidTax += totalGst
       } else {
-        unpaidTax += entry.incomeTaaxAmount
-        unpaidCount++
+        unpaidTax += totalGst
       }
     })
 
-    return { totalTax, paidTax, unpaidTax, unpaidCount }
+    return { totalTax, paidTax, unpaidTax }
   }, [filteredData])
 
   const totalAmountSelected = selectedIds.reduce((total, id) => {
     const entry = data.find(d => d.id === id)
-    return total + (entry?.incomeTaaxAmount || 0)
+    if (!entry) return total
+    const cgst = entry.tdscgstAmt
+    const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
+    return total + cgst + sgst
   }, 0)
 
   const handleCheckAll = (checked: boolean) => {
@@ -132,7 +138,7 @@ export function TaxTable({ data }: TaxTableProps) {
     }
 
     startTransition(async () => {
-      await updateIncomeTaxPayment(selectedIds, paymentMethod, chequeNumber)
+      await updateGstPayment(selectedIds, paymentMethod, chequeNumber)
       setSelectedIds([])
       window.location.reload()
     })
@@ -145,7 +151,7 @@ export function TaxTable({ data }: TaxTableProps) {
 
       doc.setFontSize(18)
       doc.setFont("helvetica", "bold")
-      doc.text("Income Tax Register Report", pageWidth / 2, 20, { align: "center" })
+      doc.text("GST Register Report (TDS CGST & SGST)", pageWidth / 2, 20, { align: "center" })
 
       doc.setFontSize(10)
       doc.setFont("helvetica", "normal")
@@ -160,11 +166,15 @@ export function TaxTable({ data }: TaxTableProps) {
           : (bidAgency?.name || "N/A")
         const nitNumber = worksDetail?.nitDetails?.memoNumber || "N/A"
         const fund = worksDetail?.ApprovedActionPlanDetails?.schemeName || "N/A"
+        const cgst = entry.tdscgstAmt
+        const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
         return [
           index + 1,
           agencyName,
           nitNumber,
-          entry.incomeTaaxAmount,
+          cgst,
+          sgst,
+          cgst + sgst,
           entry.paid ? "Paid" : "Unpaid",
           fund,
           entry.paidAt ? new Date(entry.paidAt).toLocaleDateString("en-IN") : "-",
@@ -174,7 +184,7 @@ export function TaxTable({ data }: TaxTableProps) {
       })
 
       autoTable(doc, {
-        head: [["Sl No", "Agency Name", "NIT Memo No", "Amount (Rs.)", "Status", "Fund", "Paid At", "Payment Method", "Cheque No"]],
+        head: [["Sl No", "Agency Name", "NIT Memo No", "CGST (Rs.)", "SGST (Rs.)", "Total GST", "Status", "Fund", "Paid At", "Payment Method", "Cheque No"]],
         body: tableData,
         startY: 38,
         theme: "striped",
@@ -182,7 +192,7 @@ export function TaxTable({ data }: TaxTableProps) {
         bodyStyles: { fontSize: 9 },
       })
 
-      doc.save(`income-tax-register-${new Date().toISOString().slice(0, 10)}.pdf`)
+      doc.save(`gst-register-${new Date().toISOString().slice(0, 10)}.pdf`)
     } catch (error) {
       console.error("Error generating PDF:", error)
     }
@@ -202,10 +212,10 @@ export function TaxTable({ data }: TaxTableProps) {
               <span className="bg-orange-600/10 p-2 rounded-xl text-orange-600">
                 <DollarSign className="h-7 w-7" strokeWidth={2.5} />
               </span>
-              Income Tax Register
+              GST Register
             </h1>
             <p className="text-slate-500 mt-1 text-sm">
-              Monitor, track, and record payments for deducted income tax.
+              Monitor, track, and record payments for deducted TDS CGST & SGST.
             </p>
           </div>
           <Button
@@ -228,7 +238,7 @@ export function TaxTable({ data }: TaxTableProps) {
           <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
             <CardContent className="p-6 flex justify-between items-center">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-500">Total Tax Deducted</p>
+                <p className="text-sm font-medium text-slate-500">Total GST Deducted</p>
                 <h3 className="text-2xl font-bold tracking-tight text-slate-900">
                   {formatCurrency(metrics.totalTax)}
                 </h3>
@@ -357,7 +367,9 @@ export function TaxTable({ data }: TaxTableProps) {
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Sl No</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Agency Name</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">NIT Details</TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Amount (₹)</TableHead>
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">CGST (₹)</TableHead>
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">SGST (₹)</TableHead>
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Total GST (₹)</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Fund</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Paid At</TableHead>
@@ -373,6 +385,9 @@ export function TaxTable({ data }: TaxTableProps) {
                         ? (bidAgency?.name + "(" + bidAgency.proprietorName + ")")
                         : (bidAgency?.name || "N/A")
                       const nitDetails = worksDetail?.nitDetails
+                      const cgst = entry.tdscgstAmt
+                      const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
+                      const totalGst = cgst + sgst
 
                       return (
                         <TableRow key={entry.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-all">
@@ -402,8 +417,10 @@ export function TaxTable({ data }: TaxTableProps) {
                               />
                             )}
                           </TableCell>
+                          <TableCell className="px-6 py-4 text-slate-900">{formatCurrency(cgst)}</TableCell>
+                          <TableCell className="px-6 py-4 text-slate-900">{formatCurrency(sgst)}</TableCell>
                           <TableCell className="px-6 py-4 font-bold text-slate-900">
-                            {formatCurrency(entry.incomeTaaxAmount)}
+                            {formatCurrency(totalGst)}
                           </TableCell>
                           <TableCell className="px-6 py-4">
                             <Badge

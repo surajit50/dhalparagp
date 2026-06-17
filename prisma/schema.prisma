@@ -738,6 +738,9 @@ model LabourWelfareCess {
   labourWelfarecessAmt Int
   paid                 Boolean          @default(false)
   createdAt            DateTime         @default(now())
+  paidAt               DateTime?
+  paymentMethod        PaymentMethod?
+  chequeNumber         String?
   PaymentDetails       PaymentDetails[]
 }
 
@@ -746,6 +749,9 @@ model TdsCgst {
   tdscgstAmt     Int
   paid           Boolean          @default(false)
   createdAt      DateTime         @default(now())
+  paidAt         DateTime?
+  paymentMethod  PaymentMethod?
+  chequeNumber   String?
   PaymentDetails PaymentDetails[]
 }
 
@@ -754,6 +760,9 @@ model TdsSgst {
   tdsSgstAmt     Int
   paid           Boolean          @default(false)
   createdAt      DateTime         @default(now())
+  paidAt         DateTime?
+  paymentMethod  PaymentMethod?
+  chequeNumber   String?
   PaymentDetails PaymentDetails[]
 }
 

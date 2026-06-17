@@ -156,6 +156,9 @@ export default function WarishGenerateListClient({
                     Applicant
                   </TableHead>
                   <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300 py-4">
+                    Acknowledgment No
+                  </TableHead>
+                  <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300 py-4">
                     Reference No
                   </TableHead>
                   <TableHead className="text-center font-semibold text-gray-700 dark:text-gray-300 py-4">
@@ -191,6 +194,14 @@ export default function WarishGenerateListClient({
                         <div className="text-gray-700 dark:text-gray-300">
                           {application.applicantName}
                         </div>
+                      </TableCell>
+                      <TableCell className="text-center py-4">
+                        <Badge
+                          variant="outline"
+                          className="font-mono px-3 py-1 text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800"
+                        >
+                          {application.acknowlegment || "N/A"}
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-center py-4">
                         <Badge
@@ -238,7 +249,7 @@ export default function WarishGenerateListClient({
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={7} className="h-64 text-center">
+                    <TableCell colSpan={8} className="h-64 text-center">
                       <div className="flex flex-col items-center justify-center gap-4 text-gray-500 dark:text-gray-400">
                         <FileText className="h-16 w-16 opacity-40" />
                         <div className="space-y-2">

@@ -1,4 +1,3 @@
-
 import { db } from "@/lib/db";
 import { TaxTable } from "./tax-table";
 
@@ -10,7 +9,21 @@ async function getData() {
         include: {
           WorksDetail: {
             include: {
-              ApprovedActionPlanDetails: true
+              ApprovedActionPlanDetails: true,
+              nitDetails: true,
+              AwardofContract: {
+                include: {
+                  workorderdetails: {
+                    include: {
+                      Bidagency: {
+                        include: {
+                          agencydetails: true
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }

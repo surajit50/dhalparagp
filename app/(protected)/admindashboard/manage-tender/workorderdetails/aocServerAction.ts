@@ -1,7 +1,6 @@
 "use server";
 
 import { createAgreement } from "@/action/create-agrement";
-import { register } from "@/lib/register";
 import { bidagencybyid } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { sentAwardedNotification } from "@/lib/mail";
@@ -140,6 +139,7 @@ export const addAoCdetails = async (data: FormData) => {
         include: {
           nitDetails: true,
           ApprovedActionPlanDetails: true,
+          biddingAgencies: true,
         },
       });
 
@@ -174,7 +174,20 @@ export const addAoCdetails = async (data: FormData) => {
 
     /* ----------------------------- REGISTER BIDDER ----------------------------- */
 
-    await register(bidagencyId, work.earnestMoneyFee);
+    const nitMode = work.nitDetails?.nitMode || "MANUAL";
+    const status = nitMode === "ONLINE" ? "refunded" : "pending";
+
+    const emdData = work.biddingAgencies.map((agency) => ({
+      earnestMoneyAmount: work.earnestMoneyFee,
+      bidderId: agency.id,
+      paymentstatus: status as any,
+    }));
+
+    if (emdData.length > 0) {
+      await db.earnestMoneyRegister.createMany({
+        data: emdData,
+      });
+    }
 
     /* ----------------------------- EMAIL NOTIFICATION ----------------------------- */
 

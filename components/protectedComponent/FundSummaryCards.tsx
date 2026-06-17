@@ -57,6 +57,12 @@ export default async function FundSummaryCards() {
     const availableUntied = unspentUntied - security.untied;
     const availableTotal = availableTied + availableUntied;
 
+    const totalBudgetTied = fund.openingBalanceTied + fund.directReceiptTied + fund.autoReceiptTied;
+    const totalBudgetUntied = fund.openingBalanceUntied + fund.directReceiptUntied + fund.autoReceiptUntied;
+    const totalBudget = totalBudgetTied + totalBudgetUntied;
+    const expenditureTotal = fund.expenditureTied + fund.expenditureUntied;
+    const utilisePercentage = totalBudget > 0 ? ((expenditureTotal / totalBudget) * 100).toFixed(2) : "0.00";
+
     return {
       ...fund,
       unspentBalanceTied: unspentTied,
@@ -71,6 +77,7 @@ export default async function FundSummaryCards() {
       receiptsTotal: fund.directReceiptTotal + fund.autoReceiptTotal,
       receiptsTied: fund.directReceiptTied + fund.autoReceiptTied,
       receiptsUntied: fund.directReceiptUntied + fund.autoReceiptUntied,
+      utilisePercentage,
     };
   });
 
@@ -171,6 +178,7 @@ export default async function FundSummaryCards() {
                   <thead>
                     <tr className="bg-slate-50/30 text-slate-400 border-b border-slate-100">
                       <th className="text-left py-4 px-6 font-bold uppercase tracking-wider text-[9px]">Scheme / Year</th>
+                      <th className="text-center py-4 px-4 font-bold uppercase tracking-wider text-[9px] text-blue-600 bg-blue-50/30">Utilisation</th>
                       <th className="text-right py-4 px-4 font-bold uppercase tracking-wider text-[9px] bg-slate-100/10 text-slate-600">Unspent Bal.</th>
                       <th className="text-right py-4 px-4 font-bold uppercase tracking-wider text-[9px] bg-red-50/10 text-red-600">Security Held</th>
                       <th className="text-right py-4 px-6 font-bold uppercase tracking-wider text-[9px] text-orange-600 bg-orange-50/30">Net Available</th>
@@ -182,6 +190,11 @@ export default async function FundSummaryCards() {
                         <td className="py-4 px-6">
                            <div className="font-bold text-slate-800 leading-tight">{fund.schemeName}</div>
                            <div className="text-[9px] text-slate-400 font-bold uppercase tracking-tighter">{fund.year}</div>
+                        </td>
+                        <td className="py-4 px-4 text-center bg-blue-50/10">
+                           <div className="inline-flex items-center justify-center px-2 py-1 rounded-full bg-white text-blue-600 font-bold text-xs border border-blue-100 shadow-sm">
+                             {fund.utilisePercentage}%
+                           </div>
                         </td>
                         <td className="py-4 px-4 text-right bg-slate-100/5">
                            <div className="font-semibold text-slate-700">₹{fund.unspentBalanceTotal.toLocaleString()}</div>
@@ -201,11 +214,11 @@ export default async function FundSummaryCards() {
                     ))}
                     {funds.length === 0 && (
                       <tr>
-                        <td colSpan={4} className="py-16 text-center text-slate-400">
-                          <div className="flex flex-col items-center gap-2">
-                             <Calculator className="w-8 h-8 opacity-20" />
-                             <p className="text-[10px] font-bold uppercase tracking-widest">No financial data available</p>
-                          </div>
+                        <td colSpan={5} className="py-16 text-center text-slate-400">
+                           <div className="flex flex-col items-center gap-2">
+                              <Calculator className="w-8 h-8 opacity-20" />
+                              <p className="text-[10px] font-bold uppercase tracking-widest">No financial data available</p>
+                           </div>
                         </td>
                       </tr>
                     )}

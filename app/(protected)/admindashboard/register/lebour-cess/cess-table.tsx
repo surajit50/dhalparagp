@@ -5,8 +5,8 @@ import { IndeterminateCheckbox } from "@/components/ui/indeterminate-checkbox"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { updateIncomeTaxPayment } from "@/action/update-income-tax"
-import type { IncomeTaxRegister, PaymentMethod, PaymentDetails, WorksDetail, ApprovedActionPlanDetails } from "@prisma/client"
+import { updateLabourCessPayment } from "@/action/update-labour-cess"
+import type { LabourWelfareCess, PaymentMethod, PaymentDetails, WorksDetail, ApprovedActionPlanDetails } from "@prisma/client"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -16,7 +16,7 @@ import { ShowNitDetails } from "@/components/ShowNitDetails"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 
-type IncomeTaxRegisterWithDetails = IncomeTaxRegister & {
+type LabourCessRegisterWithDetails = LabourWelfareCess & {
   PaymentDetails: (PaymentDetails & {
     WorksDetail: WorksDetail & {
       ApprovedActionPlanDetails: ApprovedActionPlanDetails | null
@@ -26,8 +26,8 @@ type IncomeTaxRegisterWithDetails = IncomeTaxRegister & {
   })[]
 }
 
-interface TaxTableProps {
-  data: IncomeTaxRegisterWithDetails[]
+interface CessTableProps {
+  data: LabourCessRegisterWithDetails[]
 }
 
 const formatCurrency = (amount: number) => {
@@ -38,7 +38,7 @@ const formatCurrency = (amount: number) => {
   }).format(amount)
 }
 
-export function TaxTable({ data }: TaxTableProps) {
+export function CessTable({ data }: CessTableProps) {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>()
   const [chequeNumber, setChequeNumber] = useState("")
@@ -88,32 +88,31 @@ export function TaxTable({ data }: TaxTableProps) {
     [data, selectedFund, statusFilter, searchQuery]
   )
 
-  const unpaidEntries = useMemo(() => filteredData.filter(entry => !entry.paid), [filteredData])
-  const allUnpaidSelected = useMemo(() => unpaidEntries.length > 0 && unpaidEntries.every(entry => selectedIds.includes(entry.id)), [unpaidEntries, selectedIds])
+  const unpaidEntries = filteredData.filter(entry => !entry.paid)
+  const allUnpaidSelected = unpaidEntries.length > 0 && unpaidEntries.every(entry => selectedIds.includes(entry.id))
 
   // Metrics
   const metrics = useMemo(() => {
     let totalTax = 0
     let paidTax = 0
     let unpaidTax = 0
-    let unpaidCount = 0
 
     filteredData.forEach(entry => {
-      totalTax += entry.incomeTaaxAmount
+      const amount = entry.labourWelfarecessAmt
+      totalTax += amount
       if (entry.paid) {
-        paidTax += entry.incomeTaaxAmount
+        paidTax += amount
       } else {
-        unpaidTax += entry.incomeTaaxAmount
-        unpaidCount++
+        unpaidTax += amount
       }
     })
 
-    return { totalTax, paidTax, unpaidTax, unpaidCount }
+    return { totalTax, paidTax, unpaidTax }
   }, [filteredData])
 
   const totalAmountSelected = selectedIds.reduce((total, id) => {
     const entry = data.find(d => d.id === id)
-    return total + (entry?.incomeTaaxAmount || 0)
+    return total + (entry?.labourWelfarecessAmt || 0)
   }, 0)
 
   const handleCheckAll = (checked: boolean) => {
@@ -132,7 +131,7 @@ export function TaxTable({ data }: TaxTableProps) {
     }
 
     startTransition(async () => {
-      await updateIncomeTaxPayment(selectedIds, paymentMethod, chequeNumber)
+      await updateLabourCessPayment(selectedIds, paymentMethod, chequeNumber)
       setSelectedIds([])
       window.location.reload()
     })
@@ -145,7 +144,7 @@ export function TaxTable({ data }: TaxTableProps) {
 
       doc.setFontSize(18)
       doc.setFont("helvetica", "bold")
-      doc.text("Income Tax Register Report", pageWidth / 2, 20, { align: "center" })
+      doc.text("Labour Welfare Cess Register Report", pageWidth / 2, 20, { align: "center" })
 
       doc.setFontSize(10)
       doc.setFont("helvetica", "normal")
@@ -164,7 +163,7 @@ export function TaxTable({ data }: TaxTableProps) {
           index + 1,
           agencyName,
           nitNumber,
-          entry.incomeTaaxAmount,
+          entry.labourWelfarecessAmt,
           entry.paid ? "Paid" : "Unpaid",
           fund,
           entry.paidAt ? new Date(entry.paidAt).toLocaleDateString("en-IN") : "-",
@@ -174,7 +173,7 @@ export function TaxTable({ data }: TaxTableProps) {
       })
 
       autoTable(doc, {
-        head: [["Sl No", "Agency Name", "NIT Memo No", "Amount (Rs.)", "Status", "Fund", "Paid At", "Payment Method", "Cheque No"]],
+        head: [["Sl No", "Agency Name", "NIT Memo No", "Cess Amount (Rs.)", "Status", "Fund", "Paid At", "Payment Method", "Cheque No"]],
         body: tableData,
         startY: 38,
         theme: "striped",
@@ -182,7 +181,7 @@ export function TaxTable({ data }: TaxTableProps) {
         bodyStyles: { fontSize: 9 },
       })
 
-      doc.save(`income-tax-register-${new Date().toISOString().slice(0, 10)}.pdf`)
+      doc.save(`labour-cess-register-${new Date().toISOString().slice(0, 10)}.pdf`)
     } catch (error) {
       console.error("Error generating PDF:", error)
     }
@@ -202,10 +201,10 @@ export function TaxTable({ data }: TaxTableProps) {
               <span className="bg-orange-600/10 p-2 rounded-xl text-orange-600">
                 <DollarSign className="h-7 w-7" strokeWidth={2.5} />
               </span>
-              Income Tax Register
+              Labour Welfare Cess Register
             </h1>
             <p className="text-slate-500 mt-1 text-sm">
-              Monitor, track, and record payments for deducted income tax.
+              Monitor, track, and record payments for deducted Labour Welfare Cess.
             </p>
           </div>
           <Button
@@ -228,7 +227,7 @@ export function TaxTable({ data }: TaxTableProps) {
           <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
             <CardContent className="p-6 flex justify-between items-center">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-500">Total Tax Deducted</p>
+                <p className="text-sm font-medium text-slate-500">Total Cess Deducted</p>
                 <h3 className="text-2xl font-bold tracking-tight text-slate-900">
                   {formatCurrency(metrics.totalTax)}
                 </h3>
@@ -403,7 +402,7 @@ export function TaxTable({ data }: TaxTableProps) {
                             )}
                           </TableCell>
                           <TableCell className="px-6 py-4 font-bold text-slate-900">
-                            {formatCurrency(entry.incomeTaaxAmount)}
+                            {formatCurrency(entry.labourWelfarecessAmt)}
                           </TableCell>
                           <TableCell className="px-6 py-4">
                             <Badge
