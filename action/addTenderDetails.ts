@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { updateWorkStatus } from "@/lib/actionplan";
 
 const AddWorkDetailsSchema = z.object({
@@ -73,7 +73,8 @@ export const addTenderDetails = async (
       },
     });
 
-    revalidateTag("/admindashboard/manage-tender/add",'max');
+    revalidatePath(`/admindashboard/manage-tender/add/${tenderId}`);
+    revalidatePath("/admindashboard/manage-tender/add", "layout");
     return { success: "Work details added successfully" };
   } catch (error) {
     console.error("Error adding tender details:", error);

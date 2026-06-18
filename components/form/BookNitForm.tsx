@@ -115,6 +115,7 @@ export default function BookNitForm() {
       supplynit: false,
       supplyitemname: "",
       nitCount: "1st call",
+      nitMode: "ONLINE",
       percentageofworkvaluerequired: 60,
       termsTemplateIds: [],
     },
@@ -125,6 +126,8 @@ export default function BookNitForm() {
   const selectedTemplates = useMemo(() => {
     return templates.filter((t) => selectedTemplateIds?.includes(t.id));
   }, [templates, selectedTemplateIds]);
+
+  const allowedTimes = useMemo(() => generateTimeOptions(), []);
 
   /* ------------------------ Fetch Templates ------------------------ */
   useEffect(() => {
@@ -180,7 +183,7 @@ export default function BookNitForm() {
   const getStepFields = (step: number): (keyof FormValues)[] => {
     switch (step) {
       case 1:
-        return ["tendermemonumber", "tendermemodate", "nitCount"];
+        return ["tendermemonumber", "tendermemodate", "nitCount", "nitMode"];
       case 2:
         return [
           "tender_pulishing_Date",
@@ -249,11 +252,13 @@ export default function BookNitForm() {
   };
 
   /* ---------------- Template Selection Card ---------------- */
-  const TemplateCard = ({
+  const renderTemplateCard = ({
+    key,
     t,
     selected,
     toggle,
   }: {
+    key: string;
     t: TenderTermTemplate;
     selected: boolean;
     toggle: (id: string) => void;
@@ -266,6 +271,7 @@ export default function BookNitForm() {
 
     return (
       <motion.div
+        key={key}
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.2 }}
@@ -340,7 +346,7 @@ export default function BookNitForm() {
   };
 
   /* ------------------------ Optimistic Preview Section ------------------------ */
-  const OptimisticPreview = () => {
+  const renderOptimisticPreview = () => {
     if (!optimisticSubmission) return null;
     return (
       <motion.div
@@ -364,6 +370,10 @@ export default function BookNitForm() {
             <span className="font-medium">NIT Count:</span>{" "}
             {optimisticSubmission.nitCount}
           </p>
+          <p>
+            <span className="font-medium">Mode:</span>{" "}
+            {optimisticSubmission.nitMode}
+          </p>
           {optimisticSubmission.supplyitemname && (
             <p>
               <span className="font-medium">Item:</span>{" "}
@@ -376,7 +386,7 @@ export default function BookNitForm() {
   };
 
   /* ------------------------ Step 1: Tender Details ------------------------ */
-  const Step1 = () => (
+  const renderStep1 = () => (
     <Section title="Tender Details" icon={<FileText />} count={1}>
       <div className="space-y-4">
         <div className="text-sm text-gray-600 mb-2">
@@ -406,50 +416,58 @@ export default function BookNitForm() {
             />
           </FormItemWrapper>
 
-          <div className="md:col-span-2">
-            <FormItemWrapper
-              label="NIT Call Number"
-              description="Number of times NIT has been called"
-            >
-              <CustomFormField
-                fieldType={FormFieldType.SELECT}
-                control={form.control}
-                name="nitCount"
-                options={[
-                  { value: "1st call", label: "1st Call" },
-                  { value: "2nd call", label: "2nd Call" },
-                  { value: "3rd call", label: "3rd Call" },
-                ]}
-              />
-            </FormItemWrapper>
-          </div>
+          <FormItemWrapper
+            label="NIT Call Number"
+            description="Number of times NIT has been called"
+          >
+            <CustomFormField
+              fieldType={FormFieldType.SELECT}
+              control={form.control}
+              name="nitCount"
+              options={[
+                { value: "1st call", label: "1st Call" },
+                { value: "2nd call", label: "2nd Call" },
+                { value: "3rd call", label: "3rd Call" },
+              ]}
+            />
+          </FormItemWrapper>
+
+          <FormItemWrapper
+            label="NIT Mode"
+            description="Select whether the NIT is online or offline (manual)"
+          >
+            <CustomFormField
+              fieldType={FormFieldType.SELECT}
+              control={form.control}
+              name="nitMode"
+              options={[
+                { value: "ONLINE", label: "Online" },
+                { value: "MANUAL", label: "Offline (Manual)" },
+              ]}
+            />
+          </FormItemWrapper>
         </div>
       </div>
     </Section>
   );
 
   /* ------------------------ Step 2: Tender Schedule ------------------------ */
-  const Step2 = () => {
-    const allowedTimes = useMemo(() => generateTimeOptions(), []);
+  const tenderScheduleFields = [
+    { name: "tender_pulishing_Date", label: "Publishing Date" },
+    { name: "tender_document_Download_from", label: "Download From" },
+    { name: "tender_start_time_from", label: "Start Time" },
+    { name: "tender_end_date_time_from", label: "End Date/Time" },
+    {
+      name: "tender_techinical_bid_opening_date",
+      label: "Tech Bid Opening",
+    },
+    {
+      name: "tender_financial_bid_opening_date",
+      label: "Financial Bid Opening",
+    },
+  ];
 
-    const tenderScheduleFields = useMemo(
-      () => [
-        { name: "tender_pulishing_Date", label: "Publishing Date" },
-        { name: "tender_document_Download_from", label: "Download From" },
-        { name: "tender_start_time_from", label: "Start Time" },
-        { name: "tender_end_date_time_from", label: "End Date/Time" },
-        {
-          name: "tender_techinical_bid_opening_date",
-          label: "Tech Bid Opening",
-        },
-        {
-          name: "tender_financial_bid_opening_date",
-          label: "Financial Bid Opening",
-        },
-      ],
-      [],
-    );
-
+  const renderStep2 = () => {
     return (
       <Section title="Tender Schedule & Timeline" icon={<Calendar />} count={2}>
         <div className="space-y-4">
@@ -478,7 +496,7 @@ export default function BookNitForm() {
     );
   };
   /* ------------------------ Step 3: Bid Details ------------------------ */
-  const Step3 = () => (
+  const renderStep3 = () => (
     <Section title="Bid Information" icon={<MapPin />} count={3}>
       <div className="space-y-4">
         <div className="text-sm text-gray-600 mb-2">
@@ -544,7 +562,7 @@ export default function BookNitForm() {
   );
 
   /* ------------------------ Step 4: Work Value ------------------------ */
-  const Step4 = () => (
+  const renderStep4 = () => (
     <Section
       title="Percentage of Work Value Required"
       icon={<FaPercentage />}
@@ -586,7 +604,7 @@ export default function BookNitForm() {
   );
 
   /* ------------------------ Step 5: Term Templates ------------------------ */
-  const Step5 = () => (
+  const renderStep5 = () => (
     <Section title="Term Templates" icon={<FileText />} count={5}>
       <div className="space-y-4">
         <div className="text-sm text-gray-600 mb-2">
@@ -648,14 +666,12 @@ export default function BookNitForm() {
                     <EmptyMessage link="/admindashboard/manage-tender/templates" />
                   ) : (
                     <AnimatePresence>
-                      {templates.map((t) => (
-                        <TemplateCard
-                          key={t.id}
-                          t={t}
-                          selected={selected.includes(t.id)}
-                          toggle={toggle}
-                        />
-                      ))}
+                      {templates.map((t) => renderTemplateCard({
+                        key: t.id,
+                        t,
+                        selected: selected.includes(t.id),
+                        toggle,
+                      }))}
                     </AnimatePresence>
                   )}
                 </div>
@@ -696,17 +712,17 @@ export default function BookNitForm() {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <Step1 />;
+        return renderStep1();
       case 2:
-        return <Step2 />;
+        return renderStep2();
       case 3:
-        return <Step3 />;
+        return renderStep3();
       case 4:
-        return <Step4 />;
+        return renderStep4();
       case 5:
-        return <Step5 />;
+        return renderStep5();
       default:
-        return <Step1 />;
+        return renderStep1();
     }
   };
 
@@ -826,7 +842,7 @@ export default function BookNitForm() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {optimisticSubmission && <OptimisticPreview />}
+              {optimisticSubmission && renderOptimisticPreview()}
 
               {/* Status Messages */}
               <AnimatePresence>

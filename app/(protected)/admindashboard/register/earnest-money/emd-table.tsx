@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { AlertCircle, CheckCircle2, CreditCard, Download, Search, Filter, FileText, Plus, Shield, RotateCcw, AlertOctagon } from "lucide-react"
+import { AlertCircle, CheckCircle2, CreditCard, Download, Search, Filter, FileText, Plus, Shield, RotateCcw, AlertOctagon, ChevronLeft, ChevronRight } from "lucide-react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -34,6 +34,12 @@ export function EmdTable({ data }: EmdTableProps) {
   const [selectedFund, setSelectedFund] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const itemsPerPage = 10
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, statusFilter])
 
   // Dialog state
   const [verifyEmd, setVerifyEmd] = useState<any>(null)
@@ -67,6 +73,12 @@ export function EmdTable({ data }: EmdTableProps) {
     }),
     [data, statusFilter, searchQuery]
   )
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage)
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    return filteredData.slice(startIndex, startIndex + itemsPerPage)
+  }, [filteredData, currentPage, itemsPerPage])
 
   // Metrics
   const metrics = useMemo(() => {
@@ -147,27 +159,27 @@ export function EmdTable({ data }: EmdTableProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-sm ring-1 ring-slate-200/60 mb-2">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
-              <span className="bg-orange-600/10 p-2 rounded-xl text-orange-600">
-                <Shield className="h-7 w-7" strokeWidth={2.5} />
+            <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3 text-slate-900">
+              <span className="bg-gradient-to-br from-orange-500 to-orange-600 p-2.5 rounded-xl text-white shadow-lg shadow-orange-500/20">
+                <Shield className="h-6 w-6" strokeWidth={2.5} />
               </span>
               Earnest Money Register
             </h1>
-            <p className="text-slate-500 mt-1 text-sm">
+            <p className="text-slate-500 mt-2 text-sm font-medium">
               Manage and track earnest money deposits for contracts.
             </p>
           </div>
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             <Button
-              className="bg-white text-slate-700 border border-slate-200 shadow-sm hover:bg-slate-50 transition-all rounded-xl px-5 h-11"
+              className="bg-white text-slate-700 border border-slate-200 shadow-sm hover:bg-slate-50 hover:shadow transition-all duration-300 rounded-xl px-5 h-11 font-medium"
               onClick={exportToPDF}
             >
               <Download className="h-4 w-4 mr-2 text-orange-500" />
               Export Report
             </Button>
-            <Button className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl shadow-lg h-11 px-5" asChild>
+            <Button className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white rounded-xl shadow-md shadow-orange-500/20 h-11 px-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5" asChild>
               <Link href="/admindashboard/register/earnest-money/new">
                 <Plus className="mr-2 h-4 w-4" />
                 Add New Entry
@@ -183,59 +195,79 @@ export function EmdTable({ data }: EmdTableProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
       >
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
-            <CardContent className="p-5 flex justify-between items-center">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-500">Received EMD</p>
-                <h3 className="text-2xl font-bold tracking-tight text-emerald-600">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <Card className="relative overflow-hidden border-0 shadow-sm ring-1 ring-slate-200/60 bg-white hover:shadow-md hover:ring-slate-300/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500">
+               <CheckCircle2 className="h-32 w-32 text-emerald-600" />
+            </div>
+            <CardContent className="p-6 flex flex-col justify-between h-full relative z-10">
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-12 w-12 bg-emerald-50/80 rounded-2xl flex items-center justify-center ring-1 ring-emerald-100 group-hover:scale-110 group-hover:bg-emerald-100 transition-all duration-300">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Received EMD</p>
+                <h3 className="text-3xl font-bold tracking-tight text-slate-900">
                   {formatCurrency(metrics.receivedEmd)}
                 </h3>
               </div>
-              <div className="h-10 w-10 bg-emerald-50 rounded-full flex items-center justify-center">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-              </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
-            <CardContent className="p-5 flex justify-between items-center">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-500">Pending EMD</p>
-                <h3 className="text-2xl font-bold tracking-tight text-rose-600">
+          <Card className="relative overflow-hidden border-0 shadow-sm ring-1 ring-slate-200/60 bg-white hover:shadow-md hover:ring-slate-300/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500">
+               <AlertCircle className="h-32 w-32 text-rose-600" />
+            </div>
+            <CardContent className="p-6 flex flex-col justify-between h-full relative z-10">
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-12 w-12 bg-rose-50/80 rounded-2xl flex items-center justify-center ring-1 ring-rose-100 group-hover:scale-110 group-hover:bg-rose-100 transition-all duration-300">
+                  <AlertCircle className="h-6 w-6 text-rose-600" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Pending EMD</p>
+                <h3 className="text-3xl font-bold tracking-tight text-slate-900">
                   {formatCurrency(metrics.pendingEmd)}
                 </h3>
               </div>
-              <div className="h-10 w-10 bg-rose-50 rounded-full flex items-center justify-center">
-                <AlertCircle className="h-5 w-5 text-rose-600" />
-              </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
-            <CardContent className="p-5 flex justify-between items-center">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-500">Refunded EMD</p>
-                <h3 className="text-2xl font-bold tracking-tight text-blue-600">
+          <Card className="relative overflow-hidden border-0 shadow-sm ring-1 ring-slate-200/60 bg-white hover:shadow-md hover:ring-slate-300/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500">
+               <RotateCcw className="h-32 w-32 text-blue-600" />
+            </div>
+            <CardContent className="p-6 flex flex-col justify-between h-full relative z-10">
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-12 w-12 bg-blue-50/80 rounded-2xl flex items-center justify-center ring-1 ring-blue-100 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-300">
+                  <RotateCcw className="h-6 w-6 text-blue-600" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Refunded EMD</p>
+                <h3 className="text-3xl font-bold tracking-tight text-slate-900">
                   {formatCurrency(metrics.refundedEmd)}
                 </h3>
               </div>
-              <div className="h-10 w-10 bg-blue-50 rounded-full flex items-center justify-center">
-                <RotateCcw className="h-5 w-5 text-blue-600" />
-              </div>
             </CardContent>
           </Card>
 
-          <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
-            <CardContent className="p-5 flex justify-between items-center">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-slate-500">Forfeited EMD</p>
-                <h3 className="text-2xl font-bold tracking-tight text-amber-600">
+          <Card className="relative overflow-hidden border-0 shadow-sm ring-1 ring-slate-200/60 bg-white hover:shadow-md hover:ring-slate-300/60 transition-all duration-300 hover:-translate-y-1 group">
+            <div className="absolute -right-4 -top-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity duration-500">
+               <AlertOctagon className="h-32 w-32 text-amber-600" />
+            </div>
+            <CardContent className="p-6 flex flex-col justify-between h-full relative z-10">
+              <div className="flex justify-between items-start mb-4">
+                <div className="h-12 w-12 bg-amber-50/80 rounded-2xl flex items-center justify-center ring-1 ring-amber-100 group-hover:scale-110 group-hover:bg-amber-100 transition-all duration-300">
+                  <AlertOctagon className="h-6 w-6 text-amber-600" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Forfeited EMD</p>
+                <h3 className="text-3xl font-bold tracking-tight text-slate-900">
                   {formatCurrency(metrics.forfeitedEmd)}
                 </h3>
-              </div>
-              <div className="h-10 w-10 bg-amber-50 rounded-full flex items-center justify-center">
-                <AlertOctagon className="h-5 w-5 text-amber-600" />
               </div>
             </CardContent>
           </Card>
@@ -248,29 +280,30 @@ export function EmdTable({ data }: EmdTableProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-4 bg-white p-2 rounded-2xl shadow-sm ring-1 ring-slate-200/60">
           <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
             <Input
               placeholder="Search agency name or NIT memo number..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-orange-500 w-full"
+              className="pl-12 h-12 bg-slate-50/50 border-0 rounded-xl focus-visible:ring-1 focus-visible:ring-orange-500 w-full hover:bg-slate-50 transition-colors text-base"
             />
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center pr-2">
+            <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px] h-11 border-slate-200 rounded-xl bg-white">
+              <SelectTrigger className="w-[180px] h-12 border-0 bg-transparent hover:bg-slate-50 rounded-xl focus:ring-1 focus:ring-orange-500 transition-colors shadow-none font-medium text-slate-600">
                 <Filter className="h-4 w-4 mr-2 text-slate-400" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="paid">Received</SelectItem>
-                <SelectItem value="refunded">Refunded</SelectItem>
-                <SelectItem value="forfeited">Forfeited</SelectItem>
+              <SelectContent className="rounded-xl border-slate-200 shadow-lg">
+                <SelectItem value="all" className="rounded-lg cursor-pointer">All Statuses</SelectItem>
+                <SelectItem value="pending" className="rounded-lg cursor-pointer">Pending</SelectItem>
+                <SelectItem value="paid" className="rounded-lg cursor-pointer">Received</SelectItem>
+                <SelectItem value="refunded" className="rounded-lg cursor-pointer">Refunded</SelectItem>
+                <SelectItem value="forfeited" className="rounded-lg cursor-pointer">Forfeited</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -283,14 +316,16 @@ export function EmdTable({ data }: EmdTableProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
       >
-        <Card className="border-0 shadow-sm ring-1 ring-slate-200 rounded-2xl overflow-hidden bg-white">
-          <CardHeader className="border-b border-slate-100 py-5 bg-white">
+        <Card className="border-0 shadow-lg shadow-slate-200/40 ring-1 ring-slate-200/60 rounded-3xl overflow-hidden bg-white/80 backdrop-blur-sm">
+          <CardHeader className="border-b border-slate-100 py-5 bg-white/50">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                <FileText className="h-5 w-5 text-orange-500" />
+              <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-3">
+                <div className="bg-orange-100 p-2 rounded-xl">
+                  <FileText className="h-5 w-5 text-orange-600" />
+                </div>
                 Ledger Entries
               </CardTitle>
-              <Badge variant="secondary" className="bg-slate-100 text-slate-600 px-3">
+              <Badge variant="secondary" className="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg font-medium text-sm border-0">
                 {filteredData.length} Records
               </Badge>
             </div>
@@ -305,11 +340,12 @@ export function EmdTable({ data }: EmdTableProps) {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
+              <>
+                <div className="overflow-x-auto">
+                  <Table>
                   <TableHeader className="bg-slate-50/80 border-b border-slate-200">
-                    <TableRow>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Sl No</TableHead>
+                    <TableRow className="hover:bg-transparent">
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 w-[80px]">Sl No</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">NIT Number</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Agency Name</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 text-right">EMD Amount</TableHead>
@@ -320,7 +356,7 @@ export function EmdTable({ data }: EmdTableProps) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredData.map((emd, index) => {
+                    {paginatedData.map((emd, index) => {
                       const agencyDetails = emd.bidderName?.agencydetails || emd.bidderName?.WorksDetail?.biddingAgencies[0]?.agencydetails;
                       const agencyName = agencyDetails?.agencyType === "FARM"
                         ? (agencyDetails?.name + "(" + agencyDetails.proprietorName + ")")
@@ -330,8 +366,8 @@ export function EmdTable({ data }: EmdTableProps) {
                       const isAwarded = emd.bidderName?.workorderdetails && emd.bidderName.workorderdetails.length > 0;
 
                       return (
-                        <TableRow key={emd.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-all">
-                          <TableCell className="px-6 py-4 text-slate-500">{index + 1}</TableCell>
+                        <TableRow key={emd.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-colors group">
+                          <TableCell className="px-6 py-4 text-slate-500 font-medium">{(currentPage - 1) * itemsPerPage + index + 1}</TableCell>
                           <TableCell className="px-6 py-4">
                             {nitDetails && (
                               <ShowNitDetails
@@ -358,12 +394,14 @@ export function EmdTable({ data }: EmdTableProps) {
                             <div className="flex flex-col gap-1 items-start">
                               <Badge
                                 variant="outline"
-                                className={`rounded-full px-3 py-0.5 text-xs font-semibold border-0 ${
+                                className={`rounded-full px-3 py-1 text-xs font-semibold border-0 shadow-sm ${
                                   emd.paymentstatus === "paid"
                                     ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20"
                                     : emd.paymentstatus === "pending"
                                       ? "bg-rose-50 text-rose-700 ring-1 ring-rose-600/20"
-                                      : "bg-slate-100 text-slate-700 ring-1 ring-slate-200"
+                                      : emd.paymentstatus === "refunded"
+                                        ? "bg-blue-50 text-blue-700 ring-1 ring-blue-600/20"
+                                        : "bg-amber-50 text-amber-700 ring-1 ring-amber-600/20"
                                 }`}
                               >
                                 {emd.paymentstatus === "paid" ? "Received" : emd.paymentstatus}
@@ -387,21 +425,21 @@ export function EmdTable({ data }: EmdTableProps) {
                           </TableCell>
                           
                           
-                          <TableCell className="px-6 py-4 text-right flex items-center justify-end gap-1.5">
+                          <TableCell className="px-6 py-4 text-right flex items-center justify-end gap-2">
                             {emd.paymentstatus === "pending" ? (
                               <Button
                                 size="sm"
-                                className="bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs h-8 px-2.5"
+                                className="bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs h-8 px-3 shadow-sm hover:shadow-md transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
                                 onClick={() => setVerifyEmd(emd)}
                               >
                                 Verify Manually
                               </Button>
                             ) : emd.paymentstatus === "paid" ? (
-                              <>
+                              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 rounded-lg text-xs h-8 px-2.5"
+                                  className="border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:border-emerald-300 rounded-lg text-xs h-8 px-3 transition-colors"
                                   onClick={() => {
                                     setRefundMethod("ONLINE_TRANSFER");
                                     setRefundChequeNo("");
@@ -414,7 +452,7 @@ export function EmdTable({ data }: EmdTableProps) {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  className="border-rose-600 text-rose-600 hover:bg-rose-50 rounded-lg text-xs h-8 px-2.5"
+                                  className="border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 hover:border-rose-300 rounded-lg text-xs h-8 px-3 transition-colors"
                                   onClick={() => {
                                     setForfeitReason("");
                                     setForfeitEmd(emd);
@@ -422,7 +460,7 @@ export function EmdTable({ data }: EmdTableProps) {
                                 >
                                   Forfeit
                                 </Button>
-                              </>
+                              </div>
                             ) : null}
                           </TableCell>
                         </TableRow>
@@ -431,6 +469,37 @@ export function EmdTable({ data }: EmdTableProps) {
                   </TableBody>
                 </Table>
               </div>
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between border-t border-slate-100 px-6 py-4 bg-slate-50/50">
+                  <div className="text-sm text-slate-500">
+                    Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to <span className="font-medium">{Math.min(currentPage * itemsPerPage, filteredData.length)}</span> of <span className="font-medium">{filteredData.length}</span> results
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="h-8 w-8 p-0 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-100"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <div className="text-sm font-medium text-slate-600">
+                      Page {currentPage} of {totalPages}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="h-8 w-8 p-0 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-100"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+              </>
             )}
           </CardContent>
         </Card>

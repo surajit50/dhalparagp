@@ -45,6 +45,7 @@ export const bookNitNumber = async (
       supplynit: values.supplynit,
       supplyitemname: values.supplyitemname,
       nitCount: values.nitCount,
+      nitMode: values.nitMode,
       percentageofworkvaluerequired: values.percentageofworkvaluerequired,
       termsTemplateIds: values.termsTemplateIds || [],
     });
@@ -86,6 +87,7 @@ export const bookNitNumber = async (
         isSupply: validatedData.supplynit,
         supplyitemname: validatedData.supplyitemname || null,
         nitCount: validatedData.nitCount,
+        nitMode: validatedData.nitMode,
         percentageofworkvaluerequired: validatedData.percentageofworkvaluerequired,
         termsTemplateIds: validatedData.termsTemplateIds || [],
       },
@@ -122,6 +124,7 @@ const NitUpdateValidationSchema = z.object({
     .nonempty("Place for Opening Bids is required"),
   tender_vilidity_bids: z.string().nonempty("Validity of Bids is required"),
   supplynit: z.boolean().optional(),
+  nitMode: z.enum(["ONLINE", "MANUAL"]).default("ONLINE"),
 });
 
 export async function updateNitNumber(
@@ -148,6 +151,7 @@ export async function updateNitNumber(
       tender_place_opening_bids: formData.get("tender_place_opening_bids"),
       tender_vilidity_bids: formData.get("tender_vilidity_bids"),
       supplynit: formData.get("supplynit") === "on",
+      nitMode: formData.get("nitMode"),
     });
 
     // Update the NIT in the database
@@ -167,6 +171,7 @@ export async function updateNitNumber(
         placeOfOpeningBids: validatedData.tender_place_opening_bids,
         bidValidity: parseInt(validatedData.tender_vilidity_bids),
         isSupply: validatedData.supplynit,
+        nitMode: validatedData.nitMode,
       },
     });
 

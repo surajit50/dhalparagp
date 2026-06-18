@@ -174,14 +174,23 @@ export const addAoCdetails = async (data: FormData) => {
 
     /* ----------------------------- REGISTER BIDDER ----------------------------- */
 
-    const nitMode = work.nitDetails?.nitMode || "MANUAL";
-    const status = nitMode === "ONLINE" ? "refunded" : "pending";
+    // for online tender emd l1 is not refund whill be manual refunded
 
-    const emdData = work.biddingAgencies.map((agency) => ({
-      earnestMoneyAmount: work.earnestMoneyFee,
-      bidderId: agency.id,
-      paymentstatus: status as any,
-    }));
+    const nitMode = work.nitDetails?.nitMode || "MANUAL";
+
+    const emdData = work.biddingAgencies.map((agency) => {
+      let paymentStatus = "pending";
+      
+      if (nitMode === "ONLINE") {
+        paymentStatus = agency.id === bidagencyId ? "pending" : "refunded";
+      }
+
+      return {
+        earnestMoneyAmount: work.earnestMoneyFee,
+        bidderId: agency.id,
+        paymentstatus: paymentStatus as any,
+      };
+    });
 
     if (emdData.length > 0) {
       await db.earnestMoneyRegister.createMany({
@@ -201,40 +210,40 @@ export const addAoCdetails = async (data: FormData) => {
       );
     }
 
-    /* ----------------------------- SMS NOTIFICATION ----------------------------- */
+//     /* ----------------------------- SMS NOTIFICATION ----------------------------- */
 
-    const mobile = bidder.agencydetails.mobileNumber;
+//     const mobile = bidder.agencydetails.mobileNumber;
 
-    if (!mobile || mobile.length !== 10) {
-      throw new Error("Invalid bidder mobile number");
-    }
+//     if (!mobile || mobile.length !== 10) {
+//       throw new Error("Invalid bidder mobile number");
+//     }
 
-    const phoneWithCountryCode = `+91${mobile}`;
+//     const phoneWithCountryCode = `+91${mobile}`;
 
-    const memoDate = work.nitDetails?.memoDate;
+//     const memoDate = work.nitDetails?.memoDate;
 
-    const smsMessage = `🎉 Congratulations!
+//     const smsMessage = `🎉 Congratulations!
 
-You have been awarded the contract.
+// You have been awarded the contract.
 
-NIT No: ${work.nitDetails?.memoNumber ?? 0}/${gpcode}/${memoDate ? memoDate.getFullYear() : ""}
-Date: ${memoDate ? formatDate(memoDate) : "N/A"}
-Work Sl No: ${work.workslno}
+// NIT No: ${work.nitDetails?.memoNumber ?? 0}/${gpcode}/${memoDate ? memoDate.getFullYear() : ""}
+// Date: ${memoDate ? formatDate(memoDate) : "N/A"}
+// Work Sl No: ${work.workslno}
 
-${gpnameinshort} GP
-Check your email for further details.`;
+// ${gpnameinshort} GP
+// Check your email for further details.`;
 
-    const sms = await sendSms(phoneWithCountryCode, smsMessage);
+//     const sms = await sendSms(phoneWithCountryCode, smsMessage);
 
-    if (!sms) {
-      throw new Error("Failed to send SMS notification");
-    }
+//     if (!sms) {
+//       throw new Error("Failed to send SMS notification");
+//     }
 
-    if (sms.MessageId) {
-      console.log("SMS sent successfully:", sms.MessageId);
-    } else {
-      console.log("SMS sending failed.");
-    }
+//     if (sms.MessageId) {
+//       console.log("SMS sent successfully:", sms.MessageId);
+//     } else {
+//       console.log("SMS sending failed.");
+//     }
 
     /* ----------------------------- SUCCESS ----------------------------- */
 

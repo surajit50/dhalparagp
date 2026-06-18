@@ -13,6 +13,7 @@ import {
   type QueryKey,
 } from "@tanstack/react-query";
 import type { ApprovedActionPlanDetails } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -278,6 +279,7 @@ export default function AddWorkDetailsForm({
   const pageSize = 10;
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -411,6 +413,7 @@ export default function AddWorkDetailsForm({
         description: "Tender details added successfully!",
       });
       setIsDialogOpen(true);
+      router.refresh();
     },
   });
 

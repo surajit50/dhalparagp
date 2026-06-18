@@ -214,6 +214,7 @@ export const NitBookValidationSchema = z
         /^\d+(st|nd|rd|th) call$/,
         "Call count must be in the format '1st call', '2nd call', etc."
       ),
+    nitMode: z.enum(["ONLINE", "MANUAL"]).default("ONLINE"),
     percentageofworkvaluerequired: z.number().min(1).max(100).default(60),
     termsTemplateIds: z
       .array(z.string().min(1))

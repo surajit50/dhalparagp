@@ -355,7 +355,7 @@ export default function VendorRegistrationForm() {
             {/* ========================= */}
             <Button
               type="submit"
-              disabled={!form.formState.isValid || isPending}
+              disabled={isPending}
               className="w-full h-14 text-lg rounded-xl"
             >
               {isPending ? (
