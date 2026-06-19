@@ -80,73 +80,93 @@ export function PondsClient({ data }: PondsClientProps) {
 
   return (
     <div className="space-y-8">
-      {/* HEADER */}
-      <div className="bg-gradient-to-r from-orange-700 to-orange-800 rounded-2xl p-8 text-white shadow-xl">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      {/* HEADER SECTION */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
-              <Waves className="h-9 w-9 text-orange-200" />
+            <h1 className="text-4xl font-bold flex items-center gap-3 bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
+              <Waves className="h-9 w-9 text-blue-600" />
               Pond Inventory Management
             </h1>
-            <p className="text-orange-100/90 mt-2 text-lg">
-              Manage your Gram Panchayat&apos;s pond records and lease availability.
+            <p className="text-muted-foreground mt-2 max-w-2xl text-lg">
+              Manage your Gram Panchayat&apos;s pond records and lease availability efficiently.
             </p>
           </div>
 
-          <PondDialog />
+          <div className="flex-shrink-0">
+            <PondDialog />
+          </div>
         </div>
       </div>
 
       {/* STATISTICS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-muted-foreground">Total Ponds</p>
-              <p className="text-2xl font-bold">{totalPonds}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <Card className="group overflow-hidden border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Total Ponds</p>
+                <p className="text-3xl font-bold mt-2">{totalPonds}</p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Waves className="h-6 w-6 text-blue-600" />
+              </div>
             </div>
-            <Waves className="h-8 w-8 text-orange-500" />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-muted-foreground">Available</p>
-              <p className="text-2xl font-bold text-emerald-600">
-                {availablePonds}
-              </p>
+        <Card className="group overflow-hidden border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Available</p>
+                <p className="text-3xl font-bold mt-2 text-emerald-600">
+                  {availablePonds}
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+              </div>
             </div>
-            <CheckCircle2 className="h-8 w-8 text-emerald-500" />
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="p-6 flex justify-between items-center">
-            <div>
-              <p className="text-sm text-muted-foreground">Leased</p>
-              <p className="text-2xl font-bold text-amber-600">
-                {leasedPonds}
-              </p>
+        <Card className="group overflow-hidden border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Leased</p>
+                <p className="text-3xl font-bold mt-2 text-amber-600">
+                  {leasedPonds}
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <XCircle className="h-6 w-6 text-amber-600" />
+              </div>
             </div>
-            <XCircle className="h-8 w-8 text-amber-500" />
           </CardContent>
         </Card>
       </div>
 
       {/* TABLE CARD */}
-      <Card>
-        <CardHeader>
+      <Card className="border-border/50 shadow-lg overflow-hidden">
+        <CardHeader className="border-b bg-muted/20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <CardTitle className="text-xl font-bold">Pond List</CardTitle>
+            <div>
+              <CardTitle className="text-xl font-bold">Pond List</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">
+                View and manage all ponds
+              </p>
+            </div>
 
-            <div className="relative w-full md:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <div className="relative w-full md:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search ponds..."
+                placeholder="Search by name or location..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 bg-slate-50 border-slate-200"
+                className="pl-9 bg-background border-border/50 focus-visible:ring-blue-500"
               />
             </div>
           </div>
@@ -155,28 +175,28 @@ export function PondsClient({ data }: PondsClientProps) {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-slate-50 sticky top-0 z-10">
-                <TableRow>
-                  <TableHead>SL</TableHead>
-                  <TableHead>Pond Name</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Area</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right pr-6">Actions</TableHead>
+              <TableHeader className="bg-muted/50 sticky top-0 z-10 backdrop-blur supports-[backdrop-filter]:bg-muted/50">
+                <TableRow className="hover:bg-transparent border-b">
+                  <TableHead className="font-semibold">SL</TableHead>
+                  <TableHead className="font-semibold">Pond Name</TableHead>
+                  <TableHead className="font-semibold">Location</TableHead>
+                  <TableHead className="font-semibold">Area</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="text-right pr-6 font-semibold">Actions</TableHead>
                 </TableRow>
               </TableHeader>
 
               <TableBody>
                 {filteredData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-40 text-center">
-                      <div className="flex flex-col items-center justify-center">
-                        <Waves className="h-10 w-10 text-slate-300 mb-2" />
-                        <p className="text-lg font-medium text-slate-600">
+                    <TableCell colSpan={6} className="py-16 text-center">
+                      <div className="flex flex-col items-center justify-center text-muted-foreground">
+                        <Waves className="h-12 w-12 opacity-30 mb-3" />
+                        <p className="text-lg font-medium text-foreground">
                           No ponds found
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          Try adjusting search or add a new pond
+                        <p className="text-sm">
+                          Try adjusting your search terms or add a new pond
                         </p>
                       </div>
                     </TableCell>
@@ -185,34 +205,34 @@ export function PondsClient({ data }: PondsClientProps) {
                   filteredData.map((pond, index) => (
                     <TableRow
                       key={pond.id}
-                      className="hover:bg-slate-50 transition"
+                      className="group hover:bg-muted/40 transition-colors duration-150"
                     >
-                      <TableCell>{index + 1}</TableCell>
+                      <TableCell className="font-mono text-sm">{index + 1}</TableCell>
 
-                      <TableCell className="font-semibold">
+                      <TableCell className="font-semibold text-foreground">
                         {pond.name}
                       </TableCell>
 
                       <TableCell>
-                        <div className="flex items-center text-slate-600">
-                          <MapPin className="h-4 w-4 mr-2 text-slate-400" />
-                          {pond.location}
+                        <div className="flex items-center text-muted-foreground text-sm">
+                          <MapPin className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
+                          <span className="truncate">{pond.location}</span>
                         </div>
                       </TableCell>
 
-                      <TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
                         {pond.area ? `${pond.area} Decimal` : "N/A"}
                       </TableCell>
 
                       <TableCell>
                         {pond.status === "AVAILABLE" ? (
-                          <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                          <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-200/50">
+                            <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
                             AVAILABLE
                           </Badge>
                         ) : (
-                          <Badge className="bg-amber-50 text-amber-700 border border-amber-200">
-                            <XCircle className="h-3.5 w-3.5 mr-1" />
+                          <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-200/50">
+                            <XCircle className="h-3.5 w-3.5 mr-1.5" />
                             LEASED
                           </Badge>
                         )}

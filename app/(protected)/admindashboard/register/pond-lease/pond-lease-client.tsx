@@ -61,6 +61,7 @@ import { NoticeGenerateDialog } from "./notice-generate-dialog"
 import { deletePondLease, updateLeaseStatus } from "./actions"
 import { LeaseStatusChart } from "./lease-status-chart"
 import { PendingByYear } from "./pending-by-year"
+import { cn } from "@/lib/utils"
 
 interface PondLeaseClientProps {
   data: any[]
@@ -95,18 +96,18 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
   const expiredLeases = data.filter((l) => l.status === "EXPIRED").length
   const totalPendingAmount = data.reduce((sum, l) => sum + l.pendingAmount, 0)
 
-  const getStatusVariant = (status: string) => {
+  const getStatusClasses = (status: string) => {
     switch (status) {
       case "ACTIVE":
-        return "default"
+        return "bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200/50"
       case "EXPIRED":
-        return "destructive"
+        return "bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-200/50"
       case "COMPLETED":
-        return "secondary"
+        return "bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 border-blue-200/50"
       case "CANCELLED":
-        return "outline"
+        return "bg-slate-500/10 text-slate-600 hover:bg-slate-500/20 border-slate-200/50"
       default:
-        return "outline"
+        return "bg-slate-500/10 text-slate-600 hover:bg-slate-500/20 border-slate-200/50"
     }
   }
 
@@ -155,12 +156,12 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
   return (
     <div className="space-y-8 p-4 md:p-6 bg-gradient-to-b from-background to-muted/20 min-h-screen">
       {/* Header Section with Gradient Accent */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-orange-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
         <div className="relative flex flex-col md:flex-row justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-bold flex items-center gap-3 bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
-              <FileCheck className="h-8 w-8 text-orange-600" />
+            <h1 className="text-4xl font-bold flex items-center gap-3 bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
+              <FileCheck className="h-8 w-8 text-blue-600" />
               Pond Lease Management
             </h1>
             <p className="text-muted-foreground mt-2 max-w-2xl">
@@ -184,8 +185,8 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
                 <p className="text-sm font-medium text-muted-foreground">Total Leases</p>
                 <h3 className="text-3xl font-bold mt-2">{totalLeases}</h3>
               </div>
-              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Layers className="h-6 w-6 text-orange-600" />
+              <div className="h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Layers className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -226,8 +227,8 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
                 <p className="text-sm font-medium text-muted-foreground">Expired Leases</p>
                 <h3 className="text-3xl font-bold mt-2">{expiredLeases}</h3>
               </div>
-              <div className="h-12 w-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Clock className="h-6 w-6 text-orange-600" />
+              <div className="h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Clock className="h-6 w-6 text-amber-600" />
               </div>
             </div>
           </CardContent>
@@ -437,7 +438,7 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
 
                       {/* Status Column */}
                       <TableCell>
-                        <Badge variant={getStatusVariant(lease.status)} className="gap-1">
+                        <Badge className={cn("gap-1 font-medium shadow-sm transition-colors", getStatusClasses(lease.status))}>
                           {getStatusIcon(lease.status)}
                           {lease.status}
                         </Badge>

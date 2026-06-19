@@ -82,24 +82,24 @@ export function PondDialog({ initialData }: PondDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {initialData ? (
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <Edit2 className="h-4 w-4 text-orange-600" />
+          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50">
+            <Edit2 className="h-4 w-4 text-blue-600" />
           </Button>
         ) : (
-          <Button className="bg-orange-700 hover:bg-orange-800 text-white">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200">
             <Plus className="h-4 w-4 mr-2" />
             Add New Pond
           </Button>
         )}
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[450px]">
-        <DialogHeader>
-          <DialogTitle>{initialData ? "Edit Pond Details" : "Register New Pond"}</DialogTitle>
+      <DialogContent className="sm:max-w-[500px]">
+        <DialogHeader className="pb-4 border-b">
+          <DialogTitle className="text-xl">{initialData ? "Edit Pond Details" : "Register New Pond"}</DialogTitle>
           <DialogDescription>
             {initialData 
-              ? "Update the details for this pond." 
-              : "Enter the details to register a new pond for lease."}
+              ? "Update the details for this pond record." 
+              : "Enter the details to register a new pond into the inventory."}
           </DialogDescription>
         </DialogHeader>
 
@@ -133,15 +133,15 @@ export function PondDialog({ initialData }: PondDialogProps) {
               )}
             />
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-5">
               <FormField
                 control={form.control}
                 name="area"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Pond Area (Acres/Bigha)</FormLabel>
+                    <FormLabel>Pond Area (Decimal)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. 1.5 Acres" {...field} />
+                      <Input placeholder="e.g. 150" {...field} className="bg-muted/50 focus-visible:bg-transparent" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -153,7 +153,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
                 name="status"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Status</FormLabel>
+                    <FormLabel>Current Status</FormLabel>
                     <Select
                       disabled={isPending}
                       onValueChange={field.onChange}
@@ -161,13 +161,13 @@ export function PondDialog({ initialData }: PondDialogProps) {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-muted/50 focus-visible:bg-transparent">
                           <SelectValue placeholder="Select Status" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="AVAILABLE">AVAILABLE</SelectItem>
-                        <SelectItem value="LEASED">LEASED</SelectItem>
+                        <SelectItem value="AVAILABLE">Available</SelectItem>
+                        <SelectItem value="LEASED">Leased</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -176,10 +176,10 @@ export function PondDialog({ initialData }: PondDialogProps) {
               />
             </div>
 
-            <DialogFooter className="pt-4">
+            <DialogFooter className="pt-6 border-t mt-4">
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 onClick={() => setOpen(false)}
                 disabled={isPending}
               >
@@ -188,7 +188,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
               <Button 
                 type="submit" 
                 disabled={isPending}
-                className="bg-orange-700 hover:bg-orange-800 text-white min-w-[100px]"
+                className="bg-blue-600 hover:bg-blue-700 text-white min-w-[120px]"
               >
                 {isPending ? (
                   <>
@@ -196,7 +196,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
                     Saving...
                   </>
                 ) : (
-                  initialData ? "Update Pond" : "Register Pond"
+                  initialData ? "Save Changes" : "Register Pond"
                 )}
               </Button>
             </DialogFooter>
