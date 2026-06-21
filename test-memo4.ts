@@ -17,3 +17,8 @@ async function generateMemoNumber() {
 }
 
 generateMemoNumber().then(console.log).catch(console.error).finally(() => process.exit(0));
+
+
+
+
+
