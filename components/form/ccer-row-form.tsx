@@ -16,6 +16,7 @@ import { getFundDisplayName, STATUTORY_FUNDS } from "@/constants/funds";
 
 interface CcerRowFormProps {
   index: number;
+  serialNo: number;
   initialData: any;
   financialYear: string;
   onUpdate: (index: number, data: any) => void;
@@ -25,6 +26,7 @@ interface CcerRowFormProps {
 
 export function CcerRowForm({
   index,
+  serialNo,
   initialData,
   financialYear,
   onUpdate,
@@ -126,25 +128,21 @@ export function CcerRowForm({
       {/* We don't render a <form> tag because it's invalid inside a <tbody> */}
       <TableRow className="hover:bg-blue-50/50 group">
         <TableCell className="p-1 border-r border-gray-200 text-center font-medium text-xs text-gray-500">
-          {index + 1}
+          {serialNo}
         </TableCell>
         
         <TableCell className="p-1 border-r border-gray-200">
-          <FormField control={form.control} name="fundName" render={({ field }) => {
-            const isFundReadOnly = !isEditing || !!initialData.fundName;
-            return (
-              <FormItem className="space-y-0"><FormControl>
-                <Input 
-                  {...field} 
-                  value={isFundReadOnly ? getFundDisplayName(field.value) : field.value}
-                  readOnly={isFundReadOnly} 
-                  className={getInputClassName(false)} 
-                  title={getFundDisplayName(field.value)}
-                  placeholder="Fund name..." 
-                />
-              </FormControl></FormItem>
-            );
-          }} />
+          <FormField control={form.control} name="fundName" render={({ field }) => (
+            <FormItem className="space-y-0"><FormControl>
+              <Input 
+                {...field} 
+                value={getFundDisplayName(field.value)}
+                disabled
+                className="h-8 text-[11px] font-medium rounded-md border-transparent bg-gray-100 text-gray-600 cursor-not-allowed opacity-80 select-none"
+                title={getFundDisplayName(field.value)}
+              />
+            </FormControl></FormItem>
+          )} />
         </TableCell>
 
         <TableCell className="p-1 border-r border-gray-200 bg-gray-50/50">

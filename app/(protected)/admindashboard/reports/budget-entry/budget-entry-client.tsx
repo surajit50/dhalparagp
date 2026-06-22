@@ -53,6 +53,17 @@ export function BudgetEntryClient() {
   const [rows, setRows] = useState<RowData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Legacy key groups: old numbered keys → new merged key
+  const LEGACY_MERGE: Record<string, string[]> = {
+    "Central Finance Commission (CFC)": ["15th CFC", "16th CFC", "17th CFC", "PBG-CFC"],
+    "Performance Based Grant (SFC)": ["5th SFC", "6th SFC", "7th SFC"],
+  };
+
+  const numericFields: (keyof RowData)[] = [
+    "receipts", "arthoOParikalpana", "krishi", "pranisampadBikash",
+    "siksha", "janaswasthya", "nariOSishuUnnoyan", "samajkalyan", "silpa", "parikathamo",
+  ];
+
   const fetchEntries = useCallback(async () => {
     setIsLoading(true);
     const res = await getBudgetEntries(selectedYear, budgetType);
@@ -63,6 +74,21 @@ export function BudgetEntryClient() {
         savedDataMap.set(item.fundName, item)
       );
     }
+
+    // Aggregate legacy keys into their merged counterpart
+    Object.entries(LEGACY_MERGE).forEach(([mergedKey, legacyKeys]) => {
+      const legacyRows = legacyKeys.map((k) => savedDataMap.get(k)).filter(Boolean) as RowData[];
+      if (legacyRows.length > 0) {
+        const merged: RowData = { ...EMPTY_ROW(mergedKey) };
+        numericFields.forEach((field) => {
+          (merged as any)[field] = legacyRows.reduce(
+            (sum, r) => sum + (Number((r as any)[field]) || 0), 0
+          );
+        });
+        (merged as any).id = (legacyRows[legacyRows.length - 1] as any).id;
+        savedDataMap.set(mergedKey, merged);
+      }
+    });
 
     const initialRows: RowData[] = [];
     STATUTORY_FUNDS.forEach((group) => {
@@ -237,38 +263,42 @@ export function BudgetEntryClient() {
                   </TableHeader>
 
                   <TableBody>
-                    {rows.map((row, i) =>
-                      row.isHeader ? (
-                        <TableRow
-                          key={`header-${row.fundName}`}
-                          className="bg-blue-100 hover:bg-blue-100"
-                        >
-                          <TableCell
-                            colSpan={2}
-                            className="p-2 border-r border-b border-gray-300 font-bold text-blue-900 text-[11px]"
+                    {(() => {
+                      let serialNo = 0;
+                      return rows.map((row, i) =>
+                        row.isHeader ? (
+                          <TableRow
+                            key={`header-${row.fundName}`}
+                            className="bg-blue-100 hover:bg-blue-100"
                           >
-                            {row.fundName}
-                          </TableCell>
-                          {Array.from({ length: 11 }).map((_, idx) => (
-                            <TableCell key={idx} className="p-1 border-r border-b border-gray-300">
-                              <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+                            <TableCell
+                              colSpan={2}
+                              className="p-2 border-r border-b border-gray-300 font-bold text-blue-900 text-[11px]"
+                            >
+                              {row.fundName}
                             </TableCell>
-                          ))}
-                          <TableCell className="p-1 border-b border-gray-300"></TableCell>
-                        </TableRow>
-                      ) : (
-                        <BudgetEntryRowForm
-                          key={row.id ?? `${row.fundName}-${i}`}
-                          index={i}
-                          initialData={row}
-                          financialYear={selectedYear}
-                          budgetType={budgetType}
-                          onUpdate={handleRowUpdate}
-                          onDelete={removeRowLocally}
-                          onSaveSuccess={fetchEntries}
-                        />
-                      )
-                    )}
+                            {Array.from({ length: 11 }).map((_, idx) => (
+                              <TableCell key={idx} className="p-1 border-r border-b border-gray-300">
+                                <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+                              </TableCell>
+                            ))}
+                            <TableCell className="p-1 border-b border-gray-300"></TableCell>
+                          </TableRow>
+                        ) : (
+                          <BudgetEntryRowForm
+                            key={row.id ?? `${row.fundName}-${i}`}
+                            index={i}
+                            serialNo={++serialNo}
+                            initialData={row}
+                            financialYear={selectedYear}
+                            budgetType={budgetType}
+                            onUpdate={handleRowUpdate}
+                            onDelete={removeRowLocally}
+                            onSaveSuccess={fetchEntries}
+                          />
+                        )
+                      );
+                    })()}
                   </TableBody>
                 </Table>
 

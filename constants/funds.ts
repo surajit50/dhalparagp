@@ -3,13 +3,8 @@ export const STATUTORY_FUNDS = [
     category: "(A) GRANTS, CONTRIBUTION AVAILABLE FROM THE CENTRAL OR THE STATE GOVERNMENT OR THE ZILLA PARISHAD/ PANCHAYAT SAMITI",
     funds: [
       "MGNREGS",
-      "15th CFC",
-      "16th CFC",
-      "17th CFC",
-      "5th SFC",
-      "6th SFC",
-      "7th SFC",
-      "PBG-CFC",
+      "Central Finance Commission (CFC)",
+      "Performance Based Grant (SFC)",
       "UBUP",
       "MNB/SBM",
       "CHCMI/NRHM",
@@ -95,8 +90,8 @@ export const FLAT_STATUTORY_FUNDS = STATUTORY_FUNDS.flatMap((cat) => cat.funds);
 export const FUND_FULL_NAMES: Record<string, string> = {
   // (A) Central / State / ZP / PS Grants
   MGNREGS: "Mahatma Gandhi National Rural Employment Guarantee Scheme (MGNREGS)",
-  "15th CFC": "Central Finance Commission (CFC)",
-  "5th SFC": "Performance Based Grant (SFC)",
+  "Central Finance Commission (CFC)": "Central Finance Commission (CFC)",
+  "Performance Based Grant (SFC)": "Performance Based Grant (SFC)",
   "PBG-CFC": "Performance Based Grant (CFC)",
   UBUP: "Uttar Banga Unnayan Parishad (UBUP)",
   "MNB/SBM": "Mission Nirmal Bangla (MNB) / Swachh Bharat Mission",
@@ -170,18 +165,9 @@ export const FUND_FULL_NAMES: Record<string, string> = {
 
 /**
  * Returns the full display name for a fund key, falling back to the key itself.
- * Supports dynamic matching for numbered CFC and SFC entries
- * (e.g., "16th CFC", "17 CFC", "6th SFC", "7 SFC").
  */
 export function getFundDisplayName(key: string): string {
   if (FUND_FULL_NAMES[key]) return FUND_FULL_NAMES[key];
-
-  const cfcMatch = key.match(/^(\d+)(?:th)?\s+CFC$/i);
-  if (cfcMatch) return "Central Finance Commission (CFC)";
-
-  const sfcMatch = key.match(/^(\d+)(?:th)?\s+SFC$/i);
-  if (sfcMatch) return "Performance Based Grant (SFC)";
-
   return key;
 }
 

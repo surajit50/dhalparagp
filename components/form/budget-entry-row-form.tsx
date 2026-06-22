@@ -16,6 +16,7 @@ import { FUND_FULL_NAMES, STATUTORY_FUNDS } from "@/constants/funds";
 
 interface BudgetEntryRowFormProps {
   index: number;
+  serialNo: number;
   initialData: any;
   financialYear: string;
   budgetType: "CURRENT_YEAR" | "NEXT_YEAR";
@@ -27,6 +28,7 @@ interface BudgetEntryRowFormProps {
 
 export function BudgetEntryRowForm({
   index,
+  serialNo,
   initialData,
   financialYear,
   budgetType,
@@ -150,7 +152,7 @@ export function BudgetEntryRowForm({
       {/* We don't render a <form> tag because it's invalid inside a <tbody> */}
       <TableRow className="hover:bg-blue-50/50 group">
         <TableCell className="p-1 border-r border-gray-200 text-center font-medium text-xs text-gray-500">
-          {index + 1}
+          {serialNo}
         </TableCell>
         
         <TableCell className="p-1 border-r border-gray-200">

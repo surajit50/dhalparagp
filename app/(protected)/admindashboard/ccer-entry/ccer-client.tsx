@@ -38,22 +38,45 @@ export default function CcerClient() {
   const fetchActuals = async () => {
     setIsLoading(true);
     const res = await getCcerActuals(selectedYear);
-    
-    // We want to always show the full structure, filling in any saved data.
-    const savedDataMap = new Map();
+
+    // Legacy key groups: old numbered keys → new merged key
+    const LEGACY_MERGE: Record<string, string[]> = {
+      "Central Finance Commission (CFC)": ["15th CFC", "16th CFC", "17th CFC", "PBG-CFC"],
+      "Performance Based Grant (SFC)": ["5th SFC", "6th SFC", "7th SFC"],
+    };
+
+    const numericFields: (keyof RowData)[] = [
+      "receipts", "arthoOParikalpana", "krishi", "pranisampadBikash",
+      "siksha", "janaswasthya", "nariOSishuUnnoyan", "samajkalyan", "silpa", "parikathamo",
+    ];
+
+    // Build savedDataMap from DB records
+    const savedDataMap = new Map<string, any>();
     if (res.success && res.data) {
       res.data.forEach((item: any) => savedDataMap.set(item.fundName, item));
     }
 
+    // Aggregate legacy keys into their merged counterpart
+    Object.entries(LEGACY_MERGE).forEach(([mergedKey, legacyKeys]) => {
+      const legacyRows = legacyKeys.map(k => savedDataMap.get(k)).filter(Boolean);
+      if (legacyRows.length > 0) {
+        const merged: any = { fundName: mergedKey };
+        numericFields.forEach((field) => {
+          merged[field] = legacyRows.reduce((sum: number, r: any) => sum + (Number(r[field]) || 0), 0);
+        });
+        // Use the most recent id so Save/Delete work on an existing record
+        merged.id = legacyRows[legacyRows.length - 1].id;
+        savedDataMap.set(mergedKey, merged);
+      }
+    });
+
     const initialRows: RowData[] = [];
     STATUTORY_FUNDS.forEach((group) => {
-      // Add a header row pseudo-object (we use a special flag for rendering)
       initialRows.push({
         fundName: group.category,
-        
         receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
         siksha: 0, janaswasthya: 0, nariOSishuUnnoyan: 0, samajkalyan: 0, silpa: 0, parikathamo: 0,
-        isHeader: true, // we need to add this to the type
+        isHeader: true,
       } as any);
 
       group.funds.forEach((fund) => {
@@ -63,9 +86,8 @@ export default function CcerClient() {
         } else {
           initialRows.push({
             fundName: fund,
-           
             receipts: 0, arthoOParikalpana: 0, krishi: 0, pranisampadBikash: 0,
-            siksha: 0, janaswasthya: 0, nariOSishuUnnoyan: 0, samajkalyan: 0, silpa: 0, parikathamo: 0
+            siksha: 0, janaswasthya: 0, nariOSishuUnnoyan: 0, samajkalyan: 0, silpa: 0, parikathamo: 0,
           });
         }
       });
@@ -163,35 +185,40 @@ export default function CcerClient() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((row, i) => {
-                  if ((row as any).isHeader) {
-                    return (
-                      <TableRow key={i} className="bg-blue-100 hover:bg-blue-100">
-                        <TableCell colSpan={2} className="p-2 border-r border-b border-gray-300 font-bold text-blue-900 text-[11px]">
-                          {row.fundName}
-                        </TableCell>
-                        {Array.from({ length: 11 }).map((_, idx) => (
-                          <TableCell key={idx} className="p-1 border-r border-b border-gray-300">
-                            <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+                {(() => {
+                  let serialNo = 0;
+                  return rows.map((row, i) => {
+                    if ((row as any).isHeader) {
+                      return (
+                        <TableRow key={i} className="bg-blue-100 hover:bg-blue-100">
+                          <TableCell colSpan={2} className="p-2 border-r border-b border-gray-300 font-bold text-blue-900 text-[11px]">
+                            {row.fundName}
                           </TableCell>
-                        ))}
-                        <TableCell className="p-1 border-b border-gray-300"></TableCell>
-                      </TableRow>
+                          {Array.from({ length: 11 }).map((_, idx) => (
+                            <TableCell key={idx} className="p-1 border-r border-b border-gray-300">
+                              <div className="h-8 bg-gray-200/50 rounded-md flex items-center justify-center pattern-cross text-[10px] text-gray-400 border border-gray-200">-</div>
+                            </TableCell>
+                          ))}
+                          <TableCell className="p-1 border-b border-gray-300"></TableCell>
+                        </TableRow>
+                      );
+                    }
+
+                    serialNo += 1;
+                    return (
+                      <CcerRowForm
+                        key={i}
+                        index={i}
+                        serialNo={serialNo}
+                        initialData={row}
+                        financialYear={selectedYear}
+                        onUpdate={handleRowUpdate}
+                        onDelete={removeRowLocally}
+                        onSaveSuccess={fetchActuals}
+                      />
                     );
-                  }
-                  
-                  return (
-                    <CcerRowForm
-                      key={i}
-                      index={i}
-                      initialData={row}
-                      financialYear={selectedYear}
-                      onUpdate={handleRowUpdate}
-                      onDelete={removeRowLocally}
-                      onSaveSuccess={fetchActuals}
-                    />
-                  );
-                })}
+                  });
+                })()}
               </TableBody>
             </Table>
             <div className="bg-gray-100 border-b border-l border-r border-gray-300">
