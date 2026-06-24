@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { revalidatePath } from "next/cache";
 
 import { z } from "zod";
 
@@ -76,6 +77,9 @@ export async function updateDepositStatus(params: UpdateDepositParams) {
       where: { id: params.depositId },
       data: updateData,
     });
+
+    // Revalidate the page cache so fresh data is served on next request
+    revalidatePath("/admindashboard/register/security");
 
     return { success: true, message: "Deposit status updated successfully" };
   } catch (error) {
