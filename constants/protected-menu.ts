@@ -347,8 +347,7 @@ export const adminMenuItems: MenuItemProps[] = [
   // Certificates & Documents
   createMenuItem("Certificates & Documents", ["admin", "superadmin"], undefined, MdDescription, COLORS.red, [
     ...certificateManagementItems(BASE_URLS.admin),
-    ...documentGenerationItems(BASE_URLS.admin),
-    createMenuItem("APA Reports", ["admin"], undefined, FaChartBar, COLORS.cyan, apaReportItems(BASE_URLS.admin)),
+    ...documentGenerationItems(BASE_URLS.admin)
   ]),
 
   // Procurement & Vendors
