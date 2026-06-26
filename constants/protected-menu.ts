@@ -210,41 +210,6 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
   createMenuItem("Birth Verification Report", ["admin"], `${baseUrl}/birth-verification`, FaRegFileAlt, COLORS.orange),
 ];
 
-// Extract APA reports structure
-const apaReportItems = (baseUrl: string): MenuItemProps[] => [
-  createMenuItem("Generate APA Report", ["admin"], `${baseUrl}/generate-apa-report`, FaRegFileAlt, COLORS.purple),
-  createMenuItem("Mandatory Conditions", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
-    createMenuItem("APA-MC-1", ["admin"], `${baseUrl}/apa-report/APA-MC-1`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-MC-2", ["admin"], `${baseUrl}/apa-report/APA-MC-2`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-MC-5", ["admin"], `${baseUrl}/apa-report/APA-MC-5`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-MC-6", ["admin"], `${baseUrl}/apa-report/APA-MC-6`, FaChevronCircleRight, COLORS.purple)
-  ]),
-  createMenuItem("Theme - 1", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
-    createMenuItem("APA-TE-1", ["admin"], `${baseUrl}/apa-report/APA-TE-1`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-2", ["admin"], `${baseUrl}/apa-report/APA-TE-2`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-3", ["admin"], `${baseUrl}/apa-report/APA-TE-3`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-4", ["admin"], `${baseUrl}/apa-report/APA-TE-4`, FaChevronCircleRight, COLORS.purple)
-  ]),
-  createMenuItem("Theme - 2", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
-    createMenuItem("APA-TE-5", ["admin"], `${baseUrl}/apa-report/APA-TE-5`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-6", ["admin"], `${baseUrl}/apa-report/APA-TE-6`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-7", ["admin"], `${baseUrl}/apa-report/APA-TE-7`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-8", ["admin"], `${baseUrl}/apa-report/APA-TE-8`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-9", ["admin"], `${baseUrl}/apa-report/APA-TE-9`, FaChevronCircleRight, COLORS.purple)
-  ]),
-  createMenuItem("Theme - 3", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
-    createMenuItem("APA-TE-10", ["admin"], `${baseUrl}/apa-report/APA-TE-10`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-11", ["admin"], `${baseUrl}/apa-report/APA-TE-11`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-13", ["admin"], `${baseUrl}/apa-report/APA-TE-13`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-14", ["admin"], `${baseUrl}/apa-report/APA-TE-14`, FaChevronCircleRight, COLORS.purple)
-  ]),
-  createMenuItem("Theme - 4", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
-    createMenuItem("APA-TE-16", ["admin"], `${baseUrl}/apa-report/APA-TE-16`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-17", ["admin"], `${baseUrl}/apa-report/APA-TE-17`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-19", ["admin"], `${baseUrl}/apa-report/APA-TE-19`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("APA-TE-20", ["admin"], `${baseUrl}/apa-report/APA-TE-20`, FaChevronCircleRight, COLORS.purple)
-  ])
-];
 
 // Extract document generation items
 const documentGenerationItems = (baseUrl: string): MenuItemProps[] => [
