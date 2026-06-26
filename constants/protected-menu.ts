@@ -139,7 +139,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
   createMenuItem("Inheritance Certificate", ["admin"], undefined, FaRegFileAlt, COLORS.yellow, [
     createMenuItem("Application Lifecycle", ["admin"], undefined, FaChevronDown, COLORS.teal, [
       createMenuItem("New Application", ["admin"], `${baseUrl}/manage-warish/application`, FaChevronCircleRight, COLORS.teal),
-      createMenuItem("Bulk Applications", ["admin"], `${baseUrl}/manage-warish/bulk-upload`, FaChevronCircleRight, COLORS.blue),
+  
       createMenuItem("Document Upload", ["admin"], `${baseUrl}/manage-warish/pending-uploaddoc`, FaChevronCircleRight, COLORS.teal),
       createMenuItem("Verification", ["admin"], `${baseUrl}/manage-warish/verify-document`, FaChevronCircleRight, COLORS.teal),
     ]),
@@ -155,7 +155,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     ]),
     createMenuItem("Monitoring", ["admin"], undefined, FaChevronDown, COLORS.cyan, [
       createMenuItem("Status Tracking", ["admin"], `${baseUrl}/manage-warish/status`, FaChevronCircleRight, COLORS.purple),
-      createMenuItem("Performance Metrics", ["admin"], `${baseUrl}/manage-warish/metrics`, FaChevronCircleRight, COLORS.orange),
+      
       createMenuItem("Correction Requests", ["admin"], `${baseUrl}/manage-warish/correction-requests`, FaChevronCircleRight, COLORS.red),
     ]),
   ]),
@@ -178,15 +178,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Allotment", ["admin"], `${baseUrl}/manage-samabyathi/allotment`, FaChevronCircleRight, COLORS.green),
     createMenuItem("Muster Roll", ["admin"], `${baseUrl}/manage-samabyathi/muster-roll`, FaChevronCircleRight, COLORS.green),
   ]),
-  createMenuItem("Linkage Certificate", ["admin"], undefined, FaRegFileAlt, COLORS.blue, [
-    createMenuItem("Application Portal", ["admin"], `${baseUrl}/manage-linkage/application`, FaChevronCircleRight, COLORS.blue),
-    createMenuItem("Document Validation", ["admin"], `${baseUrl}/manage-linkage/validate`, FaChevronCircleRight, COLORS.teal),
-    createMenuItem("Ownership Verification", ["admin"], `${baseUrl}/manage-linkage/ownership`, FaChevronCircleRight, COLORS.green),
-    createMenuItem("Certificate Issuance", ["admin"], `${baseUrl}/manage-linkage/issue`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("Print Certificate", ["admin"], `${baseUrl}/manage-linkage/print`, FaChevronCircleRight, COLORS.cyan),
-    createMenuItem("Renewal Process", ["admin"], `${baseUrl}/manage-linkage/renew`, FaChevronCircleRight, COLORS.orange),
-    createMenuItem("Dispute Resolution", ["admin"], `${baseUrl}/manage-linkage/disputes`, FaChevronCircleRight, COLORS.red),
-  ]),
+  
   createMenuItem("Certificate Operations", ["admin"], undefined, HiDocumentDuplicate, COLORS.purple, [
     createMenuItem("Bulk Processing", ["admin"], `${baseUrl}/certificates/bulk`, FaChevronCircleRight, COLORS.cyan),
     createMenuItem("Status Tracker", ["admin"], `${baseUrl}/certificates/status`, FaChevronCircleRight, COLORS.blue),
@@ -194,12 +186,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Renewal Management", ["admin"], `${baseUrl}/certificates/renewals`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Certificate Revocation", ["admin"], `${baseUrl}/certificates/revoke`, FaChevronCircleRight, COLORS.red),
   ]),
-  createMenuItem("Certificate Analytics", ["admin"], undefined, FaChartBar, COLORS.teal, [
-    createMenuItem("Issuance Reports", ["admin"], `${baseUrl}/analytics/certificates/issuance`, FaChevronCircleRight, COLORS.blue),
-    createMenuItem("Processing Times", ["admin"], `${baseUrl}/analytics/certificates/processing`, FaChevronCircleRight, COLORS.green),
-    createMenuItem("Type-wise Distribution", ["admin"], `${baseUrl}/analytics/certificates/types`, FaChevronCircleRight, COLORS.purple),
-    createMenuItem("Revenue Analysis", ["admin"], `${baseUrl}/analytics/certificates/revenue`, FaChevronCircleRight, COLORS.orange),
-  ]),
+  
   createMenuItem("Puja/Festival NOC", ["admin"], undefined, FaRegFileAlt, COLORS.orange, [
     createMenuItem("Verify & Approve", ["admin"], `${baseUrl}/verify/puja-noc`, FaChevronCircleRight, COLORS.red),
     createMenuItem("NOC Dashboard", ["admin"], `${baseUrl}/generate/puja-noc?tab=dashboard`, FaChevronCircleRight, COLORS.blue),
@@ -309,11 +296,25 @@ export const adminMenuItems: MenuItemProps[] = [
     ]),
   ]),
 
-  // Certificates & Documents
-  createMenuItem("Certificates & Documents", ["admin", "superadmin"], undefined, MdDescription, COLORS.red, [
-    ...certificateManagementItems(BASE_URLS.admin),
-    ...documentGenerationItems(BASE_URLS.admin)
-  ]),
+  // Certificate & Application Management
+  createMenuItem(
+    "Certificate & Application Management",
+    ["admin", "superadmin"],
+    undefined,
+    MdDescription,
+    COLORS.red,
+    certificateManagementItems(BASE_URLS.admin)
+  ),
+
+  // Document Generation
+  createMenuItem(
+    "Document Generation",
+    ["admin", "superadmin"],
+    undefined,
+    MdPrint,
+    COLORS.indigo,
+    documentGenerationItems(BASE_URLS.admin)
+  ),
 
   // Procurement & Vendors
   createMenuItem("Procurement", ["admin"], undefined, MdBusinessCenter, COLORS.purple, [
