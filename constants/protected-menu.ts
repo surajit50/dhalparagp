@@ -179,13 +179,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Muster Roll", ["admin"], `${baseUrl}/manage-samabyathi/muster-roll`, FaChevronCircleRight, COLORS.green),
   ]),
   
-  createMenuItem("Certificate Operations", ["admin"], undefined, HiDocumentDuplicate, COLORS.purple, [
-    createMenuItem("Bulk Processing", ["admin"], `${baseUrl}/certificates/bulk`, FaChevronCircleRight, COLORS.cyan),
-    createMenuItem("Status Tracker", ["admin"], `${baseUrl}/certificates/status`, FaChevronCircleRight, COLORS.blue),
-    createMenuItem("Certificate Archive", ["admin"], `${baseUrl}/certificates/archive`, FaChevronCircleRight, COLORS.green),
-    createMenuItem("Renewal Management", ["admin"], `${baseUrl}/certificates/renewals`, FaChevronCircleRight, COLORS.orange),
-    createMenuItem("Certificate Revocation", ["admin"], `${baseUrl}/certificates/revoke`, FaChevronCircleRight, COLORS.red),
-  ]),
+  
   
   createMenuItem("Puja/Festival NOC", ["admin"], undefined, FaRegFileAlt, COLORS.orange, [
     createMenuItem("Verify & Approve", ["admin"], `${baseUrl}/verify/puja-noc`, FaChevronCircleRight, COLORS.red),
