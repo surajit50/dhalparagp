@@ -400,6 +400,10 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Tax Compliance", ["admin"], undefined, FaChevronDown, COLORS.yellow, [
         createMenuItem("GST Register", ["admin"], `${BASE_URLS.admin}/register/gst-register`, FaChevronCircleRight, COLORS.red),
         createMenuItem("Income Tax", ["admin"], `${BASE_URLS.admin}/register/income-tax`, FaChevronCircleRight, COLORS.red),
+createMenuItem("Labour cess", ["admin"], `${BASE_URLS.admin}/register/lebour-cess`, FaChevronCircleRight, COLORS.green),
+
+
+        
       ]),
       createMenuItem("Deposits", ["admin"], undefined, FaChevronDown, COLORS.teal, [
         createMenuItem("Security Deposits", ["admin"], `${BASE_URLS.admin}/register/security`, FaChevronCircleRight, COLORS.yellow),
