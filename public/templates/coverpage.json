@@ -1,1 +1,1753 @@
-{"schemas":[[{"name":"field37","type":"rectangle","position":{"x":135.56,"y":81.66},"width":62.44,"height":30.69,"rotate":0,"opacity":0,"borderWidth":0,"borderColor":"#ffffff","color":"#ececec","readOnly":true,"required":false,"content":""},{"name":"field40","type":"rectangle","position":{"x":10,"y":10},"width":189.97,"height":32.54,"rotate":0,"opacity":1,"borderWidth":0,"borderColor":"#000000","color":"#ffffff","readOnly":true,"required":false,"content":""},{"name":"field24","type":"rectangle","position":{"x":15,"y":73},"width":180,"height":56,"rotate":0,"opacity":1,"borderWidth":1,"borderColor":"#cbd5e1","color":"#f8fafc","readOnly":true,"required":false,"content":""},{"name":"field34","type":"rectangle","position":{"x":5,"y":5},"width":200,"height":287,"rotate":0,"opacity":1,"borderWidth":0.5,"borderColor":"#94a3b8","color":"","readOnly":true,"required":false,"content":""},{"name":"field22 copy 2","type":"text","content":"Work Sl No:","position":{"x":110,"y":92},"width":42,"height":9.79,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field1","type":"text","content":"No 3 Dhalpara Gram Panchayat","position":{"x":15,"y":12},"width":123.56,"height":10.05,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":22,"lineHeight":1,"characterSpacing":0,"fontColor":"#0f172a","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"NotoSansJP"},{"name":"field2","type":"text","content":"Hili Block, Dakshin Dinajpur","position":{"x":15,"y":24},"width":124.35,"height":6.09,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field3","type":"text","content":"Financial Year: 2023-2024","position":{"x":128,"y":31},"width":72,"height":6.61,"rotate":0,"alignment":"right","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#1d4ed8","backgroundColor":"#dbeafe","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"fund","type":"text","content":"Fund- 5th SFC","position":{"x":141,"y":12},"width":55,"height":6.61,"rotate":0,"alignment":"right","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#166534","backgroundColor":"#dcfce7","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"field9","type":"text","content":"Project Identification","position":{"x":15,"y":40},"width":180,"height":8,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":14,"lineHeight":1,"characterSpacing":0,"fontColor":"#0f172a","backgroundColor":"","opacity":1,"strikethrough":false,"underline":true,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"workname","type":"text","content":"Installation of a water vending machine with a solar system at Trimohini Primary Health Sub Centre in Kismatdapat.","position":{"x":15,"y":50},"width":180,"height":18,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1.2,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field20","type":"text","content":"","position":{"x":200,"y":200},"width":0,"height":0,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":1,"lineHeight":1,"characterSpacing":0,"fontColor":"#ffffff","fontName":"Roboto","backgroundColor":"","opacity":0,"strikethrough":false,"underline":false,"required":false,"readOnly":true},{"name":"field19","type":"text","content":"Activity Code:","position":{"x":20,"y":83},"width":48,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"activitycode","type":"text","content":"485858524","position":{"x":68,"y":83},"width":40,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"field22","type":"text","content":"NIT Memo No:","position":{"x":110,"y":83},"width":48,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field22 copy","type":"text","content":"NIT Date:","position":{"x":20,"y":93},"width":40,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"nitmemo","type":"text","content":"141/${gpcode}/2024","position":{"x":155,"y":83},"width":38,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"NotoSansJP"},{"name":"nitmeodate","type":"text","content":"24/03/2024","position":{"x":67.78,"y":93.12},"width":40.22,"height":6.88,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"workslno","type":"text","content":"22 out of 26","position":{"x":155,"y":92},"width":38,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"NotoSansJP"},{"name":"field11 copy5","type":"text","content":"Completion Date:","position":{"x":20,"y":102},"width":48,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"workcompletation","type":"text","content":"14/05/2025","position":{"x":66.36,"y":101.41},"width":38,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"NotoSansJP"},{"name":"field24 copy","type":"rectangle","position":{"x":15,"y":133},"width":180,"height":32,"rotate":0,"opacity":1,"borderWidth":1,"borderColor":"#cbd5e1","color":"#f8fafc","readOnly":true,"required":false,"content":""},{"name":"field11 copy","type":"text","content":"Work Order Details","position":{"x":15,"y":138},"width":100,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#0f172a","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field22 copy 3","type":"text","content":"Memo No:","position":{"x":20,"y":150},"width":35,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field22 copy 4","type":"text","content":"Date:","position":{"x":20,"y":158},"width":25,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"field22 copy 5","type":"text","content":"Agreement:","position":{"x":95,"y":150},"width":45,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#334155","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"workordermemo","type":"text","content":"141/${gpcode}/2024","position":{"x":55,"y":150},"width":38,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"workmemodate","type":"text","content":"24/03/2024","position":{"x":45,"y":158},"width":48,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"agrementdetails","type":"text","content":"141/${gpcode}/2024","position":{"x":140,"y":150},"width":53,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"field24 copy 2","type":"rectangle","position":{"x":15,"y":170},"width":180,"height":24,"rotate":0,"opacity":1,"borderWidth":1,"borderColor":"#bfdbfe","color":"#eff6ff","readOnly":true,"required":false,"content":""},{"name":"field11 copy 2","type":"text","content":"Agency Details","position":{"x":15,"y":175},"width":70,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#0f172a","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"agencydetails","type":"text","content":"Sujay Mondal, Chakdapat , Trimohini , Hili, Dakshin Dinajpur, Mob: 8942805098","position":{"x":25,"y":182.68},"width":175,"height":10,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":9,"lineHeight":1.2,"characterSpacing":0,"fontColor":"#111827","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"Roboto"},{"name":"field11 copy 3","type":"text","content":"Fund Details","position":{"x":15,"y":197},"width":70,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#0f172a","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"fundetailstable","type":"table","position":{"x":15,"y":203},"width":180,"height":13.6448,"content":"[[\"\u20b9123,564.00\",\"\u20b9123,564.00\",\"\u20b9123,564.00\"]]","showHead":true,"head":["Estimate Cost","Awarded Cost","Expenditure"],"headWidthPercentages":[33.33,33.33,33.34],"tableStyles":{"borderWidth":0.3,"borderColor":"#94a3b8"},"headStyles":{"fontName":"Roboto","fontSize":8,"characterSpacing":0,"alignment":"center","verticalAlignment":"middle","lineHeight":1,"fontColor":"#f8fafc","borderColor":"#1e3a8a","backgroundColor":"#1e3a8a","borderWidth":{"top":0.1,"right":0.1,"bottom":0.1,"left":0.1},"padding":{"top":2,"right":2,"bottom":2,"left":2}},"bodyStyles":{"fontName":"Roboto","fontSize":8,"characterSpacing":0,"alignment":"center","verticalAlignment":"middle","lineHeight":1,"fontColor":"#0f172a","borderColor":"#cbd5e1","backgroundColor":"","alternateBackgroundColor":"#f1f5f9","borderWidth":{"top":0.1,"right":0.1,"bottom":0.1,"left":0.1},"padding":{"top":2,"right":2,"bottom":2,"left":2}},"columnStyles":{},"required":false,"readOnly":false,"columnWidths":[60,60,60]},{"name":"paymentdetails","type":"table","position":{"x":12.53,"y":222},"width":187.06,"height":12.9392,"content":"[[\"123456.00\",\"1234.00\",\"1113.00\",\"3634.00\",\"4567.00\",\"13214.00\",\"123456.00\",\"1st and Final Bill\"]]","showHead":true,"head":["Gross Bill","IT","Cess","SD Money","GST","Total Deduction","Net Amount","Bill Type"],"headWidthPercentages":[12.5,12.5,12.5,12.5,12.5,12.5,12.5,12.5],"tableStyles":{"borderWidth":0.3,"borderColor":"#94a3b8"},"headStyles":{"fontName":"Roboto","fontSize":7,"characterSpacing":0,"alignment":"center","verticalAlignment":"middle","lineHeight":1,"fontColor":"#f8fafc","borderColor":"#1e3a8a","backgroundColor":"#1e3a8a","borderWidth":{"top":0.1,"right":0.1,"bottom":0.1,"left":0.1},"padding":{"top":2,"right":1,"bottom":2,"left":1}},"bodyStyles":{"fontName":"Roboto","fontSize":7,"characterSpacing":0,"alignment":"center","verticalAlignment":"middle","lineHeight":1,"fontColor":"#0f172a","borderColor":"#cbd5e1","backgroundColor":"","alternateBackgroundColor":"#f1f5f9","borderWidth":{"top":0.1,"right":0.1,"bottom":0.1,"left":0.1},"padding":{"top":2,"right":1,"bottom":2,"left":1}},"columnStyles":{},"required":false,"readOnly":false},{"name":"field11 copy 4","type":"text","content":"Payment Details","position":{"x":15,"y":216},"width":70,"height":7,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#0f172a","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":true,"fontName":"Roboto"},{"name":"watermark","type":"text","content":"22","position":{"x":34.06,"y":103.11},"width":125.94,"height":106.89,"rotate":45,"alignment":"center","verticalAlignment":"middle","fontSize":130,"lineHeight":1,"characterSpacing":0,"fontColor":"#1e3a8a","backgroundColor":"","opacity":0.04,"strikethrough":false,"underline":false,"required":false,"readOnly":false,"fontName":"NotoSansJP"},{"name":"onset_label","type":"text","position":{"x":12,"y":288},"width":58,"height":4,"alignment":"center","fontSize":7,"fontName":"Roboto","verticalAlignment":"middle","content":"","fontColor":"#475569"},{"name":"photo_onset","type":"image","position":{"x":12,"y":255},"width":58,"height":32,"content":"","fit":"cover"},{"name":"ongoing_label","type":"text","position":{"x":76,"y":288},"width":58,"height":4,"alignment":"center","fontSize":7,"fontName":"Roboto","verticalAlignment":"middle","content":"","fontColor":"#475569"},{"name":"photo_ongoing","type":"image","position":{"x":76,"y":255},"width":58,"height":32,"content":"","fit":"cover"},{"name":"complete_label","type":"text","position":{"x":140,"y":288},"width":58,"height":4,"alignment":"center","fontSize":7,"fontName":"Roboto","verticalAlignment":"middle","content":"","fontColor":"#475569"},{"name":"photo_complete","type":"image","position":{"x":140,"y":255},"width":58,"height":32,"content":"","fit":"cover"},{"name":"box_onset","type":"rectangle","position":{"x":12,"y":255},"width":58,"height":32,"borderWidth":1,"borderColor":"#94a3b8","color":"","content":""},{"name":"box_ongoing","type":"rectangle","position":{"x":76,"y":255},"width":58,"height":32,"borderWidth":1,"borderColor":"#94a3b8","color":"","content":""},{"name":"box_complete","type":"rectangle","position":{"x":140,"y":255},"width":58,"height":32,"borderWidth":1,"borderColor":"#94a3b8","color":"","content":""},{"name":"static_onset","type":"text","content":"Onset Photo","position":{"x":12,"y":249},"width":58,"height":6,"alignment":"center","fontSize":8,"fontName":"Roboto","fontColor":"#334155"},{"name":"static_ongoing","type":"text","content":"Ongoing Photo","position":{"x":76,"y":249},"width":58,"height":6,"alignment":"center","fontSize":8,"fontName":"Roboto","fontColor":"#334155"},{"name":"static_complete","type":"text","content":"Complete Photo","position":{"x":140,"y":249},"width":58,"height":6,"alignment":"center","fontSize":8,"fontName":"Roboto","fontColor":"#334155"}]],"basePdf":{"width":210,"height":297,"padding":[5,5,5,5]},"pdfmeVersion":"6.0.6"}
+{
+    "schemas": [
+        [
+            {
+                "name": "bg_page",
+                "type": "rectangle",
+                "position": {
+                    "x": 0,
+                    "y": 0
+                },
+                "width": 210,
+                "height": 297,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#ffffff",
+                "color": "#f8fafc",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "header_banner",
+                "type": "rectangle",
+                "position": {
+                    "x": 0,
+                    "y": 0
+                },
+                "width": 210,
+                "height": 52,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#1e3a8a",
+                "color": "#1e3a8a",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "header_accent_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 0,
+                    "y": 52
+                },
+                "width": 210,
+                "height": 3.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field1",
+                "type": "text",
+                "content": "No 3 Dhalpara Gram Panchayat",
+                "position": {
+                    "x": 10,
+                    "y": 9
+                },
+                "width": 145,
+                "height": 11,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 19,
+                "lineHeight": 1,
+                "characterSpacing": 0.3,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "NotoSansJP"
+            },
+            {
+                "name": "field2",
+                "type": "text",
+                "content": "Hili Block, Dakshin Dinajpur",
+                "position": {
+                    "x": 10,
+                    "y": 22
+                },
+                "width": 130,
+                "height": 7,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 10,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#bfdbfe",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "header_divider",
+                "type": "rectangle",
+                "position": {
+                    "x": 10,
+                    "y": 31
+                },
+                "width": 130,
+                "height": 0.5,
+                "rotate": 0,
+                "opacity": 0.4,
+                "borderWidth": 0,
+                "borderColor": "#93c5fd",
+                "color": "#93c5fd",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "header_sub",
+                "type": "text",
+                "content": "Project Cover Sheet",
+                "position": {
+                    "x": 10,
+                    "y": 34
+                },
+                "width": 100,
+                "height": 7,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 9,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#93c5fd",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "fund",
+                "type": "text",
+                "content": "Fund- 5th SFC",
+                "position": {
+                    "x": 141,
+                    "y": 9
+                },
+                "width": 60,
+                "height": 7,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#fef08a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field3",
+                "type": "text",
+                "content": "Financial Year: 2023-2024",
+                "position": {
+                    "x": 141,
+                    "y": 18
+                },
+                "width": 60,
+                "height": 7,
+                "rotate": 0,
+                "alignment": "right",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#bfdbfe",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "outer_border",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 58
+                },
+                "width": 198,
+                "height": 233,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0.5,
+                "borderColor": "#cbd5e1",
+                "color": "",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "project_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 58
+                },
+                "width": 198,
+                "height": 9,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#1e40af",
+                "color": "#1e40af",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "project_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 58
+                },
+                "width": 4,
+                "height": 9,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field9",
+                "type": "text",
+                "content": "PROJECT IDENTIFICATION",
+                "position": {
+                    "x": 12,
+                    "y": 58
+                },
+                "width": 120,
+                "height": 9,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "project_bg",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 67
+                },
+                "width": 198,
+                "height": 30,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#dbeafe",
+                "color": "#eff6ff",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "workname",
+                "type": "text",
+                "content": "Installation of a water vending machine with a solar system at Trimohini Primary Health Sub Centre in Kismatdapat.",
+                "position": {
+                    "x": 10,
+                    "y": 68
+                },
+                "width": 190,
+                "height": 27,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 10,
+                "lineHeight": 1.4,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "nit_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 97
+                },
+                "width": 198,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#0f766e",
+                "color": "#0f766e",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "nit_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 97
+                },
+                "width": 4,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "nit_section_label",
+                "type": "text",
+                "content": "NIT DETAILS",
+                "position": {
+                    "x": 12,
+                    "y": 97
+                },
+                "width": 80,
+                "height": 7.5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "nit_row_bg_1",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 104.5
+                },
+                "width": 198,
+                "height": 8,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f0fdf4",
+                "color": "#f0fdf4",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "nit_row_bg_2",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 112.5
+                },
+                "width": 198,
+                "height": 8,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#ffffff",
+                "color": "#ffffff",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "nit_row_bg_3",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 120.5
+                },
+                "width": 198,
+                "height": 8,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f0fdf4",
+                "color": "#f0fdf4",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "nit_col_divider",
+                "type": "rectangle",
+                "position": {
+                    "x": 105,
+                    "y": 104.5
+                },
+                "width": 0.5,
+                "height": 24,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#d1fae5",
+                "color": "#d1fae5",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field19",
+                "type": "text",
+                "content": "Activity Code",
+                "position": {
+                    "x": 10,
+                    "y": 104.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "activitycode",
+                "type": "text",
+                "content": "485858524",
+                "position": {
+                    "x": 57,
+                    "y": 104.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field22",
+                "type": "text",
+                "content": "NIT Memo No",
+                "position": {
+                    "x": 109,
+                    "y": 104.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "nitmemo",
+                "type": "text",
+                "content": "141/${gpcode}/2024",
+                "position": {
+                    "x": 156,
+                    "y": 104.5
+                },
+                "width": 46,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field22copy",
+                "type": "text",
+                "content": "NIT Date",
+                "position": {
+                    "x": 10,
+                    "y": 112.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "nitmeodate",
+                "type": "text",
+                "content": "24/03/2024",
+                "position": {
+                    "x": 57,
+                    "y": 112.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field22copy2",
+                "type": "text",
+                "content": "Work Sl No",
+                "position": {
+                    "x": 109,
+                    "y": 112.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "workslno",
+                "type": "text",
+                "content": "22 out of 26",
+                "position": {
+                    "x": 156,
+                    "y": 112.5
+                },
+                "width": 46,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field11copy5",
+                "type": "text",
+                "content": "Completion Date",
+                "position": {
+                    "x": 10,
+                    "y": 120.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "workcompletation",
+                "type": "text",
+                "content": "14/05/2025",
+                "position": {
+                    "x": 57,
+                    "y": 120.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "wo_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 131
+                },
+                "width": 198,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#7c3aed",
+                "color": "#7c3aed",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "wo_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 131
+                },
+                "width": 4,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field11copy",
+                "type": "text",
+                "content": "WORK ORDER DETAILS",
+                "position": {
+                    "x": 12,
+                    "y": 131
+                },
+                "width": 120,
+                "height": 7.5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "wo_row_bg_1",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 138.5
+                },
+                "width": 198,
+                "height": 8,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#faf5ff",
+                "color": "#faf5ff",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "wo_row_bg_2",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 146.5
+                },
+                "width": 198,
+                "height": 8,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#ffffff",
+                "color": "#ffffff",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "wo_row_bg_3",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 154.5
+                },
+                "width": 198,
+                "height": 8,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#faf5ff",
+                "color": "#faf5ff",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "wo_col_divider",
+                "type": "rectangle",
+                "position": {
+                    "x": 105,
+                    "y": 138.5
+                },
+                "width": 0.5,
+                "height": 24,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#e9d5ff",
+                "color": "#e9d5ff",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field22copy3",
+                "type": "text",
+                "content": "Memo No",
+                "position": {
+                    "x": 10,
+                    "y": 138.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "workordermemo",
+                "type": "text",
+                "content": "141/${gpcode}/2024",
+                "position": {
+                    "x": 57,
+                    "y": 138.5
+                },
+                "width": 46,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field22copy5",
+                "type": "text",
+                "content": "Agreement",
+                "position": {
+                    "x": 109,
+                    "y": 138.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "agrementdetails",
+                "type": "text",
+                "content": "141/${gpcode}/2024",
+                "position": {
+                    "x": 156,
+                    "y": 138.5
+                },
+                "width": 46,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "field22copy4",
+                "type": "text",
+                "content": "Date",
+                "position": {
+                    "x": 10,
+                    "y": 146.5
+                },
+                "width": 45,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "workmemodate",
+                "type": "text",
+                "content": "24/03/2024",
+                "position": {
+                    "x": 57,
+                    "y": 146.5
+                },
+                "width": 46,
+                "height": 8,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 8,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#0f172a",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "agency_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 162.5
+                },
+                "width": 198,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#b45309",
+                "color": "#b45309",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "agency_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 162.5
+                },
+                "width": 4,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#fbbf24",
+                "color": "#fbbf24",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field11copy2",
+                "type": "text",
+                "content": "AGENCY DETAILS",
+                "position": {
+                    "x": 12,
+                    "y": 162.5
+                },
+                "width": 120,
+                "height": 7.5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "agency_bg",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 170
+                },
+                "width": 198,
+                "height": 14,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#fffbeb",
+                "color": "#fffbeb",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "agencydetails",
+                "type": "text",
+                "content": "Sujay Mondal, Chakdapat , Trimohini , Hili, Dakshin Dinajpur, Mob: 8942805098",
+                "position": {
+                    "x": 10,
+                    "y": 170
+                },
+                "width": 190,
+                "height": 14,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 9,
+                "lineHeight": 1.4,
+                "characterSpacing": 0,
+                "fontColor": "#1c1917",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "fund_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 185
+                },
+                "width": 198,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#0369a1",
+                "color": "#0369a1",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "fund_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 185
+                },
+                "width": 4,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field11copy3",
+                "type": "text",
+                "content": "FUND DETAILS",
+                "position": {
+                    "x": 12,
+                    "y": 185
+                },
+                "width": 120,
+                "height": 7.5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "fundetailstable",
+                "type": "table",
+                "position": {
+                    "x": 6,
+                    "y": 192.5
+                },
+                "width": 198,
+                "height": 13.6448,
+                "content": "[[\"₹123,564.00\",\"₹123,564.00\",\"₹123,564.00\"]]",
+                "showHead": true,
+                "head": [
+                    "Estimate Cost",
+                    "Awarded Cost",
+                    "Expenditure"
+                ],
+                "headWidthPercentages": [
+                    33.33,
+                    33.33,
+                    33.34
+                ],
+                "tableStyles": {
+                    "borderWidth": 0.3,
+                    "borderColor": "#bae6fd"
+                },
+                "headStyles": {
+                    "fontName": "Roboto",
+                    "fontSize": 8,
+                    "characterSpacing": 0,
+                    "alignment": "center",
+                    "verticalAlignment": "middle",
+                    "lineHeight": 1,
+                    "fontColor": "#ffffff",
+                    "borderColor": "#0369a1",
+                    "backgroundColor": "#0369a1",
+                    "borderWidth": {
+                        "top": 0.1,
+                        "right": 0.1,
+                        "bottom": 0.1,
+                        "left": 0.1
+                    },
+                    "padding": {
+                        "top": 2,
+                        "right": 2,
+                        "bottom": 2,
+                        "left": 2
+                    }
+                },
+                "bodyStyles": {
+                    "fontName": "Roboto",
+                    "fontSize": 8,
+                    "characterSpacing": 0,
+                    "alignment": "center",
+                    "verticalAlignment": "middle",
+                    "lineHeight": 1,
+                    "fontColor": "#0f172a",
+                    "borderColor": "#bae6fd",
+                    "backgroundColor": "#f0f9ff",
+                    "alternateBackgroundColor": "#e0f2fe",
+                    "borderWidth": {
+                        "top": 0.1,
+                        "right": 0.1,
+                        "bottom": 0.1,
+                        "left": 0.1
+                    },
+                    "padding": {
+                        "top": 2,
+                        "right": 2,
+                        "bottom": 2,
+                        "left": 2
+                    }
+                },
+                "columnStyles": {},
+                "required": false,
+                "readOnly": false,
+                "columnWidths": [
+                    66,
+                    66,
+                    66
+                ]
+            },
+            {
+                "name": "payment_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 208
+                },
+                "width": 198,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#be185d",
+                "color": "#be185d",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "payment_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 208
+                },
+                "width": 4,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "field11copy4",
+                "type": "text",
+                "content": "PAYMENT DETAILS",
+                "position": {
+                    "x": 12,
+                    "y": 208
+                },
+                "width": 120,
+                "height": 7.5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "paymentdetails",
+                "type": "table",
+                "position": {
+                    "x": 6,
+                    "y": 215.5
+                },
+                "width": 198,
+                "height": 12.9392,
+                "content": "[[\"123456.00\",\"1234.00\",\"1113.00\",\"3634.00\",\"4567.00\",\"13214.00\",\"123456.00\",\"1st and Final Bill\"]]",
+                "showHead": true,
+                "head": [
+                    "Gross Bill",
+                    "IT",
+                    "Cess",
+                    "SD Money",
+                    "GST",
+                    "Total Deduction",
+                    "Net Amount",
+                    "Bill Type"
+                ],
+                "headWidthPercentages": [
+                    12.5,
+                    12.5,
+                    12.5,
+                    12.5,
+                    12.5,
+                    12.5,
+                    12.5,
+                    12.5
+                ],
+                "tableStyles": {
+                    "borderWidth": 0.3,
+                    "borderColor": "#fbcfe8"
+                },
+                "headStyles": {
+                    "fontName": "Roboto",
+                    "fontSize": 6.5,
+                    "characterSpacing": 0,
+                    "alignment": "center",
+                    "verticalAlignment": "middle",
+                    "lineHeight": 1,
+                    "fontColor": "#ffffff",
+                    "borderColor": "#be185d",
+                    "backgroundColor": "#be185d",
+                    "borderWidth": {
+                        "top": 0.1,
+                        "right": 0.1,
+                        "bottom": 0.1,
+                        "left": 0.1
+                    },
+                    "padding": {
+                        "top": 2,
+                        "right": 1,
+                        "bottom": 2,
+                        "left": 1
+                    }
+                },
+                "bodyStyles": {
+                    "fontName": "Roboto",
+                    "fontSize": 6.5,
+                    "characterSpacing": 0,
+                    "alignment": "center",
+                    "verticalAlignment": "middle",
+                    "lineHeight": 1,
+                    "fontColor": "#0f172a",
+                    "borderColor": "#fbcfe8",
+                    "backgroundColor": "#fff1f2",
+                    "alternateBackgroundColor": "#fce7f3",
+                    "borderWidth": {
+                        "top": 0.1,
+                        "right": 0.1,
+                        "bottom": 0.1,
+                        "left": 0.1
+                    },
+                    "padding": {
+                        "top": 2,
+                        "right": 1,
+                        "bottom": 2,
+                        "left": 1
+                    }
+                },
+                "columnStyles": {},
+                "required": false,
+                "readOnly": false
+            },
+            {
+                "name": "photos_section_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 231
+                },
+                "width": 198,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#334155",
+                "color": "#334155",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "photos_accent",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 231
+                },
+                "width": 4,
+                "height": 7.5,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f59e0b",
+                "color": "#f59e0b",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "photos_section_label",
+                "type": "text",
+                "content": "SITE PHOTOGRAPHS",
+                "position": {
+                    "x": 12,
+                    "y": 231
+                },
+                "width": 120,
+                "height": 7.5,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "lineHeight": 1,
+                "characterSpacing": 1,
+                "fontColor": "#ffffff",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "photos_bg",
+                "type": "rectangle",
+                "position": {
+                    "x": 6,
+                    "y": 238.5
+                },
+                "width": 198,
+                "height": 50,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#f8fafc",
+                "color": "#f8fafc",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "static_onset",
+                "type": "text",
+                "content": "Onset Photo",
+                "position": {
+                    "x": 10,
+                    "y": 239
+                },
+                "width": 60,
+                "height": 6,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "fontName": "Roboto",
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false
+            },
+            {
+                "name": "box_onset",
+                "type": "rectangle",
+                "position": {
+                    "x": 10,
+                    "y": 245
+                },
+                "width": 60,
+                "height": 38,
+                "borderWidth": 0.8,
+                "borderColor": "#94a3b8",
+                "color": "#f1f5f9",
+                "content": ""
+            },
+            {
+                "name": "photo_onset",
+                "type": "image",
+                "position": {
+                    "x": 10,
+                    "y": 245
+                },
+                "width": 60,
+                "height": 38,
+                "content": "",
+                "fit": "cover"
+            },
+            {
+                "name": "onset_label",
+                "type": "text",
+                "position": {
+                    "x": 10,
+                    "y": 283
+                },
+                "width": 60,
+                "height": 5,
+                "alignment": "center",
+                "fontSize": 6.5,
+                "fontName": "Roboto",
+                "verticalAlignment": "middle",
+                "content": "",
+                "fontColor": "#ef4444"
+            },
+            {
+                "name": "static_ongoing",
+                "type": "text",
+                "content": "Ongoing Photo",
+                "position": {
+                    "x": 79,
+                    "y": 239
+                },
+                "width": 60,
+                "height": 6,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "fontName": "Roboto",
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false
+            },
+            {
+                "name": "box_ongoing",
+                "type": "rectangle",
+                "position": {
+                    "x": 79,
+                    "y": 245
+                },
+                "width": 60,
+                "height": 38,
+                "borderWidth": 0.8,
+                "borderColor": "#94a3b8",
+                "color": "#f1f5f9",
+                "content": ""
+            },
+            {
+                "name": "photo_ongoing",
+                "type": "image",
+                "position": {
+                    "x": 79,
+                    "y": 245
+                },
+                "width": 60,
+                "height": 38,
+                "content": "",
+                "fit": "cover"
+            },
+            {
+                "name": "ongoing_label",
+                "type": "text",
+                "position": {
+                    "x": 79,
+                    "y": 283
+                },
+                "width": 60,
+                "height": 5,
+                "alignment": "center",
+                "fontSize": 6.5,
+                "fontName": "Roboto",
+                "verticalAlignment": "middle",
+                "content": "",
+                "fontColor": "#ef4444"
+            },
+            {
+                "name": "static_complete",
+                "type": "text",
+                "content": "Complete Photo",
+                "position": {
+                    "x": 148,
+                    "y": 239
+                },
+                "width": 60,
+                "height": 6,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 7.5,
+                "fontName": "Roboto",
+                "fontColor": "#475569",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false
+            },
+            {
+                "name": "box_complete",
+                "type": "rectangle",
+                "position": {
+                    "x": 148,
+                    "y": 245
+                },
+                "width": 60,
+                "height": 38,
+                "borderWidth": 0.8,
+                "borderColor": "#94a3b8",
+                "color": "#f1f5f9",
+                "content": ""
+            },
+            {
+                "name": "photo_complete",
+                "type": "image",
+                "position": {
+                    "x": 148,
+                    "y": 245
+                },
+                "width": 60,
+                "height": 38,
+                "content": "",
+                "fit": "cover"
+            },
+            {
+                "name": "complete_label",
+                "type": "text",
+                "position": {
+                    "x": 148,
+                    "y": 283
+                },
+                "width": 60,
+                "height": 5,
+                "alignment": "center",
+                "fontSize": 6.5,
+                "fontName": "Roboto",
+                "verticalAlignment": "middle",
+                "content": "",
+                "fontColor": "#ef4444"
+            },
+            {
+                "name": "footer_bar",
+                "type": "rectangle",
+                "position": {
+                    "x": 0,
+                    "y": 290
+                },
+                "width": 210,
+                "height": 7,
+                "rotate": 0,
+                "opacity": 1,
+                "borderWidth": 0,
+                "borderColor": "#1e3a8a",
+                "color": "#1e3a8a",
+                "readOnly": true,
+                "required": false,
+                "content": ""
+            },
+            {
+                "name": "footer_text",
+                "type": "text",
+                "content": "No 3 Dhalpara Gram Panchayat  •  Hili Block, Dakshin Dinajpur  •  Confidential",
+                "position": {
+                    "x": 0,
+                    "y": 290
+                },
+                "width": 210,
+                "height": 7,
+                "rotate": 0,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 6.5,
+                "lineHeight": 1,
+                "characterSpacing": 0.3,
+                "fontColor": "#bfdbfe",
+                "backgroundColor": "",
+                "opacity": 1,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true,
+                "fontName": "Roboto"
+            },
+            {
+                "name": "watermark",
+                "type": "text",
+                "content": "22",
+                "position": {
+                    "x": 34.06,
+                    "y": 103.11
+                },
+                "width": 125.94,
+                "height": 106.89,
+                "rotate": 45,
+                "alignment": "center",
+                "verticalAlignment": "middle",
+                "fontSize": 130,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#1e3a8a",
+                "backgroundColor": "",
+                "opacity": 0.03,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": false,
+                "fontName": "NotoSansJP"
+            },
+            {
+                "name": "field20",
+                "type": "text",
+                "content": "",
+                "position": {
+                    "x": 200,
+                    "y": 200
+                },
+                "width": 0,
+                "height": 0,
+                "rotate": 0,
+                "alignment": "left",
+                "verticalAlignment": "middle",
+                "fontSize": 1,
+                "lineHeight": 1,
+                "characterSpacing": 0,
+                "fontColor": "#ffffff",
+                "fontName": "Roboto",
+                "backgroundColor": "",
+                "opacity": 0,
+                "strikethrough": false,
+                "underline": false,
+                "required": false,
+                "readOnly": true
+            }
+        ]
+    ],
+    "basePdf": {
+        "width": 210,
+        "height": 297,
+        "padding": [
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "pdfmeVersion": "6.0.6"
+}

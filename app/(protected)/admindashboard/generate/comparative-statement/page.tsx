@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, AlertCircle, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Briefcase, AlertCircle, Loader2, ChevronRight, BarChart3 } from "lucide-react";
 import { comparativeStatementProps } from "@/types";
 import { Suspense } from "react";
 import { DataTable } from "@/components/data-table";
@@ -87,27 +88,71 @@ export default async function ComparativeStatementList({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <Card className="border-none shadow-lg rounded-lg overflow-hidden">
-          <CardHeader className="bg-gradient-to-r from-primary to-primary-dark text-primary-foreground">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <CardTitle className="text-3xl font-bold flex items-center">
-                <Briefcase className="w-8 h-8 mr-3" />
-                Comparative Statement
-              </CardTitle>
-              <FinancialYearFilter className="text-white" />
-            </div>
-          </CardHeader>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      {/* Page Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-12 sm:px-12 rounded-b-[40px] shadow-2xl">
+        <div className="absolute -top-32 -right-32 h-96 w-96 bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 h-96 w-96 bg-pink-500/10 rounded-full blur-3xl" />
 
+        <div className="relative z-10 container mx-auto space-y-6">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <span>Dashboard</span>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-purple-400">Comparative Statement</span>
+          </div>
+
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+            <div className="space-y-3 max-w-2xl">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-purple-500/20 ring-1 ring-purple-500/40 text-purple-400">
+                  <BarChart3 className="h-7 w-7" />
+                </div>
+                <h1 className="text-4xl font-bold text-white tracking-tight">
+                  Comparative Statement
+                </h1>
+              </div>
+              <p className="text-lg text-slate-400 leading-relaxed">
+                Compare financial bids across manual NITs. Shows works at
+                Financial Evaluation and AOC stages.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-end gap-4">
+              <Badge
+                variant="secondary"
+                className="text-base px-4 py-2 bg-purple-500/20 text-purple-300 border border-purple-500/30 rounded-2xl"
+              >
+                <Briefcase className="w-4 h-4 mr-2" />
+                {works.length} Work{works.length !== 1 ? "s" : ""}
+              </Badge>
+              <div className="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-xl">
+                <FinancialYearFilter />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="container mx-auto px-4 sm:px-8 py-10">
+        <Card className="border-none shadow-xl rounded-2xl overflow-hidden">
+          <CardHeader className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 py-5 px-6">
+            <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-purple-500" />
+              Manual NIT — Financial Evaluation &amp; AOC Works
+            </CardTitle>
+          </CardHeader>
           <CardContent className="p-6">
             {error ? (
-              <div className="text-center py-12">
-                <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                <p className="text-xl font-semibold text-gray-700">
+              <div className="text-center py-16 space-y-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 dark:bg-red-950/30 mx-auto">
+                  <AlertCircle className="w-8 h-8 text-red-500" />
+                </div>
+                <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">
                   Something went wrong.
                 </p>
-                <p className="text-muted-foreground mt-2">{error}</p>
+                <p className="text-muted-foreground">{error}</p>
               </div>
             ) : (
               <Suspense fallback={<LoadingState />}>
@@ -124,7 +169,10 @@ export default async function ComparativeStatementList({
 function LoadingState() {
   return (
     <div className="flex items-center justify-center h-64">
-      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="flex flex-col items-center gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+        <p className="text-sm text-muted-foreground">Loading works...</p>
+      </div>
     </div>
   );
 }
@@ -136,12 +184,14 @@ function WorkListContent({
 }) {
   if (works.length === 0) {
     return (
-      <div className="text-center py-12">
-        <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-        <p className="text-xl font-semibold text-gray-700">
+      <div className="text-center py-16 space-y-4">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-50 dark:bg-yellow-950/30 mx-auto">
+          <AlertCircle className="w-8 h-8 text-yellow-500" />
+        </div>
+        <p className="text-xl font-semibold text-slate-700 dark:text-slate-300">
           No works found.
         </p>
-        <p className="text-muted-foreground mt-2">
+        <p className="text-muted-foreground">
           There are currently no manual tenders available for the selected
           financial year.
         </p>
@@ -150,8 +200,8 @@ function WorkListContent({
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <DataTable data={works} columns={columns} />
     </div>
   );
-      }
+}

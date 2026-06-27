@@ -22,16 +22,18 @@ import {
 } from "@/components/ui/select";
 import {
   AlertCircle,
-  FileDown,
   Loader2,
   Printer,
   CheckCircle,
   Search,
   Building2,
   Calendar,
-  DollarSign,
+  IndianRupee,
   Users,
   FileText,
+  ChevronRight,
+  ScanLine,
+  CheckCheck,
 } from "lucide-react";
 import { generatePDF } from "@/components/pdfgenerator";
 import { workdetailsforprint } from "@/types";
@@ -148,7 +150,6 @@ export default function BulkScrutinySheetPage() {
         selectedWorks.includes(work.id),
       );
 
-      // Generate combined inputs for all selected works
       const combinedInputs = selectedWorkDetails.map((workdetails) => ({
         field2: `Scrutiny Report of Tender Papers for NIT No. ${
           workdetails.nitDetails.memoNumber
@@ -176,7 +177,6 @@ export default function BulkScrutinySheetPage() {
               }`
             : agency.agencydetails.name,
           workdetails.participationFee.toFixed(2),
-          //agency is coparative then emd 0
           agency.agencydetails.cooperative
             ? "0.00"
             : workdetails.earnestMoneyFee.toFixed(2),
@@ -216,10 +216,8 @@ export default function BulkScrutinySheetPage() {
         })(),
       }));
 
-      // Generate single combined PDF
       const pdf = await generatePDF(TEMPLATE_PATH, combinedInputs);
 
-      // Handle different buffer types properly
       const buffer =
         pdf.buffer instanceof ArrayBuffer
           ? new Uint8Array(pdf.buffer)
@@ -238,7 +236,6 @@ export default function BulkScrutinySheetPage() {
       document.body.appendChild(link);
       link.click();
 
-      // Cleanup
       setTimeout(() => {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
@@ -260,197 +257,265 @@ export default function BulkScrutinySheetPage() {
   }, [selectedWorks, works, selectedNitNumber, formatDateTime]);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Bulk Scrutiny Sheet Generation
-          </h1>
-          <p className="text-muted-foreground">
-            Generate multiple scrutiny sheets by NIT memo number
-          </p>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      {/* Page Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-6 py-12 sm:px-12 rounded-b-[40px] shadow-2xl">
+        <div className="absolute -top-32 -right-32 h-96 w-96 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 -left-32 h-96 w-96 bg-yellow-500/10 rounded-full blur-3xl" />
+
+        <div className="relative z-10 container mx-auto space-y-6">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <span>Dashboard</span>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-amber-400">Bulk Scrutiny Sheet</span>
+          </div>
+
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+            <div className="space-y-3 max-w-2xl">
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-amber-500/20 ring-1 ring-amber-500/40 text-amber-400">
+                  <ScanLine className="h-7 w-7" />
+                </div>
+                <h1 className="text-4xl font-bold text-white tracking-tight">
+                  Bulk Scrutiny Sheet
+                </h1>
+              </div>
+              <p className="text-lg text-slate-400 leading-relaxed">
+                Generate multiple scrutiny sheets by NIT memo number. Select
+                works and download a combined PDF in one click.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Search Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
-            Search by NIT Number
-          </CardTitle>
-          <CardDescription>
-            Select the NIT memo number to find all related works
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <Label htmlFor="nitSelect">NIT Memo Number</Label>
-              <Select
-                value={selectedNitNumber}
-                onValueChange={setSelectedNitNumber}
-                disabled={isLoadingNits}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue
-                    placeholder={
-                      isLoadingNits
-                        ? "Loading NIT numbers..."
-                        : "Select NIT memo number"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {nitNumbers.map((nit) => (
-                    <SelectItem key={nit.memoNumber} value={nit.memoNumber}>
-                      {`${
-                        nit.memoNumber
-                      }/${gpcode}/${nit.memoDate.getFullYear()}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-end">
-              <Button
-                onClick={handleSearch}
-                disabled={isSearching || !selectedNitNumber || isLoadingNits}
-              >
-                {isSearching ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Searching...
-                  </>
-                ) : (
-                  <>
-                    <Search className="mr-2 h-4 w-4" />
-                    Search
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Content */}
+      <div className="container mx-auto px-4 sm:px-8 py-10 space-y-6">
 
-      {/* Status Messages */}
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {success && (
-        <Alert>
-          <CheckCircle className="h-4 w-4" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>{success}</AlertDescription>
-        </Alert>
-      )}
-
-      {/* Results Section */}
-      {works.length > 0 && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Found Works ({works.length})
-              </CardTitle>
-              <div className="flex items-center gap-4">
-                <Button variant="outline" size="sm" onClick={handleSelectAll}>
-                  {selectedWorks.length === works.length
-                    ? "Deselect All"
-                    : "Select All"}
-                </Button>
-                <Button
-                  onClick={handleBulkGeneratePDF}
-                  disabled={isGenerating || selectedWorks.length === 0}
+        {/* Search Section */}
+        <Card className="border-none shadow-xl rounded-2xl overflow-hidden">
+          <CardHeader className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 py-5 px-6">
+            <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+              <Search className="w-5 h-5 text-amber-500" />
+              Search by NIT Number
+            </CardTitle>
+            <CardDescription>
+              Select the NIT memo number to find all related works
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <Label htmlFor="nitSelect" className="text-sm font-medium mb-2 block">
+                  NIT Memo Number
+                </Label>
+                <Select
+                  value={selectedNitNumber}
+                  onValueChange={setSelectedNitNumber}
+                  disabled={isLoadingNits}
                 >
-                  {isGenerating ? (
+                  <SelectTrigger className="w-full rounded-xl border-slate-200 dark:border-slate-700">
+                    <SelectValue
+                      placeholder={
+                        isLoadingNits
+                          ? "Loading NIT numbers..."
+                          : "Select NIT memo number"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {nitNumbers.map((nit) => (
+                      <SelectItem key={nit.memoNumber} value={nit.memoNumber}>
+                        {`${
+                          nit.memoNumber
+                        }/${gpcode}/${nit.memoDate.getFullYear()}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-end">
+                <Button
+                  onClick={handleSearch}
+                  disabled={isSearching || !selectedNitNumber || isLoadingNits}
+                  className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-none shadow-md"
+                >
+                  {isSearching ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating...
+                      Searching...
                     </>
                   ) : (
                     <>
-                      <Printer className="mr-2 h-4 w-4" />
-                      Generate Combined PDF ({selectedWorks.length} sheets)
+                      <Search className="mr-2 h-4 w-4" />
+                      Search
                     </>
                   )}
                 </Button>
               </div>
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {works.map((work) => (
-                <div
-                  key={work.id}
-                  className="flex items-start gap-4 p-4 border rounded-lg hover:bg-gray-50"
-                >
-                  <Checkbox
-                    checked={selectedWorks.includes(work.id)}
-                    onCheckedChange={() => handleSelectWork(work.id)}
-                  />
-                  <div className="flex-1 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">
-                        Work Serial: {work.workslno}
-                      </h3>
-                      <Badge
-                        variant={
-                          work.tenderStatus === "AOC" ? "default" : "secondary"
-                        }
-                      >
-                        {work.tenderStatus}
-                      </Badge>
-                    </div>
+          </CardContent>
+        </Card>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Activity:</span>
-                        <span className="font-medium truncate">
-                          {work.ApprovedActionPlanDetails.activityDescription ||
-                            "N/A"}
-                        </span>
+        {/* Status Messages */}
+        {error && (
+          <Alert variant="destructive" className="rounded-xl">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        {success && (
+          <Alert className="rounded-xl border-green-200 bg-green-50 text-green-800 dark:border-green-800 dark:bg-green-950/30 dark:text-green-300">
+            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+            <AlertTitle>Success</AlertTitle>
+            <AlertDescription>{success}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Results Section */}
+        {works.length > 0 && (
+          <Card className="border-none shadow-xl rounded-2xl overflow-hidden">
+            <CardHeader className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 py-5 px-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-amber-500" />
+                    Found Works
+                  </CardTitle>
+                  <Badge className="bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800">
+                    {works.length} work{works.length !== 1 ? "s" : ""}
+                  </Badge>
+                  {selectedWorks.length > 0 && (
+                    <Badge className="bg-green-500/15 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800">
+                      <CheckCheck className="w-3 h-3 mr-1" />
+                      {selectedWorks.length} selected
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSelectAll}
+                    className="rounded-xl"
+                  >
+                    {selectedWorks.length === works.length
+                      ? "Deselect All"
+                      : "Select All"}
+                  </Button>
+                  <Button
+                    onClick={handleBulkGeneratePDF}
+                    disabled={isGenerating || selectedWorks.length === 0}
+                    className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-none shadow-md"
+                  >
+                    {isGenerating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Printer className="mr-2 h-4 w-4" />
+                        Generate PDF ({selectedWorks.length})
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-3">
+                {works.map((work) => (
+                  <div
+                    key={work.id}
+                    onClick={() => handleSelectWork(work.id)}
+                    className={`flex items-start gap-4 p-5 border rounded-xl cursor-pointer transition-all duration-150 ${
+                      selectedWorks.includes(work.id)
+                        ? "border-amber-400 bg-amber-50 dark:bg-amber-950/20 shadow-sm"
+                        : "border-slate-200 dark:border-slate-700 hover:border-amber-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                    }`}
+                  >
+                    <Checkbox
+                      checked={selectedWorks.includes(work.id)}
+                      onCheckedChange={() => handleSelectWork(work.id)}
+                      className="mt-0.5"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-slate-800 dark:text-slate-200">
+                          Work Serial: {work.workslno}
+                        </h3>
+                        <Badge
+                          variant={
+                            work.tenderStatus === "AOC" ? "default" : "secondary"
+                          }
+                          className="rounded-lg"
+                        >
+                          {work.tenderStatus}
+                        </Badge>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">NIT Date:</span>
-                        <span className="font-medium">
-                          {formatDate(work.nitDetails.memoDate)}
-                        </span>
-                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                            <Building2 className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Activity</p>
+                            <p className="font-medium text-slate-700 dark:text-slate-300 truncate">
+                              {work.ApprovedActionPlanDetails.activityDescription || "N/A"}
+                            </p>
+                          </div>
+                        </div>
 
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Estimate:</span>
-                        <span className="font-medium">
-                          ₹{work.finalEstimateAmount.toLocaleString()}
-                        </span>
-                      </div>
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                            <Calendar className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">NIT Date</p>
+                            <p className="font-medium text-slate-700 dark:text-slate-300">
+                              {formatDate(work.nitDetails.memoDate)}
+                            </p>
+                          </div>
+                        </div>
 
-                      <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-gray-500" />
-                        <span className="text-gray-600">Bidders:</span>
-                        <span className="font-medium">
-                          {work.biddingAgencies.length}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                            <IndianRupee className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Estimate</p>
+                            <p className="font-medium text-slate-700 dark:text-slate-300">
+                              ₹{work.finalEstimateAmount.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800">
+                            <Users className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Bidders</p>
+                            <p className="font-medium text-slate-700 dark:text-slate-300">
+                              {work.biddingAgencies.length}
+                            </p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

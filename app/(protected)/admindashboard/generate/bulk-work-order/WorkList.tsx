@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Loader2, FileText } from "lucide-react";
+import { Loader2, FileText, Filter, IndianRupee, LayoutList, CheckSquare, ListFilter } from "lucide-react";
 import type { Workorderdetails } from "@/types/tender-manage";
 
 import {
@@ -159,90 +159,96 @@ export function WorkList({ works }: WorkListProps) {
   /* ================= UI ================= */
 
   return (
-    <div className="space-y-4">
-
-      {/* HEADER */}
-      <div className="bg-orange-900 text-white px-6 py-3 rounded">
-        <h1 className="text-lg font-semibold">
-          Work Order Register
-        </h1>
-      </div>
+    <div className="space-y-5">
 
       {/* SUMMARY */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Summary title="Total Works" value={works.length} />
-        <Summary title="Filtered" value={filteredWorks.length} />
-        <Summary title="Selected" value={selectedWorks.length} />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Summary title="Total Works" value={works.length} icon={<LayoutList className="w-5 h-5" />} color="emerald" />
+        <Summary title="Filtered" value={filteredWorks.length} icon={<ListFilter className="w-5 h-5" />} color="blue" />
+        <Summary title="Selected" value={selectedWorks.length} icon={<CheckSquare className="w-5 h-5" />} color="violet" />
         <Summary
           title="Total Amount"
           value={`₹ ${totalValue.toLocaleString("en-IN")}`}
+          icon={<IndianRupee className="w-5 h-5" />}
+          color="amber"
         />
       </div>
 
       {/* FILTER */}
-      <div className="bg-gray-50 border rounded p-4 flex flex-wrap gap-3">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="w-4 h-4 text-emerald-500" />
+          <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">Filters</span>
+        </div>
+        <div className="flex flex-wrap gap-3 items-end">
+          <FilterSelect
+            label="Financial Year"
+            value={selectedYear}
+            onChange={setSelectedYear}
+            items={Object.keys(worksByYear)}
+          />
 
-        <FilterSelect
-          label="Financial Year"
-          value={selectedYear}
-          onChange={setSelectedYear}
-          items={Object.keys(worksByYear)}
-        />
+          <FilterSelect
+            label="Fund"
+            value={selectedFund}
+            onChange={setSelectedFund}
+            items={uniqueFunds}
+          />
 
-        <FilterSelect
-          label="Fund"
-          value={selectedFund}
-          onChange={setSelectedFund}
-          items={uniqueFunds}
-        />
+          <FilterSelect
+            label="Memo"
+            value={selectedMemo}
+            onChange={setSelectedMemo}
+            items={uniqueMemos}
+          />
 
-        <FilterSelect
-          label="Memo"
-          value={selectedMemo}
-          onChange={setSelectedMemo}
-          items={uniqueMemos}
-        />
+          <FilterSelect
+            label="Agency"
+            value={selectedAgency}
+            onChange={setSelectedAgency}
+            items={uniqueAgencies}
+          />
 
-        <FilterSelect
-          label="Agency"
-          value={selectedAgency}
-          onChange={setSelectedAgency}
-          items={uniqueAgencies}
-        />
-
-        <Button
-          onClick={handleGeneratePDF}
-          size="sm"
-          className="bg-orange-900 hover:bg-orange-800"
-        >
-          {isGenerating && <Loader2 className="animate-spin mr-2 w-4 h-4" />}
-          <FileText className="mr-2 w-4 h-4" />
-          Generate
-        </Button>
+          <Button
+            onClick={handleGeneratePDF}
+            size="sm"
+            className="rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white border-none shadow-md"
+          >
+            {isGenerating && <Loader2 className="animate-spin mr-2 w-4 h-4" />}
+            <FileText className="mr-2 w-4 h-4" />
+            Generate PDF
+          </Button>
+        </div>
       </div>
 
       {/* TABLE */}
-      <div className="bg-white border rounded overflow-hidden">
-
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
         <Table>
-          <TableHeader className="bg-orange-50">
-            <TableRow>
+          <TableHeader>
+            <TableRow className="bg-slate-50 dark:bg-slate-800/60">
               <TableHead className="w-10">
                 <Checkbox
                   onCheckedChange={(c) => toggleSelectAll(c === true)}
                 />
               </TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Work</TableHead>
-              <TableHead>NIT</TableHead>
-              <TableHead>Agency</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead className="font-semibold">Date</TableHead>
+              <TableHead className="font-semibold">Work</TableHead>
+              <TableHead className="font-semibold">NIT</TableHead>
+              <TableHead className="font-semibold">Agency</TableHead>
+              <TableHead className="text-right font-semibold">Amount</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
             {filteredWorks.map((work) => (
-              <TableRow key={work.id}>
+              <TableRow
+                key={work.id}
+                className={`transition-colors ${
+                  selectedWorks.includes(work.id)
+                    ? "bg-emerald-50 dark:bg-emerald-950/20"
+                    : "hover:bg-slate-50 dark:hover:bg-slate-800/30"
+                }`}
+              >
                 <TableCell>
                   <Checkbox
                     checked={selectedWorks.includes(work.id)}
@@ -256,7 +262,7 @@ export function WorkList({ works }: WorkListProps) {
                   />
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="text-slate-600 dark:text-slate-400">
                   {work.awardofcontractdetails?.workordeermemodate
                     ? formatDate(
                         work.awardofcontractdetails.workordeermemodate
@@ -264,7 +270,7 @@ export function WorkList({ works }: WorkListProps) {
                     : "-"}
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="text-slate-700 dark:text-slate-300">
                   {work.Bidagency?.WorksDetail?.ApprovedActionPlanDetails
                     ?.activityDescription || "N/A"}
                 </TableCell>
@@ -282,19 +288,17 @@ export function WorkList({ works }: WorkListProps) {
                   />
                 </TableCell>
 
-                <TableCell>
+                <TableCell className="text-slate-700 dark:text-slate-300">
                   {work.Bidagency?.agencydetails?.name || "N/A"}
                 </TableCell>
 
-                <TableCell className="text-right font-semibold text-orange-900">
+                <TableCell className="text-right font-semibold text-emerald-600 dark:text-emerald-400">
                   ₹ {work.Bidagency?.biddingAmount?.toLocaleString("en-IN") || 0}
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
         </Table>
-
       </div>
 
     </div>
@@ -303,11 +307,23 @@ export function WorkList({ works }: WorkListProps) {
 
 /* ---------- SMALL COMPONENTS ---------- */
 
-function Summary({ title, value }: any) {
+const colorMap: Record<string, string> = {
+  emerald: "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800",
+  blue: "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800",
+  violet: "bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400 border-violet-200 dark:border-violet-800",
+  amber: "bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800",
+};
+
+function Summary({ title, value, icon, color = "emerald" }: any) {
   return (
-    <div className="bg-white border rounded p-4">
-      <p className="text-xs text-gray-500">{title}</p>
-      <h2 className="text-lg font-semibold text-orange-900">{value}</h2>
+    <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{title}</p>
+        <div className={`flex h-8 w-8 items-center justify-center rounded-xl border ${colorMap[color]}`}>
+          {icon}
+        </div>
+      </div>
+      <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200">{value}</h2>
     </div>
   );
 }
@@ -315,9 +331,9 @@ function Summary({ title, value }: any) {
 function FilterSelect({ label, value, onChange, items }: any) {
   return (
     <div>
-      <label className="text-xs text-gray-600">{label}</label>
+      <label className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1 block">{label}</label>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-[160px] h-9 text-sm">
+        <SelectTrigger className="w-[160px] h-9 text-sm rounded-xl border-slate-200 dark:border-slate-700">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
