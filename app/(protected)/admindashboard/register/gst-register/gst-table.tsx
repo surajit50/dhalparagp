@@ -10,7 +10,7 @@ import type { TdsCgst, TdsSgst, PaymentMethod, PaymentDetails, WorksDetail, Appr
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, CheckCircle2, CreditCard, Loader2, Download, Search, Filter, FileText, Check, DollarSign } from "lucide-react"
+import { AlertCircle, CheckCircle2, CreditCard, Loader2, Download, Search, Filter, FileText, Check, DollarSign, Calendar, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShowNitDetails } from "@/components/ShowNitDetails"
 import jsPDF from "jspdf"
@@ -46,6 +46,8 @@ export function GstTable({ data }: GstTableProps) {
   const [selectedFund, setSelectedFund] = useState<string>("all")
   const [statusFilter, setStatusFilter] = useState<string>("unpaid")
   const [searchQuery, setSearchQuery] = useState<string>("")
+  const [paymentDateFrom, setPaymentDateFrom] = useState<string>("")
+  const [paymentDateTo, setPaymentDateTo] = useState<string>("")
   const [isPending, startTransition] = useTransition()
 
   // Get unique fund types
@@ -62,7 +64,7 @@ export function GstTable({ data }: GstTableProps) {
     [data]
   )
 
-  // Filter data based on search and filters
+  // Filter data based on search, fund, status, and bill payment date
   const filteredData = useMemo(() => 
     data.filter(entry => {
       const fundMatch = selectedFund === "all" || entry.PaymentDetails.some(pd =>
@@ -84,9 +86,30 @@ export function GstTable({ data }: GstTableProps) {
         agencyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         nitNumber.toLowerCase().includes(searchQuery.toLowerCase())
 
-      return fundMatch && statusMatch && searchMatch
+      // Bill payment date filter – matches if ANY PaymentDetail has billPaymentDate in range
+      let dateMatch = true;
+      if (paymentDateFrom || paymentDateTo) {
+        const hasMatchingPayment = entry.PaymentDetails.some(pd => {
+          if (!pd.billPaymentDate) return false;
+          const pdDate = new Date(pd.billPaymentDate);
+          if (paymentDateFrom) {
+            const from = new Date(paymentDateFrom);
+            from.setHours(0, 0, 0, 0);
+            if (pdDate < from) return false;
+          }
+          if (paymentDateTo) {
+            const to = new Date(paymentDateTo);
+            to.setHours(23, 59, 59, 999);
+            if (pdDate > to) return false;
+          }
+          return true;
+        });
+        dateMatch = hasMatchingPayment;
+      }
+
+      return fundMatch && statusMatch && searchMatch && dateMatch
     }),
-    [data, selectedFund, statusFilter, searchQuery]
+    [data, selectedFund, statusFilter, searchQuery, paymentDateFrom, paymentDateTo]
   )
 
   const unpaidEntries = filteredData.filter(entry => !entry.paid)
@@ -168,6 +191,9 @@ export function GstTable({ data }: GstTableProps) {
         const fund = worksDetail?.ApprovedActionPlanDetails?.schemeName || "N/A"
         const cgst = entry.tdscgstAmt
         const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
+        const billDate = entry.PaymentDetails[0]?.billPaymentDate 
+          ? new Date(entry.PaymentDetails[0].billPaymentDate).toLocaleDateString("en-IN") 
+          : "-"
         return [
           index + 1,
           agencyName,
@@ -177,18 +203,18 @@ export function GstTable({ data }: GstTableProps) {
           cgst + sgst,
           entry.paid ? "Paid" : "Unpaid",
           fund,
-          entry.paidAt ? new Date(entry.paidAt).toLocaleDateString("en-IN") : "-",
+          billDate,
           entry.paymentMethod || "-",
           entry.chequeNumber || "-",
         ]
       })
 
       autoTable(doc, {
-        head: [["Sl No", "Agency Name", "NIT Memo No", "CGST (Rs.)", "SGST (Rs.)", "Total GST", "Status", "Fund", "Paid At", "Payment Method", "Cheque No"]],
+        head: [["Sl No", "Agency Name", "NIT Memo No", "CGST (Rs.)", "SGST (Rs.)", "Total GST", "Status", "Fund", "Bill Payment Date", "Payment Method", "Cheque No"]],
         body: tableData,
         startY: 38,
         theme: "striped",
-        headStyles: { fillColor: [249, 115, 22] }, // orange accent
+        headStyles: { fillColor: [249, 115, 22] },
         bodyStyles: { fontSize: 9 },
       })
 
@@ -197,6 +223,16 @@ export function GstTable({ data }: GstTableProps) {
       console.error("Error generating PDF:", error)
     }
   }
+
+  const clearAllFilters = () => {
+    setSearchQuery("")
+    setSelectedFund("all")
+    setStatusFilter("all")
+    setPaymentDateFrom("")
+    setPaymentDateTo("")
+  }
+
+  const hasActiveFilters = searchQuery || selectedFund !== "all" || statusFilter !== "all" || paymentDateFrom || paymentDateTo
 
   return (
     <div className="space-y-8">
@@ -285,44 +321,121 @@ export function GstTable({ data }: GstTableProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-            <Input
-              placeholder="Search agency name or NIT number..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-orange-500 w-full"
-            />
+        <div className="flex flex-col gap-4">
+          {/* First row: Search + Fund + Status */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <Input
+                placeholder="Search agency name or NIT number..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-11 h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-orange-500 w-full"
+              />
+            </div>
+
+            <div className="flex gap-4">
+              <Select value={selectedFund} onValueChange={setSelectedFund}>
+                <SelectTrigger className="w-[180px] h-11 border-slate-200 rounded-xl bg-white">
+                  <Filter className="h-4 w-4 mr-2 text-slate-400" />
+                  <SelectValue placeholder="Fund Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Funds</SelectItem>
+                  {fundTypes.map(fund => (
+                    <SelectItem key={fund} value={fund}>{fund}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[150px] h-11 border-slate-200 rounded-xl bg-white">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="unpaid">Unpaid</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          <div className="flex gap-4">
-            <Select value={selectedFund} onValueChange={setSelectedFund}>
-              <SelectTrigger className="w-[180px] h-11 border-slate-200 rounded-xl bg-white">
-                <Filter className="h-4 w-4 mr-2 text-slate-400" />
-                <SelectValue placeholder="Fund Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Funds</SelectItem>
-                {fundTypes.map(fund => (
-                  <SelectItem key={fund} value={fund}>{fund}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px] h-11 border-slate-200 rounded-xl bg-white">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="paid">Paid</SelectItem>
-                <SelectItem value="unpaid">Unpaid</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Second row: Bill Payment Date Range */}
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-slate-400" />
+              <span className="text-sm font-medium text-slate-500">Bill Payment Date</span>
+            </div>
+            <Input
+              type="date"
+              value={paymentDateFrom}
+              onChange={(e) => setPaymentDateFrom(e.target.value)}
+              className="w-[150px] h-9 bg-white border-slate-200 rounded-xl"
+            />
+            <span className="text-slate-400 text-sm">—</span>
+            <Input
+              type="date"
+              value={paymentDateTo}
+              onChange={(e) => setPaymentDateTo(e.target.value)}
+              className="w-[150px] h-9 bg-white border-slate-200 rounded-xl"
+            />
+            {(paymentDateFrom || paymentDateTo) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setPaymentDateFrom(""); setPaymentDateTo(""); }}
+                className="h-9 px-3 text-slate-500 hover:text-slate-700"
+              >
+                Clear
+              </Button>
+            )}
           </div>
         </div>
       </motion.div>
+
+      {/* Filter Summary */}
+      {hasActiveFilters && (
+        <motion.div
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-wrap items-center gap-2 text-sm text-slate-600 bg-slate-50/80 p-3 rounded-xl"
+        >
+          <span className="font-medium">Active Filters:</span>
+          {searchQuery && (
+            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
+              Search: {searchQuery}
+              <X className="h-3 w-3 cursor-pointer" onClick={() => setSearchQuery("")} />
+            </Badge>
+          )}
+          {selectedFund !== "all" && (
+            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
+              Fund: {selectedFund}
+              <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedFund("all")} />
+            </Badge>
+          )}
+          {statusFilter !== "all" && (
+            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
+              Status: {statusFilter}
+              <X className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter("all")} />
+            </Badge>
+          )}
+          {(paymentDateFrom || paymentDateTo) && (
+            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
+              Bill Date: {paymentDateFrom || "any"} {paymentDateFrom && paymentDateTo && "—"} {paymentDateTo || "any"}
+              <X className="h-3 w-3 cursor-pointer" onClick={() => { setPaymentDateFrom(""); setPaymentDateTo(""); }} />
+            </Badge>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearAllFilters}
+            className="h-7 px-2 text-slate-500 hover:text-slate-700"
+          >
+            Clear All
+          </Button>
+        </motion.div>
+      )}
 
       {/* Data Table */}
       <motion.div
@@ -372,7 +485,7 @@ export function GstTable({ data }: GstTableProps) {
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Total GST (₹)</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Status</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Fund</TableHead>
-                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Paid At</TableHead>
+                      <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Bill Payment Date</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Method</TableHead>
                       <TableHead className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500">Cheque No</TableHead>
                     </TableRow>
@@ -388,6 +501,9 @@ export function GstTable({ data }: GstTableProps) {
                       const cgst = entry.tdscgstAmt
                       const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
                       const totalGst = cgst + sgst
+                      const billDate = entry.PaymentDetails[0]?.billPaymentDate 
+                        ? new Date(entry.PaymentDetails[0].billPaymentDate).toLocaleDateString("en-IN")
+                        : "-"
 
                       return (
                         <TableRow key={entry.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-all">
@@ -438,7 +554,7 @@ export function GstTable({ data }: GstTableProps) {
                             {worksDetail?.ApprovedActionPlanDetails?.schemeName || "-"}
                           </TableCell>
                           <TableCell className="px-6 py-4 text-slate-600">
-                            {entry.paidAt ? new Date(entry.paidAt).toLocaleDateString("en-IN") : "-"}
+                            {billDate}
                           </TableCell>
                           <TableCell className="px-6 py-4">
                             {entry.paymentMethod ? (
