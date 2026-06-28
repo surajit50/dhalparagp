@@ -52,47 +52,91 @@ export const addPaymentDetails = async (values: FormValues, worksDetailId: strin
     // Main transaction for critical writes
     const result = await db.$transaction(
       async (tx) => {
-        const incomeTax = await tx.incomeTaxRegister.create({
-          data: { incomeTaaxAmount: data.lessIncomeTax, paid: false, createdAt: currentDate },
-        });
-        const labourWelfareCess = await tx.labourWelfareCess.create({
-          data: { labourWelfarecessAmt: data.lessLabourWelfareCess, paid: false, createdAt: currentDate },
-        });
-        const tdsCgst = await tx.tdsCgst.create({
-          data: { tdscgstAmt: data.lessTdsCgst, paid: false, createdAt: currentDate },
-        });
-        const tdsSgst = await tx.tdsSgst.create({
-          data: { tdsSgstAmt: data.lessTdsSgst, paid: false, createdAt: currentDate },
-        });
-        const securityDeposit = await tx.secrutityDeposit.create({
-          data: {
-            securityDepositAmt: data.securityDeposit,
-            maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
-            paymentstatus: "unpaid",
-            createdAt: currentDate,
-          },
-        });
+        // ------------------------------------------------------------------
+        // Create register entries only if amount > 0
+        // ------------------------------------------------------------------
+        let incomeTaxId: string | null = null;
+        if (data.lessIncomeTax > 0) {
+          const incomeTax = await tx.incomeTaxRegister.create({
+            data: { incomeTaaxAmount: data.lessIncomeTax, paid: false, createdAt: currentDate },
+          });
+          incomeTaxId = incomeTax.id;
+        }
+
+        let labourWelfareCessId: string | null = null;
+        if (data.lessLabourWelfareCess > 0) {
+          const labourWelfareCess = await tx.labourWelfareCess.create({
+            data: { labourWelfarecessAmt: data.lessLabourWelfareCess, paid: false, createdAt: currentDate },
+          });
+          labourWelfareCessId = labourWelfareCess.id;
+        }
+
+        let tdsCgstId: string | null = null;
+        if (data.lessTdsCgst > 0) {
+          const tdsCgst = await tx.tdsCgst.create({
+            data: { tdscgstAmt: data.lessTdsCgst, paid: false, createdAt: currentDate },
+          });
+          tdsCgstId = tdsCgst.id;
+        }
+
+        let tdsSgstId: string | null = null;
+        if (data.lessTdsSgst > 0) {
+          const tdsSgst = await tx.tdsSgst.create({
+            data: { tdsSgstAmt: data.lessTdsSgst, paid: false, createdAt: currentDate },
+          });
+          tdsSgstId = tdsSgst.id;
+        }
+
+        let securityDepositId: string | null = null;
+        if (data.securityDeposit > 0) {
+          const securityDeposit = await tx.secrutityDeposit.create({
+            data: {
+              securityDepositAmt: data.securityDeposit,
+              maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
+              paymentstatus: "unpaid",
+              createdAt: currentDate,
+            },
+          });
+          securityDepositId = securityDeposit.id;
+        }
+
+        // ------------------------------------------------------------------
+        // Build paymentDetails create data with optional relations
+        // ------------------------------------------------------------------
+        const paymentDetailsData: any = {
+          grossBillAmount: data.grossBillAmount,
+          billPaymentDate: data.billPaymentDate,
+          eGramVoucher: data.eGramVoucher,
+          eGramVoucherDate: data.eGramVoucherDate,
+          gpmsVoucherNumber: data.gpmsVoucherNumber,
+          gpmsVoucherDate: data.gpmsVoucherDate,
+          mbrefno: data.mbrefno,
+          billType: data.billType,
+          isfinalbill: data.billType === "Final Bill",
+          netAmt: data.netAmount,
+          workcompletaitiondate: data.workcompletaitiondate || null,
+          WorksDetail: { connect: { id: worksDetailId } },
+        };
+
+        // Only connect if a record was created
+        if (incomeTaxId) {
+          paymentDetailsData.lessIncomeTax = { connect: { id: incomeTaxId } };
+        }
+        if (labourWelfareCessId) {
+          paymentDetailsData.lessLabourWelfareCess = { connect: { id: labourWelfareCessId } };
+        }
+        if (tdsCgstId) {
+          paymentDetailsData.lessTdsCgst = { connect: { id: tdsCgstId } };
+        }
+        if (tdsSgstId) {
+          paymentDetailsData.lessTdsSgst = { connect: { id: tdsSgstId } };
+        }
+        if (securityDepositId) {
+          paymentDetailsData.securityDeposit = { connect: { id: securityDepositId } };
+        }
 
         const paymentDetails = await tx.paymentDetails.create({
-          data: {
-            grossBillAmount: data.grossBillAmount,
-            lessIncomeTax: { connect: { id: incomeTax.id } },
-            lessLabourWelfareCess: { connect: { id: labourWelfareCess.id } },
-            lessTdsCgst: { connect: { id: tdsCgst.id } },
-            lessTdsSgst: { connect: { id: tdsSgst.id } },
-            securityDeposit: { connect: { id: securityDeposit.id } },
-            billPaymentDate: data.billPaymentDate,
-            eGramVoucher: data.eGramVoucher,
-            eGramVoucherDate: data.eGramVoucherDate,
-            gpmsVoucherNumber: data.gpmsVoucherNumber,
-            gpmsVoucherDate: data.gpmsVoucherDate,
-            mbrefno: data.mbrefno,
-            billType: data.billType,
-            isfinalbill: data.billType === "Final Bill",
-            netAmt: data.netAmount,
-            workcompletaitiondate: data.workcompletaitiondate || null,
-            WorksDetail: { connect: { id: worksDetailId } },
-          },
+          data: paymentDetailsData,
         });
 
         await tx.worksDetail.update({
@@ -114,10 +158,9 @@ export const addPaymentDetails = async (values: FormValues, worksDetailId: strin
     // ------------------------------------------------------------------
     if (actionPlan && actionPlan.fundType && actionPlan.schemeName) {
       try {
-        // Find FundAvailability record with the highest year (latest financial year)
         const fundRecord = await db.fundAvailability.findFirst({
           where: { schemeName: actionPlan.schemeName },
-          orderBy: { year: 'desc' },  // latest year first
+          orderBy: { year: 'desc' },
         });
 
         if (fundRecord) {
@@ -209,54 +252,200 @@ export const updatePaymentDetails = async (
 
     const result = await db.$transaction(
       async (tx) => {
-        if (!existingPayment.lessIncomeTax) throw new Error("Income tax record missing");
-        await tx.incomeTaxRegister.update({
-          where: { id: existingPayment.lessIncomeTax.id },
-          data: { incomeTaaxAmount: data.lessIncomeTax },
-        });
+        // ------------------------------------------------------------------
+        // Update each register entry: create if new amount > 0 and missing,
+        // update if exists, delete if amount becomes 0.
+        // ------------------------------------------------------------------
 
-        if (!existingPayment.lessLabourWelfareCess) throw new Error("Labour welfare cess record missing");
-        await tx.labourWelfareCess.update({
-          where: { id: existingPayment.lessLabourWelfareCess.id },
-          data: { labourWelfarecessAmt: data.lessLabourWelfareCess },
-        });
+        // --- Income Tax ---
+        if (data.lessIncomeTax > 0) {
+          if (existingPayment.lessIncomeTax) {
+            await tx.incomeTaxRegister.update({
+              where: { id: existingPayment.lessIncomeTax.id },
+              data: { incomeTaaxAmount: data.lessIncomeTax },
+            });
+          } else {
+            // Create new record (should not happen normally, but safe)
+            const newIncomeTax = await tx.incomeTaxRegister.create({
+              data: {
+                incomeTaaxAmount: data.lessIncomeTax,
+                paid: false,
+                createdAt: new Date(),
+              },
+            });
+            // We'll need to connect it later via paymentDetails update
+            // We'll store the id for connecting
+            existingPayment.lessIncomeTax = { id: newIncomeTax.id } as any; // temporary
+          }
+        } else {
+          // Amount is 0: delete existing record if it exists
+          if (existingPayment.lessIncomeTax) {
+            await tx.incomeTaxRegister.delete({
+              where: { id: existingPayment.lessIncomeTax.id },
+            });
+            existingPayment.lessIncomeTax = null as any; // mark for disconnection
+          }
+        }
 
-        if (!existingPayment.lessTdsCgst) throw new Error("TDS CGST record missing");
-        await tx.tdsCgst.update({
-          where: { id: existingPayment.lessTdsCgst.id },
-          data: { tdscgstAmt: data.lessTdsCgst },
-        });
+        // --- Labour Welfare Cess ---
+        if (data.lessLabourWelfareCess > 0) {
+          if (existingPayment.lessLabourWelfareCess) {
+            await tx.labourWelfareCess.update({
+              where: { id: existingPayment.lessLabourWelfareCess.id },
+              data: { labourWelfarecessAmt: data.lessLabourWelfareCess },
+            });
+          } else {
+            const newLabour = await tx.labourWelfareCess.create({
+              data: {
+                labourWelfarecessAmt: data.lessLabourWelfareCess,
+                paid: false,
+                createdAt: new Date(),
+              },
+            });
+            existingPayment.lessLabourWelfareCess = { id: newLabour.id } as any;
+          }
+        } else {
+          if (existingPayment.lessLabourWelfareCess) {
+            await tx.labourWelfareCess.delete({
+              where: { id: existingPayment.lessLabourWelfareCess.id },
+            });
+            existingPayment.lessLabourWelfareCess = null as any;
+          }
+        }
 
-        if (!existingPayment.lessTdsSgst) throw new Error("TDS SGST record missing");
-        await tx.tdsSgst.update({
-          where: { id: existingPayment.lessTdsSgst.id },
-          data: { tdsSgstAmt: data.lessTdsSgst },
-        });
+        // --- TDS CGST ---
+        if (data.lessTdsCgst > 0) {
+          if (existingPayment.lessTdsCgst) {
+            await tx.tdsCgst.update({
+              where: { id: existingPayment.lessTdsCgst.id },
+              data: { tdscgstAmt: data.lessTdsCgst },
+            });
+          } else {
+            const newTdsCgst = await tx.tdsCgst.create({
+              data: {
+                tdscgstAmt: data.lessTdsCgst,
+                paid: false,
+                createdAt: new Date(),
+              },
+            });
+            existingPayment.lessTdsCgst = { id: newTdsCgst.id } as any;
+          }
+        } else {
+          if (existingPayment.lessTdsCgst) {
+            await tx.tdsCgst.delete({
+              where: { id: existingPayment.lessTdsCgst.id },
+            });
+            existingPayment.lessTdsCgst = null as any;
+          }
+        }
 
-        if (!existingPayment.securityDeposit) throw new Error("Security deposit record missing");
-        await tx.secrutityDeposit.update({
-          where: { id: existingPayment.securityDeposit.id },
-          data: {
-            securityDepositAmt: data.securityDeposit,
-            maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
-          },
-        });
+        // --- TDS SGST ---
+        if (data.lessTdsSgst > 0) {
+          if (existingPayment.lessTdsSgst) {
+            await tx.tdsSgst.update({
+              where: { id: existingPayment.lessTdsSgst.id },
+              data: { tdsSgstAmt: data.lessTdsSgst },
+            });
+          } else {
+            const newTdsSgst = await tx.tdsSgst.create({
+              data: {
+                tdsSgstAmt: data.lessTdsSgst,
+                paid: false,
+                createdAt: new Date(),
+              },
+            });
+            existingPayment.lessTdsSgst = { id: newTdsSgst.id } as any;
+          }
+        } else {
+          if (existingPayment.lessTdsSgst) {
+            await tx.tdsSgst.delete({
+              where: { id: existingPayment.lessTdsSgst.id },
+            });
+            existingPayment.lessTdsSgst = null as any;
+          }
+        }
+
+        // --- Security Deposit ---
+        if (data.securityDeposit > 0) {
+          if (existingPayment.securityDeposit) {
+            await tx.secrutityDeposit.update({
+              where: { id: existingPayment.securityDeposit.id },
+              data: {
+                securityDepositAmt: data.securityDeposit,
+                maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
+              },
+            });
+          } else {
+            const newSecurity = await tx.secrutityDeposit.create({
+              data: {
+                securityDepositAmt: data.securityDeposit,
+                maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
+                paymentstatus: "unpaid",
+                createdAt: new Date(),
+              },
+            });
+            existingPayment.securityDeposit = { id: newSecurity.id } as any;
+          }
+        } else {
+          if (existingPayment.securityDeposit) {
+            await tx.secrutityDeposit.delete({
+              where: { id: existingPayment.securityDeposit.id },
+            });
+            existingPayment.securityDeposit = null as any;
+          }
+        }
+
+        // ------------------------------------------------------------------
+        // Update paymentDetails: connect or disconnect as needed
+        // ------------------------------------------------------------------
+        const updateData: any = {
+          grossBillAmount: data.grossBillAmount,
+          billPaymentDate: data.billPaymentDate,
+          eGramVoucher: data.eGramVoucher,
+          eGramVoucherDate: data.eGramVoucherDate,
+          gpmsVoucherNumber: data.gpmsVoucherNumber,
+          gpmsVoucherDate: data.gpmsVoucherDate,
+          mbrefno: data.mbrefno,
+          billType: data.billType,
+          isfinalbill: data.billType === "Final Bill",
+          netAmt: data.netAmount,
+          workcompletaitiondate: data.workcompletaitiondate || null,
+        };
+
+        // For each relation, set connect if record exists, else set disconnect (null)
+        if (existingPayment.lessIncomeTax) {
+          updateData.lessIncomeTax = { connect: { id: existingPayment.lessIncomeTax.id } };
+        } else {
+          updateData.lessIncomeTax = { disconnect: true }; // or set to null
+        }
+
+        if (existingPayment.lessLabourWelfareCess) {
+          updateData.lessLabourWelfareCess = { connect: { id: existingPayment.lessLabourWelfareCess.id } };
+        } else {
+          updateData.lessLabourWelfareCess = { disconnect: true };
+        }
+
+        if (existingPayment.lessTdsCgst) {
+          updateData.lessTdsCgst = { connect: { id: existingPayment.lessTdsCgst.id } };
+        } else {
+          updateData.lessTdsCgst = { disconnect: true };
+        }
+
+        if (existingPayment.lessTdsSgst) {
+          updateData.lessTdsSgst = { connect: { id: existingPayment.lessTdsSgst.id } };
+        } else {
+          updateData.lessTdsSgst = { disconnect: true };
+        }
+
+        if (existingPayment.securityDeposit) {
+          updateData.securityDeposit = { connect: { id: existingPayment.securityDeposit.id } };
+        } else {
+          updateData.securityDeposit = { disconnect: true };
+        }
 
         const updatedPaymentDetails = await tx.paymentDetails.update({
           where: { id: paymentDetailsId },
-          data: {
-            grossBillAmount: data.grossBillAmount,
-            billPaymentDate: data.billPaymentDate,
-            eGramVoucher: data.eGramVoucher,
-            eGramVoucherDate: data.eGramVoucherDate,
-            gpmsVoucherNumber: data.gpmsVoucherNumber,
-            gpmsVoucherDate: data.gpmsVoucherDate,
-            mbrefno: data.mbrefno,
-            billType: data.billType,
-            isfinalbill: data.billType === "Final Bill",
-            netAmt: data.netAmount,
-            workcompletaitiondate: data.workcompletaitiondate || null,
-          },
+          data: updateData,
         });
 
         await tx.worksDetail.update({
