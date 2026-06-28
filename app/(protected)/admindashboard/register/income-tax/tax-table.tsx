@@ -389,7 +389,7 @@ export function TaxTable({ data }: TaxTableProps) {
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap items-center gap-2 text-sm text-slate-600 bg-slate-50/80 p-3 rounded-xl"
+          
         >
           <span className="font-medium">Active Filters:</span>
           {searchQuery && (
