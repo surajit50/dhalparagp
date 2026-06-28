@@ -10,7 +10,7 @@ import type { IncomeTaxRegister, PaymentMethod, PaymentDetails, WorksDetail, App
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, CheckCircle2, CreditCard, Loader2, Download, Search, Filter, FileText, Check, DollarSign, Calendar, X } from "lucide-react"
+import { AlertCircle, CheckCircle2, CreditCard, Loader2, Download, Search, Filter, FileText, Check, DollarSign, Calendar } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShowNitDetails } from "@/components/ShowNitDetails"
 import jsPDF from "jspdf"
@@ -85,9 +85,10 @@ export function TaxTable({ data }: TaxTableProps) {
         agencyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         nitNumber.toLowerCase().includes(searchQuery.toLowerCase())
 
-      // Bill payment date filter – matches if ANY PaymentDetail has billPaymentDate in range
+      // Bill payment date filter (based on PaymentDetails.billPaymentDate)
       let dateMatch = true;
       if (paymentDateFrom || paymentDateTo) {
+        // Check if any PaymentDetail has billPaymentDate within the range
         const hasMatchingPayment = entry.PaymentDetails.some(pd => {
           if (!pd.billPaymentDate) return false;
           const pdDate = new Date(pd.billPaymentDate);
@@ -183,6 +184,7 @@ export function TaxTable({ data }: TaxTableProps) {
           : (bidAgency?.name || "N/A")
         const nitNumber = worksDetail?.nitDetails?.memoNumber || "N/A"
         const fund = worksDetail?.ApprovedActionPlanDetails?.schemeName || "N/A"
+        // Use billPaymentDate from first PaymentDetail if available
         const billDate = entry.PaymentDetails[0]?.billPaymentDate 
           ? new Date(entry.PaymentDetails[0].billPaymentDate).toLocaleDateString("en-IN") 
           : "-"
@@ -213,16 +215,6 @@ export function TaxTable({ data }: TaxTableProps) {
       console.error("Error generating PDF:", error)
     }
   }
-
-  const clearAllFilters = () => {
-    setSearchQuery("")
-    setSelectedFund("all")
-    setStatusFilter("all")
-    setPaymentDateFrom("")
-    setPaymentDateTo("")
-  }
-
-  const hasActiveFilters = searchQuery || selectedFund !== "all" || statusFilter !== "all" || paymentDateFrom || paymentDateTo
 
   return (
     <div className="space-y-8">
@@ -384,49 +376,6 @@ export function TaxTable({ data }: TaxTableProps) {
         </div>
       </motion.div>
 
-      {/* Filter Summary */}
-      {hasActiveFilters && (
-        <motion.div
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          
-        >
-          <span className="font-medium">Active Filters:</span>
-          {searchQuery && (
-            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
-              Search: {searchQuery}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => setSearchQuery("")} />
-            </Badge>
-          )}
-          {selectedFund !== "all" && (
-            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
-              Fund: {selectedFund}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => setSelectedFund("all")} />
-            </Badge>
-          )}
-          {statusFilter !== "all" && (
-            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
-              Status: {statusFilter}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => setStatusFilter("all")} />
-            </Badge>
-          )}
-          {(paymentDateFrom || paymentDateTo) && (
-            <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
-              Bill Date: {paymentDateFrom || "any"} {paymentDateFrom && paymentDateTo && "—"} {paymentDateTo || "any"}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => { setPaymentDateFrom(""); setPaymentDateTo(""); }} />
-            </Badge>
-          )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearAllFilters}
-            className="h-7 px-2 text-slate-500 hover:text-slate-700"
-          >
-            Clear All
-          </Button>
-        </motion.div>
-      )}
-
       {/* Data Table */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -486,6 +435,7 @@ export function TaxTable({ data }: TaxTableProps) {
                         ? (bidAgency?.name + "(" + bidAgency.proprietorName + ")")
                         : (bidAgency?.name || "N/A")
                       const nitDetails = worksDetail?.nitDetails
+                      // Get billPaymentDate from first PaymentDetail
                       const billDate = entry.PaymentDetails[0]?.billPaymentDate 
                         ? new Date(entry.PaymentDetails[0].billPaymentDate).toLocaleDateString("en-IN")
                         : "-"
