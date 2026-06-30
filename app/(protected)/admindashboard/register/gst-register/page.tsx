@@ -2,41 +2,42 @@ import { db } from "@/lib/db";
 import { GstTable } from "./gst-table";
 
 async function getData() {
-  return await db.tdsCgst.findMany({
+  // Fetch PaymentDetails that have CGST > 0 OR SGST > 0, including both deduction records
+  return await db.paymentDetails.findMany({
     where: {
-      tdscgstAmt: {
-        gt: 0,
+      OR: [
+        { lessTdsCgst: { tdscgstAmt: { gt: 0 } } },
+        { lessTdsSgst: { tdsSgstAmt: { gt: 0 } } },
+      ],
+    },
+    orderBy: { billPaymentDate: "desc" },
+    include: {
+      lessTdsCgst: true,
+      lessTdsSgst: true,
+      WorksDetail: {
+        include: {
+          ApprovedActionPlanDetails: true,
+          nitDetails: true,
+          AwardofContract: {
+            include: {
+              workorderdetails: {
+                include: {
+                  Bidagency: {
+                    include: {
+                      agencydetails: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     },
-    orderBy: { createdAt: "desc" },
-    include: {
-      PaymentDetails: {
-        include: {
-          lessTdsSgst: true,
-          WorksDetail: {
-            include: {
-              ApprovedActionPlanDetails: true,
-              nitDetails: true,
-              AwardofContract: {
-                include: {
-                  workorderdetails: {
-                    include: {
-                      Bidagency: {
-                        include: {
-                          agencydetails: true
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   });
 }
+
+export type GstRegisterEntry = Awaited<ReturnType<typeof getData>>[number];
 
 export default async function GSTRegisterPage() {
   const data = await getData();

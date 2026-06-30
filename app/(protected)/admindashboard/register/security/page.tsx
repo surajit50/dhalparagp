@@ -3,7 +3,9 @@ import { SecurityDepositsPage } from "./SecurityDepositsPage";
 
 export default async function Page() {
   const deposits = await db.secrutityDeposit.findMany({
-    
+    where: {
+      securityDepositAmt: { gt: 0 },
+    },
     include: {
       PaymentDetails: {
         include: {

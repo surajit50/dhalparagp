@@ -688,11 +688,11 @@ model PaymentDetails {
   workcompletaitiondate DateTime?
   isfinalbill           Boolean            @default(false)
   isVerified            Boolean            @default(false)
-  secrutityDepositId    String             @db.ObjectId
-  incomeTaxRegisterId   String             @db.ObjectId
-  labourWelfareCessId   String             @db.ObjectId
-  tdsCgstId             String             @db.ObjectId
-  tdsSgstId             String             @db.ObjectId
+  secrutityDepositId    String?            @db.ObjectId
+  incomeTaxRegisterId   String?            @db.ObjectId
+  labourWelfareCessId   String?            @db.ObjectId
+  tdsCgstId             String?            @db.ObjectId
+  tdsSgstId             String?            @db.ObjectId
   WorksDetail           WorksDetail        @relation(fields: [worksDetailId], references: [id])
   worksDetailId         String             @db.ObjectId
 }

@@ -6,37 +6,41 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { updateGstPayment } from "@/action/update-gst"
-import type { TdsCgst, TdsSgst, PaymentMethod, PaymentDetails, WorksDetail, ApprovedActionPlanDetails } from "@prisma/client"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, CheckCircle2, CreditCard, Loader2, Download, Search, Filter, FileText, Check, DollarSign, Calendar, X } from "lucide-react"
+import {
+  AlertCircle, CheckCircle2, Loader2, Download, Search,
+  Filter, FileText, Check, DollarSign, Calendar, X,
+} from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ShowNitDetails } from "@/components/ShowNitDetails"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
-
-type GstRegisterWithDetails = TdsCgst & {
-  PaymentDetails: (PaymentDetails & {
-    lessTdsSgst: TdsSgst | null
-    WorksDetail: WorksDetail & {
-      ApprovedActionPlanDetails: ApprovedActionPlanDetails | null
-      nitDetails?: any
-      AwardofContract?: any
-    }
-  })[]
-}
+import type { GstRegisterEntry } from "./page"
+import type { PaymentMethod } from "@prisma/client"
 
 interface GstTableProps {
-  data: GstRegisterWithDetails[]
+  data: GstRegisterEntry[]
 }
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat("en-IN", {
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(amount)
+
+// A "row" is paid if BOTH cgst and sgst entries are paid (or whichever exist)
+function isRowPaid(entry: GstRegisterEntry): boolean {
+  const cgstPaid = entry.lessTdsCgst ? entry.lessTdsCgst.paid : true
+  const sgstPaid = entry.lessTdsSgst ? entry.lessTdsSgst.paid : true
+  return cgstPaid && sgstPaid
+}
+
+// The "representative" id for selection purposes (we use paymentDetails id)
+function rowId(entry: GstRegisterEntry) {
+  return entry.id
 }
 
 export function GstTable({ data }: GstTableProps) {
@@ -50,61 +54,59 @@ export function GstTable({ data }: GstTableProps) {
   const [paymentDateTo, setPaymentDateTo] = useState<string>("")
   const [isPending, startTransition] = useTransition()
 
-  // Get unique fund types
-  const fundTypes = useMemo(() => 
+  // Unique scheme names across all payment details
+  const fundTypes = useMemo(() =>
     Array.from(
       new Set(
-        data.flatMap(entry =>
-          entry.PaymentDetails
-            .map(pd => pd.WorksDetail.ApprovedActionPlanDetails?.schemeName)
-            .filter((fund): fund is string => !!fund)
-        )
+        data
+          .map(pd => pd.WorksDetail.ApprovedActionPlanDetails?.schemeName)
+          .filter((s): s is string => !!s)
       )
     ),
     [data]
   )
 
-  // Filter data based on search, fund, status, and bill payment date
-  const filteredData = useMemo(() => 
+  const filteredData = useMemo(() =>
     data.filter(entry => {
-      const fundMatch = selectedFund === "all" || entry.PaymentDetails.some(pd =>
-        pd.WorksDetail.ApprovedActionPlanDetails?.schemeName === selectedFund
-      )
+      const paid = isRowPaid(entry)
+
+      const fundMatch =
+        selectedFund === "all" ||
+        entry.WorksDetail.ApprovedActionPlanDetails?.schemeName === selectedFund
 
       const statusMatch =
         statusFilter === "all" ||
-        (statusFilter === "paid" && entry.paid) ||
-        (statusFilter === "unpaid" && !entry.paid)
+        (statusFilter === "paid" && paid) ||
+        (statusFilter === "unpaid" && !paid)
 
-      const bidAgency = (entry as any).PaymentDetails[0]?.WorksDetail?.AwardofContract?.workorderdetails[0]?.Bidagency?.agencydetails;
+      const bidAgency = (entry.WorksDetail as any).AwardofContract?.workorderdetails[0]?.Bidagency?.agencydetails
       const agencyName = bidAgency?.agencyType === "FARM"
-        ? (bidAgency?.name + "(" + bidAgency.proprietorName + ")")
+        ? `${bidAgency?.name}(${bidAgency.proprietorName})`
         : (bidAgency?.name || "")
-      const nitNumber = String((entry as any).PaymentDetails[0]?.WorksDetail?.nitDetails?.memoNumber || "")
+      const nitNumber = String(entry.WorksDetail.nitDetails?.memoNumber || "")
+
       const searchMatch =
         searchQuery === "" ||
         agencyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         nitNumber.toLowerCase().includes(searchQuery.toLowerCase())
 
-      // Bill payment date filter – matches if ANY PaymentDetail has billPaymentDate in range
-      let dateMatch = true;
+      let dateMatch = true
       if (paymentDateFrom || paymentDateTo) {
-        const hasMatchingPayment = entry.PaymentDetails.some(pd => {
-          if (!pd.billPaymentDate) return false;
-          const pdDate = new Date(pd.billPaymentDate);
+        if (!entry.billPaymentDate) {
+          dateMatch = false
+        } else {
+          const pdDate = new Date(entry.billPaymentDate)
           if (paymentDateFrom) {
-            const from = new Date(paymentDateFrom);
-            from.setHours(0, 0, 0, 0);
-            if (pdDate < from) return false;
+            const from = new Date(paymentDateFrom)
+            from.setHours(0, 0, 0, 0)
+            if (pdDate < from) dateMatch = false
           }
-          if (paymentDateTo) {
-            const to = new Date(paymentDateTo);
-            to.setHours(23, 59, 59, 999);
-            if (pdDate > to) return false;
+          if (paymentDateTo && dateMatch) {
+            const to = new Date(paymentDateTo)
+            to.setHours(23, 59, 59, 999)
+            if (pdDate > to) dateMatch = false
           }
-          return true;
-        });
-        dateMatch = hasMatchingPayment;
+        }
       }
 
       return fundMatch && statusMatch && searchMatch && dateMatch
@@ -112,56 +114,45 @@ export function GstTable({ data }: GstTableProps) {
     [data, selectedFund, statusFilter, searchQuery, paymentDateFrom, paymentDateTo]
   )
 
-  const unpaidEntries = filteredData.filter(entry => !entry.paid)
-  const allUnpaidSelected = unpaidEntries.length > 0 && unpaidEntries.every(entry => selectedIds.includes(entry.id))
+  const unpaidEntries = filteredData.filter(entry => !isRowPaid(entry))
+  const allUnpaidSelected =
+    unpaidEntries.length > 0 && unpaidEntries.every(entry => selectedIds.includes(rowId(entry)))
 
   // Metrics
   const metrics = useMemo(() => {
-    let totalTax = 0
-    let paidTax = 0
-    let unpaidTax = 0
-
+    let totalTax = 0, paidTax = 0, unpaidTax = 0
     filteredData.forEach(entry => {
-      const cgst = entry.tdscgstAmt
-      const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
-      const totalGst = cgst + sgst
-
-      totalTax += totalGst
-      if (entry.paid) {
-        paidTax += totalGst
-      } else {
-        unpaidTax += totalGst
-      }
+      const cgst = entry.lessTdsCgst?.tdscgstAmt ?? 0
+      const sgst = entry.lessTdsSgst?.tdsSgstAmt ?? 0
+      const total = cgst + sgst
+      totalTax += total
+      if (isRowPaid(entry)) paidTax += total
+      else unpaidTax += total
     })
-
     return { totalTax, paidTax, unpaidTax }
   }, [filteredData])
 
   const totalAmountSelected = selectedIds.reduce((total, id) => {
-    const entry = data.find(d => d.id === id)
+    const entry = data.find(d => rowId(d) === id)
     if (!entry) return total
-    const cgst = entry.tdscgstAmt
-    const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
-    return total + cgst + sgst
+    return total + (entry.lessTdsCgst?.tdscgstAmt ?? 0) + (entry.lessTdsSgst?.tdsSgstAmt ?? 0)
   }, 0)
 
   const handleCheckAll = (checked: boolean) => {
-    setSelectedIds(checked ? unpaidEntries.map(entry => entry.id) : [])
+    setSelectedIds(checked ? unpaidEntries.map(e => rowId(e)) : [])
   }
 
   const handleSave = async () => {
-    if (!paymentMethod) {
-      alert("Please select a payment method")
-      return
-    }
+    if (!paymentMethod) { alert("Please select a payment method"); return }
+    if (paymentMethod === "CHEQUE" && !chequeNumber) { alert("Please enter cheque number"); return }
 
-    if (paymentMethod === "CHEQUE" && !chequeNumber) {
-      alert("Please enter cheque number")
-      return
-    }
+    // updateGstPayment takes CGST ids and resolves SGST internally via PaymentDetails
+    const cgstIds = selectedIds
+      .map(id => data.find(d => rowId(d) === id)?.lessTdsCgst?.id)
+      .filter((id): id is string => !!id)
 
     startTransition(async () => {
-      await updateGstPayment(selectedIds, paymentMethod, chequeNumber)
+      await updateGstPayment(cgstIds, paymentMethod, chequeNumber)
       setSelectedIds([])
       window.location.reload()
     })
@@ -171,46 +162,44 @@ export function GstTable({ data }: GstTableProps) {
     try {
       const doc = new jsPDF("landscape", "mm", "a4")
       const pageWidth = doc.internal.pageSize.getWidth()
-
       doc.setFontSize(18)
       doc.setFont("helvetica", "bold")
       doc.text("GST Register Report (TDS CGST & SGST)", pageWidth / 2, 20, { align: "center" })
-
       doc.setFontSize(10)
       doc.setFont("helvetica", "normal")
-      const currentDate = new Date().toLocaleDateString("en-IN")
-      doc.text(`Generated on: ${currentDate} | Fund: ${selectedFund} | Status: ${statusFilter}`, pageWidth / 2, 28, { align: "center" })
+      doc.text(
+        `Generated on: ${new Date().toLocaleDateString("en-IN")} | Fund: ${selectedFund} | Status: ${statusFilter}`,
+        pageWidth / 2, 28, { align: "center" }
+      )
 
       const tableData = filteredData.map((entry, index) => {
-        const worksDetail = entry.PaymentDetails[0]?.WorksDetail
-        const bidAgency = (worksDetail as any)?.AwardofContract?.workorderdetails[0]?.Bidagency?.agencydetails;
+        const worksDetail = entry.WorksDetail
+        const bidAgency = (worksDetail as any)?.AwardofContract?.workorderdetails[0]?.Bidagency?.agencydetails
         const agencyName = bidAgency?.agencyType === "FARM"
-          ? (bidAgency?.name + "(" + bidAgency.proprietorName + ")")
+          ? `${bidAgency?.name}(${bidAgency.proprietorName})`
           : (bidAgency?.name || "N/A")
-        const nitNumber = worksDetail?.nitDetails?.memoNumber || "N/A"
-        const fund = worksDetail?.ApprovedActionPlanDetails?.schemeName || "N/A"
-        const cgst = entry.tdscgstAmt
-        const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
-        const billDate = entry.PaymentDetails[0]?.billPaymentDate 
-          ? new Date(entry.PaymentDetails[0].billPaymentDate).toLocaleDateString("en-IN") 
+        const cgst = entry.lessTdsCgst?.tdscgstAmt ?? 0
+        const sgst = entry.lessTdsSgst?.tdsSgstAmt ?? 0
+        const billDate = entry.billPaymentDate
+          ? new Date(entry.billPaymentDate).toLocaleDateString("en-IN")
           : "-"
         return [
           index + 1,
           agencyName,
-          nitNumber,
+          worksDetail.nitDetails?.memoNumber || "N/A",
           cgst,
           sgst,
           cgst + sgst,
-          entry.paid ? "Paid" : "Unpaid",
-          fund,
+          isRowPaid(entry) ? "Paid" : "Unpaid",
+          worksDetail.ApprovedActionPlanDetails?.schemeName || "N/A",
           billDate,
-          entry.paymentMethod || "-",
-          entry.chequeNumber || "-",
+          entry.lessTdsCgst?.paymentMethod || "-",
+          entry.lessTdsCgst?.chequeNumber || "-",
         ]
       })
 
       autoTable(doc, {
-        head: [["Sl No", "Agency Name", "NIT Memo No", "CGST (Rs.)", "SGST (Rs.)", "Total GST", "Status", "Fund", "Bill Payment Date", "Payment Method", "Cheque No"]],
+        head: [["Sl No", "Agency Name", "NIT Memo No", "CGST (₹)", "SGST (₹)", "Total GST", "Status", "Fund", "Bill Payment Date", "Payment Method", "Cheque No"]],
         body: tableData,
         startY: 38,
         theme: "striped",
@@ -237,11 +226,7 @@ export function GstTable({ data }: GstTableProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-extrabold tracking-tight flex items-center gap-3">
@@ -251,7 +236,7 @@ export function GstTable({ data }: GstTableProps) {
               GST Register
             </h1>
             <p className="text-slate-500 mt-1 text-sm">
-              Monitor, track, and record payments for deducted TDS CGST & SGST.
+              Monitor, track, and record payments for deducted TDS CGST &amp; SGST.
             </p>
           </div>
           <Button
@@ -265,19 +250,13 @@ export function GstTable({ data }: GstTableProps) {
       </motion.div>
 
       {/* Metrics Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="border-0 shadow-sm ring-1 ring-slate-200 bg-white">
             <CardContent className="p-6 flex justify-between items-center">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-slate-500">Total GST Deducted</p>
-                <h3 className="text-2xl font-bold tracking-tight text-slate-900">
-                  {formatCurrency(metrics.totalTax)}
-                </h3>
+                <h3 className="text-2xl font-bold tracking-tight text-slate-900">{formatCurrency(metrics.totalTax)}</h3>
               </div>
               <div className="h-12 w-12 bg-orange-50 rounded-full flex items-center justify-center">
                 <DollarSign className="h-6 w-6 text-orange-600" />
@@ -289,9 +268,7 @@ export function GstTable({ data }: GstTableProps) {
             <CardContent className="p-6 flex justify-between items-center">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-slate-500">Total Paid Out</p>
-                <h3 className="text-2xl font-bold tracking-tight text-emerald-600">
-                  {formatCurrency(metrics.paidTax)}
-                </h3>
+                <h3 className="text-2xl font-bold tracking-tight text-emerald-600">{formatCurrency(metrics.paidTax)}</h3>
               </div>
               <div className="h-12 w-12 bg-emerald-50 rounded-full flex items-center justify-center">
                 <CheckCircle2 className="h-6 w-6 text-emerald-600" />
@@ -303,9 +280,7 @@ export function GstTable({ data }: GstTableProps) {
             <CardContent className="p-6 flex justify-between items-center">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-slate-500">Outstanding (Unpaid)</p>
-                <h3 className="text-2xl font-bold tracking-tight text-rose-600">
-                  {formatCurrency(metrics.unpaidTax)}
-                </h3>
+                <h3 className="text-2xl font-bold tracking-tight text-rose-600">{formatCurrency(metrics.unpaidTax)}</h3>
               </div>
               <div className="h-12 w-12 bg-rose-50 rounded-full flex items-center justify-center">
                 <AlertCircle className="h-6 w-6 text-rose-600" />
@@ -315,14 +290,9 @@ export function GstTable({ data }: GstTableProps) {
         </div>
       </motion.div>
 
-      {/* Unified Toolbar */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
+      {/* Toolbar */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <div className="flex flex-col gap-4">
-          {/* First row: Search + Fund + Status */}
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
@@ -333,7 +303,6 @@ export function GstTable({ data }: GstTableProps) {
                 className="pl-11 h-11 bg-white border-slate-200 rounded-xl focus-visible:ring-orange-500 w-full"
               />
             </div>
-
             <div className="flex gap-4">
               <Select value={selectedFund} onValueChange={setSelectedFund}>
                 <SelectTrigger className="w-[180px] h-11 border-slate-200 rounded-xl bg-white">
@@ -361,7 +330,7 @@ export function GstTable({ data }: GstTableProps) {
             </div>
           </div>
 
-          {/* Second row: Bill Payment Date Range */}
+          {/* Date Range */}
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4 text-slate-400" />
@@ -384,7 +353,7 @@ export function GstTable({ data }: GstTableProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => { setPaymentDateFrom(""); setPaymentDateTo(""); }}
+                onClick={() => { setPaymentDateFrom(""); setPaymentDateTo("") }}
                 className="h-9 px-3 text-slate-500 hover:text-slate-700"
               >
                 Clear
@@ -394,14 +363,14 @@ export function GstTable({ data }: GstTableProps) {
         </div>
       </motion.div>
 
-      {/* Filter Summary */}
+      {/* Active Filter Badges */}
       {hasActiveFilters && (
         <motion.div
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           
         >
-          <span className="font-medium">Active Filters:</span>
+          <span className="font-medium text-sm text-slate-600">Active Filters:</span>
           {searchQuery && (
             <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
               Search: {searchQuery}
@@ -423,26 +392,17 @@ export function GstTable({ data }: GstTableProps) {
           {(paymentDateFrom || paymentDateTo) && (
             <Badge variant="secondary" className="bg-slate-200 text-slate-700 flex items-center gap-1">
               Bill Date: {paymentDateFrom || "any"} {paymentDateFrom && paymentDateTo && "—"} {paymentDateTo || "any"}
-              <X className="h-3 w-3 cursor-pointer" onClick={() => { setPaymentDateFrom(""); setPaymentDateTo(""); }} />
+              <X className="h-3 w-3 cursor-pointer" onClick={() => { setPaymentDateFrom(""); setPaymentDateTo("") }} />
             </Badge>
           )}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearAllFilters}
-            className="h-7 px-2 text-slate-500 hover:text-slate-700"
-          >
+          <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-7 px-2 text-slate-500 hover:text-slate-700">
             Clear All
           </Button>
         </motion.div>
       )}
 
       {/* Data Table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
         <Card className="border-0 shadow-sm ring-1 ring-slate-200 rounded-2xl overflow-hidden bg-white">
           <CardHeader className="border-b border-slate-100 py-5 bg-white">
             <div className="flex items-center justify-between">
@@ -461,7 +421,7 @@ export function GstTable({ data }: GstTableProps) {
                 <Search className="h-10 w-10 text-slate-400 mb-3" />
                 <h3 className="text-lg font-semibold text-slate-800">No Records Found</h3>
                 <p className="text-slate-500 text-sm max-w-sm">
-                  We couldn't find any entries matching your current filters.
+                  We couldn&apos;t find any entries matching your current filters.
                 </p>
               </div>
             ) : (
@@ -492,32 +452,30 @@ export function GstTable({ data }: GstTableProps) {
                   </TableHeader>
                   <TableBody>
                     {filteredData.map((entry, index) => {
-                      const worksDetail = entry.PaymentDetails[0]?.WorksDetail
-                      const bidAgency = (worksDetail as any)?.AwardofContract?.workorderdetails[0]?.Bidagency?.agencydetails;
+                      const worksDetail = entry.WorksDetail
+                      const bidAgency = (worksDetail as any)?.AwardofContract?.workorderdetails[0]?.Bidagency?.agencydetails
                       const agencyName = bidAgency?.agencyType === "FARM"
-                        ? (bidAgency?.name + "(" + bidAgency.proprietorName + ")")
+                        ? `${bidAgency?.name}(${bidAgency.proprietorName})`
                         : (bidAgency?.name || "N/A")
-                      const nitDetails = worksDetail?.nitDetails
-                      const cgst = entry.tdscgstAmt
-                      const sgst = entry.PaymentDetails[0]?.lessTdsSgst?.tdsSgstAmt || cgst
+                      const nitDetails = worksDetail.nitDetails
+                      const cgst = entry.lessTdsCgst?.tdscgstAmt ?? 0
+                      const sgst = entry.lessTdsSgst?.tdsSgstAmt ?? 0
                       const totalGst = cgst + sgst
-                      const billDate = entry.PaymentDetails[0]?.billPaymentDate 
-                        ? new Date(entry.PaymentDetails[0].billPaymentDate).toLocaleDateString("en-IN")
+                      const paid = isRowPaid(entry)
+                      const billDate = entry.billPaymentDate
+                        ? new Date(entry.billPaymentDate).toLocaleDateString("en-IN")
                         : "-"
 
                       return (
                         <TableRow key={entry.id} className="border-b border-slate-100 hover:bg-slate-50/80 transition-all">
                           <TableCell className="px-6 py-4">
                             <IndeterminateCheckbox
-                              checked={selectedIds.includes(entry.id)}
+                              checked={selectedIds.includes(rowId(entry))}
                               onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setSelectedIds([...selectedIds, entry.id])
-                                } else {
-                                  setSelectedIds(selectedIds.filter(id => id !== entry.id))
-                                }
+                                if (checked) setSelectedIds([...selectedIds, rowId(entry)])
+                                else setSelectedIds(selectedIds.filter(id => id !== rowId(entry)))
                               }}
-                              disabled={entry.paid || isPending}
+                              disabled={paid || isPending}
                             />
                           </TableCell>
                           <TableCell className="px-6 py-4 text-slate-500">{index + 1}</TableCell>
@@ -529,41 +487,43 @@ export function GstTable({ data }: GstTableProps) {
                               <ShowNitDetails
                                 nitdetails={nitDetails.memoNumber}
                                 memoDate={nitDetails.memoDate}
-                                workslno={worksDetail?.workslno || ""}
+                                workslno={worksDetail.workslno || ""}
                               />
                             )}
                           </TableCell>
                           <TableCell className="px-6 py-4 text-slate-900">{formatCurrency(cgst)}</TableCell>
                           <TableCell className="px-6 py-4 text-slate-900">{formatCurrency(sgst)}</TableCell>
-                          <TableCell className="px-6 py-4 font-bold text-slate-900">
-                            {formatCurrency(totalGst)}
-                          </TableCell>
+                          <TableCell className="px-6 py-4 font-bold text-slate-900">{formatCurrency(totalGst)}</TableCell>
                           <TableCell className="px-6 py-4">
                             <Badge
                               variant="outline"
                               className={`rounded-full px-3 py-0.5 text-xs font-semibold border-0 ${
-                                entry.paid
+                                paid
                                   ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20"
                                   : "bg-rose-50 text-rose-700 ring-1 ring-rose-600/20"
                               }`}
                             >
-                              {entry.paid ? "Paid" : "Unpaid"}
+                              {paid ? "Paid" : "Unpaid"}
                             </Badge>
                           </TableCell>
                           <TableCell className="px-6 py-4 text-slate-500">
-                            {worksDetail?.ApprovedActionPlanDetails?.schemeName || "-"}
+                            {worksDetail.ApprovedActionPlanDetails?.schemeName || "-"}
                           </TableCell>
-                          <TableCell className="px-6 py-4 text-slate-600">
-                            {billDate}
-                          </TableCell>
+                          <TableCell className="px-6 py-4 text-slate-600">{billDate}</TableCell>
                           <TableCell className="px-6 py-4">
-                            {entry.paymentMethod ? (
+                            {entry.lessTdsCgst?.paymentMethod ? (
                               <Badge variant="outline" className="font-normal border-slate-200">
-                                {entry.paymentMethod.replace("_", " ")}
+                                {entry.lessTdsCgst.paymentMethod.replace("_", " ")}
+                              </Badge>
+                            ) : entry.lessTdsSgst?.paymentMethod ? (
+                              <Badge variant="outline" className="font-normal border-slate-200">
+                                {entry.lessTdsSgst.paymentMethod.replace("_", " ")}
                               </Badge>
                             ) : "-"}
                           </TableCell>
-                          <TableCell className="px-6 py-4 text-slate-600">{entry.chequeNumber || "-"}</TableCell>
+                          <TableCell className="px-6 py-4 text-slate-600">
+                            {entry.lessTdsCgst?.chequeNumber || entry.lessTdsSgst?.chequeNumber || "-"}
+                          </TableCell>
                         </TableRow>
                       )
                     })}
@@ -575,7 +535,7 @@ export function GstTable({ data }: GstTableProps) {
         </Card>
       </motion.div>
 
-      {/* Floating Bulk Action / Form Banner */}
+      {/* Floating Bulk Action Banner */}
       <AnimatePresence>
         {selectedIds.length > 0 && (
           <motion.div
@@ -624,11 +584,7 @@ export function GstTable({ data }: GstTableProps) {
 
                 <Button
                   onClick={handleSave}
-                  disabled={
-                    isPending ||
-                    !paymentMethod ||
-                    (paymentMethod === "CHEQUE" && !chequeNumber)
-                  }
+                  disabled={isPending || !paymentMethod || (paymentMethod === "CHEQUE" && !chequeNumber)}
                   className="bg-white text-orange-700 hover:bg-slate-50 border-0 shadow-sm h-10 rounded-xl px-5"
                 >
                   {isPending ? (

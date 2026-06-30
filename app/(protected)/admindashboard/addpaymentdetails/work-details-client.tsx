@@ -303,7 +303,8 @@ export function WorkDetailsClient({ initialWorkDetails, schemeNames }: WorkDetai
                   <TableHead className="p-4 font-semibold text-gray-700">NIT Details</TableHead>
                   <TableHead className="p-4 font-semibold text-gray-700">Work Name</TableHead>
                   <TableHead className="p-4 font-semibold text-gray-700">Scheme Name</TableHead>
-                  <TableHead className="p-4 font-semibold text-gray-700">Fund Type</TableHead> {/* NEW COLUMN */}
+                  {/* NEW COLUMN */}
+                  <TableHead className="p-4 font-semibold text-gray-700">Fund Type</TableHead>
                   <TableHead className="p-4 font-semibold text-gray-700">Agency Name</TableHead>
                   <TableHead className="p-4 font-semibold text-gray-700">Awarded Cost</TableHead>
                   <TableHead className="p-4 font-semibold text-gray-700 text-center">Action</TableHead>

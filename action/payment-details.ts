@@ -55,53 +55,35 @@ export const addPaymentDetails = async (values: FormValues, worksDetailId: strin
         // ------------------------------------------------------------------
         // Create register entries only if amount > 0
         // ------------------------------------------------------------------
-        let incomeTaxId: string | null = null;
-        if (data.lessIncomeTax > 0) {
-          const incomeTax = await tx.incomeTaxRegister.create({
-            data: { incomeTaaxAmount: data.lessIncomeTax, paid: false, createdAt: currentDate },
-          });
-          incomeTaxId = incomeTax.id;
-        }
+        // Always create all register entries so FKs are never null.
+        // Records with amount=0 correctly represent that no deduction was taken.
+        const incomeTax = await tx.incomeTaxRegister.create({
+          data: { incomeTaaxAmount: data.lessIncomeTax, paid: false, createdAt: currentDate },
+        });
 
-        let labourWelfareCessId: string | null = null;
-        if (data.lessLabourWelfareCess > 0) {
-          const labourWelfareCess = await tx.labourWelfareCess.create({
-            data: { labourWelfarecessAmt: data.lessLabourWelfareCess, paid: false, createdAt: currentDate },
-          });
-          labourWelfareCessId = labourWelfareCess.id;
-        }
+        const labourWelfareCess = await tx.labourWelfareCess.create({
+          data: { labourWelfarecessAmt: data.lessLabourWelfareCess, paid: false, createdAt: currentDate },
+        });
 
-        let tdsCgstId: string | null = null;
-        if (data.lessTdsCgst > 0) {
-          const tdsCgst = await tx.tdsCgst.create({
-            data: { tdscgstAmt: data.lessTdsCgst, paid: false, createdAt: currentDate },
-          });
-          tdsCgstId = tdsCgst.id;
-        }
+        const tdsCgst = await tx.tdsCgst.create({
+          data: { tdscgstAmt: data.lessTdsCgst, paid: false, createdAt: currentDate },
+        });
 
-        let tdsSgstId: string | null = null;
-        if (data.lessTdsSgst > 0) {
-          const tdsSgst = await tx.tdsSgst.create({
-            data: { tdsSgstAmt: data.lessTdsSgst, paid: false, createdAt: currentDate },
-          });
-          tdsSgstId = tdsSgst.id;
-        }
+        const tdsSgst = await tx.tdsSgst.create({
+          data: { tdsSgstAmt: data.lessTdsSgst, paid: false, createdAt: currentDate },
+        });
 
-        let securityDepositId: string | null = null;
-        if (data.securityDeposit > 0) {
-          const securityDeposit = await tx.secrutityDeposit.create({
-            data: {
-              securityDepositAmt: data.securityDeposit,
-              maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
-              paymentstatus: "unpaid",
-              createdAt: currentDate,
-            },
-          });
-          securityDepositId = securityDeposit.id;
-        }
+        const securityDeposit = await tx.secrutityDeposit.create({
+          data: {
+            securityDepositAmt: data.securityDeposit,
+            maturityDate: calculateMaturityDate(data.workcompletaitiondate || null, data.billPaymentDate),
+            paymentstatus: "unpaid",
+            createdAt: currentDate,
+          },
+        });
 
         // ------------------------------------------------------------------
-        // Build paymentDetails create data with optional relations
+        // Build paymentDetails create data with all relations connected
         // ------------------------------------------------------------------
         const paymentDetailsData: any = {
           grossBillAmount: data.grossBillAmount,
@@ -116,24 +98,12 @@ export const addPaymentDetails = async (values: FormValues, worksDetailId: strin
           netAmt: data.netAmount,
           workcompletaitiondate: data.workcompletaitiondate || null,
           WorksDetail: { connect: { id: worksDetailId } },
+          lessIncomeTax: { connect: { id: incomeTax.id } },
+          lessLabourWelfareCess: { connect: { id: labourWelfareCess.id } },
+          lessTdsCgst: { connect: { id: tdsCgst.id } },
+          lessTdsSgst: { connect: { id: tdsSgst.id } },
+          securityDeposit: { connect: { id: securityDeposit.id } },
         };
-
-        // Only connect if a record was created
-        if (incomeTaxId) {
-          paymentDetailsData.lessIncomeTax = { connect: { id: incomeTaxId } };
-        }
-        if (labourWelfareCessId) {
-          paymentDetailsData.lessLabourWelfareCess = { connect: { id: labourWelfareCessId } };
-        }
-        if (tdsCgstId) {
-          paymentDetailsData.lessTdsCgst = { connect: { id: tdsCgstId } };
-        }
-        if (tdsSgstId) {
-          paymentDetailsData.lessTdsSgst = { connect: { id: tdsSgstId } };
-        }
-        if (securityDepositId) {
-          paymentDetailsData.securityDeposit = { connect: { id: securityDepositId } };
-        }
 
         const paymentDetails = await tx.paymentDetails.create({
           data: paymentDetailsData,
