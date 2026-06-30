@@ -25,7 +25,7 @@ export async function updateGstPayment(
       where: { tdsCgstId: { in: cgstIds } },
       select: { tdsSgstId: true },
     });
-    const sgstIds = paymentDetails.map((pd) => pd.tdsSgstId).filter(Boolean);
+    const sgstIds = paymentDetails.map((pd) => pd.tdsSgstId).filter((id): id is string => Boolean(id));
 
     // 3. Update the TdsSgst records
     if (sgstIds.length > 0) {
