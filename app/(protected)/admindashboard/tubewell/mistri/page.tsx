@@ -8,6 +8,8 @@ import { columns } from "./columns";
 import { PageHeader } from "../_components/page-header";
 import { StatsCard } from "../_components/stats-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function MistriPage() {
   const [mistris, activeMistrisCount] = await Promise.all([
     getMistris(),

@@ -107,7 +107,7 @@ export function StatsCard({
         className,
       )}
     >
-      <div>
+      <div className="flex items-center justify-between">
         <div className="space-y-1">
           <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">
             {label}
@@ -128,7 +128,7 @@ export function StatsCard({
         </div>
         <div
           className={cn(
-            "p-4 rounded-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110",
+            "p-4 rounded-2xl transition-all duration-300 group-hover:rotate-6 group-hover:scale-110 shrink-0",
             styles.iconBg,
             styles.text,
           )}

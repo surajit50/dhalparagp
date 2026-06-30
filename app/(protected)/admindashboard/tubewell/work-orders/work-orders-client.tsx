@@ -25,6 +25,7 @@ export function WorkOrdersClient({
 
   const issuedOrders = orders.filter((o) => o.status === "ISSUED" || o.status === "IN_PROGRESS");
   const completedOrders = orders.filter((o) => o.status === "COMPLETED");
+  const cancelledOrders = orders.filter((o) => o.status === "CANCELLED");
 
   const getSelectedOrders = (table: any) => {
     const selectedRows = table.getFilteredSelectedRowModel().rows;
@@ -37,10 +38,13 @@ export function WorkOrdersClient({
         <div className="flex items-center justify-between p-4 border-b">
           <TabsList>
             <TabsTrigger value="issued">
-              Issued ({issuedOrders.length})
+              Active ({issuedOrders.length})
             </TabsTrigger>
             <TabsTrigger value="completed">
               Completed ({completedOrders.length})
+            </TabsTrigger>
+            <TabsTrigger value="cancelled">
+              Cancelled ({cancelledOrders.length})
             </TabsTrigger>
           </TabsList>
         </div>
@@ -75,6 +79,21 @@ export function WorkOrdersClient({
               />
             )}
           />
+        </TabsContent>
+
+        <TabsContent value="cancelled" className="p-4 m-0">
+          {cancelledOrders.length === 0 ? (
+            <div className="py-16 text-center text-slate-400 font-medium">
+              No cancelled work orders found.
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={cancelledOrders}
+              rowSelection={rowSelection}
+              setRowSelection={setRowSelection}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>

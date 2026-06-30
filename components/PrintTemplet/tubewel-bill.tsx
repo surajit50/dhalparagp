@@ -288,7 +288,7 @@ export const TubewelBill = ({ bill, gpProfile }: Props) => {
       doc.text("GRAND NET PAYABLE", summaryX + summaryWidth / 2, finalY + 7, { align: "center" });
       doc.setFontSize(14);
       doc.text(
-        computedNetAmount.toFixed(2),
+        totalLaborFromEntries.toFixed(2),
         summaryX + summaryWidth / 2,
         finalY + 15,
         { align: "center" }

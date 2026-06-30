@@ -8,6 +8,8 @@ import { columns } from "./columns";
 import { PageHeader } from "../_components/page-header";
 import { StatsCard } from "../_components/stats-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function BillsPage() {
   const [bills, stats, pendingCount] = await Promise.all([
     getBills(),
@@ -29,7 +31,7 @@ export default async function BillsPage() {
     <div className="min-h-screen bg-[#f8fafc]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         <PageHeader
-          title="Billing & Mustard"
+          title="Billing & Mustor Roll"
           description="Manage and track financial records for tubewell repairs. Review generated bills and track payment statuses."
           icon="Banknote"
         >

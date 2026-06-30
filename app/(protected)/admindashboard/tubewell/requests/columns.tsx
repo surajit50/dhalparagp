@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, FileText, Settings2, ShieldCheck, CheckCircle2, XCircle } from "lucide-react";
+import { MoreHorizontal, FileText, Settings2, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { updateRepairRequestStatus } from "@/action/tubewell";
 import { toast } from "sonner";
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 export type RepairRequest = {
   id: string;
@@ -33,7 +34,7 @@ const StatusBadge = ({ status }: { status: string }) => {
     case "PENDING":
       return <Badge variant="secondary" className="bg-amber-50 text-amber-700 border-amber-200/50 px-3 py-1 rounded-full font-medium">Pending Approval</Badge>;
     case "APPROVED":
-      return <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200/50 px-3 py-1 rounded-full font-medium">Approved (Ready for WO)</Badge>;
+      return <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200/50 px-3 py-1 rounded-full font-medium">Approved (Ready for WO)</Badge>;
     case "WORK_ORDER_ISSUED":
       return <Badge variant="secondary" className="bg-orange-50 text-orange-700 border-orange-200/50 px-3 py-1 rounded-full font-medium">Work Order Issued</Badge>;
     case "COMPLETED":
@@ -43,6 +44,83 @@ const StatusBadge = ({ status }: { status: string }) => {
     default:
       return <Badge variant="outline" className="px-3 py-1 rounded-full font-medium">{status}</Badge>;
   }
+};
+
+// Cell action extracted as component so hooks work correctly
+const CellAction = ({ request }: { request: RepairRequest }) => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const handleStatusUpdate = (status: "APPROVED" | "REJECTED") => {
+    startTransition(async () => {
+      try {
+        await updateRepairRequestStatus(request.id, status);
+        toast.success(
+          status === "APPROVED" ? "Request approved!" : "Request rejected."
+        );
+        router.refresh();
+      } catch {
+        toast.error("Failed to update status");
+      }
+    });
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors"
+          disabled={isPending}
+        >
+          <span className="sr-only">Open menu</span>
+          {isPending ? (
+            <Loader2 className="h-4 w-4 text-slate-500 animate-spin" />
+          ) : (
+            <MoreHorizontal className="h-5 w-5 text-slate-500" />
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52 p-2 rounded-xl shadow-xl border-slate-200">
+        <DropdownMenuLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider px-3 py-2">Actions</DropdownMenuLabel>
+        <DropdownMenuSeparator className="my-1" />
+
+        {request.status === "PENDING" && (
+          <>
+            <DropdownMenuItem
+              onClick={() => handleStatusUpdate("APPROVED")}
+              className="cursor-pointer text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50 rounded-lg p-2.5 transition-colors"
+              disabled={isPending}
+            >
+              <CheckCircle2 className="h-4 w-4 mr-3" /> <span className="font-medium">Approve Request</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => handleStatusUpdate("REJECTED")}
+              className="cursor-pointer text-rose-600 focus:text-rose-700 focus:bg-rose-50 rounded-lg p-2.5 transition-colors"
+              disabled={isPending}
+            >
+              <XCircle className="h-4 w-4 mr-3" /> <span className="font-medium">Reject</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="my-1" />
+          </>
+        )}
+
+        {request.status === "APPROVED" && (
+          <DropdownMenuItem asChild>
+            <Link href={`/admindashboard/tubewell/work-orders/create?reqId=${request.id}`} className="cursor-pointer text-orange-600 focus:text-orange-700 focus:bg-orange-50 rounded-lg p-2.5 transition-colors">
+              <Settings2 className="h-4 w-4 mr-3" /> <span className="font-medium">Issue Work Order</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
+
+        <DropdownMenuItem asChild>
+          <Link href={`/admindashboard/tubewell/requests/${request.id}`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
+            <FileText className="h-4 w-4 mr-3" /> <span className="font-medium">View Full Details</span>
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 };
 
 export const columns: ColumnDef<RepairRequest>[] = [
@@ -87,58 +165,6 @@ export const columns: ColumnDef<RepairRequest>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const request = row.original;
-
-      const handleStatusUpdate = async (status: any) => {
-        try {
-          await updateRepairRequestStatus(request.id, status);
-          toast.success("Status updated!");
-        } catch {
-          toast.error("Failed to update status");
-        }
-      };
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-9 w-9 p-0 hover:bg-slate-100 rounded-full transition-colors">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-5 w-5 text-slate-500" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-52 p-2 rounded-xl shadow-xl border-slate-200">
-            <DropdownMenuLabel className="text-xs font-bold text-slate-500 uppercase tracking-wider px-3 py-2">Actions</DropdownMenuLabel>
-            <DropdownMenuSeparator className="my-1" />
-
-            {request.status === "PENDING" && (
-              <>
-                <DropdownMenuItem onClick={() => handleStatusUpdate("APPROVED")} className="cursor-pointer text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50 rounded-lg p-2.5 transition-colors">
-                  <CheckCircle2 className="h-4 w-4 mr-3" /> <span className="font-medium">Approve Request</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusUpdate("REJECTED")} className="cursor-pointer text-rose-600 focus:text-rose-700 focus:bg-rose-50 rounded-lg p-2.5 transition-colors">
-                  <XCircle className="h-4 w-4 mr-3" /> <span className="font-medium">Reject</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="my-1" />
-              </>
-            )}
-
-            {request.status === "APPROVED" && (
-              <DropdownMenuItem asChild>
-                <Link href={`/admindashboard/tubewell/work-orders/create?reqId=${request.id}`} className="cursor-pointer text-orange-600 focus:text-orange-700 focus:bg-orange-50 rounded-lg p-2.5 transition-colors">
-                  <Settings2 className="h-4 w-4 mr-3" /> <span className="font-medium">Issue Work Order</span>
-                </Link>
-              </DropdownMenuItem>
-            )}
-
-            <DropdownMenuItem asChild>
-              <Link href={`/admindashboard/tubewell/requests/${request.id}`} className="cursor-pointer text-slate-600 focus:bg-slate-50 rounded-lg p-2.5 transition-colors">
-                <FileText className="h-4 w-4 mr-3" /> <span className="font-medium">View Full Details</span>
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
+    cell: ({ row }) => <CellAction request={row.original} />,
   },
 ];

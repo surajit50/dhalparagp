@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -59,6 +60,7 @@ export function AdjustStockDialog({
   order,
   allMaterials,
 }: AdjustStockDialogProps) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   // adjustments staged by the user before saving
@@ -163,6 +165,7 @@ export function AdjustStockDialog({
           }))
         );
         toast.success("Stock adjusted successfully!");
+        router.refresh();
         setRows([]);
         onClose();
       } catch (e: any) {

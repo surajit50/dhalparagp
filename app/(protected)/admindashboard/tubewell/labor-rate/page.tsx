@@ -6,6 +6,8 @@ import { AddRateDialog } from "./components/add-rate-dialog";
 import { PageHeader } from "../_components/page-header";
 import { StatsCard } from "../_components/stats-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function LaborRatesPage() {
   const rates = await getTubewellLaborRates();
 

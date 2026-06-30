@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
@@ -64,6 +65,7 @@ export function CompleteWorkOrderDialog({
   isOpen,
   onClose,
 }: CompleteWorkOrderDialogProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [loadingRates, setLoadingRates] = useState(false);
 
@@ -107,6 +109,7 @@ export function CompleteWorkOrderDialog({
       setLoading(true);
       await updateWorkOrderStatus(orderId, "COMPLETED", data);
       toast.success("Work Order marked as completed with Master Roll details!");
+      router.refresh();
       onClose();
     } catch (error: any) {
       toast.error(error.message || "Failed to update status");

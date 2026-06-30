@@ -357,7 +357,7 @@ export function PrintBillClient({ bill, gpProfile }: PrintBillClientProps) {
                       Grand Net Payable
                     </p>
                     <p className="text-2xl font-black">
-                      ₹ {formatCurrency(computedNetAmount)}
+                      ₹ {formatCurrency(computedTotalLaborCost)}
                     </p>
                   </div>
                 </div>

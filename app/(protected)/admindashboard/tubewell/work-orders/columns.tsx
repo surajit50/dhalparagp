@@ -18,13 +18,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { format } from "date-fns";
 import { deleteWorkOrder } from "@/action/tubewell";
 import { toast } from "sonner";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { CompleteWorkOrderDialog } from "./complete-work-order-dialog";
 import { AdjustStockDialog } from "./adjust-stock-dialog";
 import { TubewellWorkOrderWithRelations } from "@/types";
@@ -76,25 +88,27 @@ interface CellActionProps {
 }
 
 const CellAction = ({ order, allMaterials }: CellActionProps) => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [isCompleteOpen, setIsCompleteOpen] = useState(false);
   const [isAdjustOpen, setIsAdjustOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const isActive =
     order.status === "ISSUED" || order.status === "IN_PROGRESS";
 
-  const handleDelete = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this work order? This will restore stock for all materials.",
-      )
-    )
-      return;
-    try {
-      await deleteWorkOrder(order.id);
-      toast.success("Work Order deleted and stock restored!");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to delete work order");
-    }
+  const handleDelete = () => {
+    startTransition(async () => {
+      try {
+        await deleteWorkOrder(order.id);
+        toast.success("Work Order deleted and stock restored!");
+        router.refresh();
+      } catch (error: any) {
+        toast.error(error.message || "Failed to delete work order");
+      } finally {
+        setDeleteOpen(false);
+      }
+    });
   };
 
   return (
@@ -114,6 +128,28 @@ const CellAction = ({ order, allMaterials }: CellActionProps) => {
         order={order}
         allMaterials={allMaterials}
       />
+
+      {/* Delete confirmation */}
+      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Work Order?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete work order <span className="font-semibold">#{order.orderNumber}</span> and restore all issued materials back to inventory. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={isPending}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isPending ? "Deleting…" : "Yes, Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -164,10 +200,19 @@ const CellAction = ({ order, allMaterials }: CellActionProps) => {
               <Printer className="h-4 w-4 mr-2" /> Print Order
             </Link>
           </DropdownMenuItem>
+          
+          <DropdownMenuItem asChild>
+            <Link
+              href={`/admindashboard/tubewell/work-orders/${order.id}/print-return`}
+              className="cursor-pointer text-slate-700"
+            >
+              <Printer className="h-4 w-4 mr-2" /> Print Return Slip
+            </Link>
+          </DropdownMenuItem>
 
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={handleDelete}
+            onClick={() => setDeleteOpen(true)}
             className="cursor-pointer text-red-600"
           >
             <Trash2 className="h-4 w-4 mr-2" /> Delete Order

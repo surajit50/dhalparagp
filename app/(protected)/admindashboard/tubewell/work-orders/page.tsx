@@ -7,6 +7,8 @@ import { WorkOrdersClient } from "./work-orders-client";
 import { PageHeader } from "../_components/page-header";
 import { StatsCard } from "../_components/stats-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function WorkOrdersPage() {
   const [orders, stats, gpProfile, allMaterials] = await Promise.all([
     getWorkOrders(),

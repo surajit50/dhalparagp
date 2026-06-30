@@ -95,13 +95,13 @@ export async function createTubewellMaterial(data: {
         ...data,
         stockLogs: data.stock
           ? {
-              create: {
-                transactionType: "IN",
-                quantity: data.stock,
-                rate: data.rate,
-                remarks: "Initial Stock",
-              },
-            }
+            create: {
+              transactionType: "IN",
+              quantity: data.stock,
+              rate: data.rate,
+              remarks: "Initial Stock",
+            },
+          }
           : undefined,
       },
     });
@@ -451,9 +451,9 @@ export async function deleteWorkOrder(id: string) {
           tx.tubewellOrderMaterial.deleteMany({ where: { workOrderId: id } }),
           workOrder.requestId
             ? tx.tubewellRepairRequest.update({
-                where: { id: workOrder.requestId },
-                data: { status: "APPROVED" },
-              })
+              where: { id: workOrder.requestId },
+              data: { status: "APPROVED" },
+            })
             : Promise.resolve(),
         ]);
 
@@ -463,12 +463,12 @@ export async function deleteWorkOrder(id: string) {
     );
 
     revalidateTag("materials", "max");
-  revalidateTag("work-orders", "max");
-  revalidateTag("repair-requests", "max");
-  revalidatePath("/admindashboard/tubewell/work-orders");
-  revalidatePath("/admindashboard/tubewell/materials");
-  revalidatePath("/admindashboard/tubewell/requests");
-  return true;
+    revalidateTag("work-orders", "max");
+    revalidateTag("repair-requests", "max");
+    revalidatePath("/admindashboard/tubewell/work-orders");
+    revalidatePath("/admindashboard/tubewell/materials");
+    revalidatePath("/admindashboard/tubewell/requests");
+    return true;
   } catch (error: any) {
     console.error("Error deleting work order:", error);
     throw new Error(error.message || "Failed to delete work order");
@@ -539,7 +539,7 @@ export const getWorkOrders = unstable_cache(
         materials: { include: { material: true } },
         masterRollEntries: { include: { items: true } },
       },
-       
+
     }),
   ["work-orders"],
   { tags: ["work-orders"] }
@@ -610,6 +610,24 @@ export const getBills = unstable_cache(
   ["bills"],
   { tags: ["bills"] }
 );
+
+export async function updateBillStatus(
+  id: string,
+  status: "GENERATED" | "PAID" | "CANCELLED"
+) {
+  try {
+    const updated = await db.tubewellBill.update({
+      where: { id },
+      data: { status },
+    });
+
+    revalidatePath("/admindashboard/tubewell/bills");
+    return updated;
+  } catch (error: any) {
+    console.error("Error updating bill status:", error);
+    throw new Error(error.message || "Failed to update bill status");
+  }
+}
 
 // ==========================================
 // MASTER ROLL ACTIONS
