@@ -145,3 +145,44 @@ export const PondLeaseExtensionSchema = z.object({
 
 export type PondLeaseExtensionFormValues =
   z.infer<typeof PondLeaseExtensionSchema>;
+
+/* -----------------------------
+   Public Pond Payment Schema
+--------------------------------*/
+
+export const PondPublicPaymentSchema = z.object({
+  pondId: z.string().min(1, "Pond is required"),
+
+  amountPaid: z
+    .number({
+      required_error: "Payment amount required",
+    })
+    .min(1, "Amount must be greater than 0"),
+
+  paymentDate: z.date({
+    required_error: "Payment date required",
+  }),
+
+  paymentMethod: z.enum(["CASH", "CHEQUE", "ONLINE_TRANSFER"]),
+
+  financialYear: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal("")),
+
+  transactionId: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal("")),
+
+  remarks: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal("")),
+});
+
+export type PondPublicPaymentFormValues =
+  z.infer<typeof PondPublicPaymentSchema>;

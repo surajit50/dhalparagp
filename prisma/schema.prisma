@@ -3267,19 +3267,32 @@ model EducationSummary {
 }
 
 model Pond {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  location  String
-  area      String?
-  status    PondStatus  @default(AVAILABLE)
-  leases    PondLease[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id                 String              @id @default(auto()) @map("_id") @db.ObjectId
+  name               String
+  location           String
+  jlNo               String?
+  plotNo             String?
+  area               String?
+  pondType           PondType            @default(LEASEABLE)
+  publicYearlyAmount Float?
+  resolutionNo       String?
+  resolutionDate     DateTime?
+  status             PondStatus          @default(AVAILABLE)
+  leases             PondLease[]
+  publicPayments     PondPublicPayment[]
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+}
+
+enum PondType {
+  LEASEABLE
+  PUBLIC
 }
 
 enum PondStatus {
   AVAILABLE
   LEASED
+  PUBLIC_USE
 }
 
 model PondLease {
@@ -3331,6 +3344,25 @@ model PondLeasePayment {
   createdAt DateTime @default(now())
 
   @@index([pondLeaseId])
+  @@index([paymentDate])
+}
+
+model PondPublicPayment {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  pondId String @db.ObjectId
+  pond   Pond   @relation(fields: [pondId], references: [id], onDelete: Cascade)
+
+  amountPaid    Float
+  paymentDate   DateTime
+  paymentMethod PaymentMethod @default(CASH)
+  financialYear String?
+  transactionId String?
+  remarks       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([pondId])
   @@index([paymentDate])
 }
 

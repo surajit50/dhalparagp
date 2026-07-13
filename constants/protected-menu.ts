@@ -6,8 +6,9 @@ import {
   MdNotifications, MdCalendarToday, MdCloudUpload, MdApi, MdLock,
   MdSettingsApplications, MdSchool, MdAssignmentTurnedIn, MdHolidayVillage,
   MdWork, MdListAlt, MdAnalytics, MdReceipt, MdImportantDevices, MdBlock,
+
   MdHome, MdAccountCircle, MdSecurity, MdAttachMoney, MdHelp, MdFolder,
-  MdInsertChart, MdGavel, MdDescription as MdDoc, MdApartment, MdImage, MdBuild
+  MdInsertChart, MdGavel, MdDescription as MdDoc, MdApartment, MdImage, MdBuild, MdWater
 } from "react-icons/md";
 import { FaChevronCircleRight, FaChartBar, FaChevronDown, FaTruck, FaKey, FaMeetup, FaFileContract, FaRegFileAlt, FaRegListAlt } from "react-icons/fa";
 import { HiDocumentDuplicate } from "react-icons/hi";
@@ -139,7 +140,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
   createMenuItem("Inheritance Certificate", ["admin"], undefined, FaRegFileAlt, COLORS.yellow, [
     createMenuItem("Application Lifecycle", ["admin"], undefined, FaChevronDown, COLORS.teal, [
       createMenuItem("New Application", ["admin"], `${baseUrl}/manage-warish/application`, FaChevronCircleRight, COLORS.teal),
-  
+
       createMenuItem("Document Upload", ["admin"], `${baseUrl}/manage-warish/pending-uploaddoc`, FaChevronCircleRight, COLORS.teal),
       createMenuItem("Verification", ["admin"], `${baseUrl}/manage-warish/verify-document`, FaChevronCircleRight, COLORS.teal),
     ]),
@@ -155,7 +156,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     ]),
     createMenuItem("Monitoring", ["admin"], undefined, FaChevronDown, COLORS.cyan, [
       createMenuItem("Status Tracking", ["admin"], `${baseUrl}/manage-warish/status`, FaChevronCircleRight, COLORS.purple),
-      
+
       createMenuItem("Correction Requests", ["admin"], `${baseUrl}/manage-warish/correction-requests`, FaChevronCircleRight, COLORS.red),
     ]),
   ]),
@@ -178,9 +179,9 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Allotment", ["admin"], `${baseUrl}/manage-samabyathi/allotment`, FaChevronCircleRight, COLORS.green),
     createMenuItem("Muster Roll", ["admin"], `${baseUrl}/manage-samabyathi/muster-roll`, FaChevronCircleRight, COLORS.green),
   ]),
-  
-  
-  
+
+
+
   createMenuItem("Puja/Festival NOC", ["admin"], undefined, FaRegFileAlt, COLORS.orange, [
     createMenuItem("Verify & Approve", ["admin"], `${baseUrl}/verify/puja-noc`, FaChevronCircleRight, COLORS.red),
     createMenuItem("NOC Dashboard", ["admin"], `${baseUrl}/generate/puja-noc?tab=dashboard`, FaChevronCircleRight, COLORS.blue),
@@ -400,17 +401,16 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Tax Compliance", ["admin"], undefined, FaChevronDown, COLORS.yellow, [
         createMenuItem("GST Register", ["admin"], `${BASE_URLS.admin}/register/gst-register`, FaChevronCircleRight, COLORS.red),
         createMenuItem("Income Tax", ["admin"], `${BASE_URLS.admin}/register/income-tax`, FaChevronCircleRight, COLORS.red),
-createMenuItem("Labour cess", ["admin"], `${BASE_URLS.admin}/register/lebour-cess`, FaChevronCircleRight, COLORS.green),
+        createMenuItem("Labour cess", ["admin"], `${BASE_URLS.admin}/register/lebour-cess`, FaChevronCircleRight, COLORS.green),
 
 
-        
+
       ]),
       createMenuItem("Deposits", ["admin"], undefined, FaChevronDown, COLORS.teal, [
         createMenuItem("Security Deposits", ["admin"], `${BASE_URLS.admin}/register/security`, FaChevronCircleRight, COLORS.yellow),
         createMenuItem("Earnest Money", ["admin"], `${BASE_URLS.admin}/register/earnest-money`, FaChevronCircleRight, COLORS.red),
       ]),
-      createMenuItem("Ponds Inventory", ["admin"], `${BASE_URLS.admin}/register/ponds`, FaChevronCircleRight, COLORS.blue),
-      createMenuItem("Pond Lease Register", ["admin"], `${BASE_URLS.admin}/register/pond-lease`, FaChevronCircleRight, COLORS.green),
+
     ]),
     createMenuItem("Reports & Analytics", ["admin"], undefined, MdAnalytics, COLORS.blue, [
       createMenuItem("Financial Reports", ["admin"], undefined, FaChartBar, COLORS.green, [
@@ -420,6 +420,12 @@ createMenuItem("Labour cess", ["admin"], `${BASE_URLS.admin}/register/lebour-ces
       createMenuItem("Performance Metrics", ["admin"], `${BASE_URLS.admin}/reports/performance`, FaChevronCircleRight, COLORS.purple),
       createMenuItem("Other Reports", ["admin"], `${BASE_URLS.admin}/reports`, FaChevronCircleRight, COLORS.indigo),
     ]),
+  ]),
+
+  // Pond Management System
+  createMenuItem("Pond Management", ["admin"], undefined, MdWater, COLORS.cyan, [
+    createMenuItem("Ponds Inventory", ["admin"], `${BASE_URLS.admin}/register/ponds`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("Pond Lease Register", ["admin"], `${BASE_URLS.admin}/register/pond-lease`, FaChevronCircleRight, COLORS.green),
   ]),
 
   // Tubewell Management

@@ -10,12 +10,19 @@ import {
   PondLeaseFormValues,
   PondLeasePaymentFormValues,
   PondLeaseExtensionFormValues,
+  PondPublicPaymentSchema,
+  PondPublicPaymentFormValues,
 } from "./schema";
 
 export async function getPonds() {
   try {
     const ponds = await db.pond.findMany({
-      where: { status: "AVAILABLE" },
+      where: {
+        status: "AVAILABLE",
+        NOT: {
+          pondType: "PUBLIC",
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
     return ponds;
@@ -25,25 +32,38 @@ export async function getPonds() {
   }
 }
 
+export async function getPublicPonds() {
+  try {
+    const ponds = await db.pond.findMany({
+      where: { pondType: "PUBLIC" },
+      orderBy: { name: "asc" },
+      include: {
+        publicPayments: {
+          orderBy: { paymentDate: "desc" },
+        },
+      },
+    });
+
+    return ponds.map((pond) => {
+      const totalCollected = pond.publicPayments.reduce(
+        (sum, payment) => sum + payment.amountPaid,
+        0,
+      );
+
+      return {
+        ...pond,
+        totalCollected,
+      };
+    });
+  } catch (error) {
+    console.error("Failed to fetch public ponds:", error);
+    throw new Error("Failed to fetch public ponds.");
+  }
+}
+
 /* --------------------------------
    Create Pond
 -------------------------------- */
-
-export async function createPond(values: {
-  name: string;
-  location: string;
-  area: number;
-}) {
-  await db.pond.create({
-    data: {
-      name: values.name,
-      location: values.location,
-      area: String(values.area),
-    },
-  });
-
-  revalidatePath("/admindashboard/register/pond-lease");
-}
 
 /* --------------------------------
    Create Pond Lease
@@ -51,6 +71,18 @@ export async function createPond(values: {
 
 export async function createPondLease(data: PondLeaseFormValues) {
   const validated = PondLeaseSchema.parse(data);
+
+  const pond = await db.pond.findUnique({
+    where: { id: validated.pondId },
+  });
+
+  if (!pond) {
+    throw new Error("Pond not found");
+  }
+
+  if (pond.pondType === "PUBLIC") {
+    throw new Error("Public ponds cannot be leased out through tender.");
+  }
 
   /* Use passed values or calculate as fallback */
 
@@ -312,4 +344,31 @@ export async function extendPondLease(data: PondLeaseExtensionFormValues) {
   revalidatePath("/admindashboard/register/pond-lease");
 
   return updatedLease;
+}
+
+/* --------------------------------
+   Add Public Pond Payment
+-------------------------------- */
+
+export async function addPondPublicPayment(
+  data: PondPublicPaymentFormValues,
+) {
+  const validated = PondPublicPaymentSchema.parse(data);
+
+  const pond = await db.pond.findUnique({
+    where: { id: validated.pondId },
+  });
+
+  if (!pond || pond.pondType !== "PUBLIC") {
+    throw new Error("Selected pond is not a public pond.");
+  }
+
+  const payment = await db.pondPublicPayment.create({
+    data: validated,
+  });
+
+  revalidatePath("/admindashboard/register/pond-lease");
+  revalidatePath("/admindashboard/register/ponds");
+
+  return payment;
 }

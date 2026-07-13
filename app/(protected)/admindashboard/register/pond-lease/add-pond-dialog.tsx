@@ -1,7 +1,6 @@
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 
 import {
   Dialog,
@@ -27,39 +26,45 @@ import { Button } from "@/components/ui/button";
 import { Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-import { createPond } from "./actions";
-
-const PondSchema = z.object({
-  name: z.string().trim().min(1, "Pond name is required"),
-  location: z.string().trim().min(1, "Location is required"),
-  area: z.string().trim().optional().or(z.literal("")),
-});
+import { createPond } from "../ponds/actions";
+import { PondSchema, PondFormValues } from "../ponds/schema";
+import { PondTypeFields } from "../ponds/pond-type-fields";
+import {
+  formatPondAreaAcre,
+  parsePondAreaDecimal,
+} from "@/lib/utils/pond-lease";
 
 export function AddPondDialog() {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof PondSchema>>({
+  const form = useForm<PondFormValues>({
     resolver: zodResolver(PondSchema),
     defaultValues: {
       name: "",
-      location: "",
+      jlNo: "",
+      plotNo: "",
       area: "",
+      pondType: "LEASEABLE",
+      publicYearlyAmount: undefined,
+      resolutionNo: "",
+      resolutionDate: undefined,
+      status: "AVAILABLE",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof PondSchema>) => {
+  const watchedArea = form.watch("area");
+  const areaDecimal = parsePondAreaDecimal(watchedArea);
+  const areaInAcre = formatPondAreaAcre(areaDecimal);
+
+  const onSubmit = (values: PondFormValues) => {
     startTransition(async () => {
       try {
-        await createPond({
-          name: values.name,
-          location: values.location,
-          area: values.area ? parseFloat(values.area) : 0,
-        });
+        await createPond(values);
         toast.success("Pond registered successfully");
         form.reset();
         setOpen(false);
-      } catch (error) {
+      } catch {
         toast.error("Failed to register pond");
       }
     });
@@ -74,11 +79,11 @@ export function AddPondDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Register New Pond</DialogTitle>
           <DialogDescription>
-            Enter the details of the new pond.
+            Enter pond details and choose whether it is leasable or a public pond.
           </DialogDescription>
         </DialogHeader>
 
@@ -98,33 +103,59 @@ export function AddPondDialog() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ward / Village" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-3 rounded-lg border border-border/50 bg-muted/20 p-4">
+              <p className="text-sm font-medium">Location of the Pond (JL No, Plot No)</p>
+              <div className="grid md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="jlNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>JL No</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 45" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="plotNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Plot No</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 1234" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
             <FormField
               control={form.control}
               name="area"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Pond Area</FormLabel>
+                  <FormLabel>Pond Area (Decimal / Satak)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. 2.5 Acre" {...field} />
+                    <Input placeholder="e.g. 150" {...field} />
                   </FormControl>
+                  {areaInAcre && (
+                    <p className="text-xs font-medium text-blue-700">
+                      Total land area: {areaInAcre}
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <PondTypeFields form={form} isPending={isPending} />
 
             <DialogFooter>
               <Button type="submit" disabled={isPending}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addYears } from "date-fns";
@@ -57,10 +57,23 @@ import {
 } from "@/components/ui/select";
 
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  calculateRatePerDecimal,
+  calculateYearlyLeaseAmount,
+  formatPondAreaAcre,
+  formatPondLocationDisplay,
+  formatRatePerDecimalCalculation,
+  formatYearlyFromRateCalculation,
+  parsePondAreaDecimal,
+} from "@/lib/utils/pond-lease";
+
+type AmountEditSource = "yearly" | "rate";
 
 export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [ratePerDecimal, setRatePerDecimal] = useState(0);
+  const [lastEdited, setLastEdited] = useState<AmountEditSource>("yearly");
 
   const form = useForm<PondLeaseFormValues>({
     resolver: zodResolver(PondLeaseSchema),
@@ -82,6 +95,56 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
 
   const leasePeriod = form.watch("leasePeriod");
   const yearlyAmount = form.watch("leaseAmountYearly");
+  const selectedPondId = form.watch("pondId");
+
+  const selectedPond = useMemo(
+    () => ponds.find((pond) => pond.id === selectedPondId),
+    [ponds, selectedPondId],
+  );
+
+  const areaDecimal = parsePondAreaDecimal(selectedPond?.area);
+
+  useEffect(() => {
+    if (areaDecimal <= 0) return;
+
+    const yearly = form.getValues("leaseAmountYearly") || 0;
+
+    if (lastEdited === "yearly" && yearly > 0) {
+      setRatePerDecimal(calculateRatePerDecimal(yearly, areaDecimal));
+    } else if (lastEdited === "rate" && ratePerDecimal > 0) {
+      form.setValue(
+        "leaseAmountYearly",
+        calculateYearlyLeaseAmount(areaDecimal, ratePerDecimal),
+      );
+    }
+    // Recalculate when pond/area changes only
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areaDecimal, selectedPondId]);
+
+  const handleYearlyAmountChange = (value: number) => {
+    setLastEdited("yearly");
+    form.setValue("leaseAmountYearly", value);
+
+    if (areaDecimal > 0 && value > 0) {
+      setRatePerDecimal(calculateRatePerDecimal(value, areaDecimal));
+    } else if (value <= 0) {
+      setRatePerDecimal(0);
+    }
+  };
+
+  const handleRatePerDecimalChange = (value: number) => {
+    setLastEdited("rate");
+    setRatePerDecimal(value);
+
+    if (areaDecimal > 0 && value > 0) {
+      form.setValue(
+        "leaseAmountYearly",
+        calculateYearlyLeaseAmount(areaDecimal, value),
+      );
+    } else if (value <= 0) {
+      form.setValue("leaseAmountYearly", 0);
+    }
+  };
 
   const leaseYears = parseInt(leasePeriod || "1");
 
@@ -105,6 +168,8 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
         toast.success("Pond lease created successfully");
 
         form.reset();
+        setRatePerDecimal(0);
+        setLastEdited("yearly");
         setOpen(false);
       } catch {
         toast.error("Failed to create pond lease");
@@ -160,7 +225,12 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                           <SelectContent>
                             {ponds.map((pond) => (
                               <SelectItem key={pond.id} value={pond.id}>
-                                {pond.name} — {pond.location}
+                                {pond.name} — {formatPondLocationDisplay(pond)}
+                                {pond.area ? ` (${pond.area} Decimal` : ""}
+                                {pond.area && formatPondAreaAcre(parsePondAreaDecimal(pond.area))
+                                  ? ` / ${formatPondAreaAcre(parsePondAreaDecimal(pond.area))}`
+                                  : ""}
+                                {pond.area ? ")" : ""}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -170,27 +240,96 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="leaseAmountYearly"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Yearly Lease Amount (₹)</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            className="bg-background font-medium text-lg"
-                            placeholder="e.g. 50000"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value) || 0)
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {selectedPond && (
+                    <div className="rounded-md border border-dashed border-blue-200 bg-blue-50/50 px-4 py-3 text-sm">
+                      <div className="flex flex-wrap justify-between gap-2">
+                        <span className="text-slate-600">Pond Area (Decimal / Satak)</span>
+                        <span className="font-semibold text-slate-900">
+                          {areaDecimal > 0 ? `${areaDecimal} Decimal` : "Not recorded"}
+                        </span>
+                      </div>
+                      {areaDecimal > 0 && (
+                        <div className="flex flex-wrap justify-between gap-2 mt-1">
+                          <span className="text-slate-600">Total land area</span>
+                          <span className="font-semibold text-slate-900">
+                            {formatPondAreaAcre(areaDecimal)}
+                          </span>
+                        </div>
+                      )}
+                      {!areaDecimal && (
+                        <p className="mt-2 text-xs text-amber-700">
+                          Add pond area in Decimal from Pond Inventory to calculate between yearly amount and per-decimal rate.
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    Enter either yearly total or rate per decimal — the other value updates automatically using pond area.
+                  </p>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="leaseAmountYearly"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Yearly Lease Amount (₹)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              min={0}
+                              className="bg-background font-medium text-lg"
+                              placeholder="e.g. 5000"
+                              value={field.value || ""}
+                              onChange={(e) =>
+                                handleYearlyAmountChange(
+                                  Number(e.target.value) || 0,
+                                )
+                              }
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormItem>
+                      <FormLabel>Rate per Decimal (₹/year)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          className="bg-background font-medium text-lg"
+                          placeholder="e.g. 50"
+                          value={ratePerDecimal || ""}
+                          onChange={(e) =>
+                            handleRatePerDecimalChange(
+                              Number(e.target.value) || 0,
+                            )
+                          }
+                          disabled={areaDecimal <= 0}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  </div>
+
+                  {areaDecimal > 0 && yearlyAmount > 0 && ratePerDecimal > 0 && (
+                    <p className="text-sm text-blue-700 font-medium">
+                      {lastEdited === "rate"
+                        ? formatYearlyFromRateCalculation(
+                            areaDecimal,
+                            ratePerDecimal,
+                            yearlyAmount,
+                          )
+                        : formatRatePerDecimalCalculation(
+                            yearlyAmount,
+                            areaDecimal,
+                            ratePerDecimal,
+                          )}
+                    </p>
+                  )}
                 </div>
               </TabsContent>
 

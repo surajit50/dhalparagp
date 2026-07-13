@@ -5,6 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
 import { formatDate } from "@/utils/utils";
 import { blockname, gpname, nameinprodhan } from "@/constants/gpinfor";
+import {
+  formatPondAreaAcre,
+  formatPondLocationDisplay,
+  parsePondAreaDecimal,
+} from "@/lib/utils/pond-lease";
 
 interface LeaseCollectionListPrintProps {
   leases: any[];
@@ -173,8 +178,15 @@ export function LeaseCollectionListPrint({
             </thead>
             <tbody>
               {rows.map(({ pond, lease }, index) => {
-                const paidAmount = Number(lease?.paidAmount) || 0;
-                const isLeasedOut = Boolean(lease);
+                const isPublicPond = pond.pondType === "PUBLIC";
+                const paidAmount = isPublicPond
+                  ? (pond.publicPayments || []).reduce(
+                      (sum: number, payment: any) =>
+                        sum + (Number(payment.amountPaid) || 0),
+                      0,
+                    )
+                  : Number(lease?.paidAmount) || 0;
+                const isLeasedOut = !isPublicPond && Boolean(lease);
 
                 return (
                   <tr key={pond.id}>
@@ -183,15 +195,43 @@ export function LeaseCollectionListPrint({
                     <td>{nameinprodhan}</td>
                     <td>-</td>
                     <td className="text-left">
-                      {pond.name}
-                      {pond.location ? ` — ${pond.location}` : ""}
+                      <div>{pond.name}</div>
+                      <div>{formatPondLocationDisplay(pond)}</div>
+                      {formatPondAreaAcre(parsePondAreaDecimal(pond.area)) && (
+                        <div>
+                          Total land area:{" "}
+                          {formatPondAreaAcre(parsePondAreaDecimal(pond.area))}
+                        </div>
+                      )}
                     </td>
                     <td>GP</td>
-                    <td>{isLeasedOut ? "Yes" : "No"}</td>
-                    <td>{getLeasePeriod(lease)}</td>
-                    <td className="text-left">{lease?.leasePartyName || "-"}</td>
+                    <td>
+                      {isPublicPond
+                        ? "Public Use"
+                        : isLeasedOut
+                          ? "Yes"
+                          : "No"}
+                    </td>
+                    <td>
+                      {isPublicPond
+                        ? pond.resolutionNo
+                          ? `Resolution ${pond.resolutionNo}`
+                          : "As per resolution"
+                        : getLeasePeriod(lease)}
+                    </td>
+                    <td className="text-left">
+                      {isPublicPond
+                        ? "Public"
+                        : lease?.leasePartyName || "-"}
+                    </td>
                     <td>{paidAmount > 0 ? formatAmount(paidAmount) : "-"}</td>
-                    <td className="text-left">{lease?.remarks || "-"}</td>
+                    <td className="text-left">
+                      {isPublicPond
+                        ? pond.publicYearlyAmount
+                          ? `₹${formatAmount(Number(pond.publicYearlyAmount))}/year`
+                          : "Public pond"
+                        : lease?.remarks || "-"}
+                    </td>
                   </tr>
                 );
               })}

@@ -26,6 +26,11 @@ import {
 import { toast } from "sonner";
 import { deletePond } from "./actions";
 import { PondDialog } from "./pond-dialog";
+import {
+  formatPondAreaAcre,
+  formatPondLocationDisplay,
+  parsePondAreaDecimal,
+} from "@/lib/utils/pond-lease";
 
 import {
   Card,
@@ -57,12 +62,17 @@ export function PondsClient({ data }: PondsClientProps) {
   const totalPonds = data.length;
   const availablePonds = data.filter((p) => p.status === "AVAILABLE").length;
   const leasedPonds = data.filter((p) => p.status === "LEASED").length;
+  const publicPonds = data.filter(
+    (p) => p.pondType === "PUBLIC" || p.status === "PUBLIC_USE",
+  ).length;
 
   // Optimized search
   const filteredData = useMemo(() => {
     return data.filter(
       (pond) =>
         (pond.name?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
+        (pond.jlNo?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
+        (pond.plotNo?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
         (pond.location?.toLowerCase() ?? "").includes(
           searchTerm.toLowerCase(),
         ),
@@ -101,7 +111,7 @@ export function PondsClient({ data }: PondsClientProps) {
       </div>
 
       {/* STATISTICS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
         <Card className="group overflow-hidden border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <CardContent className="p-6">
             <div className="flex justify-between items-center">
@@ -147,6 +157,22 @@ export function PondsClient({ data }: PondsClientProps) {
             </div>
           </CardContent>
         </Card>
+
+        <Card className="group overflow-hidden border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+          <CardContent className="p-6">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Public Ponds</p>
+                <p className="text-3xl font-bold mt-2 text-sky-600">
+                  {publicPonds}
+                </p>
+              </div>
+              <div className="h-12 w-12 rounded-full bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <MapPin className="h-6 w-6 text-sky-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* TABLE CARD */}
@@ -179,8 +205,8 @@ export function PondsClient({ data }: PondsClientProps) {
                 <TableRow className="hover:bg-transparent border-b">
                   <TableHead className="font-semibold">SL</TableHead>
                   <TableHead className="font-semibold">Pond Name</TableHead>
-                  <TableHead className="font-semibold">Location</TableHead>
-                  <TableHead className="font-semibold">Area</TableHead>
+                  <TableHead className="font-semibold">Location (JL No, Plot No)</TableHead>
+                  <TableHead className="font-semibold">Area (Decimal / Acre)</TableHead>
                   <TableHead className="font-semibold">Status</TableHead>
                   <TableHead className="text-right pr-6 font-semibold">Actions</TableHead>
                 </TableRow>
@@ -214,18 +240,35 @@ export function PondsClient({ data }: PondsClientProps) {
                       </TableCell>
 
                       <TableCell>
-                        <div className="flex items-center text-muted-foreground text-sm">
-                          <MapPin className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-                          <span className="truncate">{pond.location}</span>
+                        <div className="flex items-start text-muted-foreground text-sm">
+                          <MapPin className="h-3.5 w-3.5 mr-1.5 flex-shrink-0 mt-0.5" />
+                          <span className="truncate">
+                            {formatPondLocationDisplay(pond)}
+                          </span>
                         </div>
                       </TableCell>
 
                       <TableCell className="text-sm text-muted-foreground">
-                        {pond.area ? `${pond.area} Decimal` : "N/A"}
+                        {pond.area ? (
+                          <div>
+                            <div>{pond.area} Decimal</div>
+                            {formatPondAreaAcre(parsePondAreaDecimal(pond.area)) && (
+                              <div className="text-xs text-blue-700">
+                                {formatPondAreaAcre(parsePondAreaDecimal(pond.area))}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          "N/A"
+                        )}
                       </TableCell>
 
                       <TableCell>
-                        {pond.status === "AVAILABLE" ? (
+                        {pond.pondType === "PUBLIC" || pond.status === "PUBLIC_USE" ? (
+                          <Badge className="bg-sky-500/10 text-sky-700 hover:bg-sky-500/20 border-sky-200/50">
+                            PUBLIC USE
+                          </Badge>
+                        ) : pond.status === "AVAILABLE" ? (
                           <Badge className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-200/50">
                             <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
                             AVAILABLE

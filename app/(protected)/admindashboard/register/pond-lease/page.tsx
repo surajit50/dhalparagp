@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { PondLeaseClient } from "./pond-lease-client";
-import { getPonds } from "./actions";
+import { getPonds, getPublicPonds } from "./actions";
 
 import {
   Breadcrumb,
@@ -10,8 +10,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-
-import { Card, CardContent } from "@/components/ui/card";
 
 import { differenceInYears } from "date-fns";
 
@@ -61,6 +59,9 @@ async function getData() {
 async function getAllPonds() {
   return db.pond.findMany({
     orderBy: { name: "asc" },
+    include: {
+      publicPayments: true,
+    },
   });
 }
 
@@ -68,53 +69,40 @@ export default async function PondLeasePage() {
   const leases = await getData();
   const ponds = await getPonds();
   const allPonds = await getAllPonds();
+  const publicPonds = await getPublicPonds();
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* HEADER */}
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-50/80 via-slate-50 to-slate-100/50 relative overflow-hidden">
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute -top-24 -right-24 w-[500px] h-[500px] rounded-full bg-teal-400/10 blur-[100px]" />
+        <div className="absolute -bottom-24 -left-24 w-[500px] h-[500px] rounded-full bg-blue-400/10 blur-[100px]" />
+      </div>
 
-        <div className="rounded-xl bg-gradient-to-r from-orange-600 via-orange-600 to-purple-600 p-6 text-white shadow-lg">
-          <h1 className="text-2xl font-bold tracking-tight">
-            Pond Lease Register
-          </h1>
-
-          <p className="text-orange-100 text-sm mt-1">
-            Manage pond leases, track payments and monitor lease expiry.
-          </p>
-        </div>
-
-        {/* BREADCRUMB */}
-
-        <Breadcrumb className="text-sm">
+      <div className="container mx-auto py-6 space-y-6 relative z-10">
+        <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/admindashboard">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
-
             <BreadcrumbSeparator />
-
             <BreadcrumbItem>
               <BreadcrumbLink href="/admindashboard/register">
                 Registers
               </BreadcrumbLink>
             </BreadcrumbItem>
-
             <BreadcrumbSeparator />
-
             <BreadcrumbItem>
               <BreadcrumbPage>Pond Lease</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        {/* MAIN CONTENT */}
-
-        <Card className="shadow-sm border">
-          <CardContent className="p-6">
-            <PondLeaseClient data={leases} ponds={ponds} allPonds={allPonds} />
-          </CardContent>
-        </Card>
+        <PondLeaseClient
+          data={leases}
+          ponds={ponds}
+          allPonds={allPonds}
+          publicPonds={publicPonds}
+        />
       </div>
     </div>
   );

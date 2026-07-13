@@ -4,6 +4,7 @@
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { PondSchema, PondFormValues } from "./schema";
+import { buildPondDbData } from "@/lib/utils/pond-lease";
 
 export async function getPonds() {
   try {
@@ -26,7 +27,7 @@ export async function createPond(values: PondFormValues) {
   const validated = PondSchema.parse(values);
   
   await db.pond.create({
-    data: validated,
+    data: buildPondDbData(validated),
   });
 
   revalidatePath("/admindashboard/register/ponds");
@@ -35,10 +36,35 @@ export async function createPond(values: PondFormValues) {
 
 export async function updatePond(id: string, values: PondFormValues) {
   const validated = PondSchema.parse(values);
+
+  const existing = await db.pond.findUnique({
+    where: { id },
+    include: { leases: { where: { status: "ACTIVE" } } },
+  });
+
+  if (!existing) {
+    throw new Error("Pond not found");
+  }
+
+  if (validated.pondType === "PUBLIC" && existing.leases.length > 0) {
+    throw new Error("Cannot mark as public pond while an active lease exists.");
+  }
+
+  if (validated.pondType === "LEASEABLE" && existing.pondType === "PUBLIC") {
+    const hasPublicPayments = await db.pondPublicPayment.count({
+      where: { pondId: id },
+    });
+
+    if (hasPublicPayments > 0) {
+      throw new Error(
+        "Cannot change to leasable pond while public collection records exist.",
+      );
+    }
+  }
   
   await db.pond.update({
     where: { id },
-    data: validated,
+    data: buildPondDbData(validated),
   });
 
   revalidatePath("/admindashboard/register/ponds");
@@ -51,11 +77,16 @@ export async function deletePond(id: string) {
     where: { id },
     include: {
       leases: true,
+      publicPayments: true,
     },
   });
 
   if (pond?.leases.length) {
     throw new Error("Cannot delete pond with existing leases.");
+  }
+
+  if (pond?.publicPayments.length) {
+    throw new Error("Cannot delete pond with public collection records.");
   }
 
   await db.pond.delete({

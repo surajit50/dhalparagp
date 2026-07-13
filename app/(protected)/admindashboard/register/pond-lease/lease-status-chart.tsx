@@ -1,6 +1,6 @@
 "use client";
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
 
 interface LeaseStatusChartProps {
   data: any[];
@@ -27,14 +27,20 @@ export function LeaseStatusChart({ data }: LeaseStatusChartProps) {
   return (
     <ResponsiveContainer width="100%" height={250}>
       <PieChart>
+        <Tooltip 
+          contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+          itemStyle={{ fontWeight: 500 }}
+        />
         <Pie
           data={chartData}
           cx="50%"
           cy="50%"
-          labelLine={false}
+          innerRadius={60}
           outerRadius={80}
+          paddingAngle={5}
           fill="#8884d8"
           dataKey="value"
+          stroke="none"
         >
           {chartData.map((entry, index) => (
             <Cell
@@ -43,7 +49,7 @@ export function LeaseStatusChart({ data }: LeaseStatusChartProps) {
             />
           ))}
         </Pie>
-        <Legend />
+        <Legend iconType="circle" />
       </PieChart>
     </ResponsiveContainer>
   );

@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -21,19 +20,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Plus, Loader2, Edit2 } from "lucide-react";
+import { Plus, Loader2, Edit2, Waves } from "lucide-react";
 import { toast } from "sonner";
 import { PondSchema, PondFormValues } from "./schema";
 import { createPond, updatePond } from "./actions";
+import {
+  formatPondAreaAcre,
+  parsePondAreaDecimal,
+} from "@/lib/utils/pond-lease";
+import { PondTypeFields } from "./pond-type-fields";
 
 interface PondDialogProps {
   initialData?: any;
@@ -48,17 +45,36 @@ export function PondDialog({ initialData }: PondDialogProps) {
     defaultValues: initialData
       ? {
           name: initialData.name,
-          location: initialData.location,
+          jlNo: initialData.jlNo || "",
+          plotNo: initialData.plotNo || "",
           area: initialData.area || "",
-          status: initialData.status,
+          pondType: initialData.pondType || "LEASEABLE",
+          publicYearlyAmount: initialData.publicYearlyAmount ?? undefined,
+          resolutionNo: initialData.resolutionNo || "",
+          resolutionDate: initialData.resolutionDate
+            ? new Date(initialData.resolutionDate)
+            : undefined,
+          status: initialData.status || "AVAILABLE",
         }
       : {
           name: "",
-          location: "",
+          jlNo: "",
+          plotNo: "",
           area: "",
+          pondType: "LEASEABLE",
+          publicYearlyAmount: undefined,
+          resolutionNo: "",
+          resolutionDate: undefined,
           status: "AVAILABLE",
         },
   });
+
+  const watchedArea = form.watch("area");
+  const areaDecimal = parsePondAreaDecimal(watchedArea);
+  const areaInAcre = useMemo(
+    () => formatPondAreaAcre(areaDecimal),
+    [areaDecimal],
+  );
 
   const onSubmit = (values: PondFormValues) => {
     startTransition(async () => {
@@ -93,17 +109,25 @@ export function PondDialog({ initialData }: PondDialogProps) {
         )}
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader className="pb-4 border-b">
-          <DialogTitle className="text-xl">{initialData ? "Edit Pond Details" : "Register New Pond"}</DialogTitle>
-          <DialogDescription>
-            {initialData 
-              ? "Update the details for this pond record." 
-              : "Enter the details to register a new pond into the inventory."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto p-0">
+        <div className="bg-gradient-to-r from-blue-50 to-transparent p-6 pb-4 border-b">
+          <DialogHeader>
+            <DialogTitle className="text-2xl flex items-center gap-2 text-blue-900">
+              <div className="bg-blue-100 p-2 rounded-lg">
+                <Waves className="h-5 w-5 text-blue-600" />
+              </div>
+              {initialData ? "Edit Pond Details" : "Register New Pond"}
+            </DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              {initialData 
+                ? "Update the details for this pond record." 
+                : "Enter the details to register a new pond into the inventory."}
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-        <Form {...form}>
+        <div className="px-6 pb-6 pt-2">
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
@@ -119,61 +143,66 @@ export function PondDialog({ initialData }: PondDialogProps) {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location / Landmark</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Near GP Office, Block-A" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="space-y-3 rounded-lg border border-border/50 bg-muted/20 p-4">
+              <p className="text-sm font-medium">Location of the Pond (JL No, Plot No)</p>
+              <div className="grid grid-cols-2 gap-5">
+                <FormField
+                  control={form.control}
+                  name="jlNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>JL No</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 45" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="plotNo"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Plot No</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 1234" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
 
             <div className="grid grid-cols-2 gap-5">
               <FormField
                 control={form.control}
                 name="area"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pond Area (Decimal)</FormLabel>
+                  <FormItem className="col-span-2">
+                    <FormLabel>Pond Area (Decimal / Satak)</FormLabel>
                     <FormControl>
                       <Input placeholder="e.g. 150" {...field} className="bg-muted/50 focus-visible:bg-transparent" />
                     </FormControl>
+                    {areaInAcre && (
+                      <p className="text-xs font-medium text-blue-700">
+                        Total land area: {areaInAcre}
+                      </p>
+                    )}
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Current Status</FormLabel>
-                    <Select
-                      disabled={isPending}
-                      onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="bg-muted/50 focus-visible:bg-transparent">
-                          <SelectValue placeholder="Select Status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="AVAILABLE">Available</SelectItem>
-                        <SelectItem value="LEASED">Leased</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="col-span-2">
+                <PondTypeFields
+                  form={form}
+                  isPending={isPending}
+                  isLeased={initialData?.status === "LEASED" || (initialData?.leases && initialData.leases.length > 0)}
+                />
+              </div>
             </div>
 
             <DialogFooter className="pt-6 border-t mt-4">
@@ -202,6 +231,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
             </DialogFooter>
           </form>
         </Form>
+        </div>
       </DialogContent>
     </Dialog>
   );

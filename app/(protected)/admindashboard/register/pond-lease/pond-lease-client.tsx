@@ -59,6 +59,7 @@ import { LeaseAgreementPrint } from "./lease-agreement-print"
 import { PendingListPrint } from "./pending-list-print"
 import { LeaseCollectionListPrint } from "./lease-collection-list-print"
 import { NoticeGenerateDialog } from "./notice-generate-dialog"
+import { PublicPondSection } from "./public-pond-section"
 
 import { deletePondLease, updateLeaseStatus } from "./actions"
 import { LeaseStatusChart } from "./lease-status-chart"
@@ -69,11 +70,12 @@ interface PondLeaseClientProps {
   data: any[]
   ponds: any[]
   allPonds: any[]
+  publicPonds: any[]
 }
 
 type StatusFilter = "ALL" | "ACTIVE" | "EXPIRED" | "COMPLETED" | "CANCELLED"
 
-export function PondLeaseClient({ data, ponds, allPonds }: PondLeaseClientProps) {
+export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeaseClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
 
@@ -157,7 +159,7 @@ export function PondLeaseClient({ data, ponds, allPonds }: PondLeaseClientProps)
   const hasActiveFilters = searchTerm !== "" || statusFilter !== "ALL"
 
   return (
-    <div className="space-y-8 p-4 md:p-6 bg-gradient-to-b from-background to-muted/20 min-h-screen">
+    <div className="space-y-8">
       {/* Header Section with Gradient Accent */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
@@ -507,6 +509,8 @@ export function PondLeaseClient({ data, ponds, allPonds }: PondLeaseClientProps)
           </div>
         </CardContent>
       </Card>
+
+      <PublicPondSection publicPonds={publicPonds} />
     </div>
   )
 }
