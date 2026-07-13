@@ -2,7 +2,8 @@
 
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { format, addYears, getYear } from "date-fns";
+import { addYears, getYear } from "date-fns";
+import { formatDate } from "@/utils/utils";
 import { gpaddress, gpname } from "@/constants/gpinfor";
 
 // Define the structure of the lease data
@@ -80,7 +81,7 @@ export function PondLeaseNoticePrint({
     if (noticeType === "REMINDER") {
       return `This is a formal reminder regarding the outstanding payment for your lease of pond ${lease.pond.name}. The total pending amount is ${currencyFormatter.format(lease.pendingAmount)}. Kindly clear the dues at the earliest to avoid further action.`;
     } else {
-      return `This notice is to inform you that your lease for pond ${lease.pond.name} will expire on ${format(leaseEndDate, "dd MMM yyyy")}. Please contact the Gram Panchayat office for renewal procedures.`;
+      return `This notice is to inform you that your lease for pond ${lease.pond.name} will expire on ${formatDate(leaseEndDate)}. Please contact the Gram Panchayat office for renewal procedures.`;
     }
   }, [noticeType, lease, leaseEndDate, currencyFormatter]);
 
@@ -97,7 +98,7 @@ export function PondLeaseNoticePrint({
         <span>
           Memo No: GP/Lease/{getYear(new Date())}/{lease.id.slice(-4)}
         </span>
-        <span>Date: {format(new Date(), "dd/MM/yyyy")}</span>
+        <span>Date: {formatDate(new Date())}</span>
       </div>
 
       {/* Recipient */}

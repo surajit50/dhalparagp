@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { format, differenceInDays } from "date-fns"
+import { differenceInDays } from "date-fns"
+import { formatDate } from "@/utils/utils"
 import { toast } from "sonner"
 
 import {
@@ -56,6 +57,7 @@ import { EditLeaseDialog } from "./edit-lease-dialog"
 import { PendingDetailsDialog } from "./pending-details-dialog"
 import { LeaseAgreementPrint } from "./lease-agreement-print"
 import { PendingListPrint } from "./pending-list-print"
+import { LeaseCollectionListPrint } from "./lease-collection-list-print"
 import { NoticeGenerateDialog } from "./notice-generate-dialog"
 
 import { deletePondLease, updateLeaseStatus } from "./actions"
@@ -66,11 +68,12 @@ import { cn } from "@/lib/utils"
 interface PondLeaseClientProps {
   data: any[]
   ponds: any[]
+  allPonds: any[]
 }
 
 type StatusFilter = "ALL" | "ACTIVE" | "EXPIRED" | "COMPLETED" | "CANCELLED"
 
-export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
+export function PondLeaseClient({ data, ponds, allPonds }: PondLeaseClientProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
 
@@ -170,6 +173,7 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
           </div>
           <div className="flex flex-wrap gap-3">
             <PendingListPrint leases={data} />
+            <LeaseCollectionListPrint leases={data} ponds={allPonds} />
             <AddPondDialog />
             <AddLeaseDialog ponds={ponds} />
           </div>
@@ -384,9 +388,9 @@ export function PondLeaseClient({ data, ponds }: PondLeaseClientProps) {
                       {/* Period Column */}
                       <TableCell className="min-w-[180px]">
                         <div className="text-sm">
-                          <span className="font-medium">{format(start, "dd MMM yyyy")}</span>
+                          <span className="font-medium">{formatDate(start)}</span>
                           <span className="text-muted-foreground mx-1">→</span>
-                          <span className="font-medium">{format(end, "dd MMM yyyy")}</span>
+                          <span className="font-medium">{formatDate(end)}</span>
                         </div>
                         <div className="mt-2 mb-1">
                           <Progress 

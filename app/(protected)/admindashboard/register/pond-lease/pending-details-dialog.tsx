@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { format, addYears, getYear } from "date-fns";
+import { addYears, getYear } from "date-fns";
 import { Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 

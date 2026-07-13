@@ -3,7 +3,8 @@
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addYears, format } from "date-fns";
+import { addYears } from "date-fns";
+import { formatDate } from "@/utils/utils";
 
 import {
   Dialog,
@@ -329,7 +330,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                                   )}
                                 >
                                   {field.value
-                                    ? format(field.value, "dd/MM/yyyy")
+                                    ? formatDate(field.value)
                                     : "Select date"}
 
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />

@@ -192,9 +192,10 @@ export function generateMemoNumber(latestNumber: number, year: number): string {
   return `${paddedNumber}/${gpcode}/(LH)/${year}`;
 }
 
-export const formatDate = (date: Date): string => {
+export const formatDate = (date: Date | string): string => {
+  const d = typeof date === "string" ? new Date(date) : date;
   const istDate = new Date(
-    date.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+    d.toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
   );
 
   const day = istDate.getDate().toString().padStart(2, "0");

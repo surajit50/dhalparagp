@@ -31,6 +31,7 @@ import {
 } from "./schema";
 import { extendPondLease } from "./actions";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { formatDate } from "@/utils/utils";
 
 interface ExtendLeaseDialogProps {
   lease: any;
@@ -95,7 +96,7 @@ export function ExtendLeaseDialog({ lease }: ExtendLeaseDialogProps) {
           <DialogTitle>Extend Lease Period</DialogTitle>
           <DialogDescription>
             Extend the lease for <strong>{lease.pond.name}</strong>. Current
-            expiry: {new Date(lease.leaseEndDate).toLocaleDateString("en-IN")}
+            expiry: {formatDate(new Date(lease.leaseEndDate))}
           </DialogDescription>
         </DialogHeader>
 

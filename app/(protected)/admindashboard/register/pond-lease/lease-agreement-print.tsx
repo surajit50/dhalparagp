@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Printer } from "lucide-react";
-import { format } from "date-fns";
+import { formatDate } from "@/utils/utils";
 import { gpname, gpaddress } from "@/constants/gpinfor";
 import { POND_LEASE_TERMS } from "@/constants/pond-lease-terms";
 
@@ -171,7 +171,7 @@ export function LeaseAgreementPrint({ lease }: LeaseAgreementPrintProps) {
           <div className="section">
             <p>
               This agreement is made on this{" "}
-              <strong>{format(new Date(), "do 'day of' MMMM, yyyy")}</strong>{" "}
+              <strong>{formatDate(new Date())}</strong>{" "}
               between the <strong>{gpname}</strong> (hereinafter referred to as
               the &apos;Lessor&apos;) and{" "}
               <strong>{lease.leasePartyName}</strong> (hereinafter referred to
@@ -238,13 +238,13 @@ export function LeaseAgreementPrint({ lease }: LeaseAgreementPrintProps) {
                 <tr>
                   <td>Start Date</td>
                   <td>
-                    {format(new Date(lease.leaseStartDate), "dd MMM yyyy")}
+                    {formatDate(new Date(lease.leaseStartDate))}
                   </td>
                 </tr>
                 <tr>
                   <td>End Date</td>
                   <td>
-                    {format(new Date(lease.leaseEndDate), "dd MMM yyyy")}
+                    {formatDate(new Date(lease.leaseEndDate))}
                   </td>
                 </tr>
                 <tr>

@@ -3,7 +3,8 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Printer, FileText } from "lucide-react";
-import { format, addYears, getYear } from "date-fns";
+import { addYears, getYear } from "date-fns";
+import { formatDate } from "@/utils/utils";
 import { gpname, gpaddress } from "@/constants/gpinfor";
 
 interface PendingListPrintProps {
@@ -149,7 +150,7 @@ export function PendingListPrint({ leases }: PendingListPrintProps) {
           <div className="report-title">PENDING LEASE PAYMENT REPORT</div>
 
           <p>
-            Report Generated on: <strong>{format(new Date(), "dd/MM/yyyy")}</strong>
+            Report Generated on: <strong>{formatDate(new Date())}</strong>
           </p>
 
           <table>
@@ -202,9 +203,9 @@ export function PendingListPrint({ leases }: PendingListPrintProps) {
                       </div>
                     </td>
                     <td>
-                      {format(new Date(lease.leaseStartDate), "dd/MM/yyyy")} to
+                      {formatDate(new Date(lease.leaseStartDate))} to
                       <br />
-                      {format(new Date(lease.leaseEndDate), "dd/MM/yyyy")}
+                      {formatDate(new Date(lease.leaseEndDate))}
                     </td>
                     <td className="text-right">{currency.format(yearlyAmount)}</td>
                     <td className="text-right">{currency.format(totalPaid)}</td>

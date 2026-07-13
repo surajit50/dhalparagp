@@ -50,7 +50,8 @@ import {
 
 import { Calendar } from "@/components/ui/calendar";
 
-import { format, getYear, addYears } from "date-fns";
+import { getYear, addYears } from "date-fns";
+import { formatDate } from "@/utils/utils";
 import { cn } from "@/lib/utils";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import {
@@ -217,7 +218,7 @@ export function AddPaymentDialog({ lease }: AddPaymentDialogProps) {
                               )}
                             >
                               {field.value
-                                ? format(field.value, "dd/MM/yyyy")
+                                ? formatDate(field.value)
                                 : "Pick a date"}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                             </Button>
@@ -369,7 +370,7 @@ export function AddPaymentDialog({ lease }: AddPaymentDialogProps) {
                     lease.payments.map((payment) => (
                       <TableRow key={payment.id}>
                         <TableCell>
-                          {format(new Date(payment.paymentDate), "dd/MM/yyyy")}
+                          {formatDate(new Date(payment.paymentDate))}
                         </TableCell>
                         <TableCell>{payment.paymentMethod}</TableCell>
                         <TableCell className="text-right font-medium">

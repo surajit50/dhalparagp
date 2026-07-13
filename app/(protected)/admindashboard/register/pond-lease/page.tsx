@@ -58,9 +58,16 @@ async function getData() {
   return formatted;
 }
 
+async function getAllPonds() {
+  return db.pond.findMany({
+    orderBy: { name: "asc" },
+  });
+}
+
 export default async function PondLeasePage() {
   const leases = await getData();
   const ponds = await getPonds();
+  const allPonds = await getAllPonds();
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -105,7 +112,7 @@ export default async function PondLeasePage() {
 
         <Card className="shadow-sm border">
           <CardContent className="p-6">
-            <PondLeaseClient data={leases} ponds={ponds} />
+            <PondLeaseClient data={leases} ponds={ponds} allPonds={allPonds} />
           </CardContent>
         </Card>
       </div>
