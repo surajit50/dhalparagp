@@ -45,6 +45,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
     defaultValues: initialData
       ? {
           name: initialData.name,
+          mouzaName: initialData.mouzaName || "",
           jlNo: initialData.jlNo || "",
           plotNo: initialData.plotNo || "",
           area: initialData.area || "",
@@ -58,6 +59,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
         }
       : {
           name: "",
+          mouzaName: "",
           jlNo: "",
           plotNo: "",
           area: "",
@@ -144,7 +146,22 @@ export function PondDialog({ initialData }: PondDialogProps) {
             />
 
             <div className="space-y-3 rounded-lg border border-border/50 bg-muted/20 p-4">
-              <p className="text-sm font-medium">Location of the Pond (JL No, Plot No)</p>
+              <p className="text-sm font-medium">Location of the Pond</p>
+              
+              <FormField
+                control={form.control}
+                name="mouzaName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mouza Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Dhalpara" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid grid-cols-2 gap-5">
                 <FormField
                   control={form.control}

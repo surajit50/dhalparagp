@@ -42,6 +42,7 @@ export function AddPondDialog() {
     resolver: zodResolver(PondSchema),
     defaultValues: {
       name: "",
+      mouzaName: "",
       jlNo: "",
       plotNo: "",
       area: "",
@@ -104,7 +105,22 @@ export function AddPondDialog() {
             />
 
             <div className="space-y-3 rounded-lg border border-border/50 bg-muted/20 p-4">
-              <p className="text-sm font-medium">Location of the Pond (JL No, Plot No)</p>
+              <p className="text-sm font-medium">Location of the Pond</p>
+              
+              <FormField
+                control={form.control}
+                name="mouzaName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mouza Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Dhalpara" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}

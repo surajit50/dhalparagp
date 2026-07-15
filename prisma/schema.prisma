@@ -3270,6 +3270,7 @@ model Pond {
   id                 String              @id @default(auto()) @map("_id") @db.ObjectId
   name               String
   location           String
+  mouzaName          String?
   jlNo               String?
   plotNo             String?
   area               String?

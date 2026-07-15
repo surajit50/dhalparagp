@@ -27,11 +27,13 @@ export function formatPondAreaAcre(areaDecimal: number): string {
 export function formatPondLocationDisplay(pond: {
   jlNo?: string | null;
   plotNo?: string | null;
+  mouzaName?: string | null;
   location?: string | null;
   name?: string | null;
 }): string {
-  if (pond.jlNo || pond.plotNo) {
+  if (pond.mouzaName || pond.jlNo || pond.plotNo) {
     const parts: string[] = [];
+    if (pond.mouzaName) parts.push(`Mouza: ${pond.mouzaName}`);
     if (pond.jlNo) parts.push(`JL No: ${pond.jlNo}`);
     if (pond.plotNo) parts.push(`Plot No: ${pond.plotNo}`);
     return parts.join(", ");
@@ -44,6 +46,7 @@ export function formatPondLocationDisplay(pond: {
 export function formatPondLocationWithArea(pond: {
   jlNo?: string | null;
   plotNo?: string | null;
+  mouzaName?: string | null;
   location?: string | null;
   name?: string | null;
   area?: string | number | null;
@@ -59,31 +62,36 @@ export function formatPondLocationWithArea(pond: {
   return location;
 }
 
-function buildPondLocation(jlNo: string, plotNo: string): string {
+function buildPondLocation(mouzaName: string, jlNo: string, plotNo: string): string {
   const parts: string[] = [];
+  if (mouzaName) parts.push(`Mouza: ${mouzaName}`);
   if (jlNo) parts.push(`JL No: ${jlNo}`);
   if (plotNo) parts.push(`Plot No: ${plotNo}`);
   return parts.join(", ");
 }
 
 export function normalizePondLocationFields(values: {
-  jlNo: string;
-  plotNo: string;
-}): { jlNo: string; plotNo: string; location: string } {
-  const jlNo = values.jlNo.trim();
-  const plotNo = values.plotNo.trim();
+  mouzaName?: string;
+  jlNo?: string;
+  plotNo?: string;
+}): { mouzaName: string; jlNo: string; plotNo: string; location: string } {
+  const mouzaName = (values.mouzaName || "").trim();
+  const jlNo = (values.jlNo || "").trim();
+  const plotNo = (values.plotNo || "").trim();
 
   return {
+    mouzaName,
     jlNo,
     plotNo,
-    location: buildPondLocation(jlNo, plotNo),
+    location: buildPondLocation(mouzaName, jlNo, plotNo),
   };
 }
 
 export function buildPondDbData(validated: {
   name: string;
-  jlNo: string;
-  plotNo: string;
+  mouzaName?: string;
+  jlNo?: string;
+  plotNo?: string;
   area?: string;
   pondType: "LEASEABLE" | "PUBLIC";
   publicYearlyAmount?: number;
@@ -96,6 +104,7 @@ export function buildPondDbData(validated: {
 
   return {
     name: validated.name,
+    mouzaName: locationFields.mouzaName,
     jlNo: locationFields.jlNo,
     plotNo: locationFields.plotNo,
     location: locationFields.location,

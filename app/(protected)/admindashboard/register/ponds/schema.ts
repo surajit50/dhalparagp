@@ -4,8 +4,9 @@ import { z } from "zod";
 export const PondSchema = z
   .object({
     name: z.string().min(1, "Pond name is required"),
-    jlNo: z.string().trim().min(1, "JL No is required"),
-    plotNo: z.string().trim().min(1, "Plot No is required"),
+    jlNo: z.string().trim().optional().or(z.literal("")),
+    plotNo: z.string().trim().optional().or(z.literal("")),
+    mouzaName: z.string().trim().min(1, "Mouza Name is required"),
     area: z.string().optional().or(z.literal("")),
     pondType: z.enum(["LEASEABLE", "PUBLIC"]).default("LEASEABLE"),
     publicYearlyAmount: z.coerce.number().optional(),
