@@ -87,8 +87,8 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
       leasePartyCity: "",
       leasePartyPin: "",
       leaseAmountYearly: 0,
-      leaseStartDate: undefined,
-      leasePeriod: "1",
+      leaseStartDate: new Date(),
+      leasePeriod: "3",
       remarks: "",
     },
   });
@@ -148,8 +148,8 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
 
   const leaseYears = parseInt(leasePeriod || "1");
 
-  const totalLeaseAmount =
-    leaseYears > 0 ? leaseYears * (yearlyAmount || 0) : 0;
+  const totalLeaseAmount = yearlyAmount || 0;
+  const actualYearlyAmount = leaseYears > 0 ? totalLeaseAmount / leaseYears : 0;
 
   const onSubmit = (values: PondLeaseFormValues) => {
     startTransition(() => {
@@ -160,6 +160,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
 
         createPondLease({
           ...values,
+          leaseAmountYearly: actualYearlyAmount,
           leaseEndDate: calculatedEndDate,
           totalAmount: totalLeaseAmount,
           leaseYears,
@@ -206,6 +207,22 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
               {/* STEP 1: Pond Selection */}
               <TabsContent value="pond" className="space-y-4">
                 <div className="bg-muted/30 p-5 rounded-lg border border-border/50 space-y-5">
+                  <FormField
+                    control={form.control}
+                    name="leasePeriod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Lease Period</FormLabel>
+                        <div className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm text-muted-foreground items-center font-medium">
+                          3 Years
+                        </div>
+                        {/* Hidden input to satisfy form submission */}
+                        <input type="hidden" {...field} value="3" />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
                   <FormField
                     control={form.control}
                     name="pondId"
@@ -274,7 +291,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                       name="leaseAmountYearly"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Yearly Lease Amount (₹)</FormLabel>
+                          <FormLabel>Total Lease Amount (₹)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -295,7 +312,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                     />
 
                     <FormItem>
-                      <FormLabel>Rate per Decimal (₹/year)</FormLabel>
+                      <FormLabel>Total Rate per Decimal (₹)</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
@@ -322,12 +339,12 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                             areaDecimal,
                             ratePerDecimal,
                             yearlyAmount,
-                          )
+                          ).replace("/year", " total")
                         : formatRatePerDecimalCalculation(
                             yearlyAmount,
                             areaDecimal,
                             ratePerDecimal,
-                          )}
+                          ).replace(" per year", "")}
                     </p>
                   )}
                 </div>
@@ -463,8 +480,9 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                               <FormControl>
                                 <Button
                                   variant="outline"
+                                  disabled
                                   className={cn(
-                                    "pl-3 text-left font-normal bg-background",
+                                    "pl-3 text-left font-normal bg-muted",
                                     !field.value && "text-muted-foreground",
                                   )}
                                 >
@@ -481,10 +499,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                               <Calendar
                                 mode="single"
                                 captionLayout="dropdown-buttons"
-                                fromYear={2020}
-                                toYear={2040}
+                                fromYear={1900}
+                                toYear={2050}
                                 selected={field.value}
                                 onSelect={field.onChange}
+                                disabled
                                 initialFocus
                               />
                             </PopoverContent>

@@ -324,7 +324,7 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
                   <TableHead className="font-semibold">Pond</TableHead>
                   <TableHead className="font-semibold">Party</TableHead>
                   <TableHead className="font-semibold">Lease Period</TableHead>
-                  <TableHead className="font-semibold">Financial</TableHead>
+                  <TableHead className="font-semibold">Lease Amount</TableHead>
                   <TableHead className="font-semibold">Status</TableHead>
                   <TableHead className="text-right font-semibold">Actions</TableHead>
                 </TableRow>
@@ -416,7 +416,7 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
                       <TableCell>
                         <div className="space-y-1.5">
                           <div className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">Total:</span>
+                            <span className="text-muted-foreground">Lease Amount:</span>
                             <span className="font-semibold">{currency.format(lease.totalAmount)}</span>
                           </div>
                           <div className="flex justify-between text-sm">

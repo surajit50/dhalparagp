@@ -179,13 +179,9 @@ export function LeaseCollectionListPrint({
             <tbody>
               {rows.map(({ pond, lease }, index) => {
                 const isPublicPond = pond.pondType === "PUBLIC";
-                const paidAmount = isPublicPond
-                  ? (pond.publicPayments || []).reduce(
-                      (sum: number, payment: any) =>
-                        sum + (Number(payment.amountPaid) || 0),
-                      0,
-                    )
-                  : Number(lease?.paidAmount) || 0;
+                const leaseAmountToShow = isPublicPond
+                  ? Number(pond.publicYearlyAmount) || 0
+                  : Number(lease?.totalAmount) || 0;
                 const isLeasedOut = !isPublicPond && Boolean(lease);
 
                 return (
@@ -224,7 +220,7 @@ export function LeaseCollectionListPrint({
                         ? "Public"
                         : lease?.leasePartyName || "-"}
                     </td>
-                    <td>{paidAmount > 0 ? formatAmount(paidAmount) : "-"}</td>
+                    <td>{leaseAmountToShow > 0 ? formatAmount(leaseAmountToShow) : "-"}</td>
                     <td className="text-left">
                       {isPublicPond
                         ? pond.publicYearlyAmount

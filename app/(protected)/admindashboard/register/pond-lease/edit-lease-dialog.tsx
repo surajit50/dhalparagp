@@ -51,7 +51,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
       leasePartyAddressLine2: lease.leasePartyAddressLine2 || "",
       leasePartyCity: lease.leasePartyCity || "",
       leasePartyPin: lease.leasePartyPin || "",
-      leaseAmountYearly: lease.leaseAmountYearly,
+      leaseAmountYearly: lease.totalAmount || (lease.leaseAmountYearly * (lease.leaseYears || 1)),
       leaseStartDate: new Date(lease.leaseStartDate),
       leasePeriod: (lease.leaseYears === 1 ||
       lease.leaseYears === 2 ||
@@ -67,8 +67,8 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
 
   const leaseYears = parseInt(leasePeriod || "1");
 
-  const totalLeaseAmount =
-    leaseYears > 0 ? leaseYears * (yearlyAmount || 0) : 0;
+  const totalLeaseAmount = yearlyAmount || 0;
+  const actualYearlyAmount = leaseYears > 0 ? totalLeaseAmount / leaseYears : 0;
 
   const onSubmit = (values: PondLeaseFormValues) => {
     startTransition(() => {
@@ -79,6 +79,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
 
         updatePondLease(lease.id, {
           ...values,
+          leaseAmountYearly: actualYearlyAmount,
           leaseEndDate: calculatedEndDate,
           totalAmount: totalLeaseAmount,
           leaseYears,
@@ -128,10 +129,10 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
 
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
-                    Yearly Amount
+                    Total Amount
                   </p>
                   <p className="text-sm font-bold text-orange-600">
-                    ₹{lease.leaseAmountYearly.toLocaleString()}
+                    ₹{(lease.totalAmount || (lease.leaseAmountYearly * (lease.leaseYears || 1))).toLocaleString()}
                   </p>
                 </div>
               </div>
