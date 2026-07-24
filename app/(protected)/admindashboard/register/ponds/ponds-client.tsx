@@ -21,7 +21,12 @@ import {
   XCircle,
   Search,
   Waves,
+  ArrowUpRight,
 } from "lucide-react";
+
+import Link from "next/link";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PondInventoryPrint } from "./pond-inventory-print";
 
 import { toast } from "sonner";
 import { deletePond } from "./actions";
@@ -57,6 +62,7 @@ interface PondsClientProps {
 
 export function PondsClient({ data }: PondsClientProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
 
   // Statistics
   const totalPonds = data.length;
@@ -68,16 +74,27 @@ export function PondsClient({ data }: PondsClientProps) {
 
   // Optimized search
   const filteredData = useMemo(() => {
-    return data.filter(
-      (pond) =>
+    return data.filter((pond) => {
+      const matchesSearch =
         (pond.name?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
         (pond.jlNo?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
         (pond.plotNo?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
         (pond.location?.toLowerCase() ?? "").includes(
           searchTerm.toLowerCase(),
-        ),
-    );
-  }, [data, searchTerm]);
+        );
+
+      let matchesStatus = true;
+      if (statusFilter === "AVAILABLE") {
+        matchesStatus = pond.status === "AVAILABLE";
+      } else if (statusFilter === "LEASED") {
+        matchesStatus = pond.status === "LEASED";
+      } else if (statusFilter === "PUBLIC") {
+        matchesStatus = pond.pondType === "PUBLIC" || pond.status === "PUBLIC_USE";
+      }
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [data, searchTerm, statusFilter]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -104,7 +121,8 @@ export function PondsClient({ data }: PondsClientProps) {
             </p>
           </div>
 
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 flex items-center gap-3">
+            <PondInventoryPrint ponds={filteredData} />
             <PondDialog />
           </div>
         </div>
@@ -186,14 +204,25 @@ export function PondsClient({ data }: PondsClientProps) {
               </p>
             </div>
 
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name or location..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 bg-background border-border/50 focus-visible:ring-blue-500"
-              />
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name or location..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 bg-background border-border/50 focus-visible:ring-blue-500"
+                />
+              </div>
+
+              <Tabs value={statusFilter} onValueChange={setStatusFilter} className="w-full sm:w-auto">
+                <TabsList className="grid grid-cols-4 w-full sm:w-auto h-10">
+                  <TabsTrigger value="ALL">All</TabsTrigger>
+                  <TabsTrigger value="AVAILABLE">Available</TabsTrigger>
+                  <TabsTrigger value="LEASED">Leased</TabsTrigger>
+                  <TabsTrigger value="PUBLIC">Public</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </div>
         </CardHeader>
@@ -274,10 +303,17 @@ export function PondsClient({ data }: PondsClientProps) {
                             AVAILABLE
                           </Badge>
                         ) : (
-                          <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-200/50">
-                            <XCircle className="h-3.5 w-3.5 mr-1.5" />
-                            LEASED
-                          </Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 border-amber-200/50">
+                              <XCircle className="h-3.5 w-3.5 mr-1.5" />
+                              LEASED
+                            </Badge>
+                            <Link href={`/admindashboard/register/pond-lease?tab=records&search=${encodeURIComponent(pond.name)}`}>
+                              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-blue-600" title="View Lease">
+                                <ArrowUpRight className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                          </div>
                         )}
                       </TableCell>
 

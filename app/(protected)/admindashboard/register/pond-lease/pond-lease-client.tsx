@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { differenceInDays } from "date-fns"
+import { differenceInDays, differenceInMonths, differenceInYears, addYears, addMonths } from "date-fns"
 import { formatDate } from "@/utils/utils"
 import { toast } from "sonner"
 
@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 
 import {
   MoreHorizontal,
@@ -61,7 +61,7 @@ import { LeaseCollectionListPrint } from "./lease-collection-list-print"
 import { NoticeGenerateDialog } from "./notice-generate-dialog"
 import { PublicPondSection } from "./public-pond-section"
 
-import { deletePondLease, updateLeaseStatus } from "./actions"
+import { deletePondLease, updateLeaseStatus, verifyPondLease } from "./actions"
 import { LeaseStatusChart } from "./lease-status-chart"
 import { PendingByYear } from "./pending-by-year"
 import { cn } from "@/lib/utils"
@@ -71,12 +71,14 @@ interface PondLeaseClientProps {
   ponds: any[]
   allPonds: any[]
   publicPonds: any[]
+  initialTab?: string
+  initialSearch?: string
 }
 
 type StatusFilter = "ALL" | "ACTIVE" | "EXPIRED" | "COMPLETED" | "CANCELLED"
 
-export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeaseClientProps) {
-  const [searchTerm, setSearchTerm] = useState("")
+export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab = "dashboard", initialSearch = "" }: PondLeaseClientProps) {
+  const [searchTerm, setSearchTerm] = useState(initialSearch)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
 
   const currency = new Intl.NumberFormat("en-IN", {
@@ -151,6 +153,33 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
     }
   }
 
+  const handleVerify = async (id: string) => {
+    if (!confirm("Are you sure you want to final verify this lease? Once verified, details cannot be modified.")) return
+
+    try {
+      await verifyPondLease(id)
+      toast.success("Lease final verified")
+    } catch {
+      toast.error("Verification failed")
+    }
+  }
+
+  const formatRemainingTime = (end: Date, today: Date) => {
+    if (end < today) return "Expired";
+    const years = differenceInYears(end, today);
+    const dateAfterYears = addYears(today, years);
+    const months = differenceInMonths(end, dateAfterYears);
+    const dateAfterMonths = addMonths(dateAfterYears, months);
+    const days = differenceInDays(end, dateAfterMonths);
+
+    const parts = [];
+    if (years > 0) parts.push(`${years} yr`);
+    if (months > 0) parts.push(`${months} mo`);
+    if (days > 0) parts.push(`${days} d`);
+    
+    return parts.length > 0 ? parts.join(" ") : "Expires today";
+  };
+
   const clearFilters = () => {
     setSearchTerm("")
     setStatusFilter("ALL")
@@ -159,7 +188,7 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
   const hasActiveFilters = searchTerm !== "" || statusFilter !== "ALL"
 
   return (
-    <div className="space-y-8">
+    <Tabs defaultValue={initialTab} className="space-y-8">
       {/* Header Section with Gradient Accent */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600/10 via-primary/5 to-transparent p-6 md:p-8 border border-border/50 backdrop-blur-sm">
         <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl" />
@@ -182,8 +211,17 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
         </div>
       </div>
 
-      {/* Enhanced Stats Grid */}
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+      <div className="flex justify-center md:justify-start w-full">
+        <TabsList className="grid w-full md:w-[600px] grid-cols-3">
+          <TabsTrigger value="dashboard">Dashboard & Analytics</TabsTrigger>
+          <TabsTrigger value="records">Lease Records</TabsTrigger>
+          <TabsTrigger value="public">Public Ponds</TabsTrigger>
+        </TabsList>
+      </div>
+
+      <TabsContent value="dashboard" className="space-y-8 mt-6">
+        {/* Enhanced Stats Grid */}
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
         <Card className="group overflow-hidden border-border/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -263,9 +301,11 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
           </CardContent>
         </Card>
       </div>
+      </TabsContent>
 
-      {/* Main Table Section */}
-      <Card className="border-border/50 shadow-lg overflow-hidden">
+      <TabsContent value="records" className="mt-6">
+        {/* Main Table Section */}
+        <Card className="border-border/50 shadow-lg overflow-hidden">
         <CardHeader className="border-b bg-muted/20">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
@@ -404,9 +444,14 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
                           <span className="text-xs text-muted-foreground">
                             {usedDays > totalDays ? "Completed" : `${Math.round(progress)}%`}
                           </span>
-                          {(isExpiringSoon || isOverdue) && (
-                            <Badge variant={isOverdue ? "destructive" : "secondary"} className="text-[10px] px-1.5">
-                              {isOverdue ? "Expired" : `${daysLeft} days left`}
+                          {(isExpiringSoon || isOverdue || lease.status === "ACTIVE") && !isOverdue && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 whitespace-nowrap">
+                              {formatRemainingTime(end, today)}
+                            </Badge>
+                          )}
+                          {isOverdue && (
+                            <Badge variant="destructive" className="text-[10px] px-1.5 whitespace-nowrap">
+                              Expired
                             </Badge>
                           )}
                         </div>
@@ -471,7 +516,18 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
 
                             <ExtendLeaseDialog lease={lease} />
 
-                            <EditLeaseDialog lease={lease} />
+                            {!lease.isVerified && (
+                              <EditLeaseDialog lease={lease} />
+                            )}
+                            
+                            {!lease.isVerified && (
+                              <DropdownMenuItem
+                                onClick={() => handleVerify(lease.id)}
+                              >
+                                <CheckCircle2 className="h-4 w-4 mr-2 text-blue-600" />
+                                Final Verify
+                              </DropdownMenuItem>
+                            )}
 
                             <NoticeGenerateDialog lease={lease} />
 
@@ -509,8 +565,11 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds }: PondLeas
           </div>
         </CardContent>
       </Card>
+      </TabsContent>
 
-      <PublicPondSection publicPonds={publicPonds} />
-    </div>
+      <TabsContent value="public" className="mt-6">
+        <PublicPondSection publicPonds={publicPonds} />
+      </TabsContent>
+    </Tabs>
   )
 }

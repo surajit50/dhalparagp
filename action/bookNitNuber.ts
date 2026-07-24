@@ -662,6 +662,90 @@ export async function fetchworkdetailsbynitno(nitNO: number) {
       },
     });
 
+    return work;
+  } catch (error) {
+    console.error("Error fetching work details:", error);
+    throw error;
+  }
+}
+
+export async function fetchworkdetailsbyfilters(nitNO?: number, fundType?: string, schemeName?: string, workNameSearch?: string) {
+  try {
+    const user = await currentUser();
+    const loginAgencyId = user?.agencyDetailsId || undefined;
+
+    const whereClause: any = {};
+    if (nitNO) {
+      whereClause.nitDetails = { memoNumber: nitNO };
+    }
+    
+    if (fundType || schemeName || workNameSearch) {
+      whereClause.ApprovedActionPlanDetails = {};
+      if (fundType) {
+        whereClause.ApprovedActionPlanDetails.fundType = fundType;
+      }
+      if (schemeName) {
+        whereClause.ApprovedActionPlanDetails.schemeName = schemeName;
+      }
+      if (workNameSearch) {
+        whereClause.ApprovedActionPlanDetails.activityDescription = {
+          contains: workNameSearch,
+          mode: "insensitive",
+        };
+      }
+    }
+
+    whereClause.tenderStatus = { not: "Cancelled" };
+
+    const work = await db.worksDetail.findMany({
+      where: {
+        ...whereClause,
+        ...(loginAgencyId
+          ? {
+              biddingAgencies: {
+                some: {
+                  agencyDetailsId: loginAgencyId,
+                },
+              },
+            }
+          : {}),
+      },
+      include: {
+        nitDetails: true,
+        ApprovedActionPlanDetails: true,
+        biddingAgencies: {
+          include: {
+            agencydetails: true,
+            workorderdetails: true,
+            technicalEvelution: {
+              include: {
+                credencial: true,
+                validityofdocument: true,
+              },
+            },
+          },
+        },
+        AwardofContract: {
+          include: {
+            workorderdetails: {
+              include: {
+                Bidagency: {
+                  include: {
+                    agencydetails: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        paymentDetails: {
+          include: {
+            securityDeposit: true,
+          },
+        },
+      },
+    });
+
     return work; // Return the fetched data
   } catch (error: unknown) {
     console.error("Error fetching work details:", error); // Log the error

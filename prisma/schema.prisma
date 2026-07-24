@@ -3317,6 +3317,9 @@ model PondLease {
   pendingAmount          Float
   status                 LeaseStatus        @default(ACTIVE)
   remarks                String?
+  isVerified             Boolean            @default(false)
+  extensionDocumentUrl   String?
+  extensionDocumentKey   String?
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
   payments               PondLeasePayment[]

@@ -141,6 +141,9 @@ export const PondLeaseExtensionSchema = z.object({
     .trim()
     .optional()
     .or(z.literal("")),
+
+  documentUrl: z.string().optional(),
+  documentKey: z.string().optional(),
 });
 
 export type PondLeaseExtensionFormValues =

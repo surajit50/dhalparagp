@@ -15,7 +15,7 @@ import { getFundType } from "@/lib/actions";
 export default function FundTypeFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentFundType = searchParams.get("fundType");
+  const currentSchemeName = searchParams.get("schemeName");
   const [fundTypes, setFundTypes] = useState<Array<{ schemeName: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,29 +35,29 @@ export default function FundTypeFilter() {
     getFundTypes();
   }, []);
 
-  const handleFundTypeChange = (value: string) => {
+  const handleSchemeNameChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value === "all") {
-      params.delete("fundType");
+      params.delete("schemeName");
     } else {
-      params.set("fundType", value);
+      params.set("schemeName", value);
     }
     router.push(`?${params.toString()}`);
   };
 
   return (
     <Select
-      defaultValue={currentFundType || "all"}
-      onValueChange={handleFundTypeChange}
+      defaultValue={currentSchemeName || "all"}
+      onValueChange={handleSchemeNameChange}
       disabled={isLoading}
     >
       <SelectTrigger className="w-full">
         <SelectValue
-          placeholder={isLoading ? "Loading..." : "Select Fund Type"}
+          placeholder={isLoading ? "Loading..." : "Select Scheme Name"}
         />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="all">All Funds</SelectItem>
+        <SelectItem value="all">All Scheme Names</SelectItem>
         {fundTypes.map((type) => (
           <SelectItem key={type.schemeName} value={type.schemeName}>
             {type.schemeName}

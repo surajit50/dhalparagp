@@ -41,7 +41,11 @@ export type workdetailstype = Prisma.WorksDetailGetPayload<{
         };
       };
     };
-    paymentDetails: true;
+    paymentDetails: {
+      include: {
+        securityDeposit: true;
+      };
+    };
   };
 }>;
 

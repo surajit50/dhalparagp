@@ -65,11 +65,17 @@ async function getAllPonds() {
   });
 }
 
-export default async function PondLeasePage() {
+export default async function PondLeasePage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const leases = await getData();
   const ponds = await getPonds();
   const allPonds = await getAllPonds();
   const publicPonds = await getPublicPonds();
+
+  const tab = typeof searchParams.tab === "string" ? searchParams.tab : "dashboard";
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-50/80 via-slate-50 to-slate-100/50 relative overflow-hidden">
@@ -102,6 +108,8 @@ export default async function PondLeasePage() {
           ponds={ponds}
           allPonds={allPonds}
           publicPonds={publicPonds}
+          initialTab={tab}
+          initialSearch={typeof searchParams.search === "string" ? searchParams.search : ""}
         />
       </div>
     </div>

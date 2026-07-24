@@ -63,7 +63,20 @@ export function VisibleDataTable<TData, TValue>({
       return colDef.meta.exportValue(rowOriginal);
     }
 
-    const raw = cell.getValue();
+    let raw = cell.getValue();
+
+    if (raw === undefined || raw === null) {
+      if (typeof colDef.cell === "function") {
+        try {
+          const rendered = colDef.cell(cell.getContext());
+          if (typeof rendered === "string" || typeof rendered === "number") {
+            raw = rendered;
+          }
+        } catch (e) {
+          // Ignore
+        }
+      }
+    }
 
     if (raw === null || raw === undefined) return "";
     if (raw instanceof Date) return raw.toLocaleDateString("en-IN");
@@ -153,7 +166,7 @@ export function VisibleDataTable<TData, TValue>({
 
     const exportColumns = table
       .getAllColumns()
-      .filter((col) => col.getIsVisible() && col.id !== "id");
+      .filter((col) => col.id !== "id");
 
     const exportData = rows.map((row, index) => {
       const rowData: Record<string, unknown> = {};
@@ -161,7 +174,7 @@ export function VisibleDataTable<TData, TValue>({
 
       exportColumns.forEach((column) => {
         const cell = row
-          .getVisibleCells()
+          .getAllCells()
           .find((c) => c.column.id === column.id);
         if (!cell) return;
 

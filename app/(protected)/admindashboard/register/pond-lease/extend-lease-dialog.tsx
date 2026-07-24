@@ -210,6 +210,55 @@ export function ExtendLeaseDialog({ lease }: ExtendLeaseDialogProps) {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="documentUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Extension Document (PDF only)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="file"
+                      accept=".pdf"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const formData = new FormData();
+                          formData.append("file", file);
+                          
+                          try {
+                            const res = await fetch("/api/upload", {
+                              method: "POST",
+                              body: formData,
+                            });
+                            const data = await res.json();
+                            if (data.fileUrl) {
+                              form.setValue("documentUrl", data.fileUrl);
+                              form.setValue("documentKey", data.publicId);
+                              toast.success("Document uploaded successfully");
+                            } else {
+                              toast.error("Upload failed");
+                            }
+                          } catch (err) {
+                            toast.error("Upload failed");
+                          }
+                        } else {
+                          form.setValue("documentUrl", undefined);
+                          form.setValue("documentKey", undefined);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  {form.watch("documentUrl") && (
+                    <p className="text-sm text-green-600 font-medium mt-1">
+                      Document uploaded successfully.
+                    </p>
+                  )}
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <DialogFooter>
               <Button type="submit" disabled={isPending} className="w-full">
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

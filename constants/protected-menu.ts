@@ -331,6 +331,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Active Tenders", ["admin"], `${BASE_URLS.admin}/manage-tender/view`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Upload Tenders", ["admin"], `${BASE_URLS.admin}/manage-tender/upload`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("Tender Status Report", ["admin"], `${BASE_URLS.admin}/manage-tender/tender-status-report`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Tender Report", ["admin"], `${BASE_URLS.admin}/manage-tender/report`, FaChevronCircleRight, COLORS.purple),
       createMenuItem("Terms Management", ["admin"], undefined, FaChevronDown, COLORS.orange, [
         createMenuItem("Manage Terms", ["admin"], `${BASE_URLS.admin}/manage-tender/manage-terms`, FaChevronCircleRight, COLORS.orange),
         createMenuItem("Add New Term", ["admin"], `${BASE_URLS.admin}/manage-tender/add-terms`, FaChevronCircleRight, COLORS.blue),
@@ -425,7 +426,11 @@ export const adminMenuItems: MenuItemProps[] = [
   // Pond Management System
   createMenuItem("Pond Management", ["admin"], undefined, MdWater, COLORS.cyan, [
     createMenuItem("Ponds Inventory", ["admin"], `${BASE_URLS.admin}/register/ponds`, FaChevronCircleRight, COLORS.blue),
-    createMenuItem("Pond Lease Register", ["admin"], `${BASE_URLS.admin}/register/pond-lease`, FaChevronCircleRight, COLORS.green),
+    createMenuItem("Lease & Revenue", ["admin"], undefined, FaChevronDown, COLORS.green, [
+      createMenuItem("Dashboard & Analytics", ["admin"], `${BASE_URLS.admin}/register/pond-lease?tab=dashboard`, FaChevronCircleRight, COLORS.teal),
+      createMenuItem("Lease Records", ["admin"], `${BASE_URLS.admin}/register/pond-lease?tab=records`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Public Ponds", ["admin"], `${BASE_URLS.admin}/register/pond-lease?tab=public`, FaChevronCircleRight, COLORS.orange),
+    ]),
   ]),
 
   // Tubewell Management

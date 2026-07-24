@@ -333,17 +333,31 @@ export async function extendPondLease(data: PondLeaseExtensionFormValues) {
       leaseEndDate: newEndDate,
       totalAmount: newTotalAmount,
       pendingAmount: newPendingAmount,
-      // leasePeriod is not a column in the DB; omitting
       remarks: lease.remarks 
         ? `${lease.remarks}\n[Extended by ${addedPeriod}] ${validated.remarks}`
         : `[Extended by ${addedPeriod}] ${validated.remarks}`,
       status: "ACTIVE", // Reactivate if it was expired
+      extensionDocumentUrl: validated.documentUrl,
+      extensionDocumentKey: validated.documentKey,
     },
   });
 
   revalidatePath("/admindashboard/register/pond-lease");
 
   return updatedLease;
+}
+
+export async function verifyPondLease(id: string) {
+  try {
+    await db.pondLease.update({
+      where: { id },
+      data: { isVerified: true },
+    });
+    revalidatePath("/admindashboard/register/pond-lease");
+  } catch (error) {
+    console.error("Failed to verify pond lease:", error);
+    throw new Error("Failed to verify pond lease.");
+  }
 }
 
 /* --------------------------------
