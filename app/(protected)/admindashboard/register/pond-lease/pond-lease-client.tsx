@@ -26,6 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Checkbox } from "@/components/ui/checkbox"
 
 import {
   MoreHorizontal,
@@ -59,6 +60,7 @@ import { LeaseAgreementPrint } from "./lease-agreement-print"
 import { PendingListPrint } from "./pending-list-print"
 import { LeaseCollectionListPrint } from "./lease-collection-list-print"
 import { NoticeGenerateDialog } from "./notice-generate-dialog"
+import { BulkNoticeGenerateDialog } from "./bulk-notice-generate-dialog"
 import { PublicPondSection } from "./public-pond-section"
 
 import { deletePondLease, updateLeaseStatus, verifyPondLease } from "./actions"
@@ -80,6 +82,7 @@ type StatusFilter = "ALL" | "ACTIVE" | "EXPIRED" | "COMPLETED" | "CANCELLED"
 export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab = "dashboard", initialSearch = "" }: PondLeaseClientProps) {
   const [searchTerm, setSearchTerm] = useState(initialSearch)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL")
+  const [selectedLeases, setSelectedLeases] = useState<string[]>([])
 
   const currency = new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -97,6 +100,11 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
       return matchesSearch && matchesStatus
     })
   }, [data, searchTerm, statusFilter])
+
+  // Clear selections when filter changes
+  useMemo(() => {
+    setSelectedLeases([])
+  }, [searchTerm, statusFilter])
 
   const totalLeases = data.length
   const activeLeases = data.filter((l) => l.status === "ACTIVE").length
@@ -186,6 +194,22 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
   }
 
   const hasActiveFilters = searchTerm !== "" || statusFilter !== "ALL"
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedLeases(filteredData.map(l => l.id))
+    } else {
+      setSelectedLeases([])
+    }
+  }
+
+  const handleSelectLease = (id: string, checked: boolean) => {
+    if (checked) {
+      setSelectedLeases(prev => [...prev, id])
+    } else {
+      setSelectedLeases(prev => prev.filter(l => l !== id))
+    }
+  }
 
   return (
     <Tabs defaultValue={initialTab} className="space-y-8">
@@ -315,8 +339,14 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
               </p>
             </div>
 
-            {/* Filters Section */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Filters and Bulk Actions Section */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto items-center">
+              {selectedLeases.length > 0 && (
+                <div className="flex items-center gap-3 mr-2 bg-blue-50 px-3 py-1.5 rounded-md border border-blue-100">
+                  <span className="text-sm text-blue-700 whitespace-nowrap">{selectedLeases.length} selected</span>
+                  <BulkNoticeGenerateDialog leases={data.filter(l => selectedLeases.includes(l.id))} />
+                </div>
+              )}
               <div className="relative w-full sm:w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -360,6 +390,12 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
             <Table>
               <TableHeader className="sticky top-0 bg-muted/95 backdrop-blur supports-[backdrop-filter]:bg-muted/80 z-10">
                 <TableRow className="hover:bg-transparent border-b">
+                  <TableHead className="w-12 text-center">
+                    <Checkbox 
+                      checked={selectedLeases.length > 0 && selectedLeases.length === filteredData.length}
+                      onCheckedChange={handleSelectAll}
+                    />
+                  </TableHead>
                   <TableHead className="font-semibold">#</TableHead>
                   <TableHead className="font-semibold">Pond</TableHead>
                   <TableHead className="font-semibold">Party</TableHead>
@@ -373,7 +409,7 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
               <TableBody>
                 {filteredData.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} className="py-16 text-center">
+                    <TableCell colSpan={8} className="py-16 text-center">
                       <div className="flex flex-col items-center text-muted-foreground">
                         <FileText className="h-12 w-12 mb-3 opacity-30" />
                         <p className="text-lg font-medium">No lease records found</p>
@@ -405,8 +441,14 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
                   return (
                     <TableRow
                       key={lease.id}
-                      className="group hover:bg-muted/40 transition-colors duration-150"
+                      className={`group hover:bg-muted/40 transition-colors duration-150 ${selectedLeases.includes(lease.id) ? 'bg-blue-50/30' : ''}`}
                     >
+                      <TableCell className="text-center">
+                        <Checkbox 
+                          checked={selectedLeases.includes(lease.id)}
+                          onCheckedChange={(checked) => handleSelectLease(lease.id, checked as boolean)}
+                        />
+                      </TableCell>
                       <TableCell className="font-mono text-sm">{index + 1}</TableCell>
 
                       {/* Pond Column */}
