@@ -171,11 +171,10 @@ export function LeaseAgreementPrint({ lease }: LeaseAgreementPrintProps) {
           <div className="section">
             <p>
               This agreement is made on this{" "}
-              <strong>{formatDate(new Date())}</strong>{" "}
-              between the <strong>{gpname}</strong> (hereinafter referred to as
-              the &apos;Lessor&apos;) and{" "}
-              <strong>{lease.leasePartyName}</strong> (hereinafter referred to
-              as the &apos;Lessee&apos;).
+              <strong>{formatDate(new Date())}</strong> between the{" "}
+              <strong>{gpname}</strong> (hereinafter referred to as the
+              &apos;Lessor&apos;) and <strong>{lease.leasePartyName}</strong>{" "}
+              (hereinafter referred to as the &apos;Lessee&apos;).
             </p>
           </div>
 
@@ -201,7 +200,16 @@ export function LeaseAgreementPrint({ lease }: LeaseAgreementPrintProps) {
                 </tr>
                 <tr>
                   <td>Address</td>
-                  <td>{lease.leasePartyAddress || "N/A"}</td>
+                  <td>
+                    {[
+                      lease.leasePartyAddressLine1,
+                      lease.leasePartyAddressLine2,
+                      lease.leasePartyCity,
+                      lease.leasePartyPin,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -237,20 +245,17 @@ export function LeaseAgreementPrint({ lease }: LeaseAgreementPrintProps) {
               <tbody>
                 <tr>
                   <td>Start Date</td>
-                  <td>
-                    {formatDate(new Date(lease.leaseStartDate))}
-                  </td>
+                  <td>{formatDate(new Date(lease.leaseStartDate))}</td>
                 </tr>
                 <tr>
                   <td>End Date</td>
-                  <td>
-                    {formatDate(new Date(lease.leaseEndDate))}
-                  </td>
+                  <td>{formatDate(new Date(lease.leaseEndDate))}</td>
                 </tr>
                 <tr>
                   <td>Lease Duration</td>
                   <td>
-                    {lease.leasePeriod} Year{parseInt(lease.leasePeriod) > 1 ? "s" : ""}
+                    {lease.leasePeriod} Year
+                    {parseInt(lease.leasePeriod) > 1 ? "s" : ""}
                   </td>
                 </tr>
                 <tr>

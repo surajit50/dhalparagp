@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Printer, FileText } from "lucide-react";
-import { addYears, getYear } from "date-fns";
+import { addYears, getYear, differenceInYears } from "date-fns";
 import { formatDate } from "@/utils/utils";
 import { gpname, gpaddress } from "@/constants/gpinfor";
 
@@ -126,7 +126,10 @@ export function PendingListPrint({ leases }: PendingListPrintProps) {
     currency: "INR",
   });
 
-  const totalPending = pendingLeases.reduce((sum, l) => sum + l.pendingAmount, 0);
+  const totalPending = pendingLeases.reduce(
+    (sum, l) => sum + l.pendingAmount,
+    0,
+  );
 
   return (
     <>
@@ -168,12 +171,27 @@ export function PendingListPrint({ leases }: PendingListPrintProps) {
             <tbody>
               {pendingLeases.map((lease, index) => {
                 const totalPaid = Number(lease.paidAmount) || 0;
-                const yearlyAmount = Number(lease.leaseAmountYearly) || 0;
+                const totalAmount = Number(lease.totalAmount) || 0;
+
+                // Calculate actual lease years from start and end dates
+                const startDate = new Date(lease.leaseStartDate);
+                const endDate = new Date(lease.leaseEndDate);
+                let leaseYears = differenceInYears(endDate, startDate);
+
+                // If differenceInYears returns 0 (less than a full year), count it as 1
+                if (leaseYears <= 0) {
+                  leaseYears = 1;
+                }
+
+                // Calculate yearly amount (total / number of years)
+                const yearlyAmount =
+                  leaseYears > 0 ? totalAmount / leaseYears : 0;
+
                 let remainingPaid = totalPaid;
 
                 const breakdown = [];
-                for (let i = 0; i < parseInt(lease.leasePeriod || "1"); i++) {
-                  const yearStart = addYears(new Date(lease.leaseStartDate), i);
+                for (let i = 0; i < leaseYears; i++) {
+                  const yearStart = addYears(startDate, i);
                   const paidForThisYear = Math.min(remainingPaid, yearlyAmount);
                   remainingPaid -= paidForThisYear;
                   const pendingForYear = yearlyAmount - paidForThisYear;
@@ -207,7 +225,9 @@ export function PendingListPrint({ leases }: PendingListPrintProps) {
                       <br />
                       {formatDate(new Date(lease.leaseEndDate))}
                     </td>
-                    <td className="text-right">{currency.format(yearlyAmount)}</td>
+                    <td className="text-right">
+                      {currency.format(yearlyAmount)}
+                    </td>
                     <td className="text-right">{currency.format(totalPaid)}</td>
                     <td className="text-right font-bold">
                       {currency.format(lease.pendingAmount)}

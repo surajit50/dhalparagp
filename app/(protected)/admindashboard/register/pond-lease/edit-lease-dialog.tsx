@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addYears } from "date-fns";
+import { addYears, differenceInYears } from "date-fns";
+import { formatDate } from "@/utils/utils";
 
 import {
   Dialog,
@@ -28,17 +29,34 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-import { FileEdit, Loader2 } from "lucide-react";
+import { FileEdit, Loader2, CalendarIcon, CheckCircle2 } from "lucide-react";
 
 import { PondLeaseSchema, PondLeaseFormValues } from "./schema";
 import { updatePondLease } from "./actions";
 
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export function EditLeaseDialog({ lease }: { lease: any }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  // Calculate lease years from existing lease data
+  const existingLeaseYears =
+    Math.round(
+      differenceInYears(
+        new Date(lease.leaseEndDate),
+        new Date(lease.leaseStartDate),
+      ),
+    ) || 1;
 
   const form = useForm<PondLeaseFormValues>({
     resolver: zodResolver(PondLeaseSchema),
@@ -51,12 +69,13 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
       leasePartyAddressLine2: lease.leasePartyAddressLine2 || "",
       leasePartyCity: lease.leasePartyCity || "",
       leasePartyPin: lease.leasePartyPin || "",
-      leaseAmountYearly: lease.totalAmount || (lease.leaseAmountYearly * (lease.leaseYears || 1)),
+      leaseAmountYearly:
+        lease.totalAmount || lease.leaseAmountYearly * existingLeaseYears,
       leaseStartDate: new Date(lease.leaseStartDate),
-      leasePeriod: (lease.leaseYears === 1 ||
-      lease.leaseYears === 2 ||
-      lease.leaseYears === 3
-        ? String(lease.leaseYears)
+      leasePeriod: (existingLeaseYears === 1 ||
+      existingLeaseYears === 2 ||
+      existingLeaseYears === 3
+        ? String(existingLeaseYears)
         : "1") as "1" | "2" | "3",
       remarks: lease.remarks || "",
     },
@@ -64,19 +83,20 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
 
   const leasePeriod = form.watch("leasePeriod");
   const yearlyAmount = form.watch("leaseAmountYearly");
+  const leaseStartDate = form.watch("leaseStartDate");
 
   const leaseYears = parseInt(leasePeriod || "1");
 
   const totalLeaseAmount = yearlyAmount || 0;
   const actualYearlyAmount = leaseYears > 0 ? totalLeaseAmount / leaseYears : 0;
 
+  const calculatedEndDate = leaseStartDate
+    ? addYears(leaseStartDate, leaseYears)
+    : undefined;
+
   const onSubmit = (values: PondLeaseFormValues) => {
     startTransition(() => {
       try {
-        const calculatedEndDate = values.leaseStartDate
-          ? addYears(values.leaseStartDate, parseInt(values.leasePeriod))
-          : undefined;
-
         updatePondLease(lease.id, {
           ...values,
           leaseAmountYearly: actualYearlyAmount,
@@ -87,7 +107,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
 
         toast.success("Pond lease updated successfully");
         setOpen(false);
-      } catch (error) {
+      } catch {
         toast.error("Failed to update pond lease");
       }
     });
@@ -129,13 +149,139 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
 
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">
-                    Total Amount
+                    Current Total Amount
                   </p>
                   <p className="text-sm font-bold text-orange-600">
-                    ₹{(lease.totalAmount || (lease.leaseAmountYearly * (lease.leaseYears || 1))).toLocaleString()}
+                    ₹{lease.totalAmount.toLocaleString()}
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Lease Terms */}
+            <div className="bg-muted/40 p-4 rounded-lg space-y-4">
+              <h3 className="text-sm font-semibold">Lease Terms</h3>
+
+              <FormField
+                control={form.control}
+                name="leaseAmountYearly"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Total Lease Amount (₹)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min={0}
+                        className="bg-background font-medium text-lg"
+                        placeholder="e.g. 5000"
+                        value={field.value || ""}
+                        onChange={(e) =>
+                          field.onChange(Number(e.target.value) || 0)
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="leaseStartDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Start Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "pl-3 text-left font-normal bg-background",
+                                !field.value && "text-muted-foreground",
+                              )}
+                            >
+                              {field.value ? (
+                                formatDate(field.value)
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            captionLayout="dropdown-buttons"
+                            fromYear={1900}
+                            toYear={2050}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="leasePeriod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Lease Duration</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex gap-6 pt-2"
+                        >
+                          {["1", "2", "3"].map((year) => (
+                            <FormItem
+                              key={year}
+                              className="flex items-center space-x-2"
+                            >
+                              <FormControl>
+                                <RadioGroupItem value={year} />
+                              </FormControl>
+                              <FormLabel className="font-normal cursor-pointer">
+                                {year} Year
+                              </FormLabel>
+                            </FormItem>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {leaseYears > 0 && calculatedEndDate && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-blue-600 mt-0.5" />
+                  <div>
+                    <div className="font-semibold text-blue-800 dark:text-blue-300">
+                      Lease Summary
+                    </div>
+                    <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">
+                      Lease Period: {leaseYears} Year{leaseYears > 1 ? "s" : ""}
+                    </div>
+                    {totalLeaseAmount > 0 && (
+                      <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-1">
+                        Total Lease Amount: ₹{totalLeaseAmount.toLocaleString()}
+                      </div>
+                    )}
+                    <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">
+                      End Date: {formatDate(calculatedEndDate)}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Party Details */}
@@ -181,7 +327,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                 name="leasePartyFatherName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Father&apos;s Name</FormLabel>
+                    <FormLabel>Father's Name</FormLabel>
                     <FormControl>
                       <Input placeholder="Father's Name" {...field} />
                     </FormControl>

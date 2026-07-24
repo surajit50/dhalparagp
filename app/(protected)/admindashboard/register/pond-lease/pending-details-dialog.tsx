@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { addYears, getYear } from "date-fns";
+import { addYears, getYear, differenceInYears } from "date-fns";
 import { Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,19 +31,21 @@ export function PendingDetailsDialog({ lease }: PendingDetailsDialogProps) {
   });
 
   const totalPaidAcrossAllYears = Number(lease.paidAmount) || 0;
-  const yearlyAmount = Number(lease.leaseAmountYearly) || 0;
-  let remainingPaidAmount = totalPaidAcrossAllYears;
+  const totalAmount = Number(lease.totalAmount) || 0;
 
-  // Handle leasePeriod which might be a string like "3" or "3 + 1 Year"
-  // We need to extract the total number of years for the breakdown
+  // Calculate actual lease years from start and end dates
   const leaseStartDate = new Date(lease.leaseStartDate);
   const leaseEndDate = new Date(lease.leaseEndDate);
+  let totalYears = differenceInYears(leaseEndDate, leaseStartDate);
 
-  // Calculate total years based on start and end date for a more accurate breakdown
-  const totalYears = Math.ceil(
-    (leaseEndDate.getTime() - leaseStartDate.getTime()) /
-      (1000 * 60 * 60 * 24 * 365.25),
-  );
+  // If differenceInYears returns 0 (less than a full year), count it as 1
+  if (totalYears <= 0) {
+    totalYears = 1;
+  }
+
+  // Calculate correct yearly amount (total / number of years)
+  const yearlyAmount = totalYears > 0 ? totalAmount / totalYears : 0;
+  let remainingPaidAmount = totalPaidAcrossAllYears;
 
   const yearlyBreakdown = Array.from({ length: totalYears }, (_, i) => {
     const yearStart = addYears(leaseStartDate, i);

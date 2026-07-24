@@ -137,28 +137,37 @@ export async function createPondLease(data: PondLeaseFormValues) {
 export async function updatePondLease(id: string, data: PondLeaseFormValues) {
   const validated = PondLeaseSchema.parse(data);
 
-  const {
-    leasePartyName,
-    leasePartyMobile,
-    leasePartyFatherName,
-    leasePartyAddressLine1,
-    leasePartyAddressLine2,
-    leasePartyCity,
-    leasePartyPin,
-    remarks,
-  } = validated;
+  // Get the current lease to calculate pending amount correctly
+  const currentLease = await db.pondLease.findUnique({
+    where: { id },
+  });
+
+  if (!currentLease) {
+    throw new Error("Lease not found");
+  }
+
+  // Calculate new pending amount (new total - paid amount)
+  const newPendingAmount = (validated.totalAmount || currentLease.totalAmount) - currentLease.paidAmount;
+
+  // Calculate lease years
+  const leaseYears = validated.leaseYears || parseInt(validated.leasePeriod) || 1;
 
   await db.pondLease.update({
     where: { id },
     data: {
-      leasePartyName,
-      leasePartyMobile,
-      leasePartyFatherName,
-      leasePartyAddressLine1,
-      leasePartyAddressLine2,
-      leasePartyCity,
-      leasePartyPin,
-      remarks,
+      leasePartyName: validated.leasePartyName,
+      leasePartyMobile: validated.leasePartyMobile,
+      leasePartyFatherName: validated.leasePartyFatherName,
+      leasePartyAddressLine1: validated.leasePartyAddressLine1,
+      leasePartyAddressLine2: validated.leasePartyAddressLine2,
+      leasePartyCity: validated.leasePartyCity,
+      leasePartyPin: validated.leasePartyPin,
+      remarks: validated.remarks,
+      leaseStartDate: validated.leaseStartDate,
+      leaseEndDate: validated.leaseEndDate,
+      leaseAmountYearly: validated.leaseAmountYearly,
+      totalAmount: validated.totalAmount || currentLease.totalAmount,
+      pendingAmount: Math.max(newPendingAmount, 0),
     },
   });
 
