@@ -70,7 +70,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
       leasePartyCity: lease.leasePartyCity || "",
       leasePartyPin: lease.leasePartyPin || "",
       leaseAmountYearly:
-        lease.totalAmount || lease.leaseAmountYearly * existingLeaseYears,
+        lease.leaseAmountYearly || lease.totalAmount / existingLeaseYears,
       leaseStartDate: new Date(lease.leaseStartDate),
       leasePeriod: (existingLeaseYears === 1 ||
       existingLeaseYears === 2 ||
@@ -99,9 +99,9 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
       try {
         updatePondLease(lease.id, {
           ...values,
-          leaseAmountYearly: actualYearlyAmount,
+          leaseAmountYearly: yearlyAmount || 0,
           leaseEndDate: calculatedEndDate,
-          totalAmount: totalLeaseAmount,
+          totalAmount: (yearlyAmount || 0) * leaseYears,
           leaseYears,
         });
 
@@ -167,7 +167,7 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                 name="leaseAmountYearly"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Total Lease Amount (₹)</FormLabel>
+                    <FormLabel>Yearly Lease Amount (₹)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -273,7 +273,12 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                     </div>
                     {totalLeaseAmount > 0 && (
                       <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-1">
-                        Total Lease Amount: ₹{totalLeaseAmount.toLocaleString()}
+                        Yearly Amount: ₹{totalLeaseAmount.toLocaleString()}
+                      </div>
+                    )}
+                    {totalLeaseAmount > 0 && (
+                      <div className="text-sm font-semibold text-blue-700 dark:text-blue-400 mt-1">
+                        Total Lease Amount: ₹{(totalLeaseAmount * leaseYears).toLocaleString()}
                       </div>
                     )}
                     <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">

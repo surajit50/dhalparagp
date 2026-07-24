@@ -1,367 +1,352 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { format, addYears, getYear } from "date-fns";
+import { format, addYears, getYear, differenceInYears } from "date-fns";
+import { gpname, gpaddress } from "@/constants/gpinfor";
 
 export const generateLeaseNoticePDF = (lease: any, noticeType: string) => {
   const doc = new jsPDF("p", "mm", "a4");
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 12;
+  const margin = 10;
   const contentWidth = pageWidth - margin * 2;
 
   let y = 10;
 
-  /* ---------- FORMAL HEADER WITH SEAL ---------- */
+  const checkPageBreak = (neededHeight: number) => {
+    if (y + neededHeight > pageHeight - margin) {
+      doc.addPage();
+      y = margin;
+    }
+  };
 
-  // Official seal/emblem placeholder
-  doc.setFillColor(31, 62, 97);
-  doc.circle(margin + 6, y - 2, 2.5, "F");
-
+  /* ---------- FORMAL HEADER ---------- */
   // Main title
   doc.setFont("times", "bold");
-  doc.setFontSize(13);
+  doc.setFontSize(14);
   doc.setTextColor(31, 62, 97);
-  doc.text("NO 3 DHALPARA GRAM PANCHAYAT", pageWidth / 2, y + 2, { align: "center" });
+  doc.text(gpname.toUpperCase(), pageWidth / 2, y, { align: "center" });
 
-  // Subtitle with better spacing
+  // Subtitle
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.5);
-  doc.setTextColor(60, 60, 60);
-  y += 7;
-  doc.text("Vill - Kismatdapat, PO - Trimohini, PS - Hili", pageWidth / 2, y, { align: "center" });
-  y += 3;
-  doc.text("Dist - Dakshin Dinajpur, West Bengal", pageWidth / 2, y, { align: "center" });
-
-  // Contact details with elegant formatting
-  doc.setFontSize(6.5);
-  doc.setTextColor(100, 100, 100);
-  y += 3;
-  doc.text("admin@dhalparagp.in", pageWidth / 2, y, { align: "center" });
-
-  // Bottom decorative line
-  y += 4;
-  doc.setDrawColor(31, 62, 97);
-  doc.setLineWidth(0.8);
-  doc.line(margin, y, pageWidth - margin, y);
-
-  y += 4;
-
-  /* ---------- OFFICIAL NOTICE HEADER ---------- */
-  doc.setFont("helvetica", "bold");
   doc.setFontSize(9);
-  doc.setTextColor(31, 62, 97);
-  doc.text("OFFICIAL NOTICE", pageWidth / 2, y, { align: "center" });
+  doc.setTextColor(80, 80, 80);
+  y += 4;
+  doc.text(gpaddress, pageWidth / 2, y, { align: "center" });
 
-  doc.setDrawColor(200, 200, 200);
-  doc.setLineWidth(0.4);
-  doc.line(pageWidth / 2 - 20, y + 1.5, pageWidth / 2 + 20, y + 1.5);
-
-  y += 5.5;
-
-  /* ---------- MEMO & DATE (formal layout) ---------- */
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  doc.setTextColor(40, 40, 40);
-  doc.text(`Memo No.`, margin, y);
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  doc.text(`: ${lease.memoNo || "_______________"}`, margin + 25, y);
-
-  doc.text(`Date`, pageWidth - margin - 25, y);
-  doc.text(`: ${format(new Date(), "dd/MM/yyyy")}`, pageWidth - margin - 20, y, { align: "left" });
+  // Decorative line
+  y += 3;
+  doc.setDrawColor(31, 62, 97);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, pageWidth - margin, y);
 
   y += 5;
 
-  /* ---------- RECIPIENT ADDRESS (formal) ---------- */
-  y += 2;
+  /* ---------- OFFICIAL NOTICE ---------- */
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(8.5);
-  doc.setTextColor(40, 40, 40);
+  doc.setFontSize(11);
+  doc.setTextColor(31, 62, 97);
+  doc.text("OFFICIAL NOTICE", pageWidth / 2, y, { align: "center" });
+
+  y += 5;
+
+  /* ---------- MEMO & DATE ---------- */
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
+  doc.text("Memo No.", margin, y);
+  
+  doc.setFont("helvetica", "normal");
+  doc.text(`: GP/Lease/${getYear(new Date())}/${lease.id.slice(-4)}`, margin + 20, y);
+  
+  doc.setFont("helvetica", "bold");
+  doc.text("Date", pageWidth - margin - 40, y);
+  
+  doc.setFont("helvetica", "normal");
+  doc.text(`: ${format(new Date(), "dd/MM/yyyy")}`, pageWidth - margin - 30, y);
+
+  y += 6;
+
+  /* ---------- RECIPIENT ADDRESS ---------- */
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.setTextColor(50, 50, 50);
   doc.text("To,", margin, y);
 
   y += 4;
   doc.setFont("times", "bold");
-  doc.setFontSize(9.5);
+  doc.setFontSize(10);
   doc.setTextColor(31, 62, 97);
-  const partyNameLines = doc.splitTextToSize(lease.leasePartyName || "", contentWidth - 4);
+  
+  const partyNameLines = doc.splitTextToSize(lease.leasePartyName || "", contentWidth);
   doc.text(partyNameLines, margin, y);
-  let lineY = y + partyNameLines.length * 4;
+  let lineY = y + (partyNameLines.length * 4);
 
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.5);
+  doc.setFontSize(9);
   doc.setTextColor(60, 60, 60);
 
-  // Function to handle null or "null" string
   const isValid = (val: any) => val && val !== "null" && val !== "undefined";
 
   if (isValid(lease.leasePartyFatherName)) {
-    const fatherNameLines = doc.splitTextToSize(`S/O - ${lease.leasePartyFatherName}`, contentWidth - 4);
+    const fatherNameLines = doc.splitTextToSize(`S/o ${lease.leasePartyFatherName}`, contentWidth);
     doc.text(fatherNameLines, margin, lineY);
-    lineY += fatherNameLines.length * 3.5;
+    lineY += fatherNameLines.length * 4;
   }
 
-  // Address details
   if (isValid(lease.leasePartyAddressLine1)) {
-    const addr1Lines = doc.splitTextToSize(lease.leasePartyAddressLine1, contentWidth - 4);
+    const addr1Lines = doc.splitTextToSize(lease.leasePartyAddressLine1, contentWidth);
     doc.text(addr1Lines, margin, lineY);
-    lineY += addr1Lines.length * 3.5;
+    lineY += addr1Lines.length * 4;
   }
 
   if (isValid(lease.leasePartyAddressLine2)) {
-    const addr2Lines = doc.splitTextToSize(lease.leasePartyAddressLine2, contentWidth - 4);
+    const addr2Lines = doc.splitTextToSize(lease.leasePartyAddressLine2, contentWidth);
     doc.text(addr2Lines, margin, lineY);
-    lineY += addr2Lines.length * 3.5;
+    lineY += addr2Lines.length * 4;
   }
 
   if (isValid(lease.leasePartyCity)) {
-    const addressLines = doc.splitTextToSize(lease.leasePartyCity, contentWidth - 4);
-    doc.text(addressLines, margin, lineY);
-    lineY += addressLines.length * 3.5;
+    const cityLine = doc.splitTextToSize(`District: ${lease.leasePartyCity}`, contentWidth);
+    doc.text(cityLine, margin, lineY);
+    lineY += cityLine.length * 4;
   }
 
   if (isValid(lease.leasePartyPin)) {
-    doc.text(`PIN - ${lease.leasePartyPin}`, margin, lineY);
-    lineY += 3;
+    doc.text(`PIN: ${lease.leasePartyPin}`, margin, lineY);
+    lineY += 4;
   }
 
   y = lineY + 4;
 
-  /* ---------- SUBJECT WITH FORMAL STYLING ---------- */
+  /* ---------- SUBJECT ---------- */
   let subject = "";
   let body = "";
 
-  if (noticeType === "reminder") {
-    subject = "RE: REMINDER FOR OUTSTANDING LEASE PAYMENT";
-    body = `It is hereby notified that an outstanding amount of Rs. ${lease.pendingAmount} remains unpaid for the lease of pond "${lease.pond.name}" located at ${lease.pond.location}. You are required to remit the pending dues with immediate effect to avoid further action by this office.`;
-  } else if (noticeType === "due") {
-    subject = "RE: NOTICE FOR DUE LEASE PAYMENT";
-    body = `Notice is hereby given that a payment for the lease of pond "${lease.pond.name}" has become due. You are instructed to effect the payment on or before the due date to maintain the validity of your lease agreement.`;
-  } else {
-    subject = "RE: LEASE INFORMATION & PARTICULARS";
-    body = `Please find below the important particulars and details pertaining to your lease of pond "${lease.pond.name}". Kindly verify all information and report any discrepancies at the earliest.`;
+  const currencyFormatter = new Intl.NumberFormat("en-IN", {
+    maximumFractionDigits: 0,
+  });
+
+  if (noticeType === "REMINDER") {
+    subject = "Subject: Reminder for Outstanding Lease Payment";
+    body = `This is to formally remind you about the outstanding payment for the lease of Pond "${lease.pond.name}" located at ${lease.pond.location}.`;
+  } else if (noticeType === "EXPIRY") {
+    subject = "Subject: Intimation of Lease Agreement Expiry";
+    body = `This is to inform you that your lease agreement for Pond "${lease.pond.name}" located at ${lease.pond.location} is expiring on ${format(new Date(lease.leaseEndDate), "dd/MM/yyyy")}.`;
   }
 
   doc.setFont("times", "bold");
-  doc.setFontSize(8.5);
+  doc.setFontSize(10);
   doc.setTextColor(31, 62, 97);
   const subjectLines = doc.splitTextToSize(subject, contentWidth);
-  doc.text(subjectLines, margin, y);
-  y += 5;
+  checkPageBreak(subjectLines.length * 4);
+  doc.text(subjectLines, pageWidth / 2, y, { align: "center" });
+  y += (subjectLines.length * 4) + 4;
 
+  /* ---------- BODY ---------- */
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
+  doc.setFontSize(9);
   doc.setTextColor(40, 40, 40);
+  checkPageBreak(4);
   doc.text("Dear Sir/Madam,", margin, y);
   y += 4;
 
   const bodyLines = doc.splitTextToSize(body, contentWidth);
+  checkPageBreak(bodyLines.length * 4);
   doc.text(bodyLines, margin, y);
-  y += bodyLines.length * 3.8 + 3;
+  y += (bodyLines.length * 4) + 3;
 
-  /* ---------- LEASE SUMMARY TABLE (FORMAL) ---------- */
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(8);
-  doc.setTextColor(31, 62, 97);
-  doc.text("Summary of Lease Account", margin, y);
-  y += 3;
+  if (noticeType === "REMINDER") {
+    const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any further action.`;
+    const pendingBodyLines = doc.splitTextToSize(pendingBody, contentWidth);
+    checkPageBreak(pendingBodyLines.length * 4);
+    doc.text(pendingBodyLines, margin, y);
+    y += (pendingBodyLines.length * 4) + 4;
 
-  autoTable(doc, {
-    startY: y,
-    margin: { left: margin, right: margin },
-    head: [["S. No", "Property Details", "Total Lease Amount", "Amount Paid", "Outstanding Balance"]],
-    body: [
-      [
-        "1",
-        `${lease.pond.name}\n${lease.pond.location}`,
-        `Rs. ${lease.totalAmount}`,
-        `Rs. ${lease.paidAmount}`,
-        `Rs. ${lease.pendingAmount || 0}`,
-      ],
-    ],
-    theme: "grid",
-    headStyles: {
-      fillColor: [31, 62, 97],
-      textColor: [255, 255, 255],
-      fontStyle: "bold",
-      fontSize: 7.5,
-      halign: "center",
-      lineColor: [31, 62, 97],
-    },
-    columnStyles: {
-      0: { cellWidth: 10, halign: "center" },
-      1: { cellWidth: "auto" },
-      2: { halign: "right" },
-      3: { halign: "right" },
-      4: { halign: "right" },
-    },
-    styles: {
-      fontSize: 7.5,
-      cellPadding: 2,
-      overflow: "linebreak",
-      textColor: [40, 40, 40],
-      lineColor: [200, 200, 200],
-    },
-    alternateRowStyles: {
-      fillColor: [248, 248, 248],
-    },
-    didDrawCell: (data) => {
-      if (data.section === "body" && data.column.index === 4) {
-        const pending = lease.pendingAmount;
-        if (pending > 0) {
-          doc.setTextColor(180, 30, 40);
-          doc.setFont("helvetica", "bold");
-        } else {
-          doc.setTextColor(40, 100, 60);
-          doc.setFont("helvetica", "bold");
-        }
-      }
-    },
-  });
-
-  y = (doc as any).lastAutoTable.finalY + 4;
-
-  /* ---------- YEAR-WISE BREAKDOWN (FORMAL) ---------- */
-  const totalPaidAcrossAllYears = Number(lease.paidAmount) || 0;
-  const yearlyAmount = Number(lease.leaseAmountYearly) || 0;
-  let remainingPaidAmount = totalPaidAcrossAllYears;
-
-  const leaseStartDate = new Date(lease.leaseStartDate);
-  const leaseEndDate = new Date(lease.leaseEndDate);
-
-  const totalYears = Math.ceil(
-    (leaseEndDate.getTime() - leaseStartDate.getTime()) /
-      (1000 * 60 * 60 * 24 * 365.25)
-  );
-
-  const yearlyBreakdown = Array.from({ length: totalYears }, (_, i) => {
-    const yearStart = addYears(leaseStartDate, i);
-    const paidForThisYear = Math.min(remainingPaidAmount, yearlyAmount);
-    remainingPaidAmount -= paidForThisYear;
-    const pendingForYear = yearlyAmount - paidForThisYear;
-
-    return {
-      yearLabel: `Year ${i + 1}`,
-      calendarYear: getYear(yearStart),
-      due: yearlyAmount,
-      paid: paidForThisYear,
-      pending: pendingForYear,
-    };
-  });
-
-  if (yearlyBreakdown.length > 0) {
-    y += 2;
+    /* ---------- LEASE SUMMARY TABLE ---------- */
+    checkPageBreak(12);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(8);
+    doc.setFontSize(9);
     doc.setTextColor(31, 62, 97);
-    doc.text("Year-wise Payment Details", margin, y);
+    doc.text("Summary of Lease Account", margin, y);
     y += 3;
 
     autoTable(doc, {
       startY: y,
       margin: { left: margin, right: margin },
-      head: [["Year", "Financial Year", "Annual Due (Rs.)", "Amount Paid (Rs.)", "Outstanding (Rs.)"]],
-      body: yearlyBreakdown.map(item => [
-        item.yearLabel,
-        item.calendarYear.toString(),
-        item.due.toFixed(2),
-        item.paid.toFixed(2),
-        item.pending.toFixed(2),
-      ]),
+      head: [["Sl. No.", "Particulars", "Amount (Rs.)"]],
+      body: [
+        ["1", "Pond Name", lease.pond.name],
+        ["2", "Location", lease.pond.location],
+        ["3", "Total Lease Amount", currencyFormatter.format(lease.totalAmount)],
+        ["4", "Amount Paid", currencyFormatter.format(lease.paidAmount)],
+        ["5", "Outstanding Balance", currencyFormatter.format(lease.pendingAmount)],
+      ],
       theme: "grid",
       headStyles: {
         fillColor: [31, 62, 97],
         textColor: [255, 255, 255],
         fontStyle: "bold",
-        fontSize: 7,
-        lineColor: [31, 62, 97],
+        fontSize: 8,
+        halign: "left",
       },
       columnStyles: {
-        0: { cellWidth: 12, halign: "center" },
-        1: { cellWidth: 20, halign: "center" },
-        2: { halign: "right" },
-        3: { halign: "right" },
-        4: { halign: "right" },
+        0: { cellWidth: 15, halign: "center" },
+        1: { cellWidth: "auto", halign: "left" },
+        2: { cellWidth: 40, halign: "right" },
       },
       styles: {
-        fontSize: 7,
-        cellPadding: 1.5,
+        fontSize: 8,
+        cellPadding: 2,
+        overflow: "linebreak",
         textColor: [40, 40, 40],
         lineColor: [200, 200, 200],
       },
-      didDrawCell: (data) => {
-        if (data.section === "body" && data.column.index === 4) {
-          const row = yearlyBreakdown[data.row.index];
-          if (row.pending > 0) {
-            doc.setTextColor(180, 30, 40);
-            doc.setFont("helvetica", "bold");
-          } else {
-            doc.setTextColor(40, 100, 60);
-            doc.setFont("helvetica", "bold");
-          }
-        }
+      alternateRowStyles: {
+        fillColor: [248, 250, 252],
       },
     });
 
-    y = (doc as any).lastAutoTable.finalY + 3;
+    y = (doc as any).lastAutoTable.finalY + 5;
+
+    /* ---------- YEAR-WISE BREAKDOWN ---------- */
+    const totalPaidAcrossAllYears = Number(lease.paidAmount) || 0;
+    const totalAmount = Number(lease.totalAmount) || 0;
+    let remainingPaidAmount = totalPaidAcrossAllYears;
+
+    const leaseStartDate = new Date(lease.leaseStartDate);
+    const leaseEndDate = new Date(lease.leaseEndDate);
+
+    let totalYears = differenceInYears(leaseEndDate, leaseStartDate);
+    if (totalYears <= 0) {
+      totalYears = 1;
+    }
+
+    const yearlyAmount = totalYears > 0 ? totalAmount / totalYears : 0;
+
+    const yearlyBreakdown = Array.from({ length: totalYears }, (_, i) => {
+      const yearStart = addYears(leaseStartDate, i);
+      const paidForThisYear = Math.min(remainingPaidAmount, yearlyAmount);
+      remainingPaidAmount -= paidForThisYear;
+      const pendingForYear = yearlyAmount - paidForThisYear;
+
+      return {
+        yearLabel: `Year ${i + 1}`,
+        calendarYear: getYear(yearStart),
+        due: yearlyAmount,
+        paid: paidForThisYear,
+        pending: pendingForYear,
+      };
+    });
+
+    if (yearlyBreakdown.length > 0) {
+      checkPageBreak(12);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(9);
+      doc.setTextColor(31, 62, 97);
+      doc.text("Year-wise Payment Details", margin, y);
+      y += 3;
+
+      autoTable(doc, {
+        startY: y,
+        margin: { left: margin, right: margin },
+        head: [["Year", "Financial Year", "Annual Due (Rs.)", "Amount Paid (Rs.)", "Outstanding (Rs.)"]],
+        body: yearlyBreakdown.map(item => [
+          item.yearLabel,
+          item.calendarYear.toString(),
+          currencyFormatter.format(item.due),
+          currencyFormatter.format(item.paid),
+          currencyFormatter.format(item.pending),
+        ]),
+        theme: "grid",
+        headStyles: {
+          fillColor: [31, 62, 97],
+          textColor: [255, 255, 255],
+          fontStyle: "bold",
+          fontSize: 8,
+        },
+        columnStyles: {
+          0: { cellWidth: 20, halign: "center" },
+          1: { cellWidth: 25, halign: "center" },
+          2: { cellWidth: 35, halign: "right" },
+          3: { cellWidth: 35, halign: "right" },
+          4: { cellWidth: 35, halign: "right" },
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+          textColor: [40, 40, 40],
+          lineColor: [200, 200, 200],
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252],
+        },
+      });
+
+      y = (doc as any).lastAutoTable.finalY + 5;
+    }
+
+    /* ---------- IMPORTANT NOTICE ---------- */
+    const noticeText = "Important: Payment of outstanding lease dues is mandatory. Non-compliance may result in cancellation of the lease agreement and/or legal proceedings as per applicable rules and regulations.";
+    const noticeLines = doc.splitTextToSize(noticeText, contentWidth - 6);
+    const noticeHeight = 6 + (noticeLines.length * 4);
+    
+    checkPageBreak(noticeHeight + 4);
+
+    doc.setFillColor(254, 242, 242);
+    doc.setDrawColor(185, 28, 28);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(margin, y, contentWidth, noticeHeight, 2, 2, "FD");
+    
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.setTextColor(185, 28, 28);
+    doc.text("IMPORTANT NOTICE", margin + 3, y + 4);
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(40, 40, 40);
+    doc.text(noticeLines, margin + 3, y + 9);
+    
+    y += noticeHeight + 6;
+  } else {
+    const expiryBody = `You are requested to contact the Gram Panchayat office at the earliest to discuss the renewal process or for any further clarifications.`;
+    const expiryBodyLines = doc.splitTextToSize(expiryBody, contentWidth);
+    checkPageBreak(expiryBodyLines.length * 4);
+    doc.text(expiryBodyLines, margin, y);
+    y += (expiryBodyLines.length * 4) + 6;
   }
 
-  /* ---------- IMPORTANT NOTICE & FOOTER ---------- */
-  y += 2;
-
-  // Check if we need a new page
-  if (y > pageHeight - 28) {
-    doc.addPage();
-    y = 15;
-  }
-
-  // Important notice box
-  doc.setFillColor(248, 240, 235);
-  doc.setDrawColor(180, 30, 40);
-  doc.setLineWidth(0.7);
-  doc.rect(margin, y, contentWidth, 13, "FD");
-
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(7);
-  doc.setTextColor(180, 30, 40);
-  doc.text("IMPORTANT NOTICE", margin + 3, y + 2.5);
-
+  /* ---------- CLOSING ---------- */
+  checkPageBreak(35);
+  
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(6.5);
+  doc.setFontSize(9);
   doc.setTextColor(40, 40, 40);
-  const noticeText = "Payment of outstanding lease dues is mandatory. Non-compliance may result in cancellation of lease and/or legal proceedings as per rules.";
-  const noticeLines = doc.splitTextToSize(noticeText, contentWidth - 6);
-  doc.text(noticeLines, margin + 3, y + 6);
-
-  y += 16;
+  doc.text("Thanking you in anticipation.", margin, y);
+  y += 12;
 
   /* ---------- SIGNATURE SECTION ---------- */
-  const signatureY = y;
-  if (signatureY > pageHeight - 20) {
-    doc.addPage();
-    y = 15;
-  }
-
+  const signatureStartX = pageWidth - margin - 50;
+  
+  doc.text("Yours faithfully,", signatureStartX, y);
+  y += 15;
+  
+  const signatureStartY = y;
+  
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("Pradhan", signatureStartX + 10, signatureStartY);
+  
+  doc.setLineWidth(0.5);
+  doc.setDrawColor(40, 40, 40);
+  doc.line(signatureStartX, signatureStartY + 8, pageWidth - margin, signatureStartY + 8);
+  
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(7.5);
-  doc.setTextColor(40, 40, 40);
-  
-  doc.text("Authorized by:", margin, y);
-  y += 12;
-  doc.line(margin, y, margin + 25, y);
-  y += 1;
-  doc.setFontSize(6);
-  doc.text("(Signature & Seal)", margin, y);
-
-  doc.text("Gram Panchayat Officer", pageWidth - margin - 25, y - 13);
-  y -= 1;
-  doc.line(pageWidth - margin - 25, y, pageWidth - margin, y);
-  y += 1;
-  doc.text("(Dated)", pageWidth - margin - 25, y);
-
-  
+  doc.setFontSize(8);
+  doc.setTextColor(80, 80, 80);
+  doc.text(gpname, signatureStartX, signatureStartY + 12);
 
   /* ---------- SAVE PDF ---------- */
-  doc.save(`Lease_Notice_${lease.leasePartyName}.pdf`);
+  doc.save(`Lease_Notice_${lease.leasePartyName.replace(/\s+/g, "_")}.pdf`);
 };

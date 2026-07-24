@@ -1,10 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { addYears, getYear } from "date-fns";
+import { addYears, getYear, differenceInYears } from "date-fns";
 import { formatDate } from "@/utils/utils";
-import { gpaddress, gpname } from "@/constants/gpinfor";
+import { gpname, gpaddress } from "@/constants/gpinfor";
 
 // Define the structure of the lease data
 export interface PondLease {
@@ -52,13 +51,15 @@ export function PondLeaseNoticePrint({
   );
 
   const yearWisePending = useMemo(() => {
-    const yearlyAmount = Number(lease.leaseAmountYearly) || 0;
+    const totalAmount = Number(lease.totalAmount) || 0;
     let remainingPaidAmount = Number(lease.paidAmount) || 0;
 
-    const totalYears = Math.ceil(
-      (leaseEndDate.getTime() - leaseStartDate.getTime()) /
-        (1000 * 60 * 60 * 24 * 365.25),
-    );
+    let totalYears = differenceInYears(leaseEndDate, leaseStartDate);
+    if (totalYears <= 0) {
+      totalYears = 1;
+    }
+
+    const yearlyAmount = totalYears > 0 ? totalAmount / totalYears : 0;
 
     const result: Record<string, number> = {};
 

@@ -16,7 +16,6 @@ import { PondLeaseNoticePrint } from "./pond-lease-notice-print";
 import { FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateLeaseNoticePDF } from "@/lib/pdf-lib";
-import { addYears, getYear } from "date-fns";
 
 export function NoticeGenerateDialog({ lease }: { lease: any }) {
   const [open, setOpen] = useState(false);
@@ -25,40 +24,7 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
   );
 
   const handleDownload = () => {
-    const leaseStartDate = new Date(lease.leaseStartDate);
-    const leaseEndDate = new Date(lease.leaseEndDate);
-
-    const yearlyAmount = Number(lease.leaseAmountYearly) || 0;
-    let remainingPaidAmount = Number(lease.paidAmount) || 0;
-
-    const totalYears = Math.ceil(
-      (leaseEndDate.getTime() - leaseStartDate.getTime()) /
-        (1000 * 60 * 60 * 24 * 365.25),
-    );
-
-    const yearWisePending: Record<string, number> = {};
-
-    for (let i = 0; i < totalYears; i++) {
-      const yearStart = addYears(leaseStartDate, i);
-      const paidForYear = Math.min(remainingPaidAmount, yearlyAmount);
-      remainingPaidAmount -= paidForYear;
-
-      const pending = yearlyAmount - paidForYear;
-
-      if (pending > 0.01) {
-        yearWisePending[getYear(yearStart)] = pending;
-      }
-    }
-
-    generateLeaseNoticePDF(
-      {
-        ...lease,
-        leaseStartDate,
-        leaseEndDate,
-        yearWisePending,
-      },
-      noticeType,
-    );
+    generateLeaseNoticePDF(lease, noticeType);
   };
 
   return (

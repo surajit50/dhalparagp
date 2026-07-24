@@ -160,9 +160,9 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
 
         createPondLease({
           ...values,
-          leaseAmountYearly: actualYearlyAmount,
+          leaseAmountYearly: yearlyAmount || 0,
           leaseEndDate: calculatedEndDate,
-          totalAmount: totalLeaseAmount,
+          totalAmount: (yearlyAmount || 0) * leaseYears,
           leaseYears,
         });
 
@@ -244,7 +244,10 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                               <SelectItem key={pond.id} value={pond.id}>
                                 {pond.name} — {formatPondLocationDisplay(pond)}
                                 {pond.area ? ` (${pond.area} Decimal` : ""}
-                                {pond.area && formatPondAreaAcre(parsePondAreaDecimal(pond.area))
+                                {pond.area &&
+                                formatPondAreaAcre(
+                                  parsePondAreaDecimal(pond.area),
+                                )
                                   ? ` / ${formatPondAreaAcre(parsePondAreaDecimal(pond.area))}`
                                   : ""}
                                 {pond.area ? ")" : ""}
@@ -260,14 +263,20 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                   {selectedPond && (
                     <div className="rounded-md border border-dashed border-blue-200 bg-blue-50/50 px-4 py-3 text-sm">
                       <div className="flex flex-wrap justify-between gap-2">
-                        <span className="text-slate-600">Pond Area (Decimal / Satak)</span>
+                        <span className="text-slate-600">
+                          Pond Area (Decimal / Satak)
+                        </span>
                         <span className="font-semibold text-slate-900">
-                          {areaDecimal > 0 ? `${areaDecimal} Decimal` : "Not recorded"}
+                          {areaDecimal > 0
+                            ? `${areaDecimal} Decimal`
+                            : "Not recorded"}
                         </span>
                       </div>
                       {areaDecimal > 0 && (
                         <div className="flex flex-wrap justify-between gap-2 mt-1">
-                          <span className="text-slate-600">Total land area</span>
+                          <span className="text-slate-600">
+                            Total land area
+                          </span>
                           <span className="font-semibold text-slate-900">
                             {formatPondAreaAcre(areaDecimal)}
                           </span>
@@ -275,14 +284,16 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                       )}
                       {!areaDecimal && (
                         <p className="mt-2 text-xs text-amber-700">
-                          Add pond area in Decimal from Pond Inventory to calculate between yearly amount and per-decimal rate.
+                          Add pond area in Decimal from Pond Inventory to
+                          calculate between yearly amount and per-decimal rate.
                         </p>
                       )}
                     </div>
                   )}
 
                   <p className="text-xs text-muted-foreground">
-                    Enter either yearly total or rate per decimal — the other value updates automatically using pond area.
+                    Enter either yearly total or rate per decimal — the other
+                    value updates automatically using pond area.
                   </p>
 
                   <div className="grid md:grid-cols-2 gap-4">
@@ -291,7 +302,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                       name="leaseAmountYearly"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Total Lease Amount (₹)</FormLabel>
+                          <FormLabel>Yearly Lease Amount (₹)</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
@@ -332,21 +343,23 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                     </FormItem>
                   </div>
 
-                  {areaDecimal > 0 && yearlyAmount > 0 && ratePerDecimal > 0 && (
-                    <p className="text-sm text-blue-700 font-medium">
-                      {lastEdited === "rate"
-                        ? formatYearlyFromRateCalculation(
-                            areaDecimal,
-                            ratePerDecimal,
-                            yearlyAmount,
-                          ).replace("/year", " total")
-                        : formatRatePerDecimalCalculation(
-                            yearlyAmount,
-                            areaDecimal,
-                            ratePerDecimal,
-                          ).replace(" per year", "")}
-                    </p>
-                  )}
+                  {areaDecimal > 0 &&
+                    yearlyAmount > 0 &&
+                    ratePerDecimal > 0 && (
+                      <p className="text-sm text-blue-700 font-medium">
+                        {lastEdited === "rate"
+                          ? formatYearlyFromRateCalculation(
+                              areaDecimal,
+                              ratePerDecimal,
+                              yearlyAmount,
+                            ).replace("/year", " total")
+                          : formatRatePerDecimalCalculation(
+                              yearlyAmount,
+                              areaDecimal,
+                              ratePerDecimal,
+                            ).replace(" per year", "")}
+                      </p>
+                    )}
                 </div>
               </TabsContent>
 
@@ -361,7 +374,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                         <FormItem>
                           <FormLabel>Party Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Full Name" {...field} className="bg-background" />
+                            <Input
+                              placeholder="Full Name"
+                              {...field}
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -395,7 +412,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                       <FormItem>
                         <FormLabel>Father&apos;s Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Father's Name" {...field} className="bg-background" />
+                          <Input
+                            placeholder="Father's Name"
+                            {...field}
+                            className="bg-background"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -410,7 +431,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                         <FormItem>
                           <FormLabel>Address Line 1</FormLabel>
                           <FormControl>
-                            <Input placeholder="Village/Street" {...field} className="bg-background" />
+                            <Input
+                              placeholder="Village/Street"
+                              {...field}
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -424,7 +449,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                         <FormItem>
                           <FormLabel>Address Line 2</FormLabel>
                           <FormControl>
-                            <Input placeholder="Post Office/Landmark" {...field} className="bg-background" />
+                            <Input
+                              placeholder="Post Office/Landmark"
+                              {...field}
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -440,7 +469,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                         <FormItem>
                           <FormLabel>City/Town</FormLabel>
                           <FormControl>
-                            <Input placeholder="City/Town" {...field} className="bg-background" />
+                            <Input
+                              placeholder="City/Town"
+                              {...field}
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -454,7 +487,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                         <FormItem>
                           <FormLabel>PIN Code</FormLabel>
                           <FormControl>
-                            <Input placeholder="PIN Code" {...field} className="bg-background" />
+                            <Input
+                              placeholder="PIN Code"
+                              {...field}
+                              className="bg-background"
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -480,9 +517,8 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                               <FormControl>
                                 <Button
                                   variant="outline"
-                                  disabled
                                   className={cn(
-                                    "pl-3 text-left font-normal bg-muted",
+                                    "pl-3 text-left font-normal bg-background",
                                     !field.value && "text-muted-foreground",
                                   )}
                                 >
@@ -503,7 +539,6 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                                 toYear={2050}
                                 selected={field.value}
                                 onSelect={field.onChange}
-                                disabled
                                 initialFocus
                               />
                             </PopoverContent>
@@ -557,11 +592,18 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                           Summary
                         </div>
                         <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">
-                          Lease Period: {leaseYears} Year{leaseYears > 1 ? "s" : ""}
+                          Lease Period: {leaseYears} Year
+                          {leaseYears > 1 ? "s" : ""}
                         </div>
                         {totalLeaseAmount > 0 && (
                           <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-1">
-                            Total Lease Amount: ₹{totalLeaseAmount.toLocaleString()}
+                            Yearly Amount: ₹{totalLeaseAmount.toLocaleString()}
+                          </div>
+                        )}
+                        {totalLeaseAmount > 0 && (
+                          <div className="text-sm font-semibold text-blue-700 dark:text-blue-400 mt-1">
+                            Total Lease Amount: ₹
+                            {(totalLeaseAmount * leaseYears).toLocaleString()}
                           </div>
                         )}
                       </div>
@@ -575,7 +617,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                       <FormItem>
                         <FormLabel>Remarks (Optional)</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Additional notes..." {...field} className="bg-background resize-none h-20" />
+                          <Textarea
+                            placeholder="Additional notes..."
+                            {...field}
+                            className="bg-background resize-none h-20"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -586,7 +632,11 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
             </Tabs>
 
             <DialogFooter className="pt-2 border-t mt-6">
-              <Button type="submit" disabled={isPending} className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white min-w-[150px]">
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white min-w-[150px]"
+              >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Submit & Save Lease
               </Button>
