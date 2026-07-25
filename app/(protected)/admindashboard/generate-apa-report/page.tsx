@@ -34,7 +34,21 @@ const FINANCIAL_YEARS = [
   { label: "2025-2026", start: "2025-04-01", end: "2026-03-31" },
 ];
 
-function processWorksToReportData(works: any[]): ReportDataItem[] {
+// Helper function to get payment period (April-June) of the financial year
+function getPaymentPeriod(fyStart: string) {
+  const startDate = new Date(fyStart);
+  const year = startDate.getFullYear();
+  // Payment period is April-June of the financial year
+  const paymentStart = new Date(`${year}-04-01`);
+  const paymentEnd = new Date(`${year}-06-30`);
+  return { paymentStart, paymentEnd };
+}
+
+function processWorksToReportData(
+  works: any[],
+  paymentStart: Date,
+  paymentEnd: Date
+): ReportDataItem[] {
   return works.map((work, index) => {
     // Determine source of fund based on scheme name
     let sourceOfFund = "OSR";
@@ -58,10 +72,6 @@ function processWorksToReportData(works: any[]): ReportDataItem[] {
 
     // Get work order issue date
     const workOrderIssueDate = work.AwardofContract?.workordeermemodate ?? null;
-
-    // Payment period (adjust based on selected year)
-    const paymentStart = new Date("2024-04-01");
-    const paymentEnd = new Date("2025-06-30");
 
     // Calculate payments in period and after period
     const allPayments = work.paymentDetails || [];
@@ -124,8 +134,13 @@ export default function FinancialReportPage() {
   const [selectedYear, setSelectedYear] = useState(FINANCIAL_YEARS[2]); // Default to 2025-2026
   const [reportData, setReportData] = useState<ReportDataItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [paymentPeriod, setPaymentPeriod] = useState({ paymentStart: new Date(), paymentEnd: new Date() });
 
   useEffect(() => {
+    // Calculate payment period based on selected year
+    const period = getPaymentPeriod(selectedYear.start);
+    setPaymentPeriod(period);
+
     async function fetchData() {
       setLoading(true);
       try {
@@ -133,7 +148,9 @@ export default function FinancialReportPage() {
           `/api/financial-report?fyStart=${selectedYear.start}&fyEnd=${selectedYear.end}`
         );
         const works = await res.json();
-        setReportData(processWorksToReportData(works));
+        setReportData(
+          processWorksToReportData(works, period.paymentStart, period.paymentEnd)
+        );
       } catch (error) {
         console.error("Failed to fetch report data:", error);
       } finally {
@@ -235,6 +252,8 @@ export default function FinancialReportPage() {
     return item && shouldHighlightRow(item);
   });
 
+  const paymentPeriodText = `${format(paymentPeriod.paymentStart, "MMM yyyy")} - ${format(paymentPeriod.paymentEnd, "MMM yyyy")}`;
+
   if (loading) {
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -252,8 +271,7 @@ export default function FinancialReportPage() {
           Work Order Financial Report
         </h1>
         <p className="text-muted-foreground">
-          Financial Year {selectedYear.label} • Payment Period: April 2024 -
-          June 2025
+          Financial Year {selectedYear.label} • Payment Period: {paymentPeriodText}
         </p>
       </div>
 
@@ -411,7 +429,7 @@ export default function FinancialReportPage() {
                   <TableHead>Issue Date</TableHead>
                   <TableHead className="text-right">Order Value</TableHead>
                   <TableHead className="text-right">
-                    Gross Bills (Apr 24-Jun 25)
+                    Gross Bills ({format(paymentPeriod.paymentStart, "MMM yy")}-{format(paymentPeriod.paymentEnd, "MMM yy")})
                   </TableHead>
                   <TableHead>Completion Date</TableHead>
                   <TableHead>Status</TableHead>
