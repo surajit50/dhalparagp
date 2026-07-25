@@ -49,85 +49,92 @@ function processWorksToReportData(
   paymentStart: Date,
   paymentEnd: Date
 ): ReportDataItem[] {
-  return works.map((work, index) => {
-    // Determine source of fund based on scheme name
-    let sourceOfFund = "OSR";
-    const schemeName =
-      work.ApprovedActionPlanDetails?.schemeName?.toLowerCase() || "";
-    if (schemeName.includes("sfc")) sourceOfFund = "SFC";
-    else if (schemeName.includes("cfc")) sourceOfFund = "CFC";
+  return works
+    .filter((work) => {
+      // Filter out APAS scheme
+      const schemeName =
+        work.ApprovedActionPlanDetails?.schemeName?.toLowerCase() || "";
+      return !schemeName.includes("apas");
+    })
+    .map((work, index) => {
+      // Determine source of fund based on scheme name
+      let sourceOfFund = "OSR";
+      const schemeName =
+        work.ApprovedActionPlanDetails?.schemeName?.toLowerCase() || "";
+      if (schemeName.includes("sfc")) sourceOfFund = "SFC";
+      else if (schemeName.includes("cfc")) sourceOfFund = "CFC";
 
-    // Get work activity name and description
-    const workActivityName =
-      work.ApprovedActionPlanDetails?.activityDescription ||
-      work.ApprovedActionPlanDetails?.activityName ||
-      work.ApprovedActionPlanDetails?.schemeName ||
-      "N/A";
+      // Get work activity name and description
+      const workActivityName =
+        work.ApprovedActionPlanDetails?.activityDescription ||
+        work.ApprovedActionPlanDetails?.activityName ||
+        work.ApprovedActionPlanDetails?.schemeName ||
+        "N/A";
 
-    // Get winning bid amount
-    const workOrderDetails = work.AwardofContract?.workorderdetails;
-    const firstWorkOrder = workOrderDetails?.[0];
-    const bidAgency = firstWorkOrder?.Bidagency;
-    const winningBid = bidAgency?.biddingAmount || 0;
+      // Get winning bid amount
+      const workOrderDetails = work.AwardofContract?.workorderdetails;
+      const firstWorkOrder = workOrderDetails?.[0];
+      const bidAgency = firstWorkOrder?.Bidagency;
+      const winningBid = bidAgency?.biddingAmount || 0;
 
-    // Get work order issue date
-    const workOrderIssueDate = work.AwardofContract?.workordeermemodate ?? null;
+      // Get work order issue date
+      const workOrderIssueDate = work.AwardofContract?.workordeermemodate ?? null;
 
-    // Calculate payments in period and after period
-    const allPayments = work.paymentDetails || [];
-    const paymentsInPeriod = allPayments
-      .filter((payment: any) => {
-        const paymentDate = payment.billPaymentDate
-          ? new Date(payment.billPaymentDate)
-          : null;
-        return (
-          paymentDate &&
-          paymentDate >= paymentStart &&
-          paymentDate <= paymentEnd
-        );
-      })
-      .reduce((sum: number, payment: any) => sum + payment.grossBillAmount, 0);
+      // Calculate payments in period and after period
+      const allPayments = work.paymentDetails || [];
+      const paymentsInPeriod = allPayments
+        .filter((payment: any) => {
+          const paymentDate = payment.billPaymentDate
+            ? new Date(payment.billPaymentDate)
+            : null;
+          return (
+            paymentDate &&
+            paymentDate >= paymentStart &&
+            paymentDate <= paymentEnd
+          );
+        })
+        .reduce((sum: number, payment: any) => sum + payment.grossBillAmount, 0);
 
-    const paymentsAfterPeriod = allPayments
-      .filter((payment: any) => {
-        const paymentDate = payment.billPaymentDate
-          ? new Date(payment.billPaymentDate)
-          : null;
-        return paymentDate && paymentDate > paymentEnd;
-      })
-      .reduce((sum: number, payment: any) => sum + payment.grossBillAmount, 0);
+      const paymentsAfterPeriod = allPayments
+        .filter((payment: any) => {
+          const paymentDate = payment.billPaymentDate
+            ? new Date(payment.billPaymentDate)
+            : null;
+          return paymentDate && paymentDate > paymentEnd;
+        })
+        .reduce((sum: number, payment: any) => sum + payment.grossBillAmount, 0);
 
-    // Determine remarks
-    let remarks = work.workStatus || "unknown";
-    if (paymentsAfterPeriod > 0) {
-      remarks = "Period Over Payment";
-    } else if (paymentsInPeriod === 0 && allPayments.length > 0) {
-      remarks = "No Payment in Period";
-    }
+      // Determine remarks
+      let remarks = work.workStatus || "unknown";
+      if (paymentsAfterPeriod > 0) {
+        remarks = "Period Over Payment";
+      } else if (paymentsInPeriod === 0 && allPayments.length > 0) {
+        remarks = "No Payment in Period";
+      }
 
-    return {
-      id: work.id || index.toString(),
-      slNo: index + 1,
-      workActivityId: work.ApprovedActionPlanDetails?.activityCode || "N/A",
-      sourceOfFund,
-      workActivityName,
-      nitNumber: work.nitDetails?.memoNumber || "N/A",
-      nitDate: work.nitDetails?.memoDate
-        ? new Date(work.nitDetails.memoDate)
-        : null,
-      workOrderIssueDate,
-      workOrderValue: winningBid,
-      paymentsInPeriod,
-      paymentsAfterPeriod,
-      completionDate: work.completionDate
-        ? new Date(work.completionDate)
-        : null,
-      workStatus: work.workStatus || "unknown",
-      remarks,
-      physicalCompletionPercentage: null,
-      physicalCompletionDisplay: "",
-    };
-  });
+      return {
+        id: work.id || index.toString(),
+        slNo: index + 1,
+        workActivityId: work.ApprovedActionPlanDetails?.activityCode || "N/A",
+        sourceOfFund,
+        workActivityName,
+        nitNumber: work.nitDetails?.memoNumber || "N/A",
+        nitDate: work.nitDetails?.memoDate
+          ? new Date(work.nitDetails.memoDate)
+          : null,
+        workOrderIssueDate,
+        workOrderValue: winningBid,
+        paymentsInPeriod,
+        paymentsAfterPeriod,
+        completionDate: work.completionDate
+          ? new Date(work.completionDate)
+          : null,
+        workStatus: work.workStatus || "unknown",
+        remarks,
+        physicalCompletionPercentage: null,
+        physicalCompletionDisplay: "",
+      };
+    });
 }
 
 export default function FinancialReportPage() {
