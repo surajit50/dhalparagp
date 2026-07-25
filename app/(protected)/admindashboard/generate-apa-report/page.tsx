@@ -34,13 +34,13 @@ const FINANCIAL_YEARS = [
   { label: "2025-2026", start: "2025-04-01", end: "2026-03-31" },
 ];
 
-// Helper function to get payment period (April-June) of the financial year
+// Helper function to get payment period (April of first year to June of next year)
 function getPaymentPeriod(fyStart: string) {
   const startDate = new Date(fyStart);
   const year = startDate.getFullYear();
-  // Payment period is April-June of the financial year
+  // Payment period is April of first year to June of next year
   const paymentStart = new Date(`${year}-04-01`);
-  const paymentEnd = new Date(`${year}-06-30`);
+  const paymentEnd = new Date(`${year + 1}-06-30`);
   return { paymentStart, paymentEnd };
 }
 
@@ -182,7 +182,7 @@ export default function FinancialReportPage() {
   ).length;
 
   // Calculate completion metrics
-  const paymentEnd = new Date(selectedYear.end);
+  const paymentEnd = paymentPeriod.paymentEnd;
   const worksWithCompletionDate = reportData.filter(
     (item) => item.completionDate !== null
   );
@@ -260,6 +260,7 @@ export default function FinancialReportPage() {
   });
 
   const paymentPeriodText = `${format(paymentPeriod.paymentStart, "MMM yyyy")} - ${format(paymentPeriod.paymentEnd, "MMM yyyy")}`;
+  const grossBillsHeader = `Gross Bills (${format(paymentPeriod.paymentStart, "MMM yy")}-${format(paymentPeriod.paymentEnd, "MMM yy")})`;
 
   if (loading) {
     return (
@@ -436,7 +437,7 @@ export default function FinancialReportPage() {
                   <TableHead>Issue Date</TableHead>
                   <TableHead className="text-right">Order Value</TableHead>
                   <TableHead className="text-right">
-                    Gross Bills ({format(paymentPeriod.paymentStart, "MMM yy")}-{format(paymentPeriod.paymentEnd, "MMM yy")})
+                    {grossBillsHeader}
                   </TableHead>
                   <TableHead>Completion Date</TableHead>
                   <TableHead>Status</TableHead>
