@@ -489,3 +489,20 @@ export async function markNoticeReceived(id: string, date: Date) {
     throw new Error("Failed to mark notice as received.");
   }
 }
+
+export async function resetNoticeCount(id: string) {
+  try {
+    await db.pondLease.update({
+      where: { id },
+      data: {
+        noticeCount: 0,
+        lastNoticeDate: null,
+        noticeReceivedDate: null,
+      },
+    });
+    revalidatePath("/admindashboard/register/pond-lease");
+  } catch (error) {
+    console.error("Failed to reset notice count:", error);
+    throw new Error("Failed to reset notice count.");
+  }
+}

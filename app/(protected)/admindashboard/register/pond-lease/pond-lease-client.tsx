@@ -63,6 +63,7 @@ import { NoticeGenerateDialog } from "./notice-generate-dialog"
 import { BulkNoticeGenerateDialog } from "./bulk-notice-generate-dialog"
 import { MarkNoticeReceivedDialog } from "./mark-notice-received-dialog"
 import { ReprintNoticeDialog } from "./reprint-notice-dialog"
+import { ResetNoticeCountDialog } from "./reset-notice-count-dialog"
 import { UpdateLeaseStatusDialog } from "./update-lease-status-dialog"
 import { PublicPondSection } from "./public-pond-section"
 
@@ -596,6 +597,7 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
                               <>
                                 <MarkNoticeReceivedDialog lease={lease} />
                                 <ReprintNoticeDialog lease={lease} />
+                                <ResetNoticeCountDialog lease={lease} />
                                 <UpdateLeaseStatusDialog lease={lease} statusType="COMPLETED" />
                                 <UpdateLeaseStatusDialog lease={lease} statusType="CANCELLED" />
                               </>
