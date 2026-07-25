@@ -189,3 +189,17 @@ export const PondPublicPaymentSchema = z.object({
 
 export type PondPublicPaymentFormValues =
   z.infer<typeof PondPublicPaymentSchema>;
+
+/* -----------------------------
+   Pond Lease Status Update Schema
+--------------------------------*/
+
+export const PondLeaseStatusUpdateSchema = z.object({
+  id: z.string(),
+  status: z.enum(["COMPLETED", "CANCELLED"]),
+  remarks: z.string().optional().or(z.literal("")),
+  documentUrl: z.string().min(1, "Resolution document is required"),
+  documentKey: z.string().min(1, "Resolution document key is required"),
+});
+
+export type PondLeaseStatusUpdateValues = z.infer<typeof PondLeaseStatusUpdateSchema>;

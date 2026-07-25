@@ -96,3 +96,21 @@ export async function deletePond(id: string) {
   revalidatePath("/admindashboard/register/ponds");
   revalidatePath("/admindashboard/register/pond-lease");
 }
+
+export async function verifyPond(id: string) {
+  const pond = await db.pond.findUnique({
+    where: { id },
+  });
+
+  if (!pond) {
+    throw new Error("Pond not found");
+  }
+
+  await db.pond.update({
+    where: { id },
+    data: { isVerified: true },
+  });
+
+  revalidatePath("/admindashboard/register/ponds");
+  revalidatePath("/admindashboard/register/pond-lease");
+}

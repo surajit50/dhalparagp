@@ -16,6 +16,9 @@ import { PondLeaseNoticePrint } from "./pond-lease-notice-print";
 import { FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { generateLeaseNoticePDF } from "@/lib/pdf-lib";
+import { updateNoticeCount } from "./actions";
+import { toast } from "sonner";
+import { differenceInDays } from "date-fns";
 
 export function NoticeGenerateDialog({ lease }: { lease: any }) {
   const [open, setOpen] = useState(false);
@@ -23,8 +26,22 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
     "REMINDER",
   );
 
-  const handleDownload = () => {
-    generateLeaseNoticePDF(lease, noticeType);
+  const referenceDate = lease.noticeReceivedDate || lease.lastNoticeDate;
+  const daysSinceLastNotice = referenceDate 
+    ? differenceInDays(new Date(), new Date(referenceDate)) 
+    : null;
+  const canSendNotice = daysSinceLastNotice === null || daysSinceLastNotice >= 7;
+
+  const handleDownload = async () => {
+    try {
+      await updateNoticeCount(lease.id);
+      generateLeaseNoticePDF(lease, noticeType);
+      toast.success("Notice generated successfully");
+      setOpen(false); // Close dialog so state refreshes properly
+    } catch (error) {
+      toast.error("Failed to update notice count");
+      console.error(error);
+    }
   };
 
   return (
@@ -40,14 +57,16 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
           <div>
             <DialogTitle>Generate Lease Notice</DialogTitle>
           </div>
-          <div className="flex gap-2 pr-6">
-            <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button size="sm" onClick={handleDownload} className="gap-2">
-              <Download className="h-4 w-4" />
-              Download PDF
-            </Button>
+          <div className="flex flex-col items-end gap-1 pr-6">
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button size="sm" onClick={handleDownload} className="gap-2" disabled={!canSendNotice}>
+                <Download className="h-4 w-4" />
+                Download PDF
+              </Button>
+            </div>
           </div>
         </DialogHeader>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
@@ -79,9 +98,34 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
             </div>
 
             <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
-              <p className="text-xs text-orange-700 leading-relaxed">
+              <p className="text-xs text-orange-700 leading-relaxed mb-2">
                 Choose the notice type and preview the content on the right.
               </p>
+              {((lease.noticeCount && lease.noticeCount > 0) || lease.lastNoticeDate) && (
+                <div className="mt-2 pt-2 border-t border-orange-200">
+                  <p className="text-xs font-semibold text-orange-800">
+                    Notice Sent: {lease.noticeCount || 1} times
+                  </p>
+                  {lease.lastNoticeDate && (
+                    <p className="text-xs text-orange-700">
+                      Last Sent: {new Date(lease.lastNoticeDate).toLocaleDateString()}
+                    </p>
+                  )}
+                  {lease.noticeReceivedDate && (
+                    <p className="text-xs text-green-700 mt-1">
+                      Received: {new Date(lease.noticeReceivedDate).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              )}
+              
+              {!canSendNotice && (
+                <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-md">
+                  <p className="text-xs text-red-600 font-medium">
+                    ⚠️ A notice was {lease.noticeReceivedDate ? 'received' : 'sent'} recently. Please wait {7 - (daysSinceLastNotice || 0)} more day(s) before sending another.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
           <div className="md:col-span-2">

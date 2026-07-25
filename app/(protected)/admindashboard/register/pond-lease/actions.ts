@@ -5,13 +5,15 @@ import { revalidatePath } from "next/cache";
 import { addYears, addMonths } from "date-fns";
 import {
   PondLeaseSchema,
-  PondLeasePaymentSchema,
-  PondLeaseExtensionSchema,
   PondLeaseFormValues,
+  PondLeasePaymentSchema,
   PondLeasePaymentFormValues,
+  PondLeaseExtensionSchema,
   PondLeaseExtensionFormValues,
   PondPublicPaymentSchema,
   PondPublicPaymentFormValues,
+  PondLeaseStatusUpdateSchema,
+  PondLeaseStatusUpdateValues,
 } from "./schema";
 
 export async function getPonds() {
@@ -305,6 +307,47 @@ export async function updateLeaseStatus(
 }
 
 /* --------------------------------
+   Update Lease Status With Resolution
+-------------------------------- */
+
+export async function updateLeaseStatusWithResolution(data: PondLeaseStatusUpdateValues) {
+  const validated = PondLeaseStatusUpdateSchema.parse(data);
+  try {
+    await db.$transaction(async (tx) => {
+      const lease = await tx.pondLease.findUnique({ where: { id: validated.id } });
+      if (!lease) throw new Error("Lease not found");
+
+      await tx.pondLease.update({
+        where: { id: validated.id },
+        data: { 
+          status: validated.status,
+          remarks: lease.remarks 
+            ? `${lease.remarks}\n[${validated.status}] ${validated.remarks || ""}`
+            : `[${validated.status}] ${validated.remarks || ""}`,
+          resolutionDocumentUrl: validated.documentUrl,
+          resolutionDocumentKey: validated.documentKey,
+        },
+      });
+
+      if (
+        validated.status === "COMPLETED" ||
+        validated.status === "CANCELLED"
+      ) {
+        await tx.pond.update({
+          where: { id: lease.pondId },
+          data: { status: "AVAILABLE" },
+        });
+      }
+    });
+
+    revalidatePath("/admindashboard/register/pond-lease");
+  } catch (error: any) {
+    console.error("Failed to update lease status with resolution:", error);
+    throw new Error(error.message || "Failed to update lease status.");
+  }
+}
+
+/* --------------------------------
    Extend Pond Lease
 -------------------------------- */
 
@@ -394,4 +437,55 @@ export async function addPondPublicPayment(
   revalidatePath("/admindashboard/register/ponds");
 
   return payment;
+}
+
+/* --------------------------------
+   Update Notice Count
+-------------------------------- */
+
+export async function updateNoticeCount(id: string) {
+  try {
+    await db.pondLease.update({
+      where: { id },
+      data: {
+        noticeCount: { increment: 1 },
+        lastNoticeDate: new Date(),
+        noticeReceivedDate: null, // Reset received date on new notice
+      },
+    });
+    revalidatePath("/admindashboard/register/pond-lease");
+  } catch (error) {
+    console.error("Failed to update notice count:", error);
+    throw new Error("Failed to update notice count.");
+  }
+}
+
+export async function bulkUpdateNoticeCount(ids: string[]) {
+  try {
+    await db.pondLease.updateMany({
+      where: { id: { in: ids } },
+      data: {
+        noticeCount: { increment: 1 },
+        lastNoticeDate: new Date(),
+        noticeReceivedDate: null, // Reset received date on new notice
+      },
+    });
+    revalidatePath("/admindashboard/register/pond-lease");
+  } catch (error) {
+    console.error("Failed to bulk update notice count:", error);
+    throw new Error("Failed to bulk update notice count.");
+  }
+}
+
+export async function markNoticeReceived(id: string, date: Date) {
+  try {
+    await db.pondLease.update({
+      where: { id },
+      data: { noticeReceivedDate: date },
+    });
+    revalidatePath("/admindashboard/register/pond-lease");
+  } catch (error) {
+    console.error("Failed to mark notice as received:", error);
+    throw new Error("Failed to mark notice as received.");
+  }
 }

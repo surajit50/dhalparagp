@@ -3281,6 +3281,7 @@ model Pond {
   status             PondStatus          @default(AVAILABLE)
   leases             PondLease[]
   publicPayments     PondPublicPayment[]
+  isVerified         Boolean             @default(false)
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
 }
@@ -3320,6 +3321,11 @@ model PondLease {
   isVerified             Boolean            @default(false)
   extensionDocumentUrl   String?
   extensionDocumentKey   String?
+  noticeCount            Int                @default(0)
+  lastNoticeDate         DateTime?
+  noticeReceivedDate     DateTime?
+  resolutionDocumentUrl  String?
+  resolutionDocumentKey  String?
   createdAt              DateTime           @default(now())
   updatedAt              DateTime           @updatedAt
   payments               PondLeasePayment[]

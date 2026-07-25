@@ -34,9 +34,10 @@ import { PondTypeFields } from "./pond-type-fields";
 
 interface PondDialogProps {
   initialData?: any;
+  disabled?: boolean;
 }
 
-export function PondDialog({ initialData }: PondDialogProps) {
+export function PondDialog({ initialData, disabled }: PondDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -100,7 +101,7 @@ export function PondDialog({ initialData }: PondDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {initialData ? (
-          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50">
+          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-50" disabled={disabled}>
             <Edit2 className="h-4 w-4 text-blue-600" />
           </Button>
         ) : (

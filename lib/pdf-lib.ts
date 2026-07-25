@@ -63,7 +63,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.text("Memo No.", margin, y);
     
     doc.setFont("helvetica", "normal");
-    doc.text(`: GP/Lease/${getYear(new Date())}/${lease.id.slice(-4)}`, margin + 20, y);
+    doc.text(`: GP/Lease/Notice/${getYear(new Date())}/${lease.id.slice(-4)}`, margin + 20, y);
     
     doc.setFont("helvetica", "bold");
     doc.text("Date", pageWidth - margin - 40, y);
@@ -133,11 +133,20 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       maximumFractionDigits: 0,
     });
 
+    const getOrdinal = (n: number) => {
+      const s = ["th", "st", "nd", "rd"];
+      const v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    };
+    
+    // lease object passed to this function has the old noticeCount because state hasn't refreshed yet
+    const currentNoticeCount = (lease.noticeCount || 0) + 1;
+
     if (noticeType === "REMINDER") {
-      subject = "Subject: Reminder for Outstanding Lease Payment";
+      subject = `Subject: ${getOrdinal(currentNoticeCount)} Reminder for Outstanding Lease Payment`;
       body = `This is to formally remind you about the outstanding payment for the lease of Pond "${lease.pond.name}" located at ${lease.pond.location}.`;
     } else if (noticeType === "EXPIRY") {
-      subject = "Subject: Intimation of Lease Agreement Expiry";
+      subject = `Subject: ${getOrdinal(currentNoticeCount)} Intimation of Lease Agreement Expiry`;
       body = `This is to inform you that your lease agreement for Pond "${lease.pond.name}" located at ${lease.pond.location} is expiring on ${format(new Date(lease.leaseEndDate), "dd/MM/yyyy")}.`;
     }
 

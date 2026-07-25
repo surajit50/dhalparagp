@@ -29,7 +29,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PondInventoryPrint } from "./pond-inventory-print";
 
 import { toast } from "sonner";
-import { deletePond } from "./actions";
+import { deletePond, verifyPond } from "./actions";
 import { PondDialog } from "./pond-dialog";
 import {
   formatPondAreaAcre,
@@ -102,6 +102,15 @@ export function PondsClient({ data }: PondsClientProps) {
       toast.success("Pond deleted successfully");
     } catch (error: any) {
       toast.error(error.message || "Failed to delete pond");
+    }
+  };
+
+  const handleVerify = async (id: string) => {
+    try {
+      await verifyPond(id);
+      toast.success("Pond verified successfully");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to verify pond");
     }
   };
 
@@ -319,7 +328,19 @@ export function PondsClient({ data }: PondsClientProps) {
 
                       <TableCell className="text-right pr-6">
                         <div className="flex justify-end gap-2">
-                          <PondDialog initialData={pond} />
+                          {!pond.isVerified && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleVerify(pond.id)}
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                              title="Verify Pond"
+                            >
+                              <CheckCircle2 className="h-4 w-4" />
+                            </Button>
+                          )}
+
+                          <PondDialog initialData={pond} disabled={pond.isVerified} />
 
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -327,6 +348,7 @@ export function PondsClient({ data }: PondsClientProps) {
                                 variant="ghost"
                                 size="icon"
                                 className="hover:bg-red-50 hover:text-red-600"
+                                disabled={pond.isVerified}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>

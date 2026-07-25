@@ -61,6 +61,9 @@ import { PendingListPrint } from "./pending-list-print"
 import { LeaseCollectionListPrint } from "./lease-collection-list-print"
 import { NoticeGenerateDialog } from "./notice-generate-dialog"
 import { BulkNoticeGenerateDialog } from "./bulk-notice-generate-dialog"
+import { MarkNoticeReceivedDialog } from "./mark-notice-received-dialog"
+import { ReprintNoticeDialog } from "./reprint-notice-dialog"
+import { UpdateLeaseStatusDialog } from "./update-lease-status-dialog"
 import { PublicPondSection } from "./public-pond-section"
 
 import { deletePondLease, updateLeaseStatus, verifyPondLease } from "./actions"
@@ -531,10 +534,26 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
 
                       {/* Status Column */}
                       <TableCell>
-                        <Badge className={cn("gap-1 font-medium shadow-sm transition-colors", getStatusClasses(lease.status))}>
-                          {getStatusIcon(lease.status)}
-                          {lease.status}
-                        </Badge>
+                        <div className="flex flex-col items-start gap-2">
+                          <Badge className={cn("gap-1 font-medium shadow-sm transition-colors", getStatusClasses(lease.status))}>
+                            {getStatusIcon(lease.status)}
+                            {lease.status}
+                          </Badge>
+                          {((lease.noticeCount && lease.noticeCount > 0) || lease.lastNoticeDate) && (
+                            <div className="text-xs font-medium text-orange-600 flex flex-col gap-1 bg-orange-50 px-2 py-1 rounded border border-orange-100">
+                              <div className="flex items-center gap-1">
+                                <FileWarning className="h-3 w-3" />
+                                {lease.noticeCount || 1} Notice{(lease.noticeCount || 1) > 1 ? 's' : ''} Sent
+                              </div>
+                              {lease.noticeReceivedDate && (
+                                <div className="text-[10px] text-green-700 flex items-center gap-1 border-t border-orange-200 pt-1 mt-0.5">
+                                  <CheckCircle2 className="h-3 w-3" />
+                                  Received: {new Date(lease.noticeReceivedDate).toLocaleDateString()}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </TableCell>
 
                       {/* Actions Column */}
@@ -575,23 +594,10 @@ export function PondLeaseClient({ data, ponds, allPonds, publicPonds, initialTab
 
                             {lease.status === "ACTIVE" && (
                               <>
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleStatusUpdate(lease.id, "COMPLETED")
-                                  }
-                                >
-                                  <CheckCircle2 className="h-4 w-4 mr-2 text-green-600" />
-                                  Mark Completed
-                                </DropdownMenuItem>
-
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleStatusUpdate(lease.id, "CANCELLED")
-                                  }
-                                >
-                                  <XCircle className="h-4 w-4 mr-2 text-red-600" />
-                                  Cancel Lease
-                                </DropdownMenuItem>
+                                <MarkNoticeReceivedDialog lease={lease} />
+                                <ReprintNoticeDialog lease={lease} />
+                                <UpdateLeaseStatusDialog lease={lease} statusType="COMPLETED" />
+                                <UpdateLeaseStatusDialog lease={lease} statusType="CANCELLED" />
                               </>
                             )}
 
