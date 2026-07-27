@@ -164,7 +164,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     if (noticeType === "REMINDER") {
       // Pending amount paragraph
-      const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any furth[...]
+      const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any further action.`;
       const pendingLines = doc.splitTextToSize(pendingBody, contentWidth);
       doc.text(pendingLines, margin, y);
       y += (pendingLines.length * lineH) + 2 * scale;
