@@ -9,15 +9,15 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 10; // standard margin
+  const margin = 10;
   const contentWidth = pageWidth - margin * 2;
 
-  // Scale factor to fit two copies comfortably (0.75 works well)
+  // Scale factor to fit two copies comfortably
   const scale = 0.75;
-  const baseFontSize = 9; // original body size
   const scaled = (size: number) => Math.max(size * scale, 5);
+  const lineH = 3.5 * scale;
 
-  // Helper to draw one complete notice
+  // Helper: draw one complete notice (either Party or Office copy)
   const drawSingleNotice = (
     doc: jsPDF,
     lease: any,
@@ -27,12 +27,12 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     isOfficeCopy: boolean
   ) => {
     let y = startY;
-    const lineH = 3.5 * scale; // line height for text
 
     // ----- LABEL (top of each copy) -----
     doc.setFont("helvetica", "bold");
     doc.setFontSize(scaled(10));
-    doc.setTextColor(isOfficeCopy ? [185, 28, 28] : [31, 62, 97]);
+    // Fix: use spread to pass three separate numbers
+    doc.setTextColor(...(isOfficeCopy ? [185, 28, 28] : [31, 62, 97]));
     doc.text(label, pageWidth / 2, y, { align: "center" });
     y += 4 * scale;
 
@@ -291,7 +291,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       const noticeText =
         "Important: Payment of outstanding lease dues is mandatory. Non-compliance may result in cancellation of the lease agreement and/or legal proceedings as per applicable rules and regulations.";
       const noticeLines = doc.splitTextToSize(noticeText, contentWidth - 6);
-      const boxHeight = 4 * scale + (noticeLines.length * lineH);
+      const boxHeight = 4 * scale + noticeLines.length * lineH;
       doc.setFillColor(254, 242, 242);
       doc.setDrawColor(185, 28, 28);
       doc.setLineWidth(0.3);
@@ -310,7 +310,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       const expiryBody = `You are requested to contact the Gram Panchayat office at the earliest to discuss the renewal process or for any further clarifications.`;
       const expiryLines = doc.splitTextToSize(expiryBody, contentWidth);
       doc.text(expiryLines, margin, y);
-      y += (expiryLines.length * lineH) + 2 * scale;
+      y += expiryLines.length * lineH + 2 * scale;
 
       // 7‑day contact deadline – BOLD RED
       doc.setFont("helvetica", "bold");
@@ -318,7 +318,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       const contactDeadline = "Please note that you are required to contact the Gram Panchayat office within 7 days of receiving this letter to discuss the renewal process.";
       const contactLines = doc.splitTextToSize(contactDeadline, contentWidth);
       doc.text(contactLines, margin, y);
-      y += (contactLines.length * lineH) + 3 * scale;
+      y += contactLines.length * lineH + 3 * scale;
       doc.setFont("helvetica", "normal");
       doc.setTextColor(40, 40, 40);
     }
