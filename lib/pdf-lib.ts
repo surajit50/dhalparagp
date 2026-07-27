@@ -12,12 +12,10 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
   const margin = 10;
   const contentWidth = pageWidth - margin * 2;
 
-  // Scale factor to fit two copies comfortably
   const scale = 0.75;
   const scaled = (size: number) => Math.max(size * scale, 5);
   const lineH = 3.5 * scale;
 
-  // Helper: draw one complete notice (either Party or Office copy)
   const drawSingleNotice = (
     doc: jsPDF,
     lease: any,
@@ -31,12 +29,16 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     // ----- LABEL (top of each copy) -----
     doc.setFont("helvetica", "bold");
     doc.setFontSize(scaled(10));
-    // Fix: use spread to pass three separate numbers
-    doc.setTextColor(...(isOfficeCopy ? [185, 28, 28] : [31, 62, 97]));
+    // FIX: conditional setTextColor instead of spread
+    if (isOfficeCopy) {
+      doc.setTextColor(185, 28, 28); // red for Office Copy
+    } else {
+      doc.setTextColor(31, 62, 97); // blue for Party Copy
+    }
     doc.text(label, pageWidth / 2, y, { align: "center" });
     y += 4 * scale;
 
-    // ----- HEADER (Gram Panchayat) -----
+    // ----- HEADER -----
     doc.setFont("times", "bold");
     doc.setFontSize(scaled(14));
     doc.setTextColor(31, 62, 97);
@@ -347,7 +349,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.text(gpname, signX, y + 8 * scale);
   };
 
-  // ===== MAIN LOOP: one page per lease, two copies =====
+  // ===== MAIN LOOP =====
   leases.forEach((lease, index) => {
     if (index > 0) doc.addPage();
 
@@ -364,7 +366,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.setLineWidth(0.3);
     doc.setLineDashPattern([3, 3]);
     doc.line(margin, lineY, pageWidth - margin, lineY);
-    doc.setLineDashPattern([]); // reset
+    doc.setLineDashPattern([]);
 
     // Bottom copy – Office
     drawSingleNotice(doc, lease, noticeType, lineY + gap / 2, "OFFICE COPY (For Record)", true);
