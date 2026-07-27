@@ -163,7 +163,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     if (noticeType === "REMINDER") {
       // Pending amount paragraph
-      const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any further action.`;
+      const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any furth[...]`;
       const pendingLines = doc.splitTextToSize(pendingBody, contentWidth);
       doc.text(pendingLines, margin, y);
       y += (pendingLines.length * lineH) + 2 * scale;
@@ -249,7 +249,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
         // Left table: Summary
         autoTable(doc, {
           startY: y,
-          startX: margin,
+          margin: { left: margin, right: margin + halfWidth + gapBetweenTables },
           tableWidth: halfWidth,
           head: summaryHead,
           body: summaryBody,
@@ -280,7 +280,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
         // Right table: Year‑wise Breakdown
         autoTable(doc, {
           startY: y,
-          startX: margin + halfWidth + gapBetweenTables,
+          margin: { left: margin + halfWidth + gapBetweenTables, right: margin },
           tableWidth: halfWidth,
           head: [["Year", "Fin. Year", "Due (Rs.)", "Paid (Rs.)", "Out. (Rs.)"]],
           body: yearlyBreakdown.map(item => [
