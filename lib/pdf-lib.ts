@@ -4,10 +4,10 @@ import { format, addYears, getYear, differenceInYears } from "date-fns";
 import { gpname, gpaddress } from "@/constants/gpinfor";
 
 // --- Unified styling constants ---
-const MARGIN = 12;                // mm
-const SCALE = 0.85;              // font/space multiplier
+const MARGIN = 8;                // mm
+const SCALE = 0.75;              // font/space multiplier
 const scaled = (size: number) => Math.max(size * SCALE, 5);
-const LINE_H = 4.5 * SCALE;      // consistent line height
+const LINE_H = 4 * SCALE;      // consistent line height
 
 export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: string) => {
   const leases = Array.isArray(leasesInput) ? leasesInput : [leasesInput];
