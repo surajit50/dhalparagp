@@ -169,12 +169,17 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       doc.text(pendingBodyLines, margin, y);
       y += (pendingBodyLines.length * 4) + 4;
 
-      // 7‑day payment deadline
+      // ====== 7‑day payment deadline – BOLD RED ======
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(185, 28, 28); // red
       const deadlineNotice = "Please note that you are required to pay the outstanding amount within 7 days of receiving this letter.";
       const deadlineLines = doc.splitTextToSize(deadlineNotice, contentWidth);
       checkPageBreak(deadlineLines.length * 4);
       doc.text(deadlineLines, margin, y);
       y += (deadlineLines.length * 4) + 4;
+      // Reset to normal text colour and font for subsequent content
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(40, 40, 40);
 
       checkPageBreak(12);
       doc.setFont("helvetica", "bold");
@@ -326,12 +331,17 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       doc.text(expiryBodyLines, margin, y);
       y += (expiryBodyLines.length * 4) + 4;
 
-      // 7‑day contact deadline
+      // ====== 7‑day contact deadline – BOLD RED ======
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(185, 28, 28);
       const contactDeadline = "Please note that you are required to contact the Gram Panchayat office within 7 days of receiving this letter to discuss the renewal process.";
       const contactLines = doc.splitTextToSize(contactDeadline, contentWidth);
       checkPageBreak(contactLines.length * 4);
       doc.text(contactLines, margin, y);
       y += (contactLines.length * 4) + 6;
+      // Reset to normal
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(40, 40, 40);
     }
 
     checkPageBreak(35);
@@ -352,7 +362,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    // Changed from "Pradhan" to "Pradhan/EA/Secretary"
+    doc.setTextColor(40, 40, 40); // keep signature in normal colour
     doc.text("Pradhan/EA/Secretary", signatureStartX + 10, signatureStartY);
     
     doc.setLineWidth(0.5);
