@@ -9,7 +9,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 10;
+  const margin = 8;
   const contentWidth = pageWidth - margin * 2;
 
   const scale = 0.75;
@@ -28,7 +28,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     // ----- LABEL (top of each copy) -----
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(scaled(10));
+    doc.setFontSize(scaled(8));
     if (isOfficeCopy) {
       doc.setTextColor(185, 28, 28); // red for Office Copy
     } else {
@@ -39,7 +39,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     // ----- HEADER -----
     doc.setFont("times", "bold");
-    doc.setFontSize(scaled(14));
+    doc.setFontSize(scaled(12));
     doc.setTextColor(31, 62, 97);
     doc.text(gpname.toUpperCase(), pageWidth / 2, y, { align: "center" });
 
@@ -58,14 +58,14 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     // ----- OFFICIAL NOTICE -----
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(scaled(11));
+    doc.setFontSize(scaled(10));
     doc.setTextColor(31, 62, 97);
     doc.text("OFFICIAL NOTICE", pageWidth / 2, y, { align: "center" });
     y += 4 * scale;
 
     // ----- MEMO & DATE -----
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(scaled(9));
+    doc.setFontSize(scaled(8));
     doc.setTextColor(50, 50, 50);
     doc.text("Memo No.", margin, y);
     doc.setFont("helvetica", "normal");
@@ -79,20 +79,20 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     // ----- RECIPIENT ADDRESS -----
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(scaled(9));
+    doc.setFontSize(scaled(8));
     doc.setTextColor(50, 50, 50);
     doc.text("To,", margin, y);
 
     y += 3 * scale;
     doc.setFont("times", "bold");
-    doc.setFontSize(scaled(10));
+    doc.setFontSize(scaled(9));
     doc.setTextColor(31, 62, 97);
     const partyNameLines = doc.splitTextToSize(lease.leasePartyName || "", contentWidth);
     doc.text(partyNameLines, margin, y);
     let lineY = y + (partyNameLines.length * lineH);
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(scaled(9));
+    doc.setFontSize(scaled(8));
     doc.setTextColor(60, 60, 60);
 
     const isValid = (val: any) => val && val !== "null" && val !== "undefined";
@@ -144,7 +144,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     }
 
     doc.setFont("times", "bold");
-    doc.setFontSize(scaled(10));
+    doc.setFontSize(scaled(8));
     doc.setTextColor(31, 62, 97);
     const subjectLines = doc.splitTextToSize(subject, contentWidth);
     doc.text(subjectLines, pageWidth / 2, y, { align: "center" });
