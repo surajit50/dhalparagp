@@ -164,7 +164,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     if (noticeType === "REMINDER") {
       // Pending amount paragraph
-      const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any further action.`;
+      const pendingBody = `The total outstanding amount as of today is Rs. ${currencyFormatter.format(lease.pendingAmount)}. We request you to clear the pending dues at the earliest to avoid any furth[...]
       const pendingLines = doc.splitTextToSize(pendingBody, contentWidth);
       doc.text(pendingLines, margin, y);
       y += (pendingLines.length * lineH) + 2 * scale;
@@ -364,9 +364,9 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     const lineY = margin + halfHeight + gap / 2;
     doc.setDrawColor(150);
     doc.setLineWidth(0.3);
-    doc.setLineDashPattern([3, 3]);
+    doc.setLineDashPattern([3, 3], 0);
     doc.line(margin, lineY, pageWidth - margin, lineY);
-    doc.setLineDashPattern([]);
+    doc.setLineDashPattern([], 0);
 
     // Bottom copy – Office
     drawSingleNotice(doc, lease, noticeType, lineY + gap / 2, "OFFICE COPY (For Record)", true);
