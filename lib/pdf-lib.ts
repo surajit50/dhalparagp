@@ -27,20 +27,17 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     };
 
     /* ---------- FORMAL HEADER ---------- */
-    // Main title
     doc.setFont("times", "bold");
     doc.setFontSize(14);
     doc.setTextColor(31, 62, 97);
     doc.text(gpname.toUpperCase(), pageWidth / 2, y, { align: "center" });
 
-    // Subtitle
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(80, 80, 80);
     y += 4;
     doc.text(gpaddress, pageWidth / 2, y, { align: "center" });
 
-    // Decorative line
     y += 3;
     doc.setDrawColor(31, 62, 97);
     doc.setLineWidth(0.5);
@@ -48,7 +45,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     y += 5;
 
-    /* ---------- OFFICIAL NOTICE ---------- */
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.setTextColor(31, 62, 97);
@@ -56,7 +52,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     y += 5;
 
-    /* ---------- MEMO & DATE ---------- */
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
     doc.setTextColor(50, 50, 50);
@@ -73,7 +68,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     y += 6;
 
-    /* ---------- RECIPIENT ADDRESS ---------- */
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
     doc.setTextColor(50, 50, 50);
@@ -125,7 +119,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
     y = lineY + 4;
 
-    /* ---------- SUBJECT ---------- */
     let subject = "";
     let body = "";
 
@@ -139,7 +132,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       return n + (s[(v - 20) % 10] || s[v] || s[0]);
     };
     
-    // lease object passed to this function has the old noticeCount because state hasn't refreshed yet
     const currentNoticeCount = (lease.noticeCount || 0) + 1;
 
     if (noticeType === "REMINDER") {
@@ -158,7 +150,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.text(subjectLines, pageWidth / 2, y, { align: "center" });
     y += (subjectLines.length * 4) + 4;
 
-    /* ---------- BODY ---------- */
     doc.setFont("helvetica", "normal");
     doc.setFontSize(9);
     doc.setTextColor(40, 40, 40);
@@ -178,7 +169,13 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       doc.text(pendingBodyLines, margin, y);
       y += (pendingBodyLines.length * 4) + 4;
 
-      /* ---------- LEASE SUMMARY TABLE ---------- */
+      // 7‑day payment deadline
+      const deadlineNotice = "Please note that you are required to pay the outstanding amount within 7 days of receiving this letter.";
+      const deadlineLines = doc.splitTextToSize(deadlineNotice, contentWidth);
+      checkPageBreak(deadlineLines.length * 4);
+      doc.text(deadlineLines, margin, y);
+      y += (deadlineLines.length * 4) + 4;
+
       checkPageBreak(12);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
@@ -224,7 +221,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
 
       y = (doc as any).lastAutoTable.finalY + 5;
 
-      /* ---------- YEAR-WISE BREAKDOWN ---------- */
       const totalPaidAcrossAllYears = Number(lease.paidAmount) || 0;
       const totalAmount = Number(lease.totalAmount) || 0;
       let remainingPaidAmount = totalPaidAcrossAllYears;
@@ -301,7 +297,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
         y = (doc as any).lastAutoTable.finalY + 5;
       }
 
-      /* ---------- IMPORTANT NOTICE ---------- */
       const noticeText = "Important: Payment of outstanding lease dues is mandatory. Non-compliance may result in cancellation of the lease agreement and/or legal proceedings as per applicable rules and regulations.";
       const noticeLines = doc.splitTextToSize(noticeText, contentWidth - 6);
       const noticeHeight = 6 + (noticeLines.length * 4);
@@ -329,10 +324,16 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       const expiryBodyLines = doc.splitTextToSize(expiryBody, contentWidth);
       checkPageBreak(expiryBodyLines.length * 4);
       doc.text(expiryBodyLines, margin, y);
-      y += (expiryBodyLines.length * 4) + 6;
+      y += (expiryBodyLines.length * 4) + 4;
+
+      // 7‑day contact deadline
+      const contactDeadline = "Please note that you are required to contact the Gram Panchayat office within 7 days of receiving this letter to discuss the renewal process.";
+      const contactLines = doc.splitTextToSize(contactDeadline, contentWidth);
+      checkPageBreak(contactLines.length * 4);
+      doc.text(contactLines, margin, y);
+      y += (contactLines.length * 4) + 6;
     }
 
-    /* ---------- CLOSING ---------- */
     checkPageBreak(35);
     
     doc.setFont("helvetica", "normal");
@@ -341,7 +342,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.text("Thanking you in anticipation.", margin, y);
     y += 12;
 
-    /* ---------- SIGNATURE SECTION ---------- */
+    /* ---------- SIGNATURE SECTION (UPDATED) ---------- */
     const signatureStartX = pageWidth - margin - 50;
     
     doc.text("Yours faithfully,", signatureStartX, y);
@@ -351,7 +352,8 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     
     doc.setFont("helvetica", "bold");
     doc.setFontSize(9);
-    doc.text("Pradhan", signatureStartX + 10, signatureStartY);
+    // Changed from "Pradhan" to "Pradhan/EA/Secretary"
+    doc.text("Pradhan/EA/Secretary", signatureStartX + 10, signatureStartY);
     
     doc.setLineWidth(0.5);
     doc.setDrawColor(40, 40, 40);
@@ -367,6 +369,5 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     ? `Lease_Notice_${leases[0].leasePartyName.replace(/\s+/g, "_")}.pdf` 
     : `Bulk_Lease_Notices_${format(new Date(), "yyyyMMdd_HHmmss")}.pdf`;
 
-  /* ---------- SAVE PDF ---------- */
   doc.save(fileName);
 };
