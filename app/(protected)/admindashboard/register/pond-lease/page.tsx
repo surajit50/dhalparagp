@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { PondLeaseClient } from "./pond-lease-client";
+
 import { getPonds, getPublicPonds } from "./actions";
 
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/breadcrumb";
 
 import { differenceInYears } from "date-fns";
+import { PondLeaseClient } from "./pond-lease-client";
 
 async function getData() {
   const leases = await db.pondLease.findMany({
@@ -75,7 +76,8 @@ export default async function PondLeasePage({
   const allPonds = await getAllPonds();
   const publicPonds = await getPublicPonds();
 
-  const tab = typeof searchParams.tab === "string" ? searchParams.tab : "dashboard";
+  const tab =
+    typeof searchParams.tab === "string" ? searchParams.tab : "dashboard";
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-teal-50/80 via-slate-50 to-slate-100/50 relative overflow-hidden">
@@ -84,7 +86,7 @@ export default async function PondLeasePage({
         <div className="absolute -bottom-24 -left-24 w-[500px] h-[500px] rounded-full bg-blue-400/10 blur-[100px]" />
       </div>
 
-      <div className="container mx-auto py-6 space-y-6 relative z-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -109,7 +111,9 @@ export default async function PondLeasePage({
           allPonds={allPonds}
           publicPonds={publicPonds}
           initialTab={tab}
-          initialSearch={typeof searchParams.search === "string" ? searchParams.search : ""}
+          initialSearch={
+            typeof searchParams.search === "string" ? searchParams.search : ""
+          }
         />
       </div>
     </div>

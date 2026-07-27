@@ -33,7 +33,7 @@ export default async function PondsPage() {
         <div className="absolute -bottom-24 -left-24 w-[500px] h-[500px] rounded-full bg-cyan-400/10 blur-[100px]" />
       </div>
 
-      <div className="container mx-auto py-6 space-y-6 relative z-10">
+      <div className="relative z-10 mx-auto w-full max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
