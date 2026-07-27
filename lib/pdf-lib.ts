@@ -29,7 +29,6 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     // ----- LABEL (top of each copy) -----
     doc.setFont("helvetica", "bold");
     doc.setFontSize(scaled(10));
-    // FIX: conditional setTextColor instead of spread
     if (isOfficeCopy) {
       doc.setTextColor(185, 28, 28); // red for Office Copy
     } else {
@@ -179,50 +178,17 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       doc.setFont("helvetica", "normal");
       doc.setTextColor(40, 40, 40);
 
-      // ---- Summary Table ----
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(scaled(9));
-      doc.setTextColor(31, 62, 97);
-      doc.text("Summary of Lease Account", margin, y);
-      y += 2 * scale;
+      // ---- Summary Table & Year-wise Table (side‑by‑side) ----
+      const summaryHead = [["Sl. No.", "Particulars", "Amount (Rs.)"]];
+      const summaryBody = [
+        ["1", "Pond Name", lease.pond.name],
+        ["2", "Location", lease.pond.location],
+        ["3", "Total Lease Amount", currencyFormatter.format(lease.totalAmount)],
+        ["4", "Amount Paid", currencyFormatter.format(lease.paidAmount)],
+        ["5", "Outstanding Balance", currencyFormatter.format(lease.pendingAmount)],
+      ];
 
-      autoTable(doc, {
-        startY: y,
-        margin: { left: margin, right: margin },
-        head: [["Sl. No.", "Particulars", "Amount (Rs.)"]],
-        body: [
-          ["1", "Pond Name", lease.pond.name],
-          ["2", "Location", lease.pond.location],
-          ["3", "Total Lease Amount", currencyFormatter.format(lease.totalAmount)],
-          ["4", "Amount Paid", currencyFormatter.format(lease.paidAmount)],
-          ["5", "Outstanding Balance", currencyFormatter.format(lease.pendingAmount)],
-        ],
-        theme: "grid",
-        headStyles: {
-          fillColor: [31, 62, 97],
-          textColor: [255, 255, 255],
-          fontStyle: "bold",
-          fontSize: scaled(8),
-          halign: "left",
-        },
-        columnStyles: {
-          0: { cellWidth: 14 * scale, halign: "center" },
-          1: { cellWidth: "auto", halign: "left" },
-          2: { cellWidth: 32 * scale, halign: "right" },
-        },
-        styles: {
-          fontSize: scaled(8),
-          cellPadding: 1.5 * scale,
-          overflow: "linebreak",
-          textColor: [40, 40, 40],
-          lineColor: [200, 200, 200],
-        },
-        alternateRowStyles: { fillColor: [248, 250, 252] },
-      });
-
-      y = (doc as any).lastAutoTable.finalY + 2 * scale;
-
-      // ---- Year‑wise Breakdown Table ----
+      // Year‑wise breakdown data
       const totalPaidAcrossAllYears = Number(lease.paidAmount) || 0;
       const totalAmount = Number(lease.totalAmount) || 0;
       let remainingPaidAmount = totalPaidAcrossAllYears;
@@ -245,17 +211,78 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
         };
       });
 
-      if (yearlyBreakdown.length > 0) {
-        doc.setFont("helvetica", "bold");
-        doc.setFontSize(scaled(9));
-        doc.setTextColor(31, 62, 97);
-        doc.text("Year-wise Payment Details", margin, y);
-        y += 2 * scale;
-
+      // If no yearly data, just draw summary full‑width
+      if (yearlyBreakdown.length === 0) {
         autoTable(doc, {
           startY: y,
           margin: { left: margin, right: margin },
-          head: [["Year", "Financial Year", "Annual Due (Rs.)", "Amount Paid (Rs.)", "Outstanding (Rs.)"]],
+          head: summaryHead,
+          body: summaryBody,
+          theme: "grid",
+          headStyles: {
+            fillColor: [31, 62, 97],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+            fontSize: scaled(8),
+            halign: "left",
+          },
+          columnStyles: {
+            0: { cellWidth: 14 * scale, halign: "center" },
+            1: { cellWidth: "auto", halign: "left" },
+            2: { cellWidth: 32 * scale, halign: "right" },
+          },
+          styles: {
+            fontSize: scaled(8),
+            cellPadding: 1.5 * scale,
+            overflow: "linebreak",
+            textColor: [40, 40, 40],
+            lineColor: [200, 200, 200],
+          },
+          alternateRowStyles: { fillColor: [248, 250, 252] },
+        });
+        y = (doc as any).lastAutoTable.finalY + 2 * scale;
+      } else {
+        // ---- Side‑by‑side tables ----
+        const gapBetweenTables = 4 * scale;
+        const halfWidth = (contentWidth - gapBetweenTables) / 2;
+
+        // Left table: Summary
+        autoTable(doc, {
+          startY: y,
+          startX: margin,
+          tableWidth: halfWidth,
+          head: summaryHead,
+          body: summaryBody,
+          theme: "grid",
+          headStyles: {
+            fillColor: [31, 62, 97],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+            fontSize: scaled(7.5),
+            halign: "left",
+          },
+          columnStyles: {
+            0: { cellWidth: 12 * scale, halign: "center" },
+            1: { cellWidth: "auto", halign: "left" },
+            2: { cellWidth: 28 * scale, halign: "right" },
+          },
+          styles: {
+            fontSize: scaled(7.5),
+            cellPadding: 1.2 * scale,
+            overflow: "linebreak",
+            textColor: [40, 40, 40],
+            lineColor: [200, 200, 200],
+          },
+          alternateRowStyles: { fillColor: [248, 250, 252] },
+        });
+        const leftFinalY = (doc as any).lastAutoTable.finalY;
+
+        // Right table: Year‑wise Breakdown
+        autoTable(doc, {
+          startY: y,
+          startX: margin + halfWidth + gapBetweenTables,
+          tableWidth: halfWidth,
+          head: [["Year", "Fin. Year", "Due (Rs.)", "Paid (Rs.)", "Out. (Rs.)"]],
           body: yearlyBreakdown.map(item => [
             item.yearLabel,
             item.calendarYear.toString(),
@@ -268,25 +295,28 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
             fillColor: [31, 62, 97],
             textColor: [255, 255, 255],
             fontStyle: "bold",
-            fontSize: scaled(8),
+            fontSize: scaled(7.5),
+            halign: "center",
           },
           columnStyles: {
-            0: { cellWidth: 18 * scale, halign: "center" },
-            1: { cellWidth: 22 * scale, halign: "center" },
-            2: { cellWidth: 30 * scale, halign: "right" },
-            3: { cellWidth: 30 * scale, halign: "right" },
-            4: { cellWidth: 30 * scale, halign: "right" },
+            0: { cellWidth: 14 * scale, halign: "center" },
+            1: { cellWidth: 18 * scale, halign: "center" },
+            2: { cellWidth: 22 * scale, halign: "right" },
+            3: { cellWidth: 22 * scale, halign: "right" },
+            4: { cellWidth: 22 * scale, halign: "right" },
           },
           styles: {
-            fontSize: scaled(8),
-            cellPadding: 1.5 * scale,
+            fontSize: scaled(7.5),
+            cellPadding: 1.2 * scale,
             textColor: [40, 40, 40],
             lineColor: [200, 200, 200],
           },
           alternateRowStyles: { fillColor: [248, 250, 252] },
         });
+        const rightFinalY = (doc as any).lastAutoTable.finalY;
 
-        y = (doc as any).lastAutoTable.finalY + 2 * scale;
+        // Move Y below the taller table
+        y = Math.max(leftFinalY, rightFinalY) + 2 * scale;
       }
 
       // ---- Important Notice Box ----
@@ -332,7 +362,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.text("Thanking you in anticipation.", margin, y);
     y += 6 * scale;
 
-    // ----- SIGNATURE (updated) -----
+    // ----- SIGNATURE -----
     const signX = pageWidth - margin - 42 * scale;
     doc.text("Yours faithfully,", signX, y);
     y += 8 * scale;
