@@ -117,8 +117,8 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       doc.text(cityLine, margin, lineY);
       lineY += cityLine.length * lineH;
     }
-    if (isValid(lease.leasePartyPin)) {
-      doc.text(`PIN: ${lease.leasePartyPin}`, margin, lineY);
+    if (isValid(lease.leasePartyMobile)) {
+      doc.text(`Mobile No: ${lease.leasePartyMobile}`, margin, lineY);
       lineY += lineH;
     }
 
@@ -360,7 +360,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.setFontSize(scaled(9));
     doc.setTextColor(40, 40, 40);
     doc.text("Thanking you in anticipation.", margin, y);
-    y += 6 * scale;
+    y += 9 * scale;
 
     // ----- SIGNATURE -----
     const signX = pageWidth - margin - 42 * scale;
