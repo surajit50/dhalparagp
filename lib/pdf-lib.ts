@@ -63,17 +63,19 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.text("OFFICIAL NOTICE", pageWidth / 2, y, { align: "center" });
     y += 4 * scale;
 
+    const noticeDate = lease.isReprint && lease.lastNoticeDate ? new Date(lease.lastNoticeDate) : new Date();
+
     // ----- MEMO & DATE -----
     doc.setFont("helvetica", "bold");
     doc.setFontSize(scaled(8));
     doc.setTextColor(50, 50, 50);
     doc.text("Memo No.", margin, y);
     doc.setFont("helvetica", "normal");
-    doc.text(`: GP/Lease/Notice/${getYear(new Date())}/${lease.id.slice(-4)}`, margin + 20 * scale, y);
+    doc.text(`: GP/Lease/Notice/${getYear(noticeDate)}/${lease.id.slice(-4)}`, margin + 20 * scale, y);
     doc.setFont("helvetica", "bold");
     doc.text("Date", pageWidth - margin - 38 * scale, y);
     doc.setFont("helvetica", "normal");
-    doc.text(`: ${format(new Date(), "dd/MM/yyyy")}`, pageWidth - margin - 28 * scale, y);
+    doc.text(`: ${format(noticeDate, "dd/MM/yyyy")}`, pageWidth - margin - 28 * scale, y);
 
     y += 4.5 * scale;
 
@@ -233,7 +235,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
           },
           styles: {
             fontSize: scaled(8),
-            cellPadding: 1.5 * scale,
+            cellPadding: 2 * scale,
             overflow: "linebreak",
             textColor: [40, 40, 40],
             lineColor: [200, 200, 200],
@@ -243,7 +245,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
         y = (doc as any).lastAutoTable.finalY + 2 * scale;
       } else {
         // ---- Side‑by‑side tables ----
-        const gapBetweenTables = 4 * scale;
+        const gapBetweenTables = 6 * scale;
         const halfWidth = (contentWidth - gapBetweenTables) / 2;
 
         // Left table: Summary
@@ -268,7 +270,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
           },
           styles: {
             fontSize: scaled(7.5),
-            cellPadding: 1.2 * scale,
+            cellPadding: 1.5 * scale,
             overflow: "linebreak",
             textColor: [40, 40, 40],
             lineColor: [200, 200, 200],
@@ -307,7 +309,7 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
           },
           styles: {
             fontSize: scaled(7.5),
-            cellPadding: 1.2 * scale,
+            cellPadding: 1.5 * scale,
             textColor: [40, 40, 40],
             lineColor: [200, 200, 200],
           },
@@ -320,23 +322,24 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
       }
 
       // ---- Important Notice Box ----
+      const noticePadding = 4 * scale;
       const noticeText =
         "Important: Payment of outstanding lease dues is mandatory. Non-compliance may result in cancellation of the lease agreement and/or legal proceedings as per applicable rules and regulations.";
-      const noticeLines = doc.splitTextToSize(noticeText, contentWidth - 6);
-      const boxHeight = 4 * scale + noticeLines.length * lineH;
+      const noticeLines = doc.splitTextToSize(noticeText, contentWidth - noticePadding * 2);
+      const boxHeight = noticePadding * 2 + 3.5 * scale + noticeLines.length * lineH;
       doc.setFillColor(254, 242, 242);
       doc.setDrawColor(185, 28, 28);
       doc.setLineWidth(0.3);
-      doc.roundedRect(margin, y, contentWidth, boxHeight, 2, 2, "FD");
+      doc.roundedRect(margin, y, contentWidth, boxHeight, 2 * scale, 2 * scale, "FD");
       doc.setFont("helvetica", "bold");
       doc.setFontSize(scaled(8));
       doc.setTextColor(185, 28, 28);
-      doc.text("IMPORTANT NOTICE", margin + 3, y + 3.5 * scale);
+      doc.text("IMPORTANT NOTICE", margin + noticePadding, y + noticePadding + 2.5 * scale);
       doc.setFont("helvetica", "normal");
       doc.setFontSize(scaled(8));
       doc.setTextColor(40, 40, 40);
-      doc.text(noticeLines, margin + 3, y + 7 * scale);
-      y += boxHeight + 4 * scale;
+      doc.text(noticeLines, margin + noticePadding, y + noticePadding + 6.5 * scale);
+      y += boxHeight + 6 * scale;
 
     } else { // EXPIRY
       const expiryBody = `You are requested to contact the Gram Panchayat office at the earliest to discuss the renewal process or for any further clarifications.`;
@@ -360,23 +363,34 @@ export const generateLeaseNoticePDF = (leasesInput: any | any[], noticeType: str
     doc.setFontSize(scaled(9));
     doc.setTextColor(40, 40, 40);
     doc.text("Thanking you in anticipation.", margin, y);
-    y += 9 * scale;
+    
+    y += 12 * scale; // Added more vertical gap before signature section
 
     // ----- SIGNATURE -----
-    const signX = pageWidth - margin - 42 * scale;
+    const sigBlockWidth = 55 * scale;
+    const signX = pageWidth - margin - sigBlockWidth;
+    
     doc.text("Yours faithfully,", signX, y);
-    y += 8 * scale;
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(scaled(9));
-    doc.setTextColor(40, 40, 40);
-    doc.text("Pradhan/EA/Secretary", signX + 8 * scale, y);
+    
+    y += 18 * scale; // Generous space for physical signature
+    
+    // Signature Line
     doc.setLineWidth(0.4);
-    doc.setDrawColor(40, 40, 40);
-    doc.line(signX, y + 4 * scale, pageWidth - margin, y + 4 * scale);
-    doc.setFont("helvetica", "normal");
+    doc.setDrawColor(100, 100, 100);
+    doc.line(signX, y, pageWidth - margin, y);
+    
+    y += 4 * scale;
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(scaled(8));
+    doc.setTextColor(40, 40, 40);
+    doc.text("Pradhan/EA/Secretary", signX + (sigBlockWidth / 2), y, { align: "center" });
+    
+    y += 4 * scale;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(scaled(7.5));
     doc.setTextColor(80, 80, 80);
-    doc.text(gpname, signX, y + 8 * scale);
+    const gpNameLines = doc.splitTextToSize(gpname, sigBlockWidth + 10 * scale);
+    doc.text(gpNameLines, signX + (sigBlockWidth / 2), y, { align: "center" });
   };
 
   // ===== MAIN LOOP =====

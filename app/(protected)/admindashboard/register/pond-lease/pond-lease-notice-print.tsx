@@ -25,6 +25,8 @@ export interface PondLease {
   totalAmount: number;
   paidAmount: number;
   pendingAmount: number;
+  lastNoticeDate?: string | Date;
+  isReprint?: boolean;
 }
 
 interface PondLeaseNoticePrintProps {
@@ -97,9 +99,9 @@ export function PondLeaseNoticePrint({
       {/* Notice Info */}
       <div className="flex justify-between mb-6 text-xs font-semibold">
         <span>
-          Memo No: GP/Lease/{getYear(new Date())}/{lease.id.slice(-4)}
+          Memo No: GP/Lease/{getYear(lease.isReprint && lease.lastNoticeDate ? new Date(lease.lastNoticeDate) : new Date())}/{lease.id.slice(-4)}
         </span>
-        <span>Date: {formatDate(new Date())}</span>
+        <span>Date: {formatDate(lease.isReprint && lease.lastNoticeDate ? new Date(lease.lastNoticeDate) : new Date())}</span>
       </div>
 
       {/* Recipient */}

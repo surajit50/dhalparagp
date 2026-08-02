@@ -26,7 +26,7 @@ export function ReprintNoticeDialog({ lease }: { lease: any }) {
     // Wait, pdf-lib does: const currentNoticeCount = (lease.noticeCount || 0) + 1;
     // For a REPRINT, we want it to print the EXACT LAST notice number, which is `lease.noticeCount`.
     // So we need to pass a cloned lease with noticeCount - 1 to the generator so it prints the correct number.
-    const leaseClone = { ...lease, noticeCount: Math.max(0, lease.noticeCount - 1) };
+    const leaseClone = { ...lease, noticeCount: Math.max(0, lease.noticeCount - 1), isReprint: true };
     generateLeaseNoticePDF(leaseClone, noticeType);
     setOpen(false);
   };
@@ -96,7 +96,7 @@ export function ReprintNoticeDialog({ lease }: { lease: any }) {
               Preview
             </h3>
             {/* The preview component doesn't add +1, but wait, let's check pond-lease-notice-print.tsx later */}
-            <PondLeaseNoticePrint lease={{ ...lease, noticeCount: Math.max(0, lease.noticeCount - 1) }} noticeType={noticeType} />
+            <PondLeaseNoticePrint lease={{ ...lease, noticeCount: Math.max(0, lease.noticeCount - 1), isReprint: true }} noticeType={noticeType} />
           </div>
         </div>
       </DialogContent>
