@@ -90,6 +90,10 @@ export const publicUserMenuItems: MenuItemProps[] = [
       createMenuItem("Apply for NOC", ["user", "citizen"], `${BASE_URLS.user}/puja-noc/apply`, FaChevronCircleRight, COLORS.orange),
       createMenuItem("Check Status", ["user", "citizen"], `${BASE_URLS.user}/puja-noc/status`, FaChevronCircleRight, COLORS.blue),
     ]),
+    createMenuItem("Digital Birth & Death", ["user", "citizen"], undefined, FaRegFileAlt, COLORS.cyan, [
+      createMenuItem("Apply for Certificate", ["user", "citizen"], `${BASE_URLS.user}/digital-certificate/apply`, FaChevronCircleRight, COLORS.cyan),
+      createMenuItem("Check Status & Print", ["user", "citizen"], `${BASE_URLS.user}/digital-certificate/status`, FaChevronCircleRight, COLORS.blue),
+    ]),
     createMenuItem("Bulk Processing", ["user", "citizen"], `${BASE_URLS.user}/certificates/bulk`, HiDocumentDuplicate, COLORS.cyan),
     createMenuItem("Issuance Reports", ["user", "citizen"], `${BASE_URLS.user}/analytics/certificates/issuance`, FaChartBar, COLORS.blue),
   ]),
@@ -190,6 +194,10 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Settings", ["admin"], `${baseUrl}/generate/puja-noc?tab=settings`, FaChevronCircleRight, COLORS.purple),
   ]),
   createMenuItem("Birth Verification Report", ["admin"], `${baseUrl}/birth-verification`, FaRegFileAlt, COLORS.orange),
+  createMenuItem("Digital Birth & Death", ["admin"], undefined, FaRegFileAlt, COLORS.cyan, [
+    createMenuItem("Manage Applications", ["admin"], `${baseUrl}/manage-digital-certificate`, FaChevronCircleRight, COLORS.blue),
+    createMenuItem("New Application", ["admin"], `${baseUrl}/manage-digital-certificate/new`, FaChevronCircleRight, COLORS.green),
+  ]),
 ];
 
 

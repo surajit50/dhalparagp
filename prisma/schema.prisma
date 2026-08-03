@@ -124,6 +124,7 @@ model User {
   samabyathiApplications       SamabyathiApplication[]
   procurementQuotations        ProcurementQuotation[]
   procurementOrders            ProcurementOrder[]
+  digitalCertificateApplications DigitalCertificateApplication[]
 }
 
 model Account {
@@ -4257,4 +4258,83 @@ model Form36Budget {
   updatedAt DateTime @updatedAt
 
   @@unique([financialYear, fundName])
+}
+
+model DigitalCertificateApplication {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  acknowledgementNo     String   @unique
+  certificateType       String   // "BIRTH" | "DEATH"
+  status                String   @default("SUBMITTED") // SUBMITTED, UNDER_REVIEW, APPROVED, REJECTED
+
+  // Section A: APPLICANT'S DETAILS
+  applicantName         String
+  relationshipWithPerson String?  // For Death Certificate Only
+  fatherOrHusbandName   String
+  postalAddress         String
+  mobileNumber          String
+
+  // Section B: PARTICULARS OF BIRTH / DEATH
+  personName            String
+  fatherName            String?  // For Birth
+  motherName            String?  // For Birth
+  deceasedFatherOrHusbandName String? // For Death
+  dateOfEvent           DateTime // Date of Birth / Death
+  placeOfEvent          String   // Place of Birth / Death
+  registrationYear      String   // e.g. "2024"
+  registrationNumber    String   // e.g. "123/2024"
+  purpose               String   // Purpose for Obtaining Certificate
+
+  // Section C: DOCUMENTS ENCLOSED (PDF under 250 KB)
+  docProofOfIdentity            Boolean  @default(false)
+  docProofOfIdentityUrl         String?
+  docProofOfIdentityPublicId    String?
+
+  docPreviousCertificate        Boolean  @default(false)
+  docPreviousCertificateUrl     String?
+  docPreviousCertificatePublicId String?
+
+  docGeneralDiary               Boolean  @default(false)
+  docGeneralDiaryUrl            String?
+  docGeneralDiaryPublicId       String?
+
+  docRegistrationDetails        Boolean  @default(false)
+  docRegistrationDetailsUrl     String?
+  docRegistrationDetailsPublicId String?
+
+  docOtherDocument              Boolean  @default(false)
+  docOtherDetails               String?
+  docOtherDocumentUrl           String?
+  docOtherDocumentPublicId      String?
+
+  // Section D: DECLARATION
+  declarationPlace      String   @default("Dhalpara")
+  declarationDate       DateTime @default(now())
+  applicantSignatureName String?
+
+  // FOR OFFICE USE ONLY
+  applicationReceivedOn DateTime?
+  registerNoPageNoSerialNo String?
+  officeRegistrationYear String?
+  officeRegistrationNo  String?
+  dateOfVerification    DateTime?
+  recordAvailable       Boolean?
+  registrationVerified  Boolean?
+  subRegistrarOrder     String?  // "APPROVED" | "REJECTED"
+  rejectionReason       String?
+  dataEntryOperatorSignature String?
+  dataEntryOperatorName String?
+  dataEntryOperatorDate DateTime?
+  subRegistrarSignature String?
+  subRegistrarName      String?
+  subRegistrarDate      DateTime?
+
+  // Metadata & Relations
+  userId                String?  @db.ObjectId
+  user                  User?    @relation(fields: [userId], references: [id])
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("digital_certificate_applications")
+  @@index([applicantName, personName])
+  @@index([registrationYear, registrationNumber])
 }
