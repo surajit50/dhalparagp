@@ -271,9 +271,7 @@ export function PondLeaseClient({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem asChild>
-          <LeaseAgreementPrint lease={lease} />
-        </DropdownMenuItem>
+        <LeaseAgreementPrint lease={lease} />
 
         <AddPaymentDialog lease={lease} />
         <ExtendLeaseDialog lease={lease} />
