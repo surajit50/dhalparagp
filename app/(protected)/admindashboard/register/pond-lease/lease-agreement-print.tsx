@@ -11,7 +11,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Printer, FileText, ShieldCheck } from "lucide-react";
-import { formatDate } from "@/utils/utils";
+import { formatDate, getFinancialYear } from "@/utils/utils";
+import { differenceInYears } from "date-fns";
 import { gpname, gpcode, blockname } from "@/constants/gpinfor";
 import { POND_LEASE_TERMS } from "@/constants/pond-lease-terms";
 import {
@@ -39,9 +40,18 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
 
   const leaseStartDate = lease?.leaseStartDate ? new Date(lease.leaseStartDate) : new Date();
   const leaseEndDate = lease?.leaseEndDate ? new Date(lease.leaseEndDate) : new Date();
-  const agreementYear = leaseStartDate.getFullYear();
-  const memoNumber = `GP/${gpcode || "DGP"}/POND-LEASE/${agreementYear}/${(lease?.id || "0000").slice(-4).toUpperCase()}`;
-  const agreementDate = formatDate(new Date());
+  
+  // Agreement date is the start date of the lease
+  const agreementDate = formatDate(leaseStartDate);
+  
+  // Financial Year determined by the first date of agreement start (e.g. "2024-25")
+  const startFinancialYear = getFinancialYear(leaseStartDate);
+  
+  // Calculate total period in years based on start and end dates
+  const calculatedYears = Math.max(1, differenceInYears(leaseEndDate, leaseStartDate));
+  const leasePeriod = lease?.leasePeriod ? Number(lease.leasePeriod) : calculatedYears;
+
+  const memoNumber = `GP/${gpcode || "DGP"}/POND-LEASE/${startFinancialYear}/${(lease?.id || "0000").slice(-4).toUpperCase()}`;
 
   const fullAddress = [
     lease?.leasePartyAddressLine1,
@@ -795,43 +805,39 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   <table className="matrix-table">
                     <tbody>
                       <tr>
-                        <td className="lbl">বার্ষিক ইজারা মূল্য (Yearly)</td>
-                        <td className="val">{currencyFormatter.format(lease?.leaseAmountYearly || 0)}</td>
-                      </tr>
-                      <tr>
-                        <td className="lbl">মোট চুক্তি মূল্য (Total)</td>
-                        <td className="val" style={{ color: "#1e3a8a", fontWeight: "bold" }}>
-                          {currencyFormatter.format(lease?.totalAmount || 0)}
+                        <td className="lbl">আর্থিক বর্ষ (Financial Year)</td>
+                        <td className="val font-bold" style={{ color: "#1e3a8a" }}>
+                          {startFinancialYear}
                         </td>
                       </tr>
                       <tr>
-                        <td className="lbl">জমাকৃত অর্থ (Paid)</td>
-                        <td className="val" style={{ color: "#166534" }}>{currencyFormatter.format(lease?.paidAmount || 0)}</td>
+                        <td className="lbl">বার্ষিক ইজারা মূল্য (Yearly Lease)</td>
+                        <td className="val font-semibold">{currencyFormatter.format(lease?.leaseAmountYearly || 0)}</td>
                       </tr>
                       <tr>
-                        <td className="lbl">অবশিষ্ট বকেয়া (Balance)</td>
-                        <td className="val" style={{ color: "#991b1b", fontWeight: "bold" }}>
-                          {currencyFormatter.format(lease?.pendingAmount || 0)}
+                        <td className="lbl">মোট চুক্তি মূল্য (Total Lease Value)</td>
+                        <td className="val font-bold" style={{ color: "#1e3a8a" }}>
+                          {currencyFormatter.format(lease?.totalAmount || 0)}
                         </td>
                       </tr>
                       <tr>
                         <td className="lbl">ইজারার সময়কাল (Period)</td>
                         <td className="val font-bold">
-                          {lease?.leasePeriod || "1"} বছর ({lease?.leasePeriod || "1"} Year{parseInt(lease?.leasePeriod || "1") > 1 ? "s" : ""})
+                          {leasePeriod} বছর ({leasePeriod} Year{leasePeriod > 1 ? "s" : ""})
                         </td>
+                      </tr>
+                      <tr>
+                        <td className="lbl">ইজারা শুরুর তারিখ (Start Date)</td>
+                        <td className="val">{formatDate(leaseStartDate)}</td>
+                      </tr>
+                      <tr>
+                        <td className="lbl">ইজারা সমাপ্তির তারিখ (End Date)</td>
+                        <td className="val">{formatDate(leaseEndDate)}</td>
                       </tr>
                       <tr>
                         <td className="lbl">মেয়াদ সীমা (Date Range)</td>
-                        <td className="val" style={{ fontSize: "7.8pt" }}>
+                        <td className="val" style={{ fontSize: "8pt", color: "#334155" }}>
                           {formatDate(leaseStartDate)} - {formatDate(leaseEndDate)}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="lbl">বর্তমান স্থিতি (Status)</td>
-                        <td className="val">
-                          <span className="status-badge">
-                            {lease?.status || "ACTIVE"}
-                          </span>
                         </td>
                       </tr>
                     </tbody>
