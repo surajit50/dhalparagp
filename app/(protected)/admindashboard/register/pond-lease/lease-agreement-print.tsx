@@ -633,20 +633,14 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
             {/* Subtle Watermark */}
             <div className="watermark-text">
               {gpname}
-              <br />
-              GOVT. OF WEST BENGAL
+             
+              
             </div>
 
             <div className="content-layer">
               {/* Header Letterhead */}
               <div className="header-wrap">
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "3px" }}>
-                  <span className="govt-badge">
-                    পশ্চিমবঙ্গ সরকার • Govt. of West Bengal
-                  </span>
-                </div>
-                <div className="dept-title">
-                  পঞ্চায়েত ও গ্রামোন্নয়ন দপ্তর • Department of Panchayats &amp; Rural Development
                 </div>
                 <h1 className="gp-title-bn">
                   ৩ নং ধালপাড়া গ্রাম পঞ্চায়েত কার্যালয়
