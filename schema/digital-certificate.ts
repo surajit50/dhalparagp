@@ -84,6 +84,27 @@ export const digitalCertificateApplicationSchema = z
     docOtherDocumentUrl: z.string().optional().nullable(),
     docOtherDocumentPublicId: z.string().optional().nullable(),
 
+    // Section C: Identity Documents for Verification
+    docFatherAadhaar: z.boolean().default(false),
+    docFatherAadhaarUrl: z.string().optional().nullable(),
+    docFatherAadhaarPublicId: z.string().optional().nullable(),
+
+    docFatherVoter: z.boolean().default(false),
+    docFatherVoterUrl: z.string().optional().nullable(),
+    docFatherVoterPublicId: z.string().optional().nullable(),
+
+    docMotherAadhaar: z.boolean().default(false),
+    docMotherAadhaarUrl: z.string().optional().nullable(),
+    docMotherAadhaarPublicId: z.string().optional().nullable(),
+
+    docMotherVoter: z.boolean().default(false),
+    docMotherVoterUrl: z.string().optional().nullable(),
+    docMotherVoterPublicId: z.string().optional().nullable(),
+
+    docChildAadhaar: z.boolean().default(false),
+    docChildAadhaarUrl: z.string().optional().nullable(),
+    docChildAadhaarPublicId: z.string().optional().nullable(),
+
     // Section D: Declaration
     declarationPlace: z.string().default("Dhalpara"),
     declarationDate: z.coerce.date().default(() => new Date()),
