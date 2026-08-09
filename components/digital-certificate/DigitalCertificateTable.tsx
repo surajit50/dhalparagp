@@ -344,16 +344,7 @@ export default function DigitalCertificateTable({
                       </Button>
 
                       {/* Delete (Admin only) */}
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleDelete(app.id, app.acknowledgementNo)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      )}
+                      
                     </div>
                   </TableCell>
                 </TableRow>
