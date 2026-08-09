@@ -52,6 +52,8 @@ import {
   ExternalLink,
   Trash2,
   AlertCircle,
+  Users,
+  Wallet,
 } from "lucide-react";
 import Link from "next/link";
 import DigitalCertificatePrintTemplate from "./DigitalCertificatePrintTemplate";
@@ -88,6 +90,11 @@ export default function DigitalCertificateForm({
     generalDiary: { isUploading: false },
     registrationDetails: { isUploading: false },
     otherDocument: { isUploading: false },
+    fatherAadhaar: { isUploading: false },
+    fatherVoter: { isUploading: false },
+    motherAadhaar: { isUploading: false },
+    motherVoter: { isUploading: false },
+    childAadhaar: { isUploading: false },
   });
 
   const form = useForm<DigitalCertificateApplicationFormData>({
@@ -124,6 +131,21 @@ export default function DigitalCertificateForm({
       docOtherDetails: "",
       docOtherDocumentUrl: "",
       docOtherDocumentPublicId: "",
+      docFatherAadhaar: false,
+      docFatherAadhaarUrl: "",
+      docFatherAadhaarPublicId: "",
+      docFatherVoter: false,
+      docFatherVoterUrl: "",
+      docFatherVoterPublicId: "",
+      docMotherAadhaar: false,
+      docMotherAadhaarUrl: "",
+      docMotherAadhaarPublicId: "",
+      docMotherVoter: false,
+      docMotherVoterUrl: "",
+      docMotherVoterPublicId: "",
+      docChildAadhaar: false,
+      docChildAadhaarUrl: "",
+      docChildAadhaarPublicId: "",
       declarationPlace: "Dhalpara",
       declarationDate: new Date(),
       applicantSignatureName: "",
@@ -139,10 +161,10 @@ export default function DigitalCertificateForm({
   // Handle PDF upload to Cloudinary under 250 KB
   const handlePdfUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
-    docKey: "proofOfIdentity" | "previousCertificate" | "generalDiary" | "registrationDetails" | "otherDocument",
-    urlField: "docProofOfIdentityUrl" | "docPreviousCertificateUrl" | "docGeneralDiaryUrl" | "docRegistrationDetailsUrl" | "docOtherDocumentUrl",
-    publicIdField: "docProofOfIdentityPublicId" | "docPreviousCertificatePublicId" | "docGeneralDiaryPublicId" | "docRegistrationDetailsPublicId" | "docOtherDocumentPublicId",
-    checkboxField: "docProofOfIdentity" | "docPreviousCertificate" | "docGeneralDiary" | "docRegistrationDetails" | "docOtherDocument"
+    docKey: "proofOfIdentity" | "previousCertificate" | "generalDiary" | "registrationDetails" | "otherDocument" | "fatherAadhaar" | "fatherVoter" | "motherAadhaar" | "motherVoter" | "childAadhaar",
+    urlField: "docProofOfIdentityUrl" | "docPreviousCertificateUrl" | "docGeneralDiaryUrl" | "docRegistrationDetailsUrl" | "docOtherDocumentUrl" | "docFatherAadhaarUrl" | "docFatherVoterUrl" | "docMotherAadhaarUrl" | "docMotherVoterUrl" | "docChildAadhaarUrl",
+    publicIdField: "docProofOfIdentityPublicId" | "docPreviousCertificatePublicId" | "docGeneralDiaryPublicId" | "docRegistrationDetailsPublicId" | "docOtherDocumentPublicId" | "docFatherAadhaarPublicId" | "docFatherVoterPublicId" | "docMotherAadhaarPublicId" | "docMotherVoterPublicId" | "docChildAadhaarPublicId",
+    checkboxField: "docProofOfIdentity" | "docPreviousCertificate" | "docGeneralDiary" | "docRegistrationDetails" | "docOtherDocument" | "docFatherAadhaar" | "docFatherVoter" | "docMotherAadhaar" | "docMotherVoter" | "docChildAadhaar"
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -245,6 +267,134 @@ export default function DigitalCertificateForm({
     toast.info("Document removed");
   };
 
+  // Helper component for document upload sections
+  const DocumentUploadField = ({
+    docKey,
+    urlField,
+    publicIdField,
+    checkboxField,
+    label,
+    color = "gray",
+  }: {
+    docKey: string;
+    urlField: any;
+    publicIdField: any;
+    checkboxField: any;
+    label: string;
+    color?: string;
+  }) => {
+    const colorClasses: Record<string, { border: string; bg: string; text: string; hover: string }> = {
+      blue: { border: "border-dashed border-blue-300", bg: "hover:bg-blue-50", text: "text-blue-600", hover: "hover:border-blue-500" },
+      green: { border: "border-dashed border-green-300", bg: "hover:bg-green-50", text: "text-green-600", hover: "hover:border-green-500" },
+      purple: { border: "border-dashed border-purple-300", bg: "hover:bg-purple-50", text: "text-purple-600", hover: "hover:border-purple-500" },
+      gray: { border: "border-dashed border-gray-300", bg: "hover:bg-gray-50", text: "text-primary", hover: "hover:border-gray-500" },
+    };
+
+    const colors = colorClasses[color] || colorClasses.gray;
+    const isUploaded = uploads[docKey as keyof typeof uploads]?.url;
+    const isLoading = uploads[docKey as keyof typeof uploads]?.isUploading;
+    const error = uploads[docKey as keyof typeof uploads]?.error;
+    const fileSize = uploads[docKey as keyof typeof uploads]?.fileSize;
+
+    return (
+      <div className="border rounded-xl p-3.5 bg-card hover:bg-muted/10 transition-all space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id={checkboxField}
+              checked={form.watch(checkboxField)}
+              onCheckedChange={(c) => form.setValue(checkboxField, Boolean(c))}
+            />
+            <Label htmlFor={checkboxField} className="text-xs font-bold cursor-pointer">
+              {label}
+            </Label>
+          </div>
+          {isUploaded && (
+            <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 flex items-center gap-1">
+              <FileCheck className="w-3 h-3 text-green-600" /> Uploaded ({fileSize})
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+          <input
+            type="file"
+            id={`file-${docKey}`}
+            accept="application/pdf,.pdf"
+            className="hidden"
+            disabled={isLoading}
+            onChange={(e) =>
+              handlePdfUpload(
+                e,
+                docKey as any,
+                urlField,
+                publicIdField,
+                checkboxField
+              )
+            }
+          />
+
+          {!isUploaded ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isLoading}
+              onClick={() => document.getElementById(`file-${docKey}`)?.click()}
+              className={`text-xs gap-1.5 ${colors.border} ${colors.hover} ${colors.bg}`}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className={`w-3.5 h-3.5 animate-spin ${colors.text}`} /> Uploading PDF...
+                </>
+              ) : (
+                <>
+                  <UploadCloud className={`w-3.5 h-3.5 ${colors.text}`} /> Upload PDF (≤ 250 KB)
+                </>
+              )}
+            </Button>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                asChild
+                className="text-xs gap-1.5 h-8 bg-blue-50 text-blue-700 hover:bg-blue-100"
+              >
+                <a href={uploads[docKey as keyof typeof uploads]?.url || "#"} target="_blank" rel="noreferrer">
+                  <ExternalLink className="w-3.5 h-3.5" /> View PDF
+                </a>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  removeUploadedPdf(
+                    docKey,
+                    urlField,
+                    publicIdField,
+                    checkboxField
+                  )
+                }
+                className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50 px-2"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          )}
+
+          {error && (
+            <p className="text-xs text-red-600 flex items-center gap-1">
+              <AlertCircle className="w-3.5 h-3.5" /> {error}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const onSubmit = async (values: DigitalCertificateApplicationFormData) => {
     setIsSubmitting(true);
     try {
@@ -330,11 +480,11 @@ export default function DigitalCertificateForm({
           </CardContent>
         </Card>
 
-        {/* Section A: Applicant’s Details */}
+        {/* Section A: Applicant's Details */}
         <Card className="shadow-sm">
           <CardHeader className="bg-muted/20 border-b pb-3">
             <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
-              <UserCheck className="w-4 h-4 text-primary" /> A. Applicant’s Details
+              <UserCheck className="w-4 h-4 text-primary" /> A. Applicant's Details
             </CardTitle>
             <CardDescription className="text-xs">
               Particulars of the person submitting this application.
@@ -375,7 +525,7 @@ export default function DigitalCertificateForm({
             {/* Father / Husband Name */}
             <div className="space-y-1.5">
               <Label htmlFor="fatherOrHusbandName">
-                Father’s / Husband’s Name <span className="text-red-500">*</span>
+                Father's / Husband's Name <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="fatherOrHusbandName"
@@ -496,7 +646,7 @@ export default function DigitalCertificateForm({
             {isBirth && (
               <>
                 <div className="space-y-1.5">
-                  <Label htmlFor="fatherName">Father’s Name (For Birth)</Label>
+                  <Label htmlFor="fatherName">Father's Name (For Birth)</Label>
                   <Input
                     id="fatherName"
                     placeholder="Father's full name"
@@ -504,7 +654,7 @@ export default function DigitalCertificateForm({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="motherName">Mother’s Name (For Birth)</Label>
+                  <Label htmlFor="motherName">Mother's Name (For Birth)</Label>
                   <Input
                     id="motherName"
                     placeholder="Mother's full name"
@@ -518,7 +668,7 @@ export default function DigitalCertificateForm({
             {isDeath && (
               <div className="space-y-1.5 sm:col-span-2">
                 <Label htmlFor="deceasedFatherOrHusbandName">
-                  Father’s / Husband’s Name (For Death)
+                  Father's / Husband's Name (For Death)
                 </Label>
                 <Input
                   id="deceasedFatherOrHusbandName"
@@ -609,392 +759,44 @@ export default function DigitalCertificateForm({
           <CardContent className="pt-6 space-y-4">
             <div className="grid grid-cols-1 gap-4">
               {/* Document 1: Proof of Identity */}
-              <div className="border rounded-xl p-3.5 bg-card hover:bg-muted/10 transition-all space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="docProofOfIdentity"
-                      checked={form.watch("docProofOfIdentity")}
-                      onCheckedChange={(c) => form.setValue("docProofOfIdentity", Boolean(c))}
-                    />
-                    <Label htmlFor="docProofOfIdentity" className="text-xs font-bold cursor-pointer">
-                      Proof of Identity (Aadhaar / Voter ID / PAN / Passport)
-                    </Label>
-                  </div>
-                  {uploads.proofOfIdentity.url && (
-                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 flex items-center gap-1">
-                      <FileCheck className="w-3 h-3 text-green-600" /> Uploaded ({uploads.proofOfIdentity.fileSize})
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-                  <input
-                    type="file"
-                    id="file-proofOfIdentity"
-                    accept="application/pdf,.pdf"
-                    className="hidden"
-                    disabled={uploads.proofOfIdentity.isUploading}
-                    onChange={(e) =>
-                      handlePdfUpload(
-                        e,
-                        "proofOfIdentity",
-                        "docProofOfIdentityUrl",
-                        "docProofOfIdentityPublicId",
-                        "docProofOfIdentity"
-                      )
-                    }
-                  />
-
-                  {!uploads.proofOfIdentity.url ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={uploads.proofOfIdentity.isUploading}
-                      onClick={() => document.getElementById("file-proofOfIdentity")?.click()}
-                      className="text-xs gap-1.5 border-dashed border-blue-300 hover:border-blue-500 hover:bg-blue-50/50"
-                    >
-                      {uploads.proofOfIdentity.isUploading ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" /> Uploading PDF...
-                        </>
-                      ) : (
-                        <>
-                          <UploadCloud className="w-3.5 h-3.5 text-blue-600" /> Upload Identity PDF (≤ 250 KB)
-                        </>
-                      )}
-                    </Button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        asChild
-                        className="text-xs gap-1.5 h-8 bg-blue-50 text-blue-700 hover:bg-blue-100"
-                      >
-                        <a href={uploads.proofOfIdentity.url} target="_blank" rel="noreferrer">
-                          <ExternalLink className="w-3.5 h-3.5" /> View PDF
-                        </a>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          removeUploadedPdf(
-                            "proofOfIdentity",
-                            "docProofOfIdentityUrl",
-                            "docProofOfIdentityPublicId",
-                            "docProofOfIdentity"
-                          )
-                        }
-                        className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50 px-2"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  )}
-
-                  {uploads.proofOfIdentity.error && (
-                    <p className="text-xs text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {uploads.proofOfIdentity.error}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <DocumentUploadField
+                docKey="proofOfIdentity"
+                urlField="docProofOfIdentityUrl"
+                publicIdField="docProofOfIdentityPublicId"
+                checkboxField="docProofOfIdentity"
+                label="Proof of Identity (Aadhaar / Voter ID / PAN / Passport)"
+                color="blue"
+              />
 
               {/* Document 2: Previous Birth / Death Certificate */}
-              <div className="border rounded-xl p-3.5 bg-card hover:bg-muted/10 transition-all space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="docPreviousCertificate"
-                      checked={form.watch("docPreviousCertificate")}
-                      onCheckedChange={(c) => form.setValue("docPreviousCertificate", Boolean(c))}
-                    />
-                    <Label htmlFor="docPreviousCertificate" className="text-xs font-bold cursor-pointer">
-                      Previous Birth / Death Certificate (If Available)
-                    </Label>
-                  </div>
-                  {uploads.previousCertificate.url && (
-                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 flex items-center gap-1">
-                      <FileCheck className="w-3 h-3 text-green-600" /> Uploaded ({uploads.previousCertificate.fileSize})
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-                  <input
-                    type="file"
-                    id="file-previousCertificate"
-                    accept="application/pdf,.pdf"
-                    className="hidden"
-                    disabled={uploads.previousCertificate.isUploading}
-                    onChange={(e) =>
-                      handlePdfUpload(
-                        e,
-                        "previousCertificate",
-                        "docPreviousCertificateUrl",
-                        "docPreviousCertificatePublicId",
-                        "docPreviousCertificate"
-                      )
-                    }
-                  />
-
-                  {!uploads.previousCertificate.url ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={uploads.previousCertificate.isUploading}
-                      onClick={() => document.getElementById("file-previousCertificate")?.click()}
-                      className="text-xs gap-1.5 border-dashed border-gray-300 hover:border-gray-500 hover:bg-gray-50"
-                    >
-                      {uploads.previousCertificate.isUploading ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" /> Uploading PDF...
-                        </>
-                      ) : (
-                        <>
-                          <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload Certificate PDF (≤ 250 KB)
-                        </>
-                      )}
-                    </Button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        asChild
-                        className="text-xs gap-1.5 h-8 bg-blue-50 text-blue-700 hover:bg-blue-100"
-                      >
-                        <a href={uploads.previousCertificate.url} target="_blank" rel="noreferrer">
-                          <ExternalLink className="w-3.5 h-3.5" /> View PDF
-                        </a>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          removeUploadedPdf(
-                            "previousCertificate",
-                            "docPreviousCertificateUrl",
-                            "docPreviousCertificatePublicId",
-                            "docPreviousCertificate"
-                          )
-                        }
-                        className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50 px-2"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  )}
-
-                  {uploads.previousCertificate.error && (
-                    <p className="text-xs text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {uploads.previousCertificate.error}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <DocumentUploadField
+                docKey="previousCertificate"
+                urlField="docPreviousCertificateUrl"
+                publicIdField="docPreviousCertificatePublicId"
+                checkboxField="docPreviousCertificate"
+                label="Previous Birth / Death Certificate (If Available)"
+                color="gray"
+              />
 
               {/* Document 3: General Diary (GD) Copy */}
-              <div className="border rounded-xl p-3.5 bg-card hover:bg-muted/10 transition-all space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="docGeneralDiary"
-                      checked={form.watch("docGeneralDiary")}
-                      onCheckedChange={(c) => form.setValue("docGeneralDiary", Boolean(c))}
-                    />
-                    <Label htmlFor="docGeneralDiary" className="text-xs font-bold cursor-pointer">
-                      General Diary (GD) Copy (If Applicable)
-                    </Label>
-                  </div>
-                  {uploads.generalDiary.url && (
-                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 flex items-center gap-1">
-                      <FileCheck className="w-3 h-3 text-green-600" /> Uploaded ({uploads.generalDiary.fileSize})
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-                  <input
-                    type="file"
-                    id="file-generalDiary"
-                    accept="application/pdf,.pdf"
-                    className="hidden"
-                    disabled={uploads.generalDiary.isUploading}
-                    onChange={(e) =>
-                      handlePdfUpload(
-                        e,
-                        "generalDiary",
-                        "docGeneralDiaryUrl",
-                        "docGeneralDiaryPublicId",
-                        "docGeneralDiary"
-                      )
-                    }
-                  />
-
-                  {!uploads.generalDiary.url ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={uploads.generalDiary.isUploading}
-                      onClick={() => document.getElementById("file-generalDiary")?.click()}
-                      className="text-xs gap-1.5 border-dashed border-gray-300 hover:border-gray-500 hover:bg-gray-50"
-                    >
-                      {uploads.generalDiary.isUploading ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" /> Uploading PDF...
-                        </>
-                      ) : (
-                        <>
-                          <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload GD Copy PDF (≤ 250 KB)
-                        </>
-                      )}
-                    </Button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        asChild
-                        className="text-xs gap-1.5 h-8 bg-blue-50 text-blue-700 hover:bg-blue-100"
-                      >
-                        <a href={uploads.generalDiary.url} target="_blank" rel="noreferrer">
-                          <ExternalLink className="w-3.5 h-3.5" /> View PDF
-                        </a>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          removeUploadedPdf(
-                            "generalDiary",
-                            "docGeneralDiaryUrl",
-                            "docGeneralDiaryPublicId",
-                            "docGeneralDiary"
-                          )
-                        }
-                        className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50 px-2"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  )}
-
-                  {uploads.generalDiary.error && (
-                    <p className="text-xs text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {uploads.generalDiary.error}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <DocumentUploadField
+                docKey="generalDiary"
+                urlField="docGeneralDiaryUrl"
+                publicIdField="docGeneralDiaryPublicId"
+                checkboxField="docGeneralDiary"
+                label="General Diary (GD) Copy (If Applicable)"
+                color="gray"
+              />
 
               {/* Document 4: Registration Details */}
-              <div className="border rounded-xl p-3.5 bg-card hover:bg-muted/10 transition-all space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="docRegistrationDetails"
-                      checked={form.watch("docRegistrationDetails")}
-                      onCheckedChange={(c) => form.setValue("docRegistrationDetails", Boolean(c))}
-                    />
-                    <Label htmlFor="docRegistrationDetails" className="text-xs font-bold cursor-pointer">
-                      Registration Details (If Available)
-                    </Label>
-                  </div>
-                  {uploads.registrationDetails.url && (
-                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200 flex items-center gap-1">
-                      <FileCheck className="w-3 h-3 text-green-600" /> Uploaded ({uploads.registrationDetails.fileSize})
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
-                  <input
-                    type="file"
-                    id="file-registrationDetails"
-                    accept="application/pdf,.pdf"
-                    className="hidden"
-                    disabled={uploads.registrationDetails.isUploading}
-                    onChange={(e) =>
-                      handlePdfUpload(
-                        e,
-                        "registrationDetails",
-                        "docRegistrationDetailsUrl",
-                        "docRegistrationDetailsPublicId",
-                        "docRegistrationDetails"
-                      )
-                    }
-                  />
-
-                  {!uploads.registrationDetails.url ? (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      disabled={uploads.registrationDetails.isUploading}
-                      onClick={() => document.getElementById("file-registrationDetails")?.click()}
-                      className="text-xs gap-1.5 border-dashed border-gray-300 hover:border-gray-500 hover:bg-gray-50"
-                    >
-                      {uploads.registrationDetails.isUploading ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" /> Uploading PDF...
-                        </>
-                      ) : (
-                        <>
-                          <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload Reg Details PDF (≤ 250 KB)
-                        </>
-                      )}
-                    </Button>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        asChild
-                        className="text-xs gap-1.5 h-8 bg-blue-50 text-blue-700 hover:bg-blue-100"
-                      >
-                        <a href={uploads.registrationDetails.url} target="_blank" rel="noreferrer">
-                          <ExternalLink className="w-3.5 h-3.5" /> View PDF
-                        </a>
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          removeUploadedPdf(
-                            "registrationDetails",
-                            "docRegistrationDetailsUrl",
-                            "docRegistrationDetailsPublicId",
-                            "docRegistrationDetails"
-                          )
-                        }
-                        className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50 px-2"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  )}
-
-                  {uploads.registrationDetails.error && (
-                    <p className="text-xs text-red-600 flex items-center gap-1">
-                      <AlertCircle className="w-3.5 h-3.5" /> {uploads.registrationDetails.error}
-                    </p>
-                  )}
-                </div>
-              </div>
+              <DocumentUploadField
+                docKey="registrationDetails"
+                urlField="docRegistrationDetailsUrl"
+                publicIdField="docRegistrationDetailsPublicId"
+                checkboxField="docRegistrationDetails"
+                label="Registration Details (If Available)"
+                color="gray"
+              />
 
               {/* Document 5: Any Other Supporting Document */}
               <div className="border rounded-xl p-3.5 bg-card hover:bg-muted/10 transition-all space-y-3">
@@ -1104,6 +906,78 @@ export default function DigitalCertificateForm({
           </CardContent>
         </Card>
 
+        {/* Section C-2: Identity Documents for Verification (Father, Mother, Child) */}
+        <Card className="shadow-sm border-green-200">
+          <CardHeader className="bg-green-50/40 border-b pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                <Users className="w-4 h-4 text-green-600" /> C2. Identity Documents for Verification (Optional)
+              </CardTitle>
+              <span className="text-xs font-semibold text-green-700 bg-green-100/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1 w-fit">
+                <Wallet className="w-3.5 h-3.5" /> Aadhaar & Voter ID
+              </span>
+            </div>
+            <CardDescription className="text-xs">
+              Upload identity proof documents of family members for faster verification. All documents must be PDF under 250 KB.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pt-6 space-y-4">
+            <div className="grid grid-cols-1 gap-4">
+              {/* Father's Aadhaar */}
+              <DocumentUploadField
+                docKey="fatherAadhaar"
+                urlField="docFatherAadhaarUrl"
+                publicIdField="docFatherAadhaarPublicId"
+                checkboxField="docFatherAadhaar"
+                label="Father's Aadhaar (If Available)"
+                color="green"
+              />
+
+              {/* Father's Voter ID */}
+              <DocumentUploadField
+                docKey="fatherVoter"
+                urlField="docFatherVoterUrl"
+                publicIdField="docFatherVoterPublicId"
+                checkboxField="docFatherVoter"
+                label="Father's Voter ID (If Available)"
+                color="green"
+              />
+
+              {/* Mother's Aadhaar */}
+              <DocumentUploadField
+                docKey="motherAadhaar"
+                urlField="docMotherAadhaarUrl"
+                publicIdField="docMotherAadhaarPublicId"
+                checkboxField="docMotherAadhaar"
+                label="Mother's Aadhaar (If Available)"
+                color="purple"
+              />
+
+              {/* Mother's Voter ID */}
+              <DocumentUploadField
+                docKey="motherVoter"
+                urlField="docMotherVoterUrl"
+                publicIdField="docMotherVoterPublicId"
+                checkboxField="docMotherVoter"
+                label="Mother's Voter ID (If Available)"
+                color="purple"
+              />
+
+              {/* Child's Aadhaar (Birth Certificate Only) */}
+              {isBirth && (
+                <DocumentUploadField
+                  docKey="childAadhaar"
+                  urlField="docChildAadhaarUrl"
+                  publicIdField="docChildAadhaarPublicId"
+                  checkboxField="docChildAadhaar"
+                  label="Child's Aadhaar (If Available)"
+                  color="blue"
+                />
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Section D: Declaration */}
         <Card className="shadow-sm border-primary/20">
           <CardHeader className="bg-muted/20 border-b pb-3">
@@ -1112,10 +986,10 @@ export default function DigitalCertificateForm({
           <CardContent className="pt-6 space-y-4">
             <div className="bg-muted/30 p-4 rounded-lg text-xs leading-relaxed text-muted-foreground border">
               <p className="mb-2 font-medium text-foreground">
-                I hereby declare that the information furnished above is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application is liable to be rejected.
+                I hereby declare that the information furnished above is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected and I may face legal consequences.
               </p>
               <p>
-                I therefore request the Sub-Registrar of Births & Deaths, No. 3 Dhalpara Gram Panchayat, to kindly verify the records maintained in your office and issue the Digital Birth / Death Certificate.
+                I therefore request the Sub-Registrar of Births & Deaths, No. 3 Dhalpara Gram Panchayat, to kindly verify the records maintained in your office and issue the Digital Birth / Death Certificate as per my application.
               </p>
             </div>
 
