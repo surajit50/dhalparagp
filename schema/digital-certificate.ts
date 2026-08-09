@@ -84,7 +84,7 @@ export const digitalCertificateApplicationSchema = z
     docOtherDocumentUrl: z.string().optional().nullable(),
     docOtherDocumentPublicId: z.string().optional().nullable(),
 
-    // Section C: Identity Documents for Verification
+    // Section C2: Identity Documents for Verification (Father)
     docFatherAadhaar: z.boolean().default(false),
     docFatherAadhaarUrl: z.string().optional().nullable(),
     docFatherAadhaarPublicId: z.string().optional().nullable(),
@@ -93,6 +93,7 @@ export const digitalCertificateApplicationSchema = z
     docFatherVoterUrl: z.string().optional().nullable(),
     docFatherVoterPublicId: z.string().optional().nullable(),
 
+    // Section C2: Identity Documents for Verification (Mother)
     docMotherAadhaar: z.boolean().default(false),
     docMotherAadhaarUrl: z.string().optional().nullable(),
     docMotherAadhaarPublicId: z.string().optional().nullable(),
@@ -101,6 +102,7 @@ export const digitalCertificateApplicationSchema = z
     docMotherVoterUrl: z.string().optional().nullable(),
     docMotherVoterPublicId: z.string().optional().nullable(),
 
+    // Section C2: Identity Documents for Verification (Child - Birth Certificate Only)
     docChildAadhaar: z.boolean().default(false),
     docChildAadhaarUrl: z.string().optional().nullable(),
     docChildAadhaarPublicId: z.string().optional().nullable(),
