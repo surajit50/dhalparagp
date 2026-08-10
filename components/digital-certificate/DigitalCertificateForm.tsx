@@ -833,7 +833,7 @@ export default function DigitalCertificateForm({
                     urlField="docProofOfIdentityUrl"
                     publicIdField="docProofOfIdentityPublicId"
                     checkboxField="docProofOfIdentity"
-                    label="Proof of Identity (Aadhaar / Voter ID / PAN / Passport)"
+                    label="Proof of applicant Identity (Aadhaar / Voter ID / PAN / Passport)"
                     color="blue"
                   />
                   <DocumentUploadField
