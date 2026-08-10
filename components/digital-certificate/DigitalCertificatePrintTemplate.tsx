@@ -74,6 +74,10 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
     const isBirth = data.certificateType === "BIRTH";
     const isDeath = data.certificateType === "DEATH";
 
+    // Dynamic labels based on certificate type
+    const certTypeLabel = isBirth ? "Birth" : isDeath ? "Death" : "Birth / Death";
+    const certTypeLabelUpper = certTypeLabel.toUpperCase();
+
     const formattedEventDate = data.dateOfEvent
       ? format(new Date(data.dateOfEvent), "dd / MM / yyyy")
       : "____ / ____ / ______";
@@ -174,7 +178,7 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
               No. 3 Dhalpara Gram Panchayat
             </h1>
             <p className="text-[11.5px] font-semibold text-black">
-              P.O. – Trimohini, Block – Hili, District – Dakshin Dinajpur, West Bengal, PIN – 733145
+              P.O. – Trimohini, Block – Hili, District – Dakshin Dinajpur, West Bengal, PIN – 733126
             </p>
           </div>
 
@@ -190,10 +194,10 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
             </div>
           </div>
 
-          {/* Document Title */}
+          {/* Document Title - dynamically shows BIRTH / DEATH */}
           <div className="text-center my-2">
             <h3 className="text-[14px] font-bold tracking-wide uppercase border-b-2 border-black inline-block pb-0.5">
-              APPLICATION FOR ISSUE OF DIGITAL BIRTH / DEATH CERTIFICATE
+              APPLICATION FOR ISSUE OF DIGITAL {certTypeLabelUpper} CERTIFICATE
             </h3>
           </div>
 
@@ -206,19 +210,19 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
             <p>District – Dakshin Dinajpur, West Bengal</p>
           </div>
 
-          {/* Subject Line */}
+          {/* Subject Line - dynamic */}
           <div className="mb-2 text-[12.5px] text-black">
             <span className="font-bold underline">Subject:</span>{" "}
             <span className="font-bold uppercase">
-              Application for Issue of Digital {isBirth ? "Birth" : isDeath ? "Death" : "Birth / Death"} Certificate
+              Application for Issue of Digital {certTypeLabel} Certificate
             </span>
           </div>
 
-          {/* Preamble */}
+          {/* Preamble - dynamic */}
           <div className="mb-2.5 text-justify text-[12px] leading-relaxed text-black">
             <p className="font-semibold mb-0.5">Respected Sir/Madam,</p>
             <p className="indent-6">
-              I respectfully submit this application for issuance of a Digital Birth / Death Certificate. The particulars relating to the Birth/Death registration are furnished below. I request you to kindly verify the official records maintained in your office and issue the Digital Certificate.
+              I respectfully submit this application for issuance of a Digital {certTypeLabel} Certificate. The particulars relating to the {certTypeLabel.toLowerCase()} registration are furnished below. I request you to kindly verify the official records maintained in your office and issue the Digital Certificate.
             </p>
           </div>
 
@@ -280,10 +284,10 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
             </table>
           </div>
 
-          {/* Section B: Particulars of Birth / Death */}
+          {/* Section B: Particulars of Birth / Death - dynamic labels */}
           <div className="mb-2.5 page-break-avoid">
             <div className="bg-gray-100 print:bg-gray-200 border border-black px-2 py-0.5 font-bold text-[12px] uppercase tracking-wide text-black">
-              B. PARTICULARS OF BIRTH / DEATH
+              B. PARTICULARS OF {certTypeLabelUpper}
             </div>
             <table className="w-full border-collapse border border-black text-[12px]">
               <thead>
@@ -316,11 +320,11 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
                   <td className="border border-black px-2 py-0.5 text-black">{data.deceasedFatherOrHusbandName || "—"}</td>
                 </tr>
                 <tr>
-                  <td className="border border-black px-2 py-0.5 font-semibold text-black">Date of Birth / Death</td>
+                  <td className="border border-black px-2 py-0.5 font-semibold text-black">Date of {certTypeLabel}</td>
                   <td className="border border-black px-2 py-0.5 font-bold text-black">{formattedEventDate}</td>
                 </tr>
                 <tr>
-                  <td className="border border-black px-2 py-0.5 font-semibold text-black">Place of Birth / Death</td>
+                  <td className="border border-black px-2 py-0.5 font-semibold text-black">Place of {certTypeLabel}</td>
                   <td className="border border-black px-2 py-0.5 text-black">{data.placeOfEvent || "—"}</td>
                 </tr>
                 <tr>
@@ -356,7 +360,7 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
                   <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docPreviousCertificate ? "bg-black text-white" : ""}`}>
                     {data.docPreviousCertificate ? "✓" : ""}
                   </span>
-                  <span>Previous Birth / Death Certificate (If Available)</span>
+                  <span>Previous {certTypeLabel} Certificate (If Available)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docGeneralDiary ? "bg-black text-white" : ""}`}>
@@ -395,7 +399,7 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
                 I hereby declare that the information furnished above is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application is liable to be rejected.
               </p>
               <p className="mb-2 indent-6">
-                I therefore request the Sub-Registrar of Births & Deaths, No. 3 Dhalpara Gram Panchayat, to kindly verify the records maintained in your office and issue the Digital Birth / Death Certificate.
+                I therefore request the Sub-Registrar of Births & Deaths, No. 3 Dhalpara Gram Panchayat, to kindly verify the records maintained in your office and issue the Digital {certTypeLabel} Certificate.
               </p>
 
               <div className="grid grid-cols-3 gap-2 pt-1.5 border-t border-dashed border-gray-400 items-end">
@@ -508,7 +512,7 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
             </table>
           </div>
 
-          {/* ORDER OF THE SUB-REGISTRAR */}
+          {/* ORDER OF THE SUB-REGISTRAR - dynamic approval text */}
           <div className="border border-black p-2 text-[11.5px] leading-tight page-break-avoid text-black">
             <div className="font-bold uppercase tracking-wide text-[11px] mb-1 border-b border-black pb-0.5">
               ORDER OF THE SUB-REGISTRAR
@@ -519,7 +523,7 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
                 <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.subRegistrarOrder === "APPROVED" ? "bg-black text-white" : ""}`}>
                   {data.subRegistrarOrder === "APPROVED" ? "✓" : ""}
                 </span>
-                Approved for issue of Digital Birth/Death Certificate
+                Approved for issue of Digital {certTypeLabel} Certificate
               </span>
               <span className="flex items-center gap-1.5 font-bold">
                 <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.subRegistrarOrder === "REJECTED" ? "bg-black text-white" : ""}`}>
