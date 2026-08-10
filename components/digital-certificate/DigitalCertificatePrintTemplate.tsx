@@ -178,7 +178,7 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
               No. 3 Dhalpara Gram Panchayat
             </h1>
             <p className="text-[11.5px] font-semibold text-black">
-              P.O. – Trimohini, Block – Hili, District – Dakshin Dinajpur, West Bengal, PIN – 733145
+              P.O. – Trimohini, Block – Hili, District – Dakshin Dinajpur, West Bengal, PIN – 733126
             </p>
           </div>
 
