@@ -471,13 +471,16 @@ export interface ReportDataItem {
   slNo: number;
   workActivityId: string | number;
   sourceOfFund: string;
+  schemeName?: string;
   workActivityName: string;
   nitNumber: string | number;
   nitDate: Date | null;
   workOrderIssueDate: Date | null;
   workOrderValue: number;
   paymentsInPeriod: number;
+  periodPaymentDates?: string;
   paymentsAfterPeriod: number;
+  afterPeriodPaymentDates?: string;
   completionDate: Date | null;
   workStatus: string;
   remarks: string;

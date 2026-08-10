@@ -9,36 +9,48 @@ interface ExportButtonProps {
     slNo: number;
     workActivityId: number | string;
     sourceOfFund: string;
+    schemeName?: string;
     workActivityName: string;
     nitNumber: number | string;
     nitDate: Date | null;
     workOrderIssueDate: Date | null;
     workOrderValue: number;
     paymentsInPeriod: number;
+    periodPaymentDates?: string;
     completionDate: Date | null;
     workStatus: string;
     remarks: string;
     paymentsAfterPeriod: number;
-    physicalCompletionPercentage: number | null; // Added for export
-    physicalCompletionDisplay: string; // Added for display (not directly used here, but part of data)
+    afterPeriodPaymentDates?: string;
+    physicalCompletionPercentage: number | null;
+    physicalCompletionDisplay: string;
   }>;
+  paymentColumnHeader?: string;
+  filename?: string;
 }
 
-export function ExportButton({ reportData }: ExportButtonProps) {
+export function ExportButton({
+  reportData,
+  paymentColumnHeader = "Payment made during April to June (INR)",
+  filename = "WorkOrderFinancialReport.xlsx",
+}: ExportButtonProps) {
   const handleExport = () => {
-    // Prepare data for export (flatten/format as needed)
+    // Prepare data for export
     const exportData = reportData.map((item) => ({
       "SL No": item.slNo,
       "Work/Activity ID": item.workActivityId,
-      Source: item.sourceOfFund,
+      Scheme: item.schemeName || item.sourceOfFund,
       "Work/Activity Name": item.workActivityName,
       "NIT No": item.nitNumber,
       "NIT Date": item.nitDate ? format(item.nitDate, "dd/MM/yyyy") : "N/A",
       "Issue Date": item.workOrderIssueDate
         ? format(item.workOrderIssueDate, "dd/MM/yyyy")
         : "N/A",
-      "Order Value": item.workOrderValue,
-      "Gross Bills (Apr 24-Jun 25)": item.paymentsInPeriod,
+      "Order Value (INR)": item.workOrderValue,
+      [paymentColumnHeader]: item.paymentsInPeriod,
+      "Payment Date(s) in Period": item.periodPaymentDates || "N/A",
+      "Payment After Period (INR)": item.paymentsAfterPeriod,
+      "Payment Date(s) After Period": item.afterPeriodPaymentDates || "N/A",
       "Completion Date": item.completionDate
         ? format(item.completionDate, "dd/MM/yyyy")
         : "",
@@ -49,7 +61,7 @@ export function ExportButton({ reportData }: ExportButtonProps) {
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Report");
-    XLSX.writeFile(wb, "WorkOrderFinancialReport.xlsx");
+    XLSX.writeFile(wb, filename);
   };
 
   return (
@@ -59,3 +71,4 @@ export function ExportButton({ reportData }: ExportButtonProps) {
     </Button>
   );
 }
+
