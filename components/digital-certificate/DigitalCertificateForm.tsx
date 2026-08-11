@@ -170,7 +170,7 @@ export default function DigitalCertificateForm({
       declarationPlace: "Dhalpara",
       declarationDate: new Date(),
       applicantSignatureName: "",
-      declarationAgreed: true,
+      declarationAgreed: false,
     },
   });
 
@@ -518,6 +518,10 @@ export default function DigitalCertificateForm({
     const isValid = await form.trigger(fieldsToValidate as any);
     if (!isValid) return;
 
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     if (currentStepIndex < totalSteps - 1) {
       setCurrentStep(STEP_ORDER[currentStepIndex + 1]);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -525,6 +529,10 @@ export default function DigitalCertificateForm({
   };
 
   const goToPrevStep = () => {
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
     if (currentStepIndex > 0) {
       setCurrentStep(STEP_ORDER[currentStepIndex - 1]);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1457,7 +1465,7 @@ export default function DigitalCertificateForm({
         id="digital-certificate-form"
         onSubmit={form.handleSubmit(onSubmit, onFormError)}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && (e.target as HTMLElement).tagName === "INPUT") {
+          if (e.key === "Enter") {
             e.preventDefault();
           }
         }}
@@ -1477,6 +1485,7 @@ export default function DigitalCertificateForm({
 
             <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
+                key="btn-back"
                 type="button"
                 variant="outline"
                 onClick={goToPrevStep}
@@ -1488,6 +1497,7 @@ export default function DigitalCertificateForm({
 
               {currentStepIndex === totalSteps - 1 ? (
                 <Button
+                  key="btn-submit"
                   type="submit"
                   disabled={isSubmitting}
                   className="gap-2 flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white"
@@ -1504,6 +1514,7 @@ export default function DigitalCertificateForm({
                 </Button>
               ) : (
                 <Button
+                  key="btn-next"
                   type="button"
                   onClick={goToNextStep}
                   disabled={isSubmitting}
