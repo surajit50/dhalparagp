@@ -4306,6 +4306,27 @@ model DigitalCertificateApplication {
   docOtherDocumentUrl           String?
   docOtherDocumentPublicId      String?
 
+  // Section C2: IDENTITY DOCUMENTS FOR VERIFICATION (PDF under 250 KB)
+  docFatherAadhaar              Boolean  @default(false)
+  docFatherAadhaarUrl           String?
+  docFatherAadhaarPublicId      String?
+
+  docFatherVoter                Boolean  @default(false)
+  docFatherVoterUrl             String?
+  docFatherVoterPublicId        String?
+
+  docMotherAadhaar              Boolean  @default(false)
+  docMotherAadhaarUrl           String?
+  docMotherAadhaarPublicId      String?
+
+  docMotherVoter                Boolean  @default(false)
+  docMotherVoterUrl             String?
+  docMotherVoterPublicId        String?
+
+  docChildAadhaar               Boolean  @default(false)
+  docChildAadhaarUrl            String?
+  docChildAadhaarPublicId       String?
+
   // Section D: DECLARATION
   declarationPlace      String   @default("Dhalpara")
   declarationDate       DateTime @default(now())
