@@ -554,6 +554,45 @@ export default function DigitalCertificateForm({
     }
   };
 
+  const onFormError = (errors: any) => {
+    console.error("Digital Certificate Form Submission Errors:", errors);
+    toast.error("Please fill in all required fields correctly before submitting.");
+
+    const errorKeys = Object.keys(errors);
+    const applicantFields = [
+      "applicantName",
+      "fatherOrHusbandName",
+      "mobileNumber",
+      "postalAddress",
+      "relationshipWithPerson",
+    ];
+    const eventFields = [
+      "personName",
+      "dateOfEvent",
+      "placeOfEvent",
+      "registrationYear",
+      "registrationNumber",
+      "purpose",
+    ];
+    const declarationFields = [
+      "declarationPlace",
+      "declarationDate",
+      "applicantSignatureName",
+      "declarationAgreed",
+    ];
+
+    if (errorKeys.some((k) => applicantFields.includes(k))) {
+      setCurrentStep("applicant");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (errorKeys.some((k) => eventFields.includes(k))) {
+      setCurrentStep("event");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (errorKeys.some((k) => declarationFields.includes(k))) {
+      setCurrentStep("declaration");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case "applicant":
@@ -1201,62 +1240,62 @@ export default function DigitalCertificateForm({
         </CardContent>
       </Card>
 
-      {/* Step Content */}
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      {/* Step Content & Action Bar wrapped inside form */}
+      <form id="digital-certificate-form" onSubmit={form.handleSubmit(onSubmit, onFormError)}>
         {renderStepContent()}
-      </form>
 
-      {/* Sticky Bottom Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t shadow-lg p-4 z-50">
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="font-medium">Step {currentStepIndex + 1} of {totalSteps}</span>
-            <span className="w-px h-4 bg-border" />
-            <span>{STEP_LABELS[currentStep]}</span>
-            <span className="w-px h-4 bg-border" />
-            <span>{Math.round(progress)}% complete</span>
-          </div>
+        {/* Sticky Bottom Action Bar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t shadow-lg p-4 z-50">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="font-medium">Step {currentStepIndex + 1} of {totalSteps}</span>
+              <span className="w-px h-4 bg-border" />
+              <span>{STEP_LABELS[currentStep]}</span>
+              <span className="w-px h-4 bg-border" />
+              <span>{Math.round(progress)}% complete</span>
+            </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={goToPrevStep}
-              disabled={currentStepIndex === 0 || isSubmitting}
-              className="gap-1.5 flex-1 sm:flex-initial"
-            >
-              <ChevronLeft className="w-4 h-4" /> Back
-            </Button>
-
-            {currentStepIndex === totalSteps - 1 ? (
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="gap-2 flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" /> Submitting...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-4 h-4" /> Submit Application
-                  </>
-                )}
-              </Button>
-            ) : (
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
                 type="button"
-                onClick={goToNextStep}
-                disabled={isSubmitting}
-                className="gap-1.5 flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white"
+                variant="outline"
+                onClick={goToPrevStep}
+                disabled={currentStepIndex === 0 || isSubmitting}
+                className="gap-1.5 flex-1 sm:flex-initial"
               >
-                Next <ChevronRight className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4" /> Back
               </Button>
-            )}
+
+              {currentStepIndex === totalSteps - 1 ? (
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="gap-2 flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" /> Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" /> Submit Application
+                    </>
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={goToNextStep}
+                  disabled={isSubmitting}
+                  className="gap-1.5 flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </form>
 
       {/* Post-Submission Success & Print Dialog */}
       <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
