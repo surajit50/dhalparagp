@@ -111,6 +111,27 @@ export async function createDigitalCertificateApplication(
         docOtherDocumentUrl: validated.docOtherDocumentUrl || null,
         docOtherDocumentPublicId: validated.docOtherDocumentPublicId || null,
 
+        // Section C2: Identity Documents for Verification
+        docFatherAadhaar: validated.docFatherAadhaar,
+        docFatherAadhaarUrl: validated.docFatherAadhaarUrl || null,
+        docFatherAadhaarPublicId: validated.docFatherAadhaarPublicId || null,
+
+        docFatherVoter: validated.docFatherVoter,
+        docFatherVoterUrl: validated.docFatherVoterUrl || null,
+        docFatherVoterPublicId: validated.docFatherVoterPublicId || null,
+
+        docMotherAadhaar: validated.docMotherAadhaar,
+        docMotherAadhaarUrl: validated.docMotherAadhaarUrl || null,
+        docMotherAadhaarPublicId: validated.docMotherAadhaarPublicId || null,
+
+        docMotherVoter: validated.docMotherVoter,
+        docMotherVoterUrl: validated.docMotherVoterUrl || null,
+        docMotherVoterPublicId: validated.docMotherVoterPublicId || null,
+
+        docChildAadhaar: validated.docChildAadhaar,
+        docChildAadhaarUrl: validated.docChildAadhaarUrl || null,
+        docChildAadhaarPublicId: validated.docChildAadhaarPublicId || null,
+
         declarationPlace: validated.declarationPlace || "Dhalpara",
         declarationDate: validated.declarationDate || new Date(),
         applicantSignatureName: validated.applicantSignatureName || validated.applicantName,
@@ -521,6 +542,11 @@ export async function updateDigitalCertificateApplication(
         registrationNumber: formData.registrationNumber ? formData.registrationNumber.trim() : existing.registrationNumber,
         purpose: formData.purpose ? formData.purpose.trim() : existing.purpose,
         docOtherDetails: formData.docOtherDetails !== undefined ? (formData.docOtherDetails?.trim() || null) : existing.docOtherDetails,
+        docFatherAadhaarUrl: formData.docFatherAadhaarUrl !== undefined ? formData.docFatherAadhaarUrl : existing.docFatherAadhaarUrl,
+        docFatherVoterUrl: formData.docFatherVoterUrl !== undefined ? formData.docFatherVoterUrl : existing.docFatherVoterUrl,
+        docMotherAadhaarUrl: formData.docMotherAadhaarUrl !== undefined ? formData.docMotherAadhaarUrl : existing.docMotherAadhaarUrl,
+        docMotherVoterUrl: formData.docMotherVoterUrl !== undefined ? formData.docMotherVoterUrl : existing.docMotherVoterUrl,
+        docChildAadhaarUrl: formData.docChildAadhaarUrl !== undefined ? formData.docChildAadhaarUrl : existing.docChildAadhaarUrl,
         declarationPlace: formData.declarationPlace ? formData.declarationPlace.trim() : existing.declarationPlace,
         applicantSignatureName: formData.applicantSignatureName ? formData.applicantSignatureName.trim() : existing.applicantSignatureName,
       },

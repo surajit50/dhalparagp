@@ -346,36 +346,68 @@ export const DigitalCertificatePrintTemplate = forwardRef<HTMLDivElement, PrintT
           {/* Section C: Documents Enclosed */}
           <div className="mb-2.5 page-break-avoid">
             <div className="bg-gray-100 print:bg-gray-200 border border-black px-2 py-0.5 font-bold text-[12px] uppercase tracking-wide text-black">
-              C. DOCUMENTS ENCLOSED <span className="text-[11px] font-normal normal-case italic">(Please tick ✔ the applicable documents)</span>
+              C. DOCUMENTS ENCLOSED & IDENTITY PROOFS <span className="text-[11px] font-normal normal-case italic">(Please tick ✔ the applicable documents)</span>
             </div>
-            <div className="border border-t-0 border-black p-2 space-y-1 text-[11.5px] text-black">
+            <div className="border border-t-0 border-black p-2 space-y-1.5 text-[11.5px] text-black">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 <div className="flex items-center gap-1.5">
                   <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docProofOfIdentity ? "bg-black text-white" : ""}`}>
                     {data.docProofOfIdentity ? "✓" : ""}
                   </span>
-                  <span>Proof of Identity (Aadhaar / Voter ID / PAN / Passport)</span>
+                  <span>Proof of Identity (Aadhaar / Voter ID / PAN)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docPreviousCertificate ? "bg-black text-white" : ""}`}>
                     {data.docPreviousCertificate ? "✓" : ""}
                   </span>
-                  <span>Previous {certTypeLabel} Certificate (If Available)</span>
+                  <span>Previous {certTypeLabel} Certificate</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docGeneralDiary ? "bg-black text-white" : ""}`}>
                     {data.docGeneralDiary ? "✓" : ""}
                   </span>
-                  <span>General Diary (GD) Copy (If Applicable)</span>
+                  <span>General Diary (GD) Copy</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docRegistrationDetails ? "bg-black text-white" : ""}`}>
                     {data.docRegistrationDetails ? "✓" : ""}
                   </span>
-                  <span>Registration Details (If Available)</span>
+                  <span>Registration Details</span>
                 </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docFatherAadhaar ? "bg-black text-white" : ""}`}>
+                    {data.docFatherAadhaar ? "✓" : ""}
+                  </span>
+                  <span>Father's Aadhaar</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docFatherVoter ? "bg-black text-white" : ""}`}>
+                    {data.docFatherVoter ? "✓" : ""}
+                  </span>
+                  <span>Father's Voter ID</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docMotherAadhaar ? "bg-black text-white" : ""}`}>
+                    {data.docMotherAadhaar ? "✓" : ""}
+                  </span>
+                  <span>Mother's Aadhaar</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docMotherVoter ? "bg-black text-white" : ""}`}>
+                    {data.docMotherVoter ? "✓" : ""}
+                  </span>
+                  <span>Mother's Voter ID</span>
+                </div>
+                {isBirth && (
+                  <div className="flex items-center gap-1.5">
+                    <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold ${data.docChildAadhaar ? "bg-black text-white" : ""}`}>
+                      {data.docChildAadhaar ? "✓" : ""}
+                    </span>
+                    <span>Child's Aadhaar</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-start gap-1.5 pt-0.5">
+              <div className="flex items-start gap-1.5 pt-0.5 border-t border-gray-300">
                 <span className={`inline-flex items-center justify-center w-3.5 h-3.5 border border-black text-xs font-bold mt-0.5 ${data.docOtherDocument ? "bg-black text-white" : ""}`}>
                   {data.docOtherDocument ? "✓" : ""}
                 </span>
