@@ -30,6 +30,9 @@ import {
   Clock,
   Loader2,
   Printer,
+  ExternalLink,
+  FileCheck,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -146,100 +149,238 @@ export default function OfficeVerificationModal({
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-2">
           {/* Enclosed Documents & Uploaded PDFs */}
-          <div className="space-y-2 border rounded-xl p-3 bg-muted/15">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-primary" /> Enclosed Documents & Attached PDFs (≤ 250 KB)
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <div className="flex items-center justify-between p-2 rounded-lg border bg-background">
-                <span>Proof of Identity:</span>
+          <div className="space-y-4 border rounded-xl p-4 bg-muted/15">
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-primary" /> C. Enclosed Application Documents (PDF ≤ 250 KB)
+              </h4>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Review attached PDF files or hardcopy documents provided by the applicant.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+              {/* Proof of Identity */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
+                <span className="font-medium text-foreground">Proof of Identity:</span>
                 {application.docProofOfIdentityUrl ? (
                   <a
                     href={application.docProofOfIdentityUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-bold text-blue-600 hover:underline inline-flex items-center gap-1"
+                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
                   >
-                    View PDF &rarr;
+                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
                   </a>
                 ) : application.docProofOfIdentity ? (
-                  <span className="text-amber-600 font-medium">Enclosed (Hardcopy)</span>
+                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                    Enclosed (Hardcopy)
+                  </span>
                 ) : (
-                  <span className="text-muted-foreground">Not enclosed</span>
+                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded-lg border bg-background">
-                <span>Previous Certificate:</span>
+              {/* Previous Certificate */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
+                <span className="font-medium text-foreground">Previous Certificate:</span>
                 {application.docPreviousCertificateUrl ? (
                   <a
                     href={application.docPreviousCertificateUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-bold text-blue-600 hover:underline inline-flex items-center gap-1"
+                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
                   >
-                    View PDF &rarr;
+                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
                   </a>
                 ) : application.docPreviousCertificate ? (
-                  <span className="text-amber-600 font-medium">Enclosed (Hardcopy)</span>
+                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                    Enclosed (Hardcopy)
+                  </span>
                 ) : (
-                  <span className="text-muted-foreground">Not enclosed</span>
+                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded-lg border bg-background">
-                <span>General Diary (GD) Copy:</span>
+              {/* General Diary Copy */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
+                <span className="font-medium text-foreground">General Diary (GD) Copy:</span>
                 {application.docGeneralDiaryUrl ? (
                   <a
                     href={application.docGeneralDiaryUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-bold text-blue-600 hover:underline inline-flex items-center gap-1"
+                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
                   >
-                    View PDF &rarr;
+                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
                   </a>
                 ) : application.docGeneralDiary ? (
-                  <span className="text-amber-600 font-medium">Enclosed (Hardcopy)</span>
+                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                    Enclosed (Hardcopy)
+                  </span>
                 ) : (
-                  <span className="text-muted-foreground">Not enclosed</span>
+                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
                 )}
               </div>
 
-              <div className="flex items-center justify-between p-2 rounded-lg border bg-background">
-                <span>Registration Details:</span>
+              {/* Registration Details */}
+              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
+                <span className="font-medium text-foreground">Registration Details:</span>
                 {application.docRegistrationDetailsUrl ? (
                   <a
                     href={application.docRegistrationDetailsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="font-bold text-blue-600 hover:underline inline-flex items-center gap-1"
+                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
                   >
-                    View PDF &rarr;
+                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
                   </a>
                 ) : application.docRegistrationDetails ? (
-                  <span className="text-amber-600 font-medium">Enclosed (Hardcopy)</span>
+                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                    Enclosed (Hardcopy)
+                  </span>
                 ) : (
-                  <span className="text-muted-foreground">Not enclosed</span>
+                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
                 )}
               </div>
 
-              {application.docOtherDocument && (
-                <div className="sm:col-span-2 flex items-center justify-between p-2 rounded-lg border bg-background">
-                  <span>Other: {application.docOtherDetails || "Supporting Document"}</span>
+              {/* Other Document */}
+              {(application.docOtherDocument || application.docOtherDocumentUrl) && (
+                <div className="sm:col-span-2 flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
+                  <span className="font-medium text-foreground">
+                    Other: {application.docOtherDetails || "Supporting Document"}
+                  </span>
                   {application.docOtherDocumentUrl ? (
                     <a
                       href={application.docOtherDocumentUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="font-bold text-blue-600 hover:underline inline-flex items-center gap-1"
+                      className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
                     >
-                      View PDF &rarr;
+                      <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
                     </a>
                   ) : (
-                    <span className="text-amber-600 font-medium">Enclosed (Hardcopy)</span>
+                    <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                      Enclosed (Hardcopy)
+                    </span>
                   )}
                 </div>
               )}
+            </div>
+
+            {/* Section C2: Family Identity Verification Documents */}
+            <div className="pt-3 border-t space-y-2">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-green-700 flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-green-600" /> C2. Verification Identity Documents (Family Aadhaar & Voter IDs)
+              </h5>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                {/* Father's Aadhaar */}
+                <div className="flex items-center justify-between p-2 rounded-lg border bg-green-50/30">
+                  <span>Father's Aadhaar:</span>
+                  {application.docFatherAadhaarUrl ? (
+                    <a
+                      href={application.docFatherAadhaarUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-bold text-xs bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
+                    >
+                      <ExternalLink className="w-3 h-3" /> View PDF
+                    </a>
+                  ) : application.docFatherAadhaar ? (
+                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">
+                      Available
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
+                  )}
+                </div>
+
+                {/* Father's Voter */}
+                <div className="flex items-center justify-between p-2 rounded-lg border bg-green-50/30">
+                  <span>Father's Voter ID:</span>
+                  {application.docFatherVoterUrl ? (
+                    <a
+                      href={application.docFatherVoterUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-bold text-xs bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
+                    >
+                      <ExternalLink className="w-3 h-3" /> View PDF
+                    </a>
+                  ) : application.docFatherVoter ? (
+                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">
+                      Available
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
+                  )}
+                </div>
+
+                {/* Mother's Aadhaar */}
+                <div className="flex items-center justify-between p-2 rounded-lg border bg-purple-50/30">
+                  <span>Mother's Aadhaar:</span>
+                  {application.docMotherAadhaarUrl ? (
+                    <a
+                      href={application.docMotherAadhaarUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-bold text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 border border-purple-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
+                    >
+                      <ExternalLink className="w-3 h-3" /> View PDF
+                    </a>
+                  ) : application.docMotherAadhaar ? (
+                    <span className="text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.5 rounded">
+                      Available
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
+                  )}
+                </div>
+
+                {/* Mother's Voter */}
+                <div className="flex items-center justify-between p-2 rounded-lg border bg-purple-50/30">
+                  <span>Mother's Voter ID:</span>
+                  {application.docMotherVoterUrl ? (
+                    <a
+                      href={application.docMotherVoterUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-bold text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 border border-purple-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
+                    >
+                      <ExternalLink className="w-3 h-3" /> View PDF
+                    </a>
+                  ) : application.docMotherVoter ? (
+                    <span className="text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.5 rounded">
+                      Available
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
+                  )}
+                </div>
+
+                {/* Child's Aadhaar (for Birth Certificate) */}
+                {application.certificateType === "BIRTH" && (
+                  <div className="sm:col-span-2 flex items-center justify-between p-2 rounded-lg border bg-blue-50/30">
+                    <span>Child's Aadhaar:</span>
+                    {application.docChildAadhaarUrl ? (
+                      <a
+                        href={application.docChildAadhaarUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-bold text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
+                      >
+                        <ExternalLink className="w-3 h-3" /> View PDF
+                      </a>
+                    ) : application.docChildAadhaar ? (
+                      <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">
+                        Available
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground text-[11px]">Not uploaded</span>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
