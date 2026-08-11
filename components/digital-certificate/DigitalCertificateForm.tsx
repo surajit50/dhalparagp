@@ -540,6 +540,38 @@ export default function DigitalCertificateForm({
     }
   };
 
+  const handleStepClick = async (targetIdx: number) => {
+    if (targetIdx < currentStepIndex) {
+      if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
+      setCurrentStep(STEP_ORDER[targetIdx]);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (targetIdx > currentStepIndex) {
+      await goToNextStep();
+    }
+  };
+
+  const handleResetForm = () => {
+    form.reset();
+    setSubmittedData(null);
+    setIsPrintDialogOpen(false);
+    setCurrentStep("applicant");
+    setUploads({
+      proofOfIdentity: { isUploading: false },
+      previousCertificate: { isUploading: false },
+      generalDiary: { isUploading: false },
+      registrationDetails: { isUploading: false },
+      otherDocument: { isUploading: false },
+      fatherAadhaar: { isUploading: false },
+      fatherVoter: { isUploading: false },
+      motherAadhaar: { isUploading: false },
+      motherVoter: { isUploading: false },
+      childAadhaar: { isUploading: false },
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const onSubmit = async (values: DigitalCertificateApplicationFormData) => {
     setIsSubmitting(true);
     try {
@@ -1381,25 +1413,37 @@ export default function DigitalCertificateForm({
 
       {/* Stepper Labels */}
       <div className="flex justify-between text-xs font-medium text-muted-foreground px-1">
-        {STEP_ORDER.map((step, idx) => (
-          <div
-            key={step}
-            className={`flex items-center gap-1.5 ${
-              idx <= currentStepIndex ? "text-primary" : "text-muted-foreground/50"
-            }`}
-          >
-            <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${
-              idx < currentStepIndex
-                ? "bg-primary text-white"
-                : idx === currentStepIndex
-                ? "bg-primary/20 text-primary border border-primary/30"
-                : "bg-muted text-muted-foreground"
-            }`}>
-              {idx < currentStepIndex ? <Check className="w-3 h-3" /> : idx + 1}
-            </span>
-            <span className="hidden sm:inline">{STEP_LABELS[step]}</span>
-          </div>
-        ))}
+        {STEP_ORDER.map((step, idx) => {
+          const isCompleted = idx < currentStepIndex;
+          const isCurrent = idx === currentStepIndex;
+          return (
+            <button
+              key={step}
+              type="button"
+              onClick={() => handleStepClick(idx)}
+              className={`flex items-center gap-1.5 transition-all text-left group ${
+                isCompleted
+                  ? "text-primary cursor-pointer hover:opacity-80"
+                  : isCurrent
+                  ? "text-primary font-bold cursor-default"
+                  : "text-muted-foreground/50 cursor-default"
+              }`}
+            >
+              <span
+                className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-all ${
+                  isCompleted
+                    ? "bg-primary text-white shadow-sm group-hover:scale-110"
+                    : isCurrent
+                    ? "bg-primary/20 text-primary border border-primary/40 font-bold ring-2 ring-primary/20"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {isCompleted ? <Check className="w-3 h-3" /> : idx + 1}
+              </span>
+              <span className="hidden sm:inline">{STEP_LABELS[step]}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Certificate Type Selector (shown on all steps) */}
@@ -1590,6 +1634,14 @@ export default function DigitalCertificateForm({
                     <Link href={onSuccessRedirectUrl}>
                       View Status <ArrowRight className="w-4 h-4 ml-1" />
                     </Link>
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleResetForm}
+                    className="gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" /> Start New Application
                   </Button>
                 </div>
               </div>
