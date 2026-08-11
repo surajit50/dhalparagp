@@ -63,6 +63,7 @@ import {
   Calendar,
   Hash,
   FileSignature,
+  RotateCcw,
 } from "lucide-react";
 import Link from "next/link";
 import DigitalCertificatePrintTemplate from "./DigitalCertificatePrintTemplate";
