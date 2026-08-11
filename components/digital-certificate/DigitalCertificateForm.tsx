@@ -91,7 +91,7 @@ const STEP_LABELS: Record<StepKey, string> = {
   applicant: "Applicant",
   event: "Event Details",
   documents: "Documents",
-  declaration: "Declaration",
+  declaration: "Preview & Declaration",
 };
 
 export default function DigitalCertificateForm({
@@ -1073,54 +1073,266 @@ export default function DigitalCertificateForm({
 
       case "declaration":
         return (
-          <Card className="shadow-sm border-t-4 border-t-primary">
-            <CardHeader className="bg-muted/20 border-b pb-3">
-              <CardTitle className="text-base font-bold text-foreground">D. Declaration</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6 space-y-4">
-              <div className="bg-muted/30 p-4 rounded-lg text-xs leading-relaxed text-muted-foreground border">
-                <p className="mb-2 font-medium text-foreground">
-                  I hereby declare that the information furnished above is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected and I may face legal consequences.
-                </p>
-                <p>
-                  I therefore request the Sub-Registrar of Births & Deaths, No. 3 Dhalpara Gram Panchayat, to kindly verify the records maintained in your office and issue the Digital Birth / Death Certificate as per my application.
-                </p>
-              </div>
-
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox
-                  id="declarationAgreed"
-                  checked={form.watch("declarationAgreed")}
-                  onCheckedChange={(c) => form.setValue("declarationAgreed", Boolean(c))}
-                />
-                <Label htmlFor="declarationAgreed" className="text-xs font-semibold cursor-pointer">
-                  I agree to the declaration and certify that all details provided are true <span className="text-red-500">*</span>
-                </Label>
-              </div>
-              {form.formState.errors.declarationAgreed && (
-                <p className="text-xs text-red-500">{form.formState.errors.declarationAgreed.message}</p>
-              )}
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="declarationPlace" className="text-xs">Place of Application</Label>
-                  <Input
-                    id="declarationPlace"
-                    defaultValue="Dhalpara"
-                    {...form.register("declarationPlace")}
-                  />
+          <div className="space-y-6">
+            {/* Application Summary Preview */}
+            <Card className="shadow-sm border-t-4 border-t-blue-600 bg-blue-50/10">
+              <CardHeader className="bg-blue-50/50 border-b pb-3">
+                <CardTitle className="text-base font-bold text-foreground flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-blue-950">
+                    <FileSignature className="w-5 h-5 text-blue-600" />
+                    Application Summary Preview
+                  </span>
+                  <span className="text-xs bg-blue-100 text-blue-800 font-semibold px-2.5 py-1 rounded-full border border-blue-200">
+                    Please Review Before Submitting
+                  </span>
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Please review all your entered information and attached documents carefully. You can edit any section before checking the declaration and clicking Submit Application.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-5 text-sm">
+                {/* Section A Summary */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between border-b pb-1.5">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-primary flex items-center gap-1.5">
+                      <UserCheck className="w-3.5 h-3.5" /> A. Applicant Details
+                    </h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCurrentStep("applicant")}
+                      className="h-6 text-xs text-blue-600 hover:text-blue-800 p-0 font-semibold"
+                    >
+                      Edit Section A
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-card p-3.5 rounded-xl border">
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Applicant Name:</span>
+                      <span className="font-semibold text-foreground">{form.watch("applicantName") || "—"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Mobile Number:</span>
+                      <span className="font-semibold text-foreground">{form.watch("mobileNumber") || "—"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Father's / Husband's Name:</span>
+                      <span className="font-semibold text-foreground">{form.watch("fatherOrHusbandName") || "—"}</span>
+                    </div>
+                    {isDeath && (
+                      <div>
+                        <span className="text-muted-foreground block text-[11px]">Relationship with Deceased:</span>
+                        <span className="font-semibold text-foreground">{form.watch("relationshipWithPerson") || "—"}</span>
+                      </div>
+                    )}
+                    <div className="sm:col-span-2">
+                      <span className="text-muted-foreground block text-[11px]">Postal Address:</span>
+                      <span className="font-semibold text-foreground">{form.watch("postalAddress") || "—"}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="applicantSignatureName" className="text-xs">Applicant Signature Name</Label>
-                  <Input
-                    id="applicantSignatureName"
-                    placeholder="Full name for signature"
-                    {...form.register("applicantSignatureName")}
-                  />
+
+                {/* Section B Summary */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between border-b pb-1.5">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-blue-600 flex items-center gap-1.5">
+                      <FileText className="w-3.5 h-3.5" /> B. Particulars of {isBirth ? "Birth" : "Death"}
+                    </h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCurrentStep("event")}
+                      className="h-6 text-xs text-blue-600 hover:text-blue-800 p-0 font-semibold"
+                    >
+                      Edit Section B
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-card p-3.5 rounded-xl border">
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Certificate Type:</span>
+                      <span className="font-bold text-blue-700 uppercase">{certificateType} CERTIFICATE</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Name of Person / Child:</span>
+                      <span className="font-semibold text-foreground">{form.watch("personName") || "—"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Date of {isBirth ? "Birth" : "Death"}:</span>
+                      <span className="font-semibold text-foreground">
+                        {form.watch("dateOfEvent") ? format(new Date(form.watch("dateOfEvent")), "dd MMMM yyyy") : "—"}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Place of Event:</span>
+                      <span className="font-semibold text-foreground">{form.watch("placeOfEvent") || "—"}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Registration Year / No:</span>
+                      <span className="font-semibold text-foreground">
+                        {form.watch("registrationNumber")} / {form.watch("registrationYear")}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[11px]">Purpose:</span>
+                      <span className="font-semibold text-foreground">{form.watch("purpose") || "—"}</span>
+                    </div>
+                    {isBirth && (
+                      <>
+                        <div>
+                          <span className="text-muted-foreground block text-[11px]">Father's Name:</span>
+                          <span className="font-semibold text-foreground">{form.watch("fatherName") || "N/A"}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground block text-[11px]">Mother's Name:</span>
+                          <span className="font-semibold text-foreground">{form.watch("motherName") || "N/A"}</span>
+                        </div>
+                      </>
+                    )}
+                    {isDeath && form.watch("deceasedFatherOrHusbandName") && (
+                      <div className="sm:col-span-2">
+                        <span className="text-muted-foreground block text-[11px]">Father's / Husband's Name of Deceased:</span>
+                        <span className="font-semibold text-foreground">{form.watch("deceasedFatherOrHusbandName")}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+
+                {/* Section C Summary */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between border-b pb-1.5">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-green-600 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5" /> C. Documents Enclosed
+                    </h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setCurrentStep("documents")}
+                      className="h-6 text-xs text-blue-600 hover:text-blue-800 p-0 font-semibold"
+                    >
+                      Edit Section C
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 text-xs bg-card p-3.5 rounded-xl border">
+                    {form.watch("docProofOfIdentity") && (
+                      <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-blue-600" /> Proof of Identity
+                      </span>
+                    )}
+                    {form.watch("docPreviousCertificate") && (
+                      <span className="bg-gray-100 text-gray-700 border px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-gray-600" /> Previous Certificate
+                      </span>
+                    )}
+                    {form.watch("docGeneralDiary") && (
+                      <span className="bg-gray-100 text-gray-700 border px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-gray-600" /> General Diary Copy
+                      </span>
+                    )}
+                    {form.watch("docRegistrationDetails") && (
+                      <span className="bg-gray-100 text-gray-700 border px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-gray-600" /> Registration Details
+                      </span>
+                    )}
+                    {form.watch("docOtherDocument") && (
+                      <span className="bg-gray-100 text-gray-700 border px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-gray-600" /> Other: {form.watch("docOtherDetails") || "Attached"}
+                      </span>
+                    )}
+                    {form.watch("docFatherAadhaar") && (
+                      <span className="bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-green-600" /> Father's Aadhaar
+                      </span>
+                    )}
+                    {form.watch("docFatherVoter") && (
+                      <span className="bg-green-50 text-green-700 border border-green-200 px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-green-600" /> Father's Voter ID
+                      </span>
+                    )}
+                    {form.watch("docMotherAadhaar") && (
+                      <span className="bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-purple-600" /> Mother's Aadhaar
+                      </span>
+                    )}
+                    {form.watch("docMotherVoter") && (
+                      <span className="bg-purple-50 text-purple-700 border border-purple-200 px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-purple-600" /> Mother's Voter ID
+                      </span>
+                    )}
+                    {isBirth && form.watch("docChildAadhaar") && (
+                      <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-1 rounded-md text-[11px] font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-blue-600" /> Child's Aadhaar
+                      </span>
+                    )}
+                    {!form.watch("docProofOfIdentity") &&
+                      !form.watch("docPreviousCertificate") &&
+                      !form.watch("docGeneralDiary") &&
+                      !form.watch("docRegistrationDetails") &&
+                      !form.watch("docOtherDocument") &&
+                      !form.watch("docFatherAadhaar") &&
+                      !form.watch("docFatherVoter") &&
+                      !form.watch("docMotherAadhaar") &&
+                      !form.watch("docMotherVoter") &&
+                      !form.watch("docChildAadhaar") && (
+                        <span className="text-muted-foreground text-xs italic">No optional documents attached</span>
+                      )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Declaration Card */}
+            <Card className="shadow-sm border-t-4 border-t-primary">
+              <CardHeader className="bg-muted/20 border-b pb-3">
+                <CardTitle className="text-base font-bold text-foreground">D. Declaration & Confirmation</CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="bg-muted/30 p-4 rounded-lg text-xs leading-relaxed text-muted-foreground border">
+                  <p className="mb-2 font-medium text-foreground">
+                    I hereby declare that the information furnished above is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected and I may face legal consequences.
+                  </p>
+                  <p>
+                    I therefore request the Sub-Registrar of Births & Deaths, No. 3 Dhalpara Gram Panchayat, to kindly verify the records maintained in your office and issue the Digital Birth / Death Certificate as per my application.
+                  </p>
+                </div>
+
+                <div className="flex items-center space-x-2 pt-2">
+                  <Checkbox
+                    id="declarationAgreed"
+                    checked={form.watch("declarationAgreed")}
+                    onCheckedChange={(c) => form.setValue("declarationAgreed", Boolean(c), { shouldValidate: true })}
+                  />
+                  <Label htmlFor="declarationAgreed" className="text-xs font-semibold cursor-pointer">
+                    I agree to the declaration and certify that all details provided are true <span className="text-red-500">*</span>
+                  </Label>
+                </div>
+                {form.formState.errors.declarationAgreed && (
+                  <p className="text-xs text-red-500">{form.formState.errors.declarationAgreed.message}</p>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="declarationPlace" className="text-xs">Place of Application</Label>
+                    <Input
+                      id="declarationPlace"
+                      defaultValue="Dhalpara"
+                      {...form.register("declarationPlace")}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="applicantSignatureName" className="text-xs">Applicant Signature Name</Label>
+                    <Input
+                      id="applicantSignatureName"
+                      placeholder="Full name for signature"
+                      {...form.register("applicantSignatureName")}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         );
     }
   };
@@ -1241,7 +1453,15 @@ export default function DigitalCertificateForm({
       </Card>
 
       {/* Step Content & Action Bar wrapped inside form */}
-      <form id="digital-certificate-form" onSubmit={form.handleSubmit(onSubmit, onFormError)}>
+      <form
+        id="digital-certificate-form"
+        onSubmit={form.handleSubmit(onSubmit, onFormError)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && (e.target as HTMLElement).tagName === "INPUT") {
+            e.preventDefault();
+          }
+        }}
+      >
         {renderStepContent()}
 
         {/* Sticky Bottom Action Bar */}
