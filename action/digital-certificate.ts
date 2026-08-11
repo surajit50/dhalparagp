@@ -474,3 +474,71 @@ export async function deleteDigitalCertificateApplication(
     };
   }
 }
+
+/**
+ * Update application field data (Admin edit)
+ */
+export async function updateDigitalCertificateApplication(
+  id: string,
+  formData: any
+): Promise<ServerActionResult<any>> {
+  try {
+    const session = await auth();
+    const role = session?.user?.role;
+
+    if (!session?.user || !["admin", "superadmin", "staff"].includes(role as string)) {
+      return {
+        success: false,
+        message: "Unauthorized: Admin privileges required",
+      };
+    }
+
+    const existing = await db.digitalCertificateApplication.findUnique({
+      where: { id },
+    });
+
+    if (!existing) {
+      return { success: false, message: "Application not found" };
+    }
+
+    const updated = await db.digitalCertificateApplication.update({
+      where: { id },
+      data: {
+        certificateType: formData.certificateType || existing.certificateType,
+        status: formData.status || existing.status,
+        applicantName: formData.applicantName ? formData.applicantName.trim() : existing.applicantName,
+        relationshipWithPerson: formData.relationshipWithPerson !== undefined ? (formData.relationshipWithPerson?.trim() || null) : existing.relationshipWithPerson,
+        fatherOrHusbandName: formData.fatherOrHusbandName ? formData.fatherOrHusbandName.trim() : existing.fatherOrHusbandName,
+        postalAddress: formData.postalAddress ? formData.postalAddress.trim() : existing.postalAddress,
+        mobileNumber: formData.mobileNumber ? formData.mobileNumber.trim() : existing.mobileNumber,
+        personName: formData.personName ? formData.personName.trim() : existing.personName,
+        fatherName: formData.fatherName !== undefined ? (formData.fatherName?.trim() || null) : existing.fatherName,
+        motherName: formData.motherName !== undefined ? (formData.motherName?.trim() || null) : existing.motherName,
+        deceasedFatherOrHusbandName: formData.deceasedFatherOrHusbandName !== undefined ? (formData.deceasedFatherOrHusbandName?.trim() || null) : existing.deceasedFatherOrHusbandName,
+        dateOfEvent: formData.dateOfEvent ? new Date(formData.dateOfEvent) : existing.dateOfEvent,
+        placeOfEvent: formData.placeOfEvent ? formData.placeOfEvent.trim() : existing.placeOfEvent,
+        registrationYear: formData.registrationYear ? formData.registrationYear.trim() : existing.registrationYear,
+        registrationNumber: formData.registrationNumber ? formData.registrationNumber.trim() : existing.registrationNumber,
+        purpose: formData.purpose ? formData.purpose.trim() : existing.purpose,
+        docOtherDetails: formData.docOtherDetails !== undefined ? (formData.docOtherDetails?.trim() || null) : existing.docOtherDetails,
+        declarationPlace: formData.declarationPlace ? formData.declarationPlace.trim() : existing.declarationPlace,
+        applicantSignatureName: formData.applicantSignatureName ? formData.applicantSignatureName.trim() : existing.applicantSignatureName,
+      },
+    });
+
+    revalidatePath("/dashboard/digital-certificate/status", "page");
+    revalidatePath("/admindashboard/manage-digital-certificate", "page");
+
+    return {
+      success: true,
+      data: updated,
+      message: "Application updated successfully!",
+    };
+  } catch (error: any) {
+    console.error("Error updating application:", error);
+    return {
+      success: false,
+      message: error?.message || "Failed to update application details",
+    };
+  }
+}

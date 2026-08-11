@@ -34,6 +34,7 @@ import {
   Trash2,
   RefreshCw,
   FilePlus,
+  Pencil,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -41,6 +42,7 @@ import {
   deleteDigitalCertificateApplication,
 } from "@/action/digital-certificate";
 import OfficeVerificationModal from "./OfficeVerificationModal";
+import EditApplicationModal from "./EditApplicationModal";
 
 interface DigitalCertificateTableProps {
   initialData?: any[];
@@ -70,6 +72,9 @@ export default function DigitalCertificateTable({
 
   const [selectedAppForVerification, setSelectedAppForVerification] = useState<any | null>(null);
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false);
+
+  const [selectedAppForEdit, setSelectedAppForEdit] = useState<any | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const fetchData = useCallback(async (newPage = 1) => {
     setIsLoading(true);
@@ -309,6 +314,21 @@ export default function DigitalCertificateTable({
                   {/* Actions */}
                   <TableCell className="py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5">
+                      {/* Edit Field Data (Admin only) */}
+                      {isAdmin && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-8 px-2.5 text-xs gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200"
+                          onClick={() => {
+                            setSelectedAppForEdit(app);
+                            setIsEditModalOpen(true);
+                          }}
+                        >
+                          <Pencil className="w-3.5 h-3.5" /> Edit
+                        </Button>
+                      )}
+
                       {/* Office Verification Modal Trigger */}
                       {isAdmin && (
                         <Button
@@ -344,7 +364,16 @@ export default function DigitalCertificateTable({
                       </Button>
 
                       {/* Delete (Admin only) */}
-                      
+                      {isAdmin && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDelete(app.id, app.acknowledgementNo)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>
@@ -390,6 +419,17 @@ export default function DigitalCertificateTable({
         onClose={() => {
           setIsVerificationModalOpen(false);
           setSelectedAppForVerification(null);
+        }}
+        onSuccess={() => fetchData(page)}
+      />
+
+      {/* Admin Edit Modal */}
+      <EditApplicationModal
+        application={selectedAppForEdit}
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedAppForEdit(null);
         }}
         onSuccess={() => fetchData(page)}
       />
