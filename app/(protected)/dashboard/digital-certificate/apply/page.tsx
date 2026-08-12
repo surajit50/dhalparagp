@@ -10,7 +10,7 @@ export const metadata = {
 export default function DigitalCertificateApplyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-indigo-50/20 py-6 px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-4xl space-y-6">
+      <div className="mx-auto  space-y-6">
         {/* Page Header */}
         <div className="text-center space-y-2 mb-8">
           <div className="inline-flex items-center justify-center bg-blue-100/80 text-blue-700 px-5 py-2.5 rounded-2xl mb-2 shadow-sm">
