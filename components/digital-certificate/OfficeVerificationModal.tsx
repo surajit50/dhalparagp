@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Badge } from "@/components/ui/badge";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -34,6 +35,9 @@ import {
   FileCheck,
   Users,
   UploadCloud,
+  FileText,
+  Calendar,
+  Hash,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -64,7 +68,7 @@ export default function OfficeVerificationModal({
       dateOfVerification: new Date(),
       recordAvailable: true,
       registrationVerified: true,
-      subRegistrarOrder: "APPROVED",
+      subRegistrarOrder: "UNDER_ENQUIRY", // New default
       rejectionReason: "",
       dataEntryOperatorName: "Staff / DEO",
       dataEntryOperatorSignature: "Verified by DEO",
@@ -91,7 +95,7 @@ export default function OfficeVerificationModal({
           : new Date(),
         recordAvailable: application.recordAvailable !== null ? application.recordAvailable : true,
         registrationVerified: application.registrationVerified !== null ? application.registrationVerified : true,
-        subRegistrarOrder: (application.subRegistrarOrder as any) || (application.status === "REJECTED" ? "REJECTED" : "APPROVED"),
+        subRegistrarOrder: application.subRegistrarOrder || "UNDER_ENQUIRY",
         rejectionReason: application.rejectionReason || "",
         dataEntryOperatorName: application.dataEntryOperatorName || "Staff / DEO",
         dataEntryOperatorSignature: application.dataEntryOperatorSignature || "Verified by DEO",
@@ -136,126 +140,136 @@ export default function OfficeVerificationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader className="border-b pb-3">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b">
           <div className="flex items-center justify-between">
             <div>
-              <DialogTitle className="text-lg font-bold flex items-center gap-2">
+              <DialogTitle className="text-xl font-bold flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-primary" />
-                Office Verification & Sub-Registrar Order
+                Office Verification & Order
               </DialogTitle>
-              <DialogDescription className="text-xs mt-1">
-                Acknowledgement No:{" "}
-                <span className="font-mono font-bold text-foreground">
-                  {application.acknowledgementNo}
-                </span>{" "}
-                | Person: <span className="font-bold">{application.personName}</span> (
-                {application.certificateType})
+              <DialogDescription className="text-sm mt-1 flex items-center gap-3 flex-wrap">
+                <span>
+                  Acknowledgement:{" "}
+                  <span className="font-mono font-bold text-foreground">
+                    {application.acknowledgementNo}
+                  </span>
+                </span>
+                <span className="text-muted-foreground">|</span>
+                <span>
+                  Person: <span className="font-bold">{application.personName}</span>
+                </span>
+                <span className="text-muted-foreground">|</span>
+                <span>
+                  Type:{" "}
+                  <span className="font-semibold">
+                    {application.certificateType === "BIRTH" ? "Birth" : "Death"}
+                  </span>
+                </span>
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-2">
-          {/* Enclosed Documents & Uploaded PDFs */}
-          <div className="space-y-4 border rounded-xl p-4 bg-muted/15">
-            <div>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-primary" /> C. Enclosed Application Documents (PDF ≤ 250 KB)
-              </h4>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Review attached PDF files or hardcopy documents provided by the applicant.
-              </p>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 py-4 space-y-6">
+          {/* Status Flow Indicator */}
+          <div className="flex items-center justify-between gap-2 bg-muted/20 p-3 rounded-lg border">
+            <div className="flex items-center gap-1 text-xs font-medium">
+              <span className="flex items-center gap-1">
+                <CheckCircle2 className="w-4 h-4 text-green-600" /> Submitted
+              </span>
+              <span className="text-muted-foreground mx-1">→</span>
+              <span
+                className={`flex items-center gap-1 ${
+                  subRegistrarOrder === "UNDER_ENQUIRY"
+                    ? "text-amber-600 font-bold"
+                    : "text-muted-foreground"
+                }`}
+              >
+                <Clock className="w-4 h-4" /> Under Enquiry
+              </span>
+              <span className="text-muted-foreground mx-1">→</span>
+              <span
+                className={`flex items-center gap-1 ${
+                  subRegistrarOrder === "APPROVED"
+                    ? "text-green-600 font-bold"
+                    : subRegistrarOrder === "REJECTED"
+                    ? "text-red-600 font-bold"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {subRegistrarOrder === "APPROVED" ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : subRegistrarOrder === "REJECTED" ? (
+                  <XCircle className="w-4 h-4" />
+                ) : null}
+                {subRegistrarOrder === "APPROVED"
+                  ? "Approved"
+                  : subRegistrarOrder === "REJECTED"
+                  ? "Rejected"
+                  : "Decision Pending"}
+              </span>
             </div>
+            {subRegistrarOrder === "APPROVED" && issuedPdfUrl && (
+              <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-300">
+                <FileCheck className="w-3 h-3 mr-1" /> Certificate Ready
+              </Badge>
+            )}
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-              {/* Proof of Identity */}
-              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
-                <span className="font-medium text-foreground">Proof of Identity:</span>
-                {application.docProofOfIdentityUrl ? (
-                  <a
-                    href={application.docProofOfIdentityUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
-                  >
-                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
-                  </a>
-                ) : application.docProofOfIdentity ? (
-                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                    Enclosed (Hardcopy)
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
-                )}
-              </div>
-
-              {/* Previous Certificate */}
-              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
-                <span className="font-medium text-foreground">Previous Certificate:</span>
-                {application.docPreviousCertificateUrl ? (
-                  <a
-                    href={application.docPreviousCertificateUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
-                  >
-                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
-                  </a>
-                ) : application.docPreviousCertificate ? (
-                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                    Enclosed (Hardcopy)
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
-                )}
-              </div>
-
-              {/* General Diary Copy */}
-              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
-                <span className="font-medium text-foreground">General Diary (GD) Copy:</span>
-                {application.docGeneralDiaryUrl ? (
-                  <a
-                    href={application.docGeneralDiaryUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
-                  >
-                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
-                  </a>
-                ) : application.docGeneralDiary ? (
-                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                    Enclosed (Hardcopy)
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
-                )}
-              </div>
-
-              {/* Registration Details */}
-              <div className="flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
-                <span className="font-medium text-foreground">Registration Details:</span>
-                {application.docRegistrationDetailsUrl ? (
-                  <a
-                    href={application.docRegistrationDetailsUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
-                  >
-                    <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
-                  </a>
-                ) : application.docRegistrationDetails ? (
-                  <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                    Enclosed (Hardcopy)
-                  </span>
-                ) : (
-                  <span className="text-muted-foreground text-[11px]">Not enclosed</span>
-                )}
-              </div>
-
-              {/* Other Document */}
+          {/* Section 1: Review Documents */}
+          <div className="space-y-3 border rounded-xl p-4 bg-muted/10">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+              <FileText className="w-4 h-4" /> 1. Enclosed Application Documents
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm">
+              {[
+                {
+                  label: "Proof of Identity",
+                  url: application.docProofOfIdentityUrl,
+                  hard: application.docProofOfIdentity,
+                },
+                {
+                  label: "Previous Certificate",
+                  url: application.docPreviousCertificateUrl,
+                  hard: application.docPreviousCertificate,
+                },
+                {
+                  label: "General Diary Copy",
+                  url: application.docGeneralDiaryUrl,
+                  hard: application.docGeneralDiary,
+                },
+                {
+                  label: "Registration Details",
+                  url: application.docRegistrationDetailsUrl,
+                  hard: application.docRegistrationDetails,
+                },
+              ].map((doc, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-2 rounded-lg border bg-background shadow-sm"
+                >
+                  <span className="font-medium text-foreground">{doc.label}</span>
+                  {doc.url ? (
+                    <a
+                      href={doc.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+                    >
+                      <ExternalLink className="w-3 h-3" /> View PDF
+                    </a>
+                  ) : doc.hard ? (
+                    <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                      Hardcopy
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Not enclosed</span>
+                  )}
+                </div>
+              ))}
               {(application.docOtherDocument || application.docOtherDocumentUrl) && (
-                <div className="sm:col-span-2 flex items-center justify-between p-2.5 rounded-lg border bg-background shadow-xs">
+                <div className="sm:col-span-2 flex items-center justify-between p-2 rounded-lg border bg-background shadow-sm">
                   <span className="font-medium text-foreground">
                     Other: {application.docOtherDetails || "Supporting Document"}
                   </span>
@@ -264,144 +278,75 @@ export default function OfficeVerificationModal({
                       href={application.docOtherDocumentUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="font-bold text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 px-2.5 py-1 rounded-md inline-flex items-center gap-1 transition-all"
+                      className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
                     >
-                      <ExternalLink className="w-3 h-3 text-blue-600" /> View PDF
+                      <ExternalLink className="w-3 h-3" /> View PDF
                     </a>
                   ) : (
-                    <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
-                      Enclosed (Hardcopy)
+                    <span className="text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded">
+                      Hardcopy
                     </span>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Section C2: Family Identity Verification Documents */}
-            <div className="pt-3 border-t space-y-2">
-              <h5 className="text-[11px] font-bold uppercase tracking-wider text-green-700 flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-green-600" /> C2. Verification Identity Documents (Family Aadhaar & Voter IDs)
+            {/* Family verification docs */}
+            <div className="pt-3 border-t">
+              <h5 className="text-xs font-bold uppercase tracking-wider text-green-700 flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5" /> Family Identity Documents
               </h5>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                {/* Father's Aadhaar */}
-                <div className="flex items-center justify-between p-2 rounded-lg border bg-green-50/30">
-                  <span>Father's Aadhaar:</span>
-                  {application.docFatherAadhaarUrl ? (
-                    <a
-                      href={application.docFatherAadhaarUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-bold text-xs bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                {[
+                  { label: "Father Aadhaar", url: application.docFatherAadhaarUrl, hard: application.docFatherAadhaar },
+                  { label: "Father Voter", url: application.docFatherVoterUrl, hard: application.docFatherVoter },
+                  { label: "Mother Aadhaar", url: application.docMotherAadhaarUrl, hard: application.docMotherAadhaar },
+                  { label: "Mother Voter", url: application.docMotherVoterUrl, hard: application.docMotherVoter },
+                  application.certificateType === "BIRTH" && {
+                    label: "Child Aadhaar",
+                    url: application.docChildAadhaarUrl,
+                    hard: application.docChildAadhaar,
+                  },
+                ]
+                  .filter(Boolean)
+                  .map((doc: any, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between p-2 rounded-lg border bg-green-50/30"
                     >
-                      <ExternalLink className="w-3 h-3" /> View PDF
-                    </a>
-                  ) : application.docFatherAadhaar ? (
-                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">
-                      Available
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
-                  )}
-                </div>
-
-                {/* Father's Voter */}
-                <div className="flex items-center justify-between p-2 rounded-lg border bg-green-50/30">
-                  <span>Father's Voter ID:</span>
-                  {application.docFatherVoterUrl ? (
-                    <a
-                      href={application.docFatherVoterUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-bold text-xs bg-green-100 text-green-800 hover:bg-green-200 border border-green-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
-                    >
-                      <ExternalLink className="w-3 h-3" /> View PDF
-                    </a>
-                  ) : application.docFatherVoter ? (
-                    <span className="text-[11px] font-semibold text-green-700 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded">
-                      Available
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
-                  )}
-                </div>
-
-                {/* Mother's Aadhaar */}
-                <div className="flex items-center justify-between p-2 rounded-lg border bg-purple-50/30">
-                  <span>Mother's Aadhaar:</span>
-                  {application.docMotherAadhaarUrl ? (
-                    <a
-                      href={application.docMotherAadhaarUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-bold text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 border border-purple-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
-                    >
-                      <ExternalLink className="w-3 h-3" /> View PDF
-                    </a>
-                  ) : application.docMotherAadhaar ? (
-                    <span className="text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.5 rounded">
-                      Available
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
-                  )}
-                </div>
-
-                {/* Mother's Voter */}
-                <div className="flex items-center justify-between p-2 rounded-lg border bg-purple-50/30">
-                  <span>Mother's Voter ID:</span>
-                  {application.docMotherVoterUrl ? (
-                    <a
-                      href={application.docMotherVoterUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="font-bold text-xs bg-purple-100 text-purple-800 hover:bg-purple-200 border border-purple-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
-                    >
-                      <ExternalLink className="w-3 h-3" /> View PDF
-                    </a>
-                  ) : application.docMotherVoter ? (
-                    <span className="text-[11px] font-semibold text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.5 rounded">
-                      Available
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground text-[11px]">Not uploaded</span>
-                  )}
-                </div>
-
-                {/* Child's Aadhaar (for Birth Certificate) */}
-                {application.certificateType === "BIRTH" && (
-                  <div className="sm:col-span-2 flex items-center justify-between p-2 rounded-lg border bg-blue-50/30">
-                    <span>Child's Aadhaar:</span>
-                    {application.docChildAadhaarUrl ? (
-                      <a
-                        href={application.docChildAadhaarUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-bold text-xs bg-blue-100 text-blue-800 hover:bg-blue-200 border border-blue-300 px-2 py-0.5 rounded inline-flex items-center gap-1 transition-all"
-                      >
-                        <ExternalLink className="w-3 h-3" /> View PDF
-                      </a>
-                    ) : application.docChildAadhaar ? (
-                      <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-1.5 py-0.5 rounded">
-                        Available
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground text-[11px]">Not uploaded</span>
-                    )}
-                  </div>
-                )}
+                      <span className="text-xs text-foreground">{doc.label}</span>
+                      {doc.url ? (
+                        <a
+                          href={doc.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+                        >
+                          <ExternalLink className="w-3 h-3" /> View PDF
+                        </a>
+                      ) : doc.hard ? (
+                        <span className="text-xs font-semibold text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded">
+                          Available
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Not uploaded</span>
+                      )}
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
 
-          {/* Office Records Table Section */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              1. Receipt & Official Record Details
+          {/* Section 2: Office Records */}
+          <div className="space-y-4 border rounded-xl p-4 bg-muted/10">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+              <Calendar className="w-4 h-4" /> 2. Receipt & Official Record Details
             </h4>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label htmlFor="applicationReceivedOn" className="text-xs">Application Received Date</Label>
+                <Label htmlFor="applicationReceivedOn" className="text-xs font-medium">
+                  Application Received Date
+                </Label>
                 <Input
                   id="applicationReceivedOn"
                   type="date"
@@ -413,40 +358,46 @@ export default function OfficeVerificationModal({
                   onChange={(e) => {
                     if (e.target.value) form.setValue("applicationReceivedOn", new Date(e.target.value));
                   }}
+                  className="text-xs"
                 />
               </div>
-
               <div className="space-y-1.5">
-                <Label htmlFor="registerNoPageNoSerialNo" className="text-xs">
-                  Register No. & Page No. & Serial No.
+                <Label htmlFor="registerNoPageNoSerialNo" className="text-xs font-medium">
+                  Register No. & Page & Serial
                 </Label>
                 <Input
                   id="registerNoPageNoSerialNo"
                   placeholder="e.g., Vol 2, Page 14, Sl 08"
                   {...form.register("registerNoPageNoSerialNo")}
+                  className="text-xs"
                 />
               </div>
-
               <div className="space-y-1.5">
-                <Label htmlFor="officeRegistrationYear" className="text-xs">Registration Year (Office)</Label>
+                <Label htmlFor="officeRegistrationYear" className="text-xs font-medium">
+                  Registration Year (Office)
+                </Label>
                 <Input
                   id="officeRegistrationYear"
                   placeholder="e.g., 2024"
                   {...form.register("officeRegistrationYear")}
+                  className="text-xs"
                 />
               </div>
-
               <div className="space-y-1.5">
-                <Label htmlFor="officeRegistrationNo" className="text-xs">Registration No. (Office)</Label>
+                <Label htmlFor="officeRegistrationNo" className="text-xs font-medium">
+                  Registration No. (Office)
+                </Label>
                 <Input
                   id="officeRegistrationNo"
                   placeholder="e.g., 145/2024"
                   {...form.register("officeRegistrationNo")}
+                  className="text-xs"
                 />
               </div>
-
               <div className="space-y-1.5">
-                <Label htmlFor="dateOfVerification" className="text-xs">Date of Verification</Label>
+                <Label htmlFor="dateOfVerification" className="text-xs font-medium">
+                  Date of Verification
+                </Label>
                 <Input
                   id="dateOfVerification"
                   type="date"
@@ -458,13 +409,13 @@ export default function OfficeVerificationModal({
                   onChange={(e) => {
                     if (e.target.value) form.setValue("dateOfVerification", new Date(e.target.value));
                   }}
+                  className="text-xs"
                 />
               </div>
             </div>
 
-            {/* Verification Toggles */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="border p-3 rounded-lg space-y-2 bg-muted/20">
+              <div className="border p-3 rounded-lg bg-background">
                 <Label className="text-xs font-bold">Record Available in GP Office?</Label>
                 <RadioGroup
                   value={form.watch("recordAvailable") ? "true" : "false"}
@@ -481,8 +432,7 @@ export default function OfficeVerificationModal({
                   </div>
                 </RadioGroup>
               </div>
-
-              <div className="border p-3 rounded-lg space-y-2 bg-muted/20">
+              <div className="border p-3 rounded-lg bg-background">
                 <Label className="text-xs font-bold">Registration Verified & Matched?</Label>
                 <RadioGroup
                   value={form.watch("registrationVerified") ? "true" : "false"}
@@ -502,19 +452,30 @@ export default function OfficeVerificationModal({
             </div>
           </div>
 
-          {/* Sub-Registrar Decision */}
-          <div className="border-t pt-4 space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              2. Order of the Sub-Registrar
+          {/* Section 3: Sub-Registrar Decision */}
+          <div className="border rounded-xl p-4 bg-muted/10 space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+              <Hash className="w-4 h-4" /> 3. Order of the Sub-Registrar
             </h4>
-
             <div className="space-y-2">
-              <Label className="text-xs font-bold">Sub-Registrar Decision</Label>
+              <Label className="text-xs font-bold">Decision</Label>
               <RadioGroup
-                value={subRegistrarOrder || "APPROVED"}
+                value={subRegistrarOrder || "UNDER_ENQUIRY"}
                 onValueChange={(val: any) => form.setValue("subRegistrarOrder", val)}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3"
               >
+                <Label
+                  htmlFor="order-enquiry"
+                  className={`flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                    subRegistrarOrder === "UNDER_ENQUIRY"
+                      ? "border-amber-500 bg-amber-50 text-amber-900 font-bold"
+                      : "border-border hover:bg-muted/20"
+                  }`}
+                >
+                  <RadioGroupItem value="UNDER_ENQUIRY" id="order-enquiry" />
+                  <Clock className="w-4 h-4 text-amber-600" />
+                  <span>Under Enquiry</span>
+                </Label>
                 <Label
                   htmlFor="order-approve"
                   className={`flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all ${
@@ -525,9 +486,8 @@ export default function OfficeVerificationModal({
                 >
                   <RadioGroupItem value="APPROVED" id="order-approve" />
                   <CheckCircle2 className="w-4 h-4 text-green-600" />
-                  <span>Approved for Issue of Certificate</span>
+                  <span>Approved</span>
                 </Label>
-
                 <Label
                   htmlFor="order-reject"
                   className={`flex items-center gap-2 p-3 border-2 rounded-lg cursor-pointer transition-all ${
@@ -551,26 +511,27 @@ export default function OfficeVerificationModal({
                 <Textarea
                   id="rejectionReason"
                   rows={2}
-                  placeholder="State the reason why the application cannot be approved..."
+                  placeholder="Provide detailed reason for rejection..."
                   {...form.register("rejectionReason")}
+                  className="text-xs"
                 />
               </div>
             )}
 
             {subRegistrarOrder === "APPROVED" && (
-              <div className="p-3.5 rounded-xl border-2 border-emerald-300 bg-emerald-50/40 space-y-3">
+              <div className="p-4 rounded-xl border-2 border-emerald-300 bg-emerald-50/50 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h5 className="text-xs font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
-                    <FileCheck className="w-4 h-4 text-emerald-600" /> Official Issued Certificate PDF (For Applicant Download)
+                  <h5 className="text-sm font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+                    <FileCheck className="w-4 h-4 text-emerald-600" /> Upload Issued Certificate (PDF)
                   </h5>
                   {issuedPdfUrl && (
-                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 px-3 py-1 rounded-full">
                       Ready for Download
                     </span>
                   )}
                 </div>
                 <p className="text-xs text-emerald-800">
-                  Upload the official signed Digital Birth/Death Certificate PDF file so the applicant can download it directly from their tracking dashboard.
+                  Upload the official signed Digital Certificate PDF file. Applicant will be able to download it from their dashboard.
                 </p>
 
                 <input
@@ -600,7 +561,7 @@ export default function OfficeVerificationModal({
                       if (res.ok && data.success && data.url) {
                         setIssuedPdfUrl(data.url);
                         form.setValue("issuedCertificateUrl", data.url);
-                        toast.success("Official Certificate PDF uploaded successfully!");
+                        toast.success("Certificate PDF uploaded successfully!");
                       } else {
                         throw new Error(data.message || "Failed to upload file");
                       }
@@ -624,7 +585,7 @@ export default function OfficeVerificationModal({
                         className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
                       >
                         <a href={issuedPdfUrl} target="_blank" rel="noreferrer">
-                          <ExternalLink className="w-3.5 h-3.5" /> View / Download Issued Certificate
+                          <ExternalLink className="w-3.5 h-3.5" /> View / Download
                         </a>
                       </Button>
                       <Button
@@ -641,7 +602,7 @@ export default function OfficeVerificationModal({
                           </>
                         ) : (
                           <>
-                            <UploadCloud className="w-3.5 h-3.5" /> Replace Certificate PDF
+                            <UploadCloud className="w-3.5 h-3.5" /> Replace PDF
                           </>
                         )}
                       </Button>
@@ -661,7 +622,7 @@ export default function OfficeVerificationModal({
                         </>
                       ) : (
                         <>
-                          <UploadCloud className="w-3.5 h-3.5 text-emerald-700" /> Upload Official Issued Certificate (PDF)
+                          <UploadCloud className="w-3.5 h-3.5 text-emerald-700" /> Upload Official Certificate (PDF)
                         </>
                       )}
                     </Button>
@@ -671,74 +632,49 @@ export default function OfficeVerificationModal({
             )}
           </div>
 
-          {/* Signatures & Authority */}
-          <div className="border-t pt-4 space-y-4">
-            <h4 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-              3. Signatures & Authorities
+          {/* Section 4: Signatures */}
+          <div className="border rounded-xl p-4 bg-muted/10 space-y-4">
+            <h4 className="text-sm font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+              <Users className="w-4 h-4" /> 4. Signatures & Authorities
             </h4>
-
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* DEO */}
-              <div className="border p-3 rounded-lg space-y-3 bg-muted/10">
+              <div className="border p-3 rounded-lg bg-background space-y-3">
                 <p className="text-xs font-bold uppercase text-primary">Data Entry Operator</p>
                 <div className="space-y-1">
-                  <Label htmlFor="dataEntryOperatorName" className="text-xs">Operator Name</Label>
-                  <Input
-                    id="dataEntryOperatorName"
-                    {...form.register("dataEntryOperatorName")}
-                  />
+                  <Label htmlFor="dataEntryOperatorName" className="text-xs">Name</Label>
+                  <Input id="dataEntryOperatorName" {...form.register("dataEntryOperatorName")} className="text-xs" />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="dataEntryOperatorSignature" className="text-xs">Signature / Remark</Label>
-                  <Input
-                    id="dataEntryOperatorSignature"
-                    {...form.register("dataEntryOperatorSignature")}
-                  />
+                  <Input id="dataEntryOperatorSignature" {...form.register("dataEntryOperatorSignature")} className="text-xs" />
                 </div>
               </div>
-
-              {/* Sub-Registrar */}
-              <div className="border p-3 rounded-lg space-y-3 bg-muted/10">
+              <div className="border p-3 rounded-lg bg-background space-y-3">
                 <p className="text-xs font-bold uppercase text-primary">Sub-Registrar</p>
                 <div className="space-y-1">
-                  <Label htmlFor="subRegistrarName" className="text-xs">Sub-Registrar Name</Label>
-                  <Input
-                    id="subRegistrarName"
-                    {...form.register("subRegistrarName")}
-                  />
+                  <Label htmlFor="subRegistrarName" className="text-xs">Name</Label>
+                  <Input id="subRegistrarName" {...form.register("subRegistrarName")} className="text-xs" />
                 </div>
                 <div className="space-y-1">
                   <Label htmlFor="subRegistrarSignature" className="text-xs">Signature / Designation</Label>
-                  <Input
-                    id="subRegistrarSignature"
-                    {...form.register("subRegistrarSignature")}
-                  />
+                  <Input id="subRegistrarSignature" {...form.register("subRegistrarSignature")} className="text-xs" />
                 </div>
               </div>
             </div>
           </div>
 
           <DialogFooter className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 border-t">
-            <Button
-              type="button"
-              variant="outline"
-              asChild
-            >
+            <Button type="button" variant="outline" asChild>
               <Link
                 href={`/admindashboard/manage-digital-certificate/print/${application.id}`}
                 target="_blank"
               >
-                <Printer className="w-4 h-4 mr-2" /> Print Official Form
+                <Printer className="w-4 h-4 mr-2" /> Print Form
               </Link>
             </Button>
 
             <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={onClose}
-                disabled={isSubmitting}
-              >
+              <Button type="button" variant="ghost" onClick={onClose} disabled={isSubmitting}>
                 Cancel
               </Button>
               <Button
