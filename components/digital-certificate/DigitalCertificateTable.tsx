@@ -36,6 +36,9 @@ import {
   Pencil,
   Download,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -104,10 +107,11 @@ export default function DigitalCertificateTable({
     }
   }, [search, certificateType, status, year]);
 
+  // Debounced fetch
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchData(1);
-    }, 300);
+    }, 400);
     return () => clearTimeout(timer);
   }, [fetchData]);
 
@@ -126,30 +130,32 @@ export default function DigitalCertificateTable({
     }
   };
 
+  // --- Badge renderers (enhanced) ---
   const getStatusBadge = (statusStr: string) => {
+    const baseClass = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border shadow-sm";
     switch (statusStr) {
       case "APPROVED":
         return (
-          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 flex items-center gap-1 font-semibold">
-            <CheckCircle2 className="w-3 h-3" /> Approved
+          <Badge className={`${baseClass} bg-emerald-50 text-emerald-700 border-emerald-200`}>
+            <CheckCircle2 className="w-3.5 h-3.5" /> Approved
           </Badge>
         );
       case "REJECTED":
         return (
-          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 flex items-center gap-1 font-semibold">
-            <XCircle className="w-3 h-3" /> Rejected
+          <Badge className={`${baseClass} bg-rose-50 text-rose-700 border-rose-200`}>
+            <XCircle className="w-3.5 h-3.5" /> Rejected
           </Badge>
         );
       case "UNDER_ENQUIRY":
         return (
-          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 flex items-center gap-1 font-semibold">
-            <Clock className="w-3 h-3" /> Under Enquiry
+          <Badge className={`${baseClass} bg-amber-50 text-amber-700 border-amber-200`}>
+            <Clock className="w-3.5 h-3.5" /> Under Enquiry
           </Badge>
         );
       case "SUBMITTED":
         return (
-          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 flex items-center gap-1 font-semibold">
-            <AlertCircle className="w-3 h-3" /> Submitted
+          <Badge className={`${baseClass} bg-sky-50 text-sky-700 border-sky-200`}>
+            <AlertCircle className="w-3.5 h-3.5" /> Submitted
           </Badge>
         );
       default:
@@ -164,46 +170,78 @@ export default function DigitalCertificateTable({
   const getTypeBadge = (typeStr: string) => {
     if (typeStr === "BIRTH") {
       return (
-        <Badge variant="outline" className="border-blue-300 text-blue-700 bg-blue-50 flex items-center gap-1 font-semibold">
-          <Baby className="w-3 h-3" /> Birth
+        <Badge variant="outline" className="border-blue-300 bg-blue-50 text-blue-700 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+          <Baby className="w-3.5 h-3.5" /> Birth
         </Badge>
       );
     }
     return (
-      <Badge variant="outline" className="border-amber-300 text-amber-700 bg-amber-50 flex items-center gap-1 font-semibold">
-        <HeartCrack className="w-3 h-3" /> Death
+      <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-700 flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold shadow-sm">
+        <HeartCrack className="w-3.5 h-3.5" /> Death
       </Badge>
     );
   };
 
+  // --- Pagination helpers ---
+  const goToPage = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      fetchData(newPage);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, page - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+    for (let i = start; i <= end; i++) {
+      pages.push(
+        <Button
+          key={i}
+          variant={i === page ? "default" : "outline"}
+          size="sm"
+          className="h-8 w-8 p-0 text-xs"
+          onClick={() => goToPage(i)}
+          disabled={isLoading}
+        >
+          {i}
+        </Button>
+      );
+    }
+    return pages;
+  };
+
   return (
-    <div className="space-y-4">
-      {/* Filters and Controls */}
-      <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between bg-card p-4 rounded-xl border shadow-sm">
-        <div className="flex flex-1 flex-col sm:flex-row gap-3">
-          <div className="relative flex-1 min-w-[220px]">
+    <div className="space-y-6">
+      {/* ===== FILTERS ===== */}
+      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between bg-card p-5 rounded-2xl border shadow-sm">
+        <div className="flex flex-1 flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search by Ack No, Name, Mobile, Reg No..."
+              placeholder="Search by Ack, Name, Mobile, Reg No..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 text-xs"
+              className="pl-9 h-10 text-sm bg-muted/30 border-muted focus:bg-background transition"
             />
           </div>
 
           <Select value={certificateType} onValueChange={setCertificateType}>
-            <SelectTrigger className="w-full sm:w-[150px] text-xs">
-              <SelectValue placeholder="Certificate Type" />
+            <SelectTrigger className="w-full sm:w-[160px] h-10 text-sm bg-muted/30 border-muted focus:bg-background">
+              <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">All Types</SelectItem>
-              <SelectItem value="BIRTH">Birth Certificate</SelectItem>
-              <SelectItem value="DEATH">Death Certificate</SelectItem>
+              <SelectItem value="BIRTH">Birth</SelectItem>
+              <SelectItem value="DEATH">Death</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="w-full sm:w-[150px] text-xs">
+            <SelectTrigger className="w-full sm:w-[160px] h-10 text-sm bg-muted/30 border-muted focus:bg-background">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -216,210 +254,271 @@ export default function DigitalCertificateTable({
           </Select>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full lg:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={() => fetchData(page)}
             disabled={isLoading}
-            className="text-xs gap-1.5"
+            className="h-10 px-4 text-sm gap-2"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} /> Refresh
+            <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+            Refresh
           </Button>
 
           {isAdmin && (
-            <Button size="sm" asChild className="gap-1.5 bg-primary text-white text-xs">
+            <Button size="sm" asChild className="h-10 px-4 text-sm gap-2 shadow-sm">
               <Link href="/admindashboard/manage-digital-certificate/new">
-                <FilePlus className="w-3.5 h-3.5" /> New Application
+                <FilePlus className="w-4 h-4" /> New
               </Link>
             </Button>
           )}
         </div>
       </div>
 
-      {/* Applications Table */}
-      <div className="rounded-xl border border-border/60 bg-card overflow-hidden shadow-sm">
-        <Table>
-          <TableHeader className="bg-muted/40">
-            <TableRow>
-              <TableHead className="text-xs font-bold uppercase py-3">Ack No & Date</TableHead>
-              <TableHead className="text-xs font-bold uppercase py-3">Type</TableHead>
-              <TableHead className="text-xs font-bold uppercase py-3">Person Details</TableHead>
-              <TableHead className="text-xs font-bold uppercase py-3">Applicant</TableHead>
-              <TableHead className="text-xs font-bold uppercase py-3">Reg Details</TableHead>
-              <TableHead className="text-xs font-bold uppercase py-3">Status</TableHead>
-              <TableHead className="text-xs font-bold uppercase py-3 text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="h-32 text-center text-muted-foreground text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <RefreshCw className="w-4 h-4 animate-spin text-primary" /> Loading applications...
-                  </div>
-                </TableCell>
+      {/* ===== TABLE ===== */}
+      <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-muted/60 border-b">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4">
+                  Ack & Date
+                </TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4">
+                  Type
+                </TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4">
+                  Person
+                </TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4">
+                  Applicant
+                </TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4">
+                  Registration
+                </TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4">
+                  Status
+                </TableHead>
+                <TableHead className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground py-3.5 px-4 text-right">
+                  Actions
+                </TableHead>
               </TableRow>
-            ) : applications.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="h-32 text-center text-muted-foreground text-sm">
-                  No applications found matching your criteria.
-                </TableCell>
-              </TableRow>
-            ) : (
-              applications.map((app) => (
-                <TableRow key={app.id} className="hover:bg-muted/30 transition-colors">
-                  <TableCell className="py-3">
-                    <div className="space-y-0.5">
-                      <p className="font-mono font-bold text-xs text-foreground">{app.acknowledgementNo}</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        {format(new Date(app.createdAt), "dd/MM/yyyy")}
-                      </p>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="py-3">{getTypeBadge(app.certificateType)}</TableCell>
-
-                  <TableCell className="py-3">
-                    <div className="space-y-0.5">
-                      <p className="font-bold text-xs text-foreground">{app.personName}</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Event: {format(new Date(app.dateOfEvent), "dd/MM/yyyy")}
-                      </p>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="py-3">
-                    <div className="space-y-0.5">
-                      <p className="font-semibold text-xs text-foreground">{app.applicantName}</p>
-                      <p className="text-[11px] text-muted-foreground">Mob: {app.mobileNumber}</p>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="py-3">
-                    <div className="space-y-0.5 text-[11px]">
-                      <p><span className="text-muted-foreground">Year:</span> <span className="font-mono font-semibold">{app.registrationYear}</span></p>
-                      <p><span className="text-muted-foreground">No:</span> <span className="font-mono font-semibold">{app.registrationNumber}</span></p>
-                    </div>
-                  </TableCell>
-
-                  <TableCell className="py-3">{getStatusBadge(app.status)}</TableCell>
-
-                  <TableCell className="py-3 text-right">
-                    <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                      {/* Issued Certificate Download */}
-                      {app.issuedCertificateUrl && (
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          asChild
-                          className="h-8 px-2.5 text-xs gap-1 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 font-bold"
-                        >
-                          <a href={app.issuedCertificateUrl} target="_blank" rel="noreferrer">
-                            <Download className="w-3.5 h-3.5 text-emerald-700" /> Certificate
-                          </a>
-                        </Button>
-                      )}
-
-                      {/* Edit Field Data (Admin only) */}
-                      {isAdmin && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 px-2.5 text-xs gap-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200"
-                          onClick={() => {
-                            setSelectedAppForEdit(app);
-                            setIsEditModalOpen(true);
-                          }}
-                        >
-                          <Pencil className="w-3.5 h-3.5" /> Edit
-                        </Button>
-                      )}
-
-                      {/* Office Verification Modal Trigger */}
-                      {isAdmin && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-8 px-2.5 text-xs gap-1 text-primary hover:text-primary hover:bg-primary/10 border-primary/30"
-                          onClick={() => {
-                            setSelectedAppForVerification(app);
-                            setIsVerificationModalOpen(true);
-                          }}
-                        >
-                          <ShieldCheck className="w-3.5 h-3.5" /> Verify / Order
-                        </Button>
-                      )}
-
-                      {/* Print Application */}
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="h-8 px-2.5 text-xs gap-1 hover:bg-muted"
-                      >
-                        <Link
-                          href={
-                            isAdmin
-                              ? `/admindashboard/manage-digital-certificate/print/${app.id}`
-                              : `/dashboard/digital-certificate/print/${app.id}`
-                          }
-                          target="_blank"
-                        >
-                          <Printer className="w-3.5 h-3.5" /> Print
-                        </Link>
-                      </Button>
-
-                      {/* Delete (Admin only) */}
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleDelete(app.id, app.acknowledgementNo)}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </Button>
-                      )}
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                // Skeleton rows
+                Array.from({ length: 5 }).map((_, idx) => (
+                  <TableRow key={idx} className="animate-pulse">
+                    <TableCell colSpan={7} className="px-4 py-5">
+                      <div className="flex flex-col gap-2">
+                        <div className="h-4 bg-muted/60 rounded w-3/4"></div>
+                        <div className="h-3 bg-muted/40 rounded w-1/2"></div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : applications.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="py-16 text-center">
+                    <div className="flex flex-col items-center gap-3 text-muted-foreground">
+                      <FileText className="w-12 h-12 text-muted-foreground/30" />
+                      <p className="text-sm font-medium">No applications found</p>
+                      <p className="text-xs">Try adjusting your search or filters</p>
                     </div>
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                applications.map((app) => (
+                  <TableRow
+                    key={app.id}
+                    className="group hover:bg-muted/30 transition-colors border-b border-muted/30 last:border-0"
+                  >
+                    <TableCell className="py-4 px-4 align-top">
+                      <div className="space-y-0.5">
+                        <p className="font-mono font-bold text-sm text-foreground">
+                          {app.acknowledgementNo}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(app.createdAt), "dd MMM yyyy")}
+                        </p>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 align-top">
+                      {getTypeBadge(app.certificateType)}
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 align-top">
+                      <div className="space-y-0.5">
+                        <p className="font-semibold text-sm text-foreground">
+                          {app.personName}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(app.dateOfEvent), "dd MMM yyyy")}
+                        </p>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 align-top">
+                      <div className="space-y-0.5">
+                        <p className="font-medium text-sm text-foreground">
+                          {app.applicantName}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {app.mobileNumber}
+                        </p>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 align-top">
+                      <div className="space-y-0.5 text-xs">
+                        <p>
+                          <span className="text-muted-foreground">Year: </span>
+                          <span className="font-mono font-semibold">
+                            {app.registrationYear}
+                          </span>
+                        </p>
+                        <p>
+                          <span className="text-muted-foreground">No: </span>
+                          <span className="font-mono font-semibold">
+                            {app.registrationNumber}
+                          </span>
+                        </p>
+                      </div>
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 align-top">
+                      {getStatusBadge(app.status)}
+                    </TableCell>
+
+                    <TableCell className="py-4 px-4 align-top text-right">
+                      <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        {/* Certificate Download */}
+                        {app.issuedCertificateUrl && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            asChild
+                            className="h-8 w-8 p-0 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                            title="Download Certificate"
+                          >
+                            <a href={app.issuedCertificateUrl} target="_blank" rel="noreferrer">
+                              <Download className="w-4 h-4" />
+                            </a>
+                          </Button>
+                        )}
+
+                        {/* Edit (Admin) */}
+                        {isAdmin && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            onClick={() => {
+                              setSelectedAppForEdit(app);
+                              setIsEditModalOpen(true);
+                            }}
+                            title="Edit Application"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                        )}
+
+                        {/* Verify / Order (Admin) */}
+                        {isAdmin && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/10"
+                            onClick={() => {
+                              setSelectedAppForVerification(app);
+                              setIsVerificationModalOpen(true);
+                            }}
+                            title="Verify / Order Certificate"
+                          >
+                            <ShieldCheck className="w-4 h-4" />
+                          </Button>
+                        )}
+
+                        {/* Print */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          asChild
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                          title="Print Application"
+                        >
+                          <Link
+                            href={
+                              isAdmin
+                                ? `/admindashboard/manage-digital-certificate/print/${app.id}`
+                                : `/dashboard/digital-certificate/print/${app.id}`
+                            }
+                            target="_blank"
+                          >
+                            <Printer className="w-4 h-4" />
+                          </Link>
+                        </Button>
+
+                        {/* Delete (Admin) */}
+                        {isAdmin && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                            onClick={() => handleDelete(app.id, app.acknowledgementNo)}
+                            title="Delete Application"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
 
-      {/* Pagination Footer */}
+      {/* ===== PAGINATION ===== */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
           <p className="text-xs text-muted-foreground">
-            Showing Page <span className="font-semibold">{page}</span> of <span className="font-semibold">{totalPages}</span> ({total} total records)
+            Showing page <span className="font-semibold text-foreground">{page}</span> of{" "}
+            <span className="font-semibold text-foreground">{totalPages}</span> ·{" "}
+            <span className="font-medium">{total}</span> total records
           </p>
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-1.5">
             <Button
               variant="outline"
               size="sm"
+              className="h-8 w-8 p-0"
               disabled={page <= 1 || isLoading}
-              onClick={() => fetchData(page - 1)}
-              className="text-xs h-8"
+              onClick={() => goToPage(page - 1)}
             >
-              Previous
+              <ChevronLeft className="w-4 h-4" />
             </Button>
+
+            {renderPageNumbers()}
+
             <Button
               variant="outline"
               size="sm"
+              className="h-8 w-8 p-0"
               disabled={page >= totalPages || isLoading}
-              onClick={() => fetchData(page + 1)}
-              className="text-xs h-8"
+              onClick={() => goToPage(page + 1)}
             >
-              Next
+              <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Verification Modal */}
+      {/* ===== MODALS ===== */}
       <OfficeVerificationModal
         application={selectedAppForVerification}
         isOpen={isVerificationModalOpen}
@@ -430,7 +529,6 @@ export default function DigitalCertificateTable({
         onSuccess={() => fetchData(page)}
       />
 
-      {/* Admin Edit Modal */}
       <EditApplicationModal
         application={selectedAppForEdit}
         isOpen={isEditModalOpen}
