@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -31,6 +32,11 @@ import {
   FileText,
   Building2,
   Clock,
+  ShieldCheck,
+  UploadCloud,
+  ExternalLink,
+  Trash2,
+  Users,
 } from "lucide-react";
 
 interface EditApplicationModalProps {
@@ -47,6 +53,7 @@ export default function EditApplicationModal({
   onSuccess,
 }: EditApplicationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadingField, setUploadingField] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<any>({
     certificateType: "BIRTH",
@@ -67,6 +74,28 @@ export default function EditApplicationModal({
     purpose: "",
     declarationPlace: "",
     applicantSignatureName: "",
+    // Section C & C2 Document Flags & URLs
+    docProofOfIdentity: false,
+    docProofOfIdentityUrl: "",
+    docPreviousCertificate: false,
+    docPreviousCertificateUrl: "",
+    docGeneralDiary: false,
+    docGeneralDiaryUrl: "",
+    docRegistrationDetails: false,
+    docRegistrationDetailsUrl: "",
+    docOtherDocument: false,
+    docOtherDetails: "",
+    docOtherDocumentUrl: "",
+    docFatherAadhaar: false,
+    docFatherAadhaarUrl: "",
+    docFatherVoter: false,
+    docFatherVoterUrl: "",
+    docMotherAadhaar: false,
+    docMotherAadhaarUrl: "",
+    docMotherVoter: false,
+    docMotherVoterUrl: "",
+    docChildAadhaar: false,
+    docChildAadhaarUrl: "",
   });
 
   useEffect(() => {
@@ -92,12 +121,84 @@ export default function EditApplicationModal({
         purpose: application.purpose || "",
         declarationPlace: application.declarationPlace || "Dhalpara",
         applicantSignatureName: application.applicantSignatureName || "",
+        // Section C & C2 Document Flags & URLs
+        docProofOfIdentity: Boolean(application.docProofOfIdentity),
+        docProofOfIdentityUrl: application.docProofOfIdentityUrl || "",
+        docPreviousCertificate: Boolean(application.docPreviousCertificate),
+        docPreviousCertificateUrl: application.docPreviousCertificateUrl || "",
+        docGeneralDiary: Boolean(application.docGeneralDiary),
+        docGeneralDiaryUrl: application.docGeneralDiaryUrl || "",
+        docRegistrationDetails: Boolean(application.docRegistrationDetails),
+        docRegistrationDetailsUrl: application.docRegistrationDetailsUrl || "",
+        docOtherDocument: Boolean(application.docOtherDocument),
+        docOtherDetails: application.docOtherDetails || "",
+        docOtherDocumentUrl: application.docOtherDocumentUrl || "",
+        docFatherAadhaar: Boolean(application.docFatherAadhaar),
+        docFatherAadhaarUrl: application.docFatherAadhaarUrl || "",
+        docFatherVoter: Boolean(application.docFatherVoter),
+        docFatherVoterUrl: application.docFatherVoterUrl || "",
+        docMotherAadhaar: Boolean(application.docMotherAadhaar),
+        docMotherAadhaarUrl: application.docMotherAadhaarUrl || "",
+        docMotherVoter: Boolean(application.docMotherVoter),
+        docMotherVoterUrl: application.docMotherVoterUrl || "",
+        docChildAadhaar: Boolean(application.docChildAadhaar),
+        docChildAadhaarUrl: application.docChildAadhaarUrl || "",
       });
     }
   }, [application]);
 
   const handleChange = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
+  };
+
+  const handlePdfUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    urlField: string,
+    checkboxField: string,
+    docKey: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      toast.error("Only PDF files are allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 250 * 1024) {
+      const sizeInKb = (file.size / 1024).toFixed(1);
+      toast.error(`File size (${sizeInKb} KB) exceeds the 250 KB limit.`);
+      e.target.value = "";
+      return;
+    }
+
+    setUploadingField(urlField);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      formDataUpload.append("documentType", docKey);
+
+      const res = await fetch("/api/digital-certificate/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success && data.url) {
+        handleChange(urlField, data.url);
+        handleChange(checkboxField, true);
+        toast.success(`${file.name} uploaded successfully!`);
+      } else {
+        throw new Error(data.message || "Failed to upload file");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Upload failed");
+    } finally {
+      setUploadingField(null);
+      e.target.value = "";
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,6 +235,101 @@ export default function EditApplicationModal({
 
   const isDeath = formData.certificateType === "DEATH";
 
+  const renderDocUploadRow = (
+    label: string,
+    urlField: string,
+    checkboxField: string,
+    docKey: string
+  ) => {
+    const isUploading = uploadingField === urlField;
+    const url = formData[urlField];
+    const isChecked = formData[checkboxField];
+
+    return (
+      <div className="border rounded-xl p-3 bg-card hover:bg-muted/10 transition-all space-y-2 text-xs">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id={`edit-${checkboxField}`}
+              checked={isChecked}
+              onCheckedChange={(c) => handleChange(checkboxField, Boolean(c))}
+            />
+            <Label htmlFor={`edit-${checkboxField}`} className="text-xs font-bold cursor-pointer">
+              {label}
+            </Label>
+          </div>
+          {url ? (
+            <span className="text-[11px] font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded border border-green-200">
+              PDF Attached
+            </span>
+          ) : isChecked ? (
+            <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              Enclosed (Hardcopy)
+            </span>
+          ) : null}
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 pt-1">
+          <input
+            type="file"
+            id={`file-input-${urlField}`}
+            accept="application/pdf,.pdf"
+            className="hidden"
+            disabled={isUploading}
+            onChange={(e) => handlePdfUpload(e, urlField, checkboxField, docKey)}
+          />
+
+          {url ? (
+            <div className="flex items-center gap-2 w-full">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                asChild
+                className="text-xs gap-1.5 h-8 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200"
+              >
+                <a href={url} target="_blank" rel="noreferrer">
+                  <ExternalLink className="w-3.5 h-3.5" /> View / Download PDF
+                </a>
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  handleChange(urlField, "");
+                  toast.info(`${label} PDF removed`);
+                }}
+                className="text-xs h-8 text-red-600 hover:text-red-700 hover:bg-red-50 px-2"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Remove
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isUploading}
+              onClick={() => document.getElementById(`file-input-${urlField}`)?.click()}
+              className="text-xs gap-1.5 border-dashed border-gray-300 hover:border-gray-500 hover:bg-gray-50"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" /> Uploading...
+                </>
+              ) : (
+                <>
+                  <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload PDF (≤ 250 KB)
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -142,14 +338,14 @@ export default function EditApplicationModal({
             <div>
               <DialogTitle className="text-lg font-bold flex items-center gap-2">
                 <Pencil className="w-5 h-5 text-blue-600" />
-                Edit Certificate Application Data
+                Edit Certificate Application & Attached Documents
               </DialogTitle>
               <DialogDescription className="text-xs mt-1">
                 Acknowledgement No:{" "}
                 <span className="font-mono font-bold text-foreground">
                   {application.acknowledgementNo}
                 </span>{" "}
-                | Update applicant or event details if required.
+                | Update applicant, event details, or attached document PDFs.
               </DialogDescription>
             </div>
           </div>
@@ -398,6 +594,34 @@ export default function EditApplicationModal({
             </div>
           </div>
 
+          {/* Section C: Enclosed Documents Upload/View */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5 border-b pb-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" /> C. Enclosed Application Documents (PDF ≤ 250 KB)
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {renderDocUploadRow("Proof of Applicant Identity", "docProofOfIdentityUrl", "docProofOfIdentity", "proofOfIdentity")}
+              {renderDocUploadRow("Previous Birth / Death Certificate", "docPreviousCertificateUrl", "docPreviousCertificate", "previousCertificate")}
+              {renderDocUploadRow("General Diary (GD) Copy", "docGeneralDiaryUrl", "docGeneralDiary", "generalDiary")}
+              {renderDocUploadRow("Registration Details", "docRegistrationDetailsUrl", "docRegistrationDetails", "registrationDetails")}
+              {renderDocUploadRow("Other Supporting Document", "docOtherDocumentUrl", "docOtherDocument", "otherDocument")}
+            </div>
+          </div>
+
+          {/* Section C2: Family Identity Verification Documents Upload/View */}
+          <div className="space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-green-700 flex items-center gap-1.5 border-b pb-1">
+              <Users className="w-3.5 h-3.5 text-green-600" /> C2. Verification Identity Documents (Family Aadhaar & Voter IDs)
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {renderDocUploadRow("Father's Aadhaar", "docFatherAadhaarUrl", "docFatherAadhaar", "fatherAadhaar")}
+              {renderDocUploadRow("Father's Voter ID", "docFatherVoterUrl", "docFatherVoter", "fatherVoter")}
+              {renderDocUploadRow("Mother's Aadhaar", "docMotherAadhaarUrl", "docMotherAadhaar", "motherAadhaar")}
+              {renderDocUploadRow("Mother's Voter ID", "docMotherVoterUrl", "docMotherVoter", "motherVoter")}
+              {!isDeath && renderDocUploadRow("Child's Aadhaar", "docChildAadhaarUrl", "docChildAadhaar", "childAadhaar")}
+            </div>
+          </div>
+
           {/* Section D: Declaration Details */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5 border-b pb-1">
@@ -450,7 +674,7 @@ export default function EditApplicationModal({
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="w-4 h-4" /> Save Field Changes
+                  <CheckCircle2 className="w-4 h-4" /> Save All Changes & Documents
                 </>
               )}
             </Button>
