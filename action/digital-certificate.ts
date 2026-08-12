@@ -425,6 +425,8 @@ export async function updateOfficeVerification(
         subRegistrarSignature: validated.subRegistrarSignature || null,
         subRegistrarName: validated.subRegistrarName?.trim() || null,
         subRegistrarDate: validated.subRegistrarDate || null,
+        issuedCertificateUrl: validated.issuedCertificateUrl !== undefined ? validated.issuedCertificateUrl : undefined,
+        issuedCertificateDate: validated.issuedCertificateUrl ? new Date() : undefined,
       },
     });
 
@@ -662,6 +664,8 @@ export async function updateDigitalCertificateApplication(
         docMotherVoterUrl: formData.docMotherVoterUrl !== undefined ? formData.docMotherVoterUrl : existing.docMotherVoterUrl,
         docChildAadhaar: formData.docChildAadhaar !== undefined ? Boolean(formData.docChildAadhaar) : existing.docChildAadhaar,
         docChildAadhaarUrl: formData.docChildAadhaarUrl !== undefined ? formData.docChildAadhaarUrl : existing.docChildAadhaarUrl,
+        issuedCertificateUrl: formData.issuedCertificateUrl !== undefined ? formData.issuedCertificateUrl : existing.issuedCertificateUrl,
+        issuedCertificateDate: formData.issuedCertificateUrl ? new Date() : existing.issuedCertificateDate,
         declarationPlace: formData.declarationPlace ? formData.declarationPlace.trim() : existing.declarationPlace,
         applicantSignatureName: formData.applicantSignatureName ? formData.applicantSignatureName.trim() : existing.applicantSignatureName,
       },
@@ -679,7 +683,62 @@ export async function updateDigitalCertificateApplication(
     console.error("Error updating application:", error);
     return {
       success: false,
-      message: error?.message || "Failed to update application details",
+      message: error?.message || "Failed to update application",
+    };
+  }
+}
+
+/**
+ * Upload official issued Digital Certificate PDF (Admin Action)
+ */
+export async function uploadIssuedCertificate(
+  id: string,
+  issuedCertificateUrl: string,
+  issuedCertificatePublicId?: string
+): Promise<ServerActionResult<any>> {
+  try {
+    const session = await auth();
+    const role = session?.user?.role;
+
+    if (!session?.user || !["admin", "superadmin", "staff"].includes(role as string)) {
+      return {
+        success: false,
+        message: "Unauthorized: Admin privileges required",
+      };
+    }
+
+    const application = await db.digitalCertificateApplication.findUnique({
+      where: { id },
+    });
+
+    if (!application) {
+      return { success: false, message: "Application not found" };
+    }
+
+    const updated = await db.digitalCertificateApplication.update({
+      where: { id },
+      data: {
+        issuedCertificateUrl,
+        issuedCertificatePublicId: issuedCertificatePublicId || null,
+        issuedCertificateDate: new Date(),
+        status: "APPROVED",
+        subRegistrarOrder: "APPROVED",
+      },
+    });
+
+    revalidatePath("/dashboard/digital-certificate/status", "page");
+    revalidatePath("/admindashboard/manage-digital-certificate", "page");
+
+    return {
+      success: true,
+      data: updated,
+      message: "Official Digital Certificate PDF uploaded and issued successfully!",
+    };
+  } catch (error: any) {
+    console.error("Error uploading issued certificate:", error);
+    return {
+      success: false,
+      message: error?.message || "Failed to upload issued certificate PDF",
     };
   }
 }

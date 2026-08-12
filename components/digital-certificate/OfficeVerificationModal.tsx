@@ -33,6 +33,7 @@ import {
   ExternalLink,
   FileCheck,
   Users,
+  UploadCloud,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -50,6 +51,8 @@ export default function OfficeVerificationModal({
   onSuccess,
 }: OfficeVerificationModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [issuedPdfUrl, setIssuedPdfUrl] = useState<string>("");
+  const [isUploadingIssuedPdf, setIsUploadingIssuedPdf] = useState<boolean>(false);
 
   const form = useForm<OfficeVerificationFormData>({
     resolver: zodResolver(officeVerificationSchema),
@@ -69,11 +72,13 @@ export default function OfficeVerificationModal({
       subRegistrarName: "Sub-Registrar of Births & Deaths",
       subRegistrarSignature: "Sub-Registrar, Dhalpara GP",
       subRegistrarDate: new Date(),
+      issuedCertificateUrl: "",
     },
   });
 
   useEffect(() => {
     if (application) {
+      setIssuedPdfUrl(application.issuedCertificateUrl || "");
       form.reset({
         applicationReceivedOn: application.applicationReceivedOn
           ? new Date(application.applicationReceivedOn)
@@ -98,6 +103,7 @@ export default function OfficeVerificationModal({
         subRegistrarDate: application.subRegistrarDate
           ? new Date(application.subRegistrarDate)
           : new Date(),
+        issuedCertificateUrl: application.issuedCertificateUrl || "",
       });
     }
   }, [application, form]);
@@ -108,7 +114,10 @@ export default function OfficeVerificationModal({
     if (!application?.id) return;
     setIsSubmitting(true);
     try {
-      const res = await updateOfficeVerification(application.id, values);
+      const res = await updateOfficeVerification(application.id, {
+        ...values,
+        issuedCertificateUrl: issuedPdfUrl || null,
+      });
       if (res.success) {
         toast.success(res.message || "Office verification updated successfully");
         onClose();
@@ -545,6 +554,119 @@ export default function OfficeVerificationModal({
                   placeholder="State the reason why the application cannot be approved..."
                   {...form.register("rejectionReason")}
                 />
+              </div>
+            )}
+
+            {subRegistrarOrder === "APPROVED" && (
+              <div className="p-3.5 rounded-xl border-2 border-emerald-300 bg-emerald-50/40 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h5 className="text-xs font-bold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5">
+                    <FileCheck className="w-4 h-4 text-emerald-600" /> Official Issued Certificate PDF (For Applicant Download)
+                  </h5>
+                  {issuedPdfUrl && (
+                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
+                      Ready for Download
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-emerald-800">
+                  Upload the official signed Digital Birth/Death Certificate PDF file so the applicant can download it directly from their tracking dashboard.
+                </p>
+
+                <input
+                  type="file"
+                  id="issued-cert-pdf-input"
+                  accept="application/pdf,.pdf"
+                  className="hidden"
+                  disabled={isUploadingIssuedPdf}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+                      toast.error("Only PDF files are allowed.");
+                      e.target.value = "";
+                      return;
+                    }
+                    setIsUploadingIssuedPdf(true);
+                    try {
+                      const formDataUpload = new FormData();
+                      formDataUpload.append("file", file);
+                      formDataUpload.append("documentType", "issuedCertificate");
+                      const res = await fetch("/api/digital-certificate/upload", {
+                        method: "POST",
+                        body: formDataUpload,
+                      });
+                      const data = await res.json();
+                      if (res.ok && data.success && data.url) {
+                        setIssuedPdfUrl(data.url);
+                        form.setValue("issuedCertificateUrl", data.url);
+                        toast.success("Official Certificate PDF uploaded successfully!");
+                      } else {
+                        throw new Error(data.message || "Failed to upload file");
+                      }
+                    } catch (err: any) {
+                      toast.error(err?.message || "Upload failed");
+                    } finally {
+                      setIsUploadingIssuedPdf(false);
+                      e.target.value = "";
+                    }
+                  }}
+                />
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  {issuedPdfUrl ? (
+                    <>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        asChild
+                        className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                      >
+                        <a href={issuedPdfUrl} target="_blank" rel="noreferrer">
+                          <ExternalLink className="w-3.5 h-3.5" /> View / Download Issued Certificate
+                        </a>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        disabled={isUploadingIssuedPdf}
+                        onClick={() => document.getElementById("issued-cert-pdf-input")?.click()}
+                        className="text-xs gap-1.5 border-emerald-300 text-emerald-900 bg-white hover:bg-emerald-100"
+                      >
+                        {isUploadingIssuedPdf ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <UploadCloud className="w-3.5 h-3.5" /> Replace Certificate PDF
+                          </>
+                        )}
+                      </Button>
+                    </>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={isUploadingIssuedPdf}
+                      onClick={() => document.getElementById("issued-cert-pdf-input")?.click()}
+                      className="text-xs gap-1.5 border-dashed border-emerald-400 bg-white text-emerald-900 hover:bg-emerald-100 font-bold"
+                    >
+                      {isUploadingIssuedPdf ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...
+                        </>
+                      ) : (
+                        <>
+                          <UploadCloud className="w-3.5 h-3.5 text-emerald-700" /> Upload Official Issued Certificate (PDF)
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </div>

@@ -35,6 +35,7 @@ import {
   RefreshCw,
   FilePlus,
   Pencil,
+  Download,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -313,7 +314,21 @@ export default function DigitalCertificateTable({
 
                   {/* Actions */}
                   <TableCell className="py-3 text-right">
-                    <div className="flex items-center justify-end gap-1.5">
+                    <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                      {/* Issued Certificate Download Button (if uploaded) */}
+                      {app.issuedCertificateUrl && (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          asChild
+                          className="h-8 px-2.5 text-xs gap-1 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 font-bold"
+                        >
+                          <a href={app.issuedCertificateUrl} target="_blank" rel="noreferrer">
+                            <Download className="w-3.5 h-3.5 text-emerald-700" /> Issued Certificate
+                          </a>
+                        </Button>
+                      )}
+
                       {/* Edit Field Data (Admin only) */}
                       {isAdmin && (
                         <Button

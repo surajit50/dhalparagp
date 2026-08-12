@@ -151,6 +151,7 @@ export const officeVerificationSchema = z.object({
   subRegistrarSignature: z.string().optional().nullable(),
   subRegistrarName: z.string().optional().nullable(),
   subRegistrarDate: z.coerce.date().optional().nullable(),
+  issuedCertificateUrl: z.string().optional().nullable(),
 });
 
 export type OfficeVerificationFormData = z.infer<typeof officeVerificationSchema>;

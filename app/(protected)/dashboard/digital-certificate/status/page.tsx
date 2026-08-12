@@ -29,6 +29,8 @@ import {
   PlusCircle,
   RefreshCw,
   Eye,
+  Download,
+  FileCheck,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -225,7 +227,39 @@ export default function DigitalCertificateStatusPage() {
                   </div>
                 )}
 
+                {searchedApp.issuedCertificateUrl && (
+                  <div className="p-3 rounded-xl bg-emerald-100/70 border border-emerald-300 flex flex-col sm:flex-row items-center justify-between gap-3 text-emerald-950">
+                    <div className="flex items-center gap-2">
+                      <FileCheck className="w-5 h-5 text-emerald-700 shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-wider">Official Certificate Issued</p>
+                        <p className="text-[11.5px] text-emerald-900">Your official signed Digital Certificate PDF is available for download.</p>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      asChild
+                      className="text-xs font-bold gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm shrink-0"
+                    >
+                      <a href={searchedApp.issuedCertificateUrl} target="_blank" rel="noreferrer" download>
+                        <Download className="w-4 h-4" /> Download Official Certificate (PDF)
+                      </a>
+                    </Button>
+                  </div>
+                )}
+
                 <div className="flex justify-end gap-2 pt-2">
+                  {searchedApp.issuedCertificateUrl && (
+                    <Button
+                      size="sm"
+                      asChild
+                      className="text-xs gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold"
+                    >
+                      <a href={searchedApp.issuedCertificateUrl} target="_blank" rel="noreferrer">
+                        <Download className="w-3.5 h-3.5" /> Download Certificate
+                      </a>
+                    </Button>
+                  )}
                   <Button
                     size="sm"
                     variant="outline"
@@ -321,7 +355,18 @@ export default function DigitalCertificateStatusPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0">
+                    <div className="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 flex-wrap">
+                      {app.issuedCertificateUrl && (
+                        <Button
+                          size="sm"
+                          asChild
+                          className="text-xs gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold"
+                        >
+                          <a href={app.issuedCertificateUrl} target="_blank" rel="noreferrer">
+                            <Download className="w-3.5 h-3.5" /> Download Certificate
+                          </a>
+                        </Button>
+                      )}
                       <Button
                         size="sm"
                         variant="outline"

@@ -4349,6 +4349,11 @@ model DigitalCertificateApplication {
   subRegistrarName      String?
   subRegistrarDate      DateTime?
 
+  // OFFICIAL CERTIFICATE ISSUE (PDF)
+  issuedCertificateUrl       String?
+  issuedCertificatePublicId  String?
+  issuedCertificateDate      DateTime?
+
   // Metadata & Relations
   userId                String?  @db.ObjectId
   user                  User?    @relation(fields: [userId], references: [id])
