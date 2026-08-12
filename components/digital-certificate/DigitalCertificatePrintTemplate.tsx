@@ -40,6 +40,13 @@ export interface DigitalCertificateApplicationData {
   docOtherDocument?: boolean;
   docOtherDetails?: string | null;
 
+  // Section C2
+  docFatherAadhaar?: boolean;
+  docFatherVoter?: boolean;
+  docMotherAadhaar?: boolean;
+  docMotherVoter?: boolean;
+  docChildAadhaar?: boolean;
+
   // Section D
   declarationPlace?: string;
   declarationDate?: Date | string;
