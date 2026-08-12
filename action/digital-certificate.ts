@@ -381,6 +381,7 @@ export async function getAllDigitalCertificateApplications(
 
 /**
  * Update Office Verification and Sub-Registrar Order (Admin)
+ * Now supports UNDER_ENQUIRY status
  */
 export async function updateOfficeVerification(
   id: string,
@@ -399,12 +400,14 @@ export async function updateOfficeVerification(
 
     const validated = officeVerificationSchema.parse(formData);
 
-    let status = "UNDER_REVIEW";
+    // Map subRegistrarOrder to application status
+    let status = "UNDER_ENQUIRY";
     if (validated.subRegistrarOrder === "APPROVED") {
       status = "APPROVED";
     } else if (validated.subRegistrarOrder === "REJECTED") {
       status = "REJECTED";
     }
+    // For "UNDER_ENQUIRY", status remains "UNDER_ENQUIRY"
 
     const updated = await db.digitalCertificateApplication.update({
       where: { id },
@@ -455,7 +458,7 @@ export async function getDigitalCertificateStats(): Promise<ServerActionResult<{
   birthCount: number;
   deathCount: number;
   submittedCount: number;
-  underReviewCount: number;
+  underEnquiryCount: number;
   approvedCount: number;
   rejectedCount: number;
 }>> {
@@ -465,7 +468,7 @@ export async function getDigitalCertificateStats(): Promise<ServerActionResult<{
       birthCount,
       deathCount,
       submittedCount,
-      underReviewCount,
+      underEnquiryCount,
       approvedCount,
       rejectedCount,
     ] = await Promise.all([
@@ -473,7 +476,7 @@ export async function getDigitalCertificateStats(): Promise<ServerActionResult<{
       db.digitalCertificateApplication.count({ where: { certificateType: "BIRTH" } }),
       db.digitalCertificateApplication.count({ where: { certificateType: "DEATH" } }),
       db.digitalCertificateApplication.count({ where: { status: "SUBMITTED" } }),
-      db.digitalCertificateApplication.count({ where: { status: "UNDER_REVIEW" } }),
+      db.digitalCertificateApplication.count({ where: { status: "UNDER_ENQUIRY" } }),
       db.digitalCertificateApplication.count({ where: { status: "APPROVED" } }),
       db.digitalCertificateApplication.count({ where: { status: "REJECTED" } }),
     ]);
@@ -485,7 +488,7 @@ export async function getDigitalCertificateStats(): Promise<ServerActionResult<{
         birthCount,
         deathCount,
         submittedCount,
-        underReviewCount,
+        underEnquiryCount,
         approvedCount,
         rejectedCount,
       },
@@ -501,7 +504,7 @@ export async function getDigitalCertificateStats(): Promise<ServerActionResult<{
         birthCount: 0,
         deathCount: 0,
         submittedCount: 0,
-        underReviewCount: 0,
+        underEnquiryCount: 0,
         approvedCount: 0,
         rejectedCount: 0,
       },
