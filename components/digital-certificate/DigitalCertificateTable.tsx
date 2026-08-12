@@ -30,12 +30,12 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
-  Eye,
   Trash2,
   RefreshCw,
   FilePlus,
   Pencil,
   Download,
+  AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -140,16 +140,22 @@ export default function DigitalCertificateTable({
             <XCircle className="w-3 h-3" /> Rejected
           </Badge>
         );
-      case "UNDER_REVIEW":
+      case "UNDER_ENQUIRY":
+        return (
+          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 flex items-center gap-1 font-semibold">
+            <Clock className="w-3 h-3" /> Under Enquiry
+          </Badge>
+        );
+      case "SUBMITTED":
         return (
           <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 flex items-center gap-1 font-semibold">
-            <Clock className="w-3 h-3" /> Under Review
+            <AlertCircle className="w-3 h-3" /> Submitted
           </Badge>
         );
       default:
         return (
-          <Badge className="bg-amber-100 text-amber-800 hover:bg-amber-100 flex items-center gap-1 font-semibold">
-            <Clock className="w-3 h-3" /> Submitted
+          <Badge variant="outline" className="text-muted-foreground">
+            {statusStr || "Unknown"}
           </Badge>
         );
     }
@@ -175,7 +181,6 @@ export default function DigitalCertificateTable({
       {/* Filters and Controls */}
       <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between bg-card p-4 rounded-xl border shadow-sm">
         <div className="flex flex-1 flex-col sm:flex-row gap-3">
-          {/* Search */}
           <div className="relative flex-1 min-w-[220px]">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -186,7 +191,6 @@ export default function DigitalCertificateTable({
             />
           </div>
 
-          {/* Certificate Type Filter */}
           <Select value={certificateType} onValueChange={setCertificateType}>
             <SelectTrigger className="w-full sm:w-[150px] text-xs">
               <SelectValue placeholder="Certificate Type" />
@@ -198,7 +202,6 @@ export default function DigitalCertificateTable({
             </SelectContent>
           </Select>
 
-          {/* Status Filter */}
           <Select value={status} onValueChange={setStatus}>
             <SelectTrigger className="w-full sm:w-[150px] text-xs">
               <SelectValue placeholder="Status" />
@@ -206,7 +209,7 @@ export default function DigitalCertificateTable({
             <SelectContent>
               <SelectItem value="ALL">All Status</SelectItem>
               <SelectItem value="SUBMITTED">Submitted</SelectItem>
-              <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
+              <SelectItem value="UNDER_ENQUIRY">Under Enquiry</SelectItem>
               <SelectItem value="APPROVED">Approved</SelectItem>
               <SelectItem value="REJECTED">Rejected</SelectItem>
             </SelectContent>
@@ -266,7 +269,6 @@ export default function DigitalCertificateTable({
             ) : (
               applications.map((app) => (
                 <TableRow key={app.id} className="hover:bg-muted/30 transition-colors">
-                  {/* Ack & Date */}
                   <TableCell className="py-3">
                     <div className="space-y-0.5">
                       <p className="font-mono font-bold text-xs text-foreground">{app.acknowledgementNo}</p>
@@ -276,22 +278,17 @@ export default function DigitalCertificateTable({
                     </div>
                   </TableCell>
 
-                  {/* Type */}
-                  <TableCell className="py-3">
-                    {getTypeBadge(app.certificateType)}
-                  </TableCell>
+                  <TableCell className="py-3">{getTypeBadge(app.certificateType)}</TableCell>
 
-                  {/* Person Details */}
                   <TableCell className="py-3">
                     <div className="space-y-0.5">
                       <p className="font-bold text-xs text-foreground">{app.personName}</p>
                       <p className="text-[11px] text-muted-foreground">
-                        Event Date: {format(new Date(app.dateOfEvent), "dd/MM/yyyy")}
+                        Event: {format(new Date(app.dateOfEvent), "dd/MM/yyyy")}
                       </p>
                     </div>
                   </TableCell>
 
-                  {/* Applicant */}
                   <TableCell className="py-3">
                     <div className="space-y-0.5">
                       <p className="font-semibold text-xs text-foreground">{app.applicantName}</p>
@@ -299,7 +296,6 @@ export default function DigitalCertificateTable({
                     </div>
                   </TableCell>
 
-                  {/* Registration Details */}
                   <TableCell className="py-3">
                     <div className="space-y-0.5 text-[11px]">
                       <p><span className="text-muted-foreground">Year:</span> <span className="font-mono font-semibold">{app.registrationYear}</span></p>
@@ -307,15 +303,11 @@ export default function DigitalCertificateTable({
                     </div>
                   </TableCell>
 
-                  {/* Status */}
-                  <TableCell className="py-3">
-                    {getStatusBadge(app.status)}
-                  </TableCell>
+                  <TableCell className="py-3">{getStatusBadge(app.status)}</TableCell>
 
-                  {/* Actions */}
                   <TableCell className="py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                      {/* Issued Certificate Download Button (if uploaded) */}
+                      {/* Issued Certificate Download */}
                       {app.issuedCertificateUrl && (
                         <Button
                           variant="secondary"
@@ -324,7 +316,7 @@ export default function DigitalCertificateTable({
                           className="h-8 px-2.5 text-xs gap-1 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300 font-bold"
                         >
                           <a href={app.issuedCertificateUrl} target="_blank" rel="noreferrer">
-                            <Download className="w-3.5 h-3.5 text-emerald-700" /> Issued Certificate
+                            <Download className="w-3.5 h-3.5 text-emerald-700" /> Certificate
                           </a>
                         </Button>
                       )}
