@@ -427,6 +427,7 @@ export const adminMenuItems: MenuItemProps[] = [
         createMenuItem("Expenditure Summary", ["admin"], `${BASE_URLS.admin}/reports/expenditure`, FaChevronCircleRight, COLORS.green),
       ]),
       createMenuItem("Performance Metrics", ["admin"], `${BASE_URLS.admin}/reports/performance`, FaChevronCircleRight, COLORS.purple),
+      createMenuItem("Internal Audit Report", ["admin"], `${BASE_URLS.admin}/reports/internal-audit`, FaChevronCircleRight, COLORS.orange),
       createMenuItem("Other Reports", ["admin"], `${BASE_URLS.admin}/reports`, FaChevronCircleRight, COLORS.indigo),
     ]),
   ]),

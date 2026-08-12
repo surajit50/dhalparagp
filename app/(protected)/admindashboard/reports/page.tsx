@@ -248,6 +248,7 @@ export default async function ReportsPage({
                   { title: "Form 36 (Budget)", href: "/admindashboard/reports/form-36", color: "from-slate-700 to-gray-900" },
                   { title: "Form 37 (Expenditure)", href: "/admindashboard/reports/form-37", color: "from-red-500 to-rose-700" },
                   { title: "Form 38 (Monthly Cash)", href: "/admindashboard/reports/form-38", color: "from-teal-500 to-cyan-700" },
+                  { title: "Internal Audit Report (Annexure 7)", href: "/admindashboard/reports/internal-audit", color: "from-blue-700 to-indigo-900" },
                 ].map((form, index) => (
                   <Link key={index} href={form.href}>
                     <Card className="hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-gray-200 group">

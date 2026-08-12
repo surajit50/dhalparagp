@@ -4364,3 +4364,99 @@ model DigitalCertificateApplication {
   @@index([applicantName, personName])
   @@index([registrationYear, registrationNumber])
 }
+
+model InternalAuditReport {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  reportNo              String   @unique
+  financialYear         String   // e.g. "2024-2025"
+  quarter               String   // e.g. "Q1", "Q2", "Q3", "Q4"
+  
+  // Auditee Profile
+  gpName                String   @default("Dhalpara Gram Panchayat")
+  blockAndDistrict      String   @default("Hilli, Dakshin Dinajpur")
+  riskCategory          String   @default("Low")
+  gpAddressAndPhone     String?
+
+  // Auditor Profile
+  auditPartyMembers     String?
+  auditPartyContact     String?
+  auditPartyEmail       String?
+
+  // Audit Profile
+  auditPeriod           String?  // e.g. "1st Quarter (1st April 2024 to 30th June 2024)"
+  auditDuration         String?  // e.g. "5 Days"
+  totalFindings         Int      @default(0)
+
+  // Part II: Summary of Past Observations
+  pastObservations      Json?
+
+  // Part III: Pending Internal and ELA Audit Compliance
+  pendingCompliances    Json?
+
+  // Part IV: Report Summary Form
+  reportSummaries       Json?
+
+  // Part V: Detailed Observations
+  observations          Json?
+
+  // Part V (Continued): Additional Information
+  gpMembersCount        Json?
+  upaSamitiDetails      Json?
+  gpStaffDetails        Json?
+  fundUsage             Json?
+  procurementList       Json?
+  otherExpenditureList  Json?
+  propertyTaxOSR        Json?
+  tradeLicenceOSR       Json?
+  otherInfoStats        Json?
+
+  // Part VI & Audit Signatures
+  auditorDesignation    String?  @default("Internal Audit Officer")
+  auditorOfficeAddress  String?  
+  status                String   @default("Draft") // Draft, Finalized
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("internal_audit_reports")
+  @@index([financialYear, quarter])
+}
+
+model GpMemberStats {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  maleElected     Int      @default(0)
+  femaleElected   Int      @default(0)
+  maleExOfficio   Int      @default(0)
+  femaleExOfficio Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("gp_member_stats")
+}
+
+model GpUpaSamiti {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  name              String
+  directMembers     Int      @default(0)
+  designatedMembers Int      @default(0)
+  sanchalakName     String?  @default("")
+  meetingsHeld      Int      @default(0)
+  orderIndex        Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("gp_upa_samitis")
+}
+
+model GpStaff {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  designation String
+  maleName    String?  @default("")
+  femaleName  String?  @default("")
+  salary      String?  @default("")
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("gp_staff")
+}
