@@ -30,7 +30,7 @@ export default function AdminNewDigitalCertificatePage() {
         </div>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-sm border p-4 sm:p-8 max-w-4xl mx-auto">
+      <div className="bg-card rounded-2xl shadow-sm border p-4 sm:p-8 mx-auto">
         <DigitalCertificateForm
           isAdmin={true}
           onSuccessRedirectUrl="/admindashboard/manage-digital-certificate"
