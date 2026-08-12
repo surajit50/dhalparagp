@@ -69,6 +69,54 @@ export async function createDigitalCertificateApplication(
 
     const validated = digitalCertificateApplicationSchema.parse(formData);
 
+    const regNoTrimmed = validated.registrationNumber.trim();
+    const regYearTrimmed = validated.registrationYear.trim();
+    const personNameTrimmed = validated.personName.trim();
+
+    // 1. Unique Registration Number check (per certificate type and registration year)
+    const existingRegNo = await db.digitalCertificateApplication.findFirst({
+      where: {
+        registrationNumber: { equals: regNoTrimmed, mode: "insensitive" },
+        registrationYear: regYearTrimmed,
+        certificateType: validated.certificateType,
+      },
+    });
+
+    if (existingRegNo) {
+      return {
+        success: false,
+        message: `Registration Number "${regNoTrimmed}" already exists for year ${regYearTrimmed} (${validated.certificateType}). Duplicate registration numbers are not allowed.`,
+        errors: { registrationNumber: `Registration Number "${regNoTrimmed}" is already registered` },
+      };
+    }
+
+    // 2. Duplicate entry check (same Person Name, Date of Birth/Event, and Registration Year)
+    const eventDate = new Date(validated.dateOfEvent);
+    const startOfDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), 0, 0, 0);
+    const endOfDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), 23, 59, 59);
+
+    const existingPerson = await db.digitalCertificateApplication.findFirst({
+      where: {
+        personName: { equals: personNameTrimmed, mode: "insensitive" },
+        certificateType: validated.certificateType,
+        registrationYear: regYearTrimmed,
+        dateOfEvent: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (existingPerson) {
+      const eventTypeLabel = validated.certificateType === "BIRTH" ? "Birth" : "Death";
+      const formattedDateStr = eventDate.toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" });
+      return {
+        success: false,
+        message: `An application for "${personNameTrimmed}" with the same Date of ${eventTypeLabel} (${formattedDateStr}) and Registration Year (${regYearTrimmed}) already exists (Ack No: ${existingPerson.acknowledgementNo}). Duplicate entries are not allowed.`,
+        errors: { personName: `Duplicate entry found for "${personNameTrimmed}" with Date of ${eventTypeLabel} in year ${regYearTrimmed}` },
+      };
+    }
+
     const acknowledgementNo = await generateAcknowledgementNo(validated.certificateType);
 
     const application = await db.digitalCertificateApplication.create({
@@ -520,6 +568,58 @@ export async function updateDigitalCertificateApplication(
 
     if (!existing) {
       return { success: false, message: "Application not found" };
+    }
+
+    const targetRegNo = formData.registrationNumber ? formData.registrationNumber.trim() : existing.registrationNumber;
+    const targetRegYear = formData.registrationYear ? formData.registrationYear.trim() : existing.registrationYear;
+    const targetType = formData.certificateType || existing.certificateType;
+    const targetPersonName = formData.personName ? formData.personName.trim() : existing.personName;
+    const targetDateOfEvent = formData.dateOfEvent ? new Date(formData.dateOfEvent) : existing.dateOfEvent;
+
+    // 1. Unique Registration Number check (excluding current ID)
+    const duplicateRegNo = await db.digitalCertificateApplication.findFirst({
+      where: {
+        id: { not: id },
+        registrationNumber: { equals: targetRegNo, mode: "insensitive" },
+        registrationYear: targetRegYear,
+        certificateType: targetType,
+      },
+    });
+
+    if (duplicateRegNo) {
+      return {
+        success: false,
+        message: `Registration Number "${targetRegNo}" is already in use by another application (Ack No: ${duplicateRegNo.acknowledgementNo}) in year ${targetRegYear}.`,
+        errors: { registrationNumber: `Registration Number "${targetRegNo}" is already taken` },
+      };
+    }
+
+    // 2. Duplicate entry check (same Person Name, Date of Birth/Event, and Registration Year, excluding current ID)
+    const eventDate = new Date(targetDateOfEvent);
+    const startOfDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), 0, 0, 0);
+    const endOfDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), 23, 59, 59);
+
+    const duplicatePerson = await db.digitalCertificateApplication.findFirst({
+      where: {
+        id: { not: id },
+        personName: { equals: targetPersonName, mode: "insensitive" },
+        certificateType: targetType,
+        registrationYear: targetRegYear,
+        dateOfEvent: {
+          gte: startOfDay,
+          lte: endOfDay,
+        },
+      },
+    });
+
+    if (duplicatePerson) {
+      const eventTypeLabel = targetType === "BIRTH" ? "Birth" : "Death";
+      const formattedDateStr = eventDate.toLocaleDateString("en-IN", { day: "2-digit", month: "2-digit", year: "numeric" });
+      return {
+        success: false,
+        message: `Another application for "${targetPersonName}" with the same Date of ${eventTypeLabel} (${formattedDateStr}) and Registration Year (${targetRegYear}) already exists (Ack No: ${duplicatePerson.acknowledgementNo}).`,
+        errors: { personName: `Duplicate entry found for "${targetPersonName}" in year ${targetRegYear}` },
+      };
     }
 
     const updated = await db.digitalCertificateApplication.update({

@@ -280,7 +280,7 @@ export default function EditApplicationModal({
           />
 
           {url ? (
-            <div className="flex items-center gap-2 w-full">
+            <div className="flex flex-wrap items-center gap-2 w-full">
               <Button
                 type="button"
                 variant="secondary"
@@ -291,6 +291,24 @@ export default function EditApplicationModal({
                 <a href={url} target="_blank" rel="noreferrer">
                   <ExternalLink className="w-3.5 h-3.5" /> View / Download PDF
                 </a>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={isUploading}
+                onClick={() => document.getElementById(`file-input-${urlField}`)?.click()}
+                className="text-xs gap-1.5 h-8 border-amber-300 text-amber-800 bg-amber-50 hover:bg-amber-100 hover:text-amber-900"
+              >
+                {isUploading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Uploading...
+                  </>
+                ) : (
+                  <>
+                    <UploadCloud className="w-3.5 h-3.5" /> Replace / Edit File
+                  </>
+                )}
               </Button>
               <Button
                 type="button"
