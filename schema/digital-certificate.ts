@@ -3,9 +3,10 @@ import { z } from "zod";
 export const CertificateTypeEnum = z.enum(["BIRTH", "DEATH"]);
 export type CertificateType = z.infer<typeof CertificateTypeEnum>;
 
+// Updated statuses: SUBMITTED, UNDER_ENQUIRY, APPROVED, REJECTED
 export const ApplicationStatusEnum = z.enum([
   "SUBMITTED",
-  "UNDER_REVIEW",
+  "UNDER_ENQUIRY",
   "APPROVED",
   "REJECTED",
 ]);
@@ -135,6 +136,7 @@ export type DigitalCertificateApplicationFormData = z.infer<
   typeof digitalCertificateApplicationSchema
 >;
 
+// Office verification schema – changed to use UNDER_ENQUIRY instead of PENDING
 export const officeVerificationSchema = z.object({
   applicationReceivedOn: z.coerce.date().optional().nullable(),
   registerNoPageNoSerialNo: z.string().optional().nullable(),
@@ -143,7 +145,7 @@ export const officeVerificationSchema = z.object({
   dateOfVerification: z.coerce.date().optional().nullable(),
   recordAvailable: z.boolean().optional().nullable(),
   registrationVerified: z.boolean().optional().nullable(),
-  subRegistrarOrder: z.enum(["APPROVED", "REJECTED", "PENDING"]).optional().nullable(),
+  subRegistrarOrder: z.enum(["UNDER_ENQUIRY", "APPROVED", "REJECTED"]).optional().nullable(),
   rejectionReason: z.string().optional().nullable(),
   dataEntryOperatorSignature: z.string().optional().nullable(),
   dataEntryOperatorName: z.string().optional().nullable(),
@@ -156,9 +158,10 @@ export const officeVerificationSchema = z.object({
 
 export type OfficeVerificationFormData = z.infer<typeof officeVerificationSchema>;
 
+// Filters schema – updated status options
 export const digitalCertificateFilterSchema = z.object({
   certificateType: z.enum(["ALL", "BIRTH", "DEATH"]).optional(),
-  status: z.enum(["ALL", "SUBMITTED", "UNDER_REVIEW", "APPROVED", "REJECTED"]).optional(),
+  status: z.enum(["ALL", "SUBMITTED", "UNDER_ENQUIRY", "APPROVED", "REJECTED"]).optional(),
   search: z.string().optional(),
   year: z.string().optional(),
   page: z.number().default(1),
