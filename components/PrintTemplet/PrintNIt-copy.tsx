@@ -9,6 +9,7 @@ import { fetchnitdetailsType } from "@/types/nitDetails";
 import { formatDate, formatDateTimeCustom } from "@/utils/utils";
 import { tenderForwardedTo, tendertermcon } from "@/constants/tenderterm";
 import { gpcode } from "@/constants/gpinfor";
+
 // Type definitions
 type TermCategory = "ELIGIBLE" | "QUALIFICATION_CRITERIA" | "TERMS_CONDITIONS";
 
@@ -235,11 +236,17 @@ export const NITCopy = ({
     return terms.map((content, index) => [`${index + 1}. ${content}`]);
   }, []);
 
-  // Generate work items for PDF
+  // Generate work items for PDF – now using workslno
   const generateWorkItems = useCallback((): string[][] => {
     const PERFORMANCE_SECURITY_RATE =
       nitdetails.percentageofworkvaluerequired / 100;
-    return nitdetails.WorksDetail.map((work, index) => {
+
+    // Sort works by workslno to ensure correct order
+    const sortedWorks = [...nitdetails.WorksDetail].sort(
+      (a, b) => (a.workslno ?? 0) - (b.workslno ?? 0)
+    );
+
+    return sortedWorks.map((work) => {
       const activityDescription =
         work.ApprovedActionPlanDetails?.activityDescription || "N/A";
       const activityCode = work.ApprovedActionPlanDetails?.activityCode || "";
@@ -253,8 +260,11 @@ export const NITCopy = ({
         work.finalEstimateAmount * PERFORMANCE_SECURITY_RATE,
       ).toString();
 
+      // Use workslno as the serial number, fallback to index if missing (shouldn't happen)
+      const serialNumber = work.workslno?.toString() || "?";
+
       return [
-        (index + 1).toString(),
+        serialNumber,
         `${activityDescription}${activityCode ? `-${activityCode}` : ""}`,
         schemeName,
         estimateAmount,
