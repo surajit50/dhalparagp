@@ -19,6 +19,7 @@ export default async function NITDetailsPage({
     where: { id },
     include: {
       WorksDetail: {
+        orderBy: { workslno: 'asc' }, // 👈 ensure works are sorted by their serial number
         include: {
           ApprovedActionPlanDetails: true,
         },
@@ -280,7 +281,7 @@ export default async function NITDetailsPage({
           <CardContent className="p-0">
             <div className="overflow-hidden">
               <div className="grid grid-cols-1 divide-y divide-gray-100">
-                {nit.WorksDetail.map((work, idx) => {
+                {nit.WorksDetail.map((work) => {
                   const actionPlan = work.ApprovedActionPlanDetails;
                   const workName = actionPlan?.activityName || "Unnamed Work";
                   return (
@@ -297,7 +298,7 @@ export default async function NITDetailsPage({
                         <div className="flex items-start gap-4">
                           <div className="flex flex-col items-center">
                             <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
-                              <span className="font-bold text-orange-700">{idx + 1}</span>
+                              <span className="font-bold text-orange-700">{work.workslno}</span> {/* 👈 using workslno */}
                             </div>
                             <Badge 
                               variant={actionPlan?.isPublish ? "default" : "secondary"}
