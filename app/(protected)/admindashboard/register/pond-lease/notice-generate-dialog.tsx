@@ -30,8 +30,8 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
   );
 
   const referenceDate = lease.noticeReceivedDate || lease.lastNoticeDate;
-  const daysSinceLastNotice = referenceDate 
-    ? differenceInDays(new Date(), new Date(referenceDate)) 
+  const daysSinceLastNotice = referenceDate
+    ? differenceInDays(new Date(), new Date(referenceDate))
     : null;
   const canSendNotice = daysSinceLastNotice === null || daysSinceLastNotice >= 7;
 
@@ -47,6 +47,10 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
       console.error(error);
     }
   };
+
+
+
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -122,7 +126,7 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
                   )}
                 </div>
               )}
-              
+
               {!canSendNotice && (
                 <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-md">
                   <p className="text-xs text-red-600 font-medium">
