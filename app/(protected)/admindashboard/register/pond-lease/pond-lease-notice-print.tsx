@@ -26,6 +26,7 @@ export interface PondLease {
   paidAmount: number;
   pendingAmount: number;
   lastNoticeDate?: string | Date;
+  noticeCount?: number;
   isReprint?: boolean;
 }
 
@@ -42,6 +43,16 @@ export function PondLeaseNoticePrint({
   const leaseStartDate = new Date(lease.leaseStartDate);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const leaseEndDate = new Date(lease.leaseEndDate);
+
+  const getOrdinal = (n: number) => {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  };
+  
+  // If isReprint is true, we display the exact noticeCount, otherwise we add 1 for the upcoming notice
+  const currentNoticeCount = lease.isReprint ? (lease.noticeCount || 1) : ((lease.noticeCount || 0) + 1);
+
 
   const currencyFormatter = useMemo(
     () =>
@@ -120,8 +131,8 @@ export function PondLeaseNoticePrint({
       <div className="mb-6 font-bold underline underline-offset-4 text-center">
         Subject:{" "}
         {noticeType === "REMINDER"
-          ? "Reminder for Outstanding Lease Payment"
-          : "Intimation of Lease Agreement Expiry"}
+          ? `${getOrdinal(currentNoticeCount)} Reminder for Outstanding Lease Payment`
+          : `${getOrdinal(currentNoticeCount)} Intimation of Lease Agreement Expiry`}
       </div>
 
       {/* Body */}

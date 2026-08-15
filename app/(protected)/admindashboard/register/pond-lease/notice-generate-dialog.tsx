@@ -20,7 +20,10 @@ import { updateNoticeCount } from "./actions";
 import { toast } from "sonner";
 import { differenceInDays } from "date-fns";
 
+import { useRouter } from "next/navigation";
+
 export function NoticeGenerateDialog({ lease }: { lease: any }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [noticeType, setNoticeType] = useState<"REMINDER" | "EXPIRY">(
     "REMINDER",
@@ -38,6 +41,7 @@ export function NoticeGenerateDialog({ lease }: { lease: any }) {
       generateLeaseNoticePDF(lease, noticeType);
       toast.success("Notice generated successfully");
       setOpen(false); // Close dialog so state refreshes properly
+      router.refresh();
     } catch (error) {
       toast.error("Failed to update notice count");
       console.error(error);

@@ -55,6 +55,7 @@ import { AddLeaseDialog } from "./add-lease-dialog";
 import { AddPondDialog } from "./add-pond-dialog";
 import { AddPaymentDialog } from "./add-payment-dialog";
 import { BulkNoticeGenerateDialog } from "./bulk-notice-generate-dialog";
+import { BulkReprintNoticeDialog } from "./bulk-reprint-notice-dialog";
 import { EditLeaseDialog } from "./edit-lease-dialog";
 import { ExtendLeaseDialog } from "./extend-lease-dialog";
 import { LeaseAgreementPrint } from "./lease-agreement-print";
@@ -288,7 +289,7 @@ export function PondLeaseClient({
         <DropdownMenuSeparator />
         <NoticeGenerateDialog lease={lease} />
 
-        {lease.status === "ACTIVE" && (
+        {(lease.status === "ACTIVE" || lease.status === "EXPIRED") && (
           <>
             <MarkNoticeReceivedDialog lease={lease} />
             <ReprintNoticeDialog lease={lease} />
@@ -570,6 +571,11 @@ export function PondLeaseClient({
                   <div className="flex flex-wrap items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-sm text-blue-700">
                     <span>{selectedLeases.length} selected</span>
                     <BulkNoticeGenerateDialog
+                      leases={data.filter((lease) =>
+                        selectedLeases.includes(lease.id),
+                      )}
+                    />
+                    <BulkReprintNoticeDialog
                       leases={data.filter((lease) =>
                         selectedLeases.includes(lease.id),
                       )}
