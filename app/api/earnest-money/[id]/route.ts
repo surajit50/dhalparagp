@@ -14,9 +14,16 @@ export async function GET(
       include: {
         bidderName: {
           include: {
+            agencydetails: true,
+            workorderdetails: {
+              include: {
+                awardofcontractdetails: true,
+              },
+            },
             WorksDetail: {
               include: {
                 nitDetails: true,
+                ApprovedActionPlanDetails: true,
                 biddingAgencies: {
                   include: {
                     agencydetails: true,

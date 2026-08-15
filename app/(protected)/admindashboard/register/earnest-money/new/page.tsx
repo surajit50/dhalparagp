@@ -1,17 +1,14 @@
-import { db } from "@/lib/db";
+import { getEligibleEarnestMoneyCandidates } from "@/lib/earnest-money";
 import ClientNewEmdPage from "./ClientPage";
 
 export default async function NewEmdPage() {
-  const bidders = await db.bidagency.findMany({
-    include: {
-      agencydetails: true,
-      WorksDetail: {
-        include: {
-          nitDetails: true,
-        },
-      },
-    },
-  });
+  const { candidates, blockedOnlineWorksCount } =
+    await getEligibleEarnestMoneyCandidates();
 
-  return <ClientNewEmdPage bidders={bidders} />;
+  return (
+    <ClientNewEmdPage
+      candidates={candidates}
+      blockedOnlineWorksCount={blockedOnlineWorksCount}
+    />
+  );
 }

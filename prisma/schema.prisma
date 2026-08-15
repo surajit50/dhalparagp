@@ -648,18 +648,49 @@ enum EarnestMoneyStatus {
   forfeited
 }
 
+enum EarnestMoneyRegisterEntryStatus {
+  RECEIVED
+  HELD
+  REFUND_DUE
+  REFUNDED
+  ADJUSTED
+  FORFEITED
+}
+
 model EarnestMoneyRegister {
-  id                 String             @id @default(auto()) @map("_id") @db.ObjectId
-  earnestMoneyAmount Int
-  paymentstatus      EarnestMoneyStatus @default(pending)
-  bidderName         Bidagency          @relation(fields: [bidderId], references: [id])
-  bidderId           String             @db.ObjectId
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  paymentDate        DateTime?
-  paymentMethod      PaymentMethod?
-  chequeNumber       String?
-  chequeDate         DateTime?
+  id                         String                          @id @default(auto()) @map("_id") @db.ObjectId
+  earnestMoneyAmount         Int
+  amountReceived             Int?
+  originalTenderAmount       Int?
+  originalEarnestMoneyAmount Int?
+  paymentstatus              EarnestMoneyStatus              @default(pending)
+  registerStatus             EarnestMoneyRegisterEntryStatus?
+  bidderName                 Bidagency                       @relation(fields: [bidderId], references: [id])
+  bidderId                   String                          @db.ObjectId
+  nitNumber                  Int?
+  nitDate                    DateTime?
+  nameOfWork                 String?
+  bidderAgencyName           String?
+  bidderAddress              String?
+  tenderMode                 NitMode?
+  receiptNumber              String?
+  receiptDate                DateTime?
+  workOrderMemoNumber        String?
+  workOrderMemoDate          DateTime?
+  workOrderId                String?                         @db.ObjectId
+  remarks                    String?
+  createdById                String?                         @db.ObjectId
+  updatedById                String?                         @db.ObjectId
+  createdAt                  DateTime                        @default(now())
+  updatedAt                  DateTime                        @updatedAt
+  paymentDate                DateTime?
+  paymentMethod              PaymentMethod?
+  chequeNumber               String?
+  chequeDate                 DateTime?
+
+  @@index([bidderId])
+  @@index([nitNumber])
+  @@index([workOrderId])
 }
 
 model workorderdetails {

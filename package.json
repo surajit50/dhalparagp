@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "pnpm prisma generate",
-    "db:seed": "ts-node prisma/seed.ts"
+    "db:seed": "ts-node prisma/seed.ts",
+    "db:migrate-emd": "node scripts/migrate-earnest-money.js"
   },
   "dependencies": {
     "@auth/core": "^0.37.3",

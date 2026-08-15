@@ -111,7 +111,7 @@ export default function InternalAuditForm({ initialData, reportId }: InternalAud
   const [formData, setFormData] = useState<InternalAuditReportInput>(defaultValues);
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev: any) => ({ ...prev, [field]: value }));
   };
 
   const handleNestedChange = (parent: string, field: string, value: any) => {
