@@ -181,8 +181,8 @@ export default function DigitalCertificateStatusPage() {
 
             {/* Search Result Card */}
             {searchedApp && (
-              <div className="mt-6 p-4 rounded-xl border-2 border-blue-200 bg-blue-50/30 space-y-4 animate-in fade-in duration-300">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-3">
+              <div className="mt-6 p-5 rounded-2xl border border-blue-100 bg-white shadow-[0_4px_20px_-4px_rgba(59,130,246,0.1)] space-y-5 animate-in fade-in duration-500 slide-in-from-bottom-2">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-4">
                   <div>
                     <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
                       Tracking Result
@@ -248,38 +248,42 @@ export default function DigitalCertificateStatusPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
                   {searchedApp.issuedCertificateUrl && (
                     <Button
                       size="sm"
                       asChild
-                      className="text-xs gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold"
+                      className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm"
                     >
                       <a href={searchedApp.issuedCertificateUrl} target="_blank" rel="noreferrer">
                         <Download className="w-3.5 h-3.5" /> Download Certificate
                       </a>
                     </Button>
                   )}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setPreviewApp(searchedApp)}
-                    className="text-xs gap-1.5"
-                  >
-                    <Eye className="w-3.5 h-3.5" /> Preview Form
-                  </Button>
-                  <Button
-                    size="sm"
-                    asChild
-                    className="text-xs gap-1.5 bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    <Link
-                      href={`/dashboard/digital-certificate/print/${searchedApp.id}`}
-                      target="_blank"
+                  {searchedApp.status !== "APPROVED" && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setPreviewApp(searchedApp)}
+                      className="text-xs gap-1.5 rounded-lg border-slate-200 hover:bg-slate-50"
                     >
-                      <Printer className="w-3.5 h-3.5" /> Print Application Form
-                    </Link>
-                  </Button>
+                      <Eye className="w-3.5 h-3.5" /> Preview Form
+                    </Button>
+                  )}
+                  {searchedApp.status !== "APPROVED" && (
+                    <Button
+                      size="sm"
+                      asChild
+                      className="text-xs gap-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm"
+                    >
+                      <Link
+                        href={`/dashboard/digital-certificate/print/${searchedApp.id}`}
+                        target="_blank"
+                      >
+                        <Printer className="w-3.5 h-3.5" /> Print Application Form
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               </div>
             )}
@@ -324,13 +328,13 @@ export default function DigitalCertificateStatusPage() {
                 </Button>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {applications.map((app) => (
                   <div
                     key={app.id}
-                    className="p-4 rounded-xl border bg-card hover:bg-muted/20 transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+                    className="p-5 rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md hover:border-blue-200 transition-all duration-300 flex flex-col md:flex-row justify-between items-start md:items-center gap-5"
                   >
-                    <div className="space-y-1.5">
+                    <div className="space-y-2">
                       <div className="flex items-center gap-2.5">
                         <span className="font-mono font-bold text-sm text-foreground">
                           {app.acknowledgementNo}
@@ -355,38 +359,42 @@ export default function DigitalCertificateStatusPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 flex-wrap">
+                    <div className="flex items-center gap-3 w-full md:w-auto justify-end pt-3 md:pt-0 border-t border-slate-100 md:border-t-0 flex-wrap">
                       {app.issuedCertificateUrl && (
                         <Button
                           size="sm"
                           asChild
-                          className="text-xs gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold"
+                          className="text-xs gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm"
                         >
                           <a href={app.issuedCertificateUrl} target="_blank" rel="noreferrer">
                             <Download className="w-3.5 h-3.5" /> Download Certificate
                           </a>
                         </Button>
                       )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setPreviewApp(app)}
-                        className="text-xs gap-1.5"
-                      >
-                        <Eye className="w-3.5 h-3.5" /> Preview
-                      </Button>
-                      <Button
-                        size="sm"
-                        asChild
-                        className="text-xs gap-1.5 bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        <Link
-                          href={`/dashboard/digital-certificate/print/${app.id}`}
-                          target="_blank"
+                      {app.status !== "APPROVED" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setPreviewApp(app)}
+                          className="text-xs gap-1.5 rounded-lg border-slate-200 hover:bg-slate-50"
                         >
-                          <Printer className="w-3.5 h-3.5" /> Print Application
-                        </Link>
-                      </Button>
+                          <Eye className="w-3.5 h-3.5" /> Preview
+                        </Button>
+                      )}
+                      {app.status !== "APPROVED" && (
+                        <Button
+                          size="sm"
+                          asChild
+                          className="text-xs gap-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm"
+                        >
+                          <Link
+                            href={`/dashboard/digital-certificate/print/${app.id}`}
+                            target="_blank"
+                          >
+                            <Printer className="w-3.5 h-3.5" /> Print Application
+                          </Link>
+                        </Button>
+                      )}
                     </div>
                   </div>
                 ))}

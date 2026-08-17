@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { uploadToCloudinary } from "@/app/lib/cloudinary";
 
-const MAX_FILE_SIZE = 250 * 1024; // 250 KB in bytes (256,000 bytes)
+const MAX_FILE_SIZE = 1024 * 1024; // 250 KB in bytes (256,000 bytes)
 
 const VALID_MIME_TYPES = ["application/pdf"];
 
@@ -29,13 +29,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate File Size - Under 250 KB
     if (file.size > MAX_FILE_SIZE) {
-      const sizeInKb = (file.size / 1024).toFixed(1);
+      const sizeInMb = (file.size / (1024 * 1024)).toFixed(2);
       return NextResponse.json(
         {
           success: false,
-          message: `File size exceeds the 250 KB limit (Uploaded file is ${sizeInKb} KB). Please compress or select a smaller PDF.`,
+          message: `File size exceeds the 1 MB limit (Uploaded file is ${sizeInMb} MB). Please compress or select a smaller PDF.`,
         },
         { status: 400 }
       );

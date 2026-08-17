@@ -166,9 +166,9 @@ export default function EditApplicationModal({
       return;
     }
 
-    if (file.size > 250 * 1024) {
+    if (file.size > 1024 * 1024) {
       const sizeInKb = (file.size / 1024).toFixed(1);
-      toast.error(`File size (${sizeInKb} KB) exceeds the 250 KB limit.`);
+      toast.error(`File size (${sizeInKb} KB) exceeds the 1 MB limit.`);
       e.target.value = "";
       return;
     }
@@ -338,7 +338,7 @@ export default function EditApplicationModal({
                 </>
               ) : (
                 <>
-                  <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload PDF (≤ 250 KB)
+                  <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload PDF (≤ 1 MB)
                 </>
               )}
             </Button>
@@ -615,7 +615,7 @@ export default function EditApplicationModal({
           {/* Section C: Enclosed Documents Upload/View */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5 border-b pb-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" /> C. Enclosed Application Documents (PDF ≤ 250 KB)
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-600" /> C. Enclosed Application Documents (PDF ≤ 1 MB)
             </h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {renderDocUploadRow("Proof of Applicant Identity", "docProofOfIdentityUrl", "docProofOfIdentity", "proofOfIdentity")}

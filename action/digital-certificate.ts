@@ -327,7 +327,12 @@ export async function getAllDigitalCertificateApplications(
     }
 
     if (filters?.status && filters.status !== "ALL") {
-      where.status = filters.status;
+      if (filters.status === "UPLOAD_PENDING") {
+        where.status = "APPROVED";
+        where.issuedCertificateUrl = null;
+      } else {
+        where.status = filters.status;
+      }
     }
 
     if (filters?.year && filters.year.trim()) {

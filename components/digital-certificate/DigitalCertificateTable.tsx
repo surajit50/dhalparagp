@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Search,
   Printer,
@@ -39,11 +40,14 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
+  UploadCloud,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import {
   getAllDigitalCertificateApplications,
   deleteDigitalCertificateApplication,
+  uploadIssuedCertificate,
 } from "@/action/digital-certificate";
 import OfficeVerificationModal from "./OfficeVerificationModal";
 import EditApplicationModal from "./EditApplicationModal";
@@ -68,6 +72,7 @@ export default function DigitalCertificateTable({
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isLoading, setIsLoading] = useState(false);
+  const [uploadingAppId, setUploadingAppId] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
   const [certificateType, setCertificateType] = useState<string>("ALL");
@@ -127,6 +132,54 @@ export default function DigitalCertificateTable({
       }
     } catch (err: any) {
       toast.error(err?.message || "Delete failed");
+    }
+  };
+
+  const handleUploadCertificate = async (e: React.ChangeEvent<HTMLInputElement>, appId: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+      toast.error("Only PDF files are allowed.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 1024 * 1024) {
+      const sizeInKb = (file.size / 1024).toFixed(1);
+      toast.error(`File size (${sizeInKb} KB) exceeds the 1 MB limit.`);
+      e.target.value = "";
+      return;
+    }
+
+    setUploadingAppId(appId);
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      formDataUpload.append("documentType", "issuedCertificate");
+
+      const res = await fetch("/api/digital-certificate/upload", {
+        method: "POST",
+        body: formDataUpload,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.url) {
+        const updateRes = await uploadIssuedCertificate(appId, data.url, data.public_id);
+        if (updateRes.success) {
+          toast.success("Certificate uploaded successfully!");
+          fetchData(page);
+        } else {
+          throw new Error(updateRes.message || "Failed to save certificate URL");
+        }
+      } else {
+        throw new Error(data.message || "Failed to upload file");
+      }
+    } catch (err: any) {
+      toast.error(err?.message || "Upload failed");
+    } finally {
+      setUploadingAppId(null);
+      e.target.value = "";
     }
   };
 
@@ -216,6 +269,21 @@ export default function DigitalCertificateTable({
 
   return (
     <div className="space-y-6">
+      {isAdmin && (
+        <Tabs 
+          value={status === "UPLOAD_PENDING" ? "pending" : "all"} 
+          onValueChange={(val) => {
+            setStatus(val === "pending" ? "UPLOAD_PENDING" : "ALL");
+            setPage(1);
+          }}
+        >
+          <TabsList className="grid w-full sm:w-[400px] grid-cols-2 h-11 p-1">
+            <TabsTrigger value="all" className="text-xs sm:text-sm">All Applications</TabsTrigger>
+            <TabsTrigger value="pending" className="text-xs sm:text-sm">Upload Pending</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      )}
+
       {/* ===== FILTERS ===== */}
       <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between bg-card p-5 rounded-2xl border shadow-sm">
         <div className="flex flex-1 flex-wrap items-center gap-3 w-full lg:w-auto">
@@ -250,6 +318,7 @@ export default function DigitalCertificateTable({
               <SelectItem value="UNDER_ENQUIRY">Under Enquiry</SelectItem>
               <SelectItem value="APPROVED">Approved</SelectItem>
               <SelectItem value="REJECTED">Rejected</SelectItem>
+              <SelectItem value="UPLOAD_PENDING">Upload Pending</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -409,8 +478,36 @@ export default function DigitalCertificateTable({
                           </Button>
                         )}
 
+                        {/* Upload Certificate (Admin) */}
+                        {isAdmin && app.status === "APPROVED" && (
+                          <div className="relative inline-block">
+                            <input
+                              type="file"
+                              id={`upload-cert-${app.id}`}
+                              accept="application/pdf,.pdf"
+                              className="hidden"
+                              disabled={uploadingAppId === app.id}
+                              onChange={(e) => handleUploadCertificate(e, app.id)}
+                            />
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-amber-600 hover:text-amber-700 hover:bg-amber-50"
+                              onClick={() => document.getElementById(`upload-cert-${app.id}`)?.click()}
+                              title={app.issuedCertificateUrl ? "Replace Certificate" : "Upload Certificate"}
+                              disabled={uploadingAppId === app.id}
+                            >
+                              {uploadingAppId === app.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <UploadCloud className="w-4 h-4" />
+                              )}
+                            </Button>
+                          </div>
+                        )}
+
                         {/* Edit (Admin) */}
-                        {isAdmin && (
+                        {isAdmin && app.status !== "APPROVED" && (
                           <Button
                             variant="ghost"
                             size="sm"
@@ -461,18 +558,7 @@ export default function DigitalCertificateTable({
                           </Link>
                         </Button>
 
-                        {/* Delete (Admin) */}
-                        {isAdmin && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-rose-600 hover:text-rose-700 hover:bg-rose-50"
-                            onClick={() => handleDelete(app.id, app.acknowledgementNo)}
-                            title="Delete Application"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
+
                       </div>
                     </TableCell>
                   </TableRow>

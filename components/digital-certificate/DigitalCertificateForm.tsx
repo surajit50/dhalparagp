@@ -69,7 +69,7 @@ import Link from "next/link";
 import DigitalCertificatePrintTemplate from "./DigitalCertificatePrintTemplate";
 import { printDocumentById } from "@/lib/print-certificate";
 
-const MAX_PDF_SIZE_BYTES = 250 * 1024; // 250 KB
+const MAX_PDF_SIZE_BYTES = 1024 * 1024; // 1 MB
 
 interface DigitalCertificateFormProps {
   isAdmin?: boolean;
@@ -104,7 +104,7 @@ export default function DigitalCertificateForm({
   const [submittedData, setSubmittedData] = useState<any | null>(null);
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
 
-  // Upload States for Section C PDF files (under 250 KB)
+  // Upload States for Section C PDF files (under 1 MB)
   const [uploads, setUploads] = useState<Record<string, UploadState>>({
     proofOfIdentity: { isUploading: false },
     previousCertificate: { isUploading: false },
@@ -180,7 +180,7 @@ export default function DigitalCertificateForm({
   const isDeath = certificateType === "DEATH";
   const docOtherDocument = form.watch("docOtherDocument");
 
-  // Handle PDF upload to Cloudinary under 250 KB
+  // Handle PDF upload to Cloudinary under 1 MB
   const handlePdfUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     docKey:
@@ -244,13 +244,13 @@ export default function DigitalCertificateForm({
     if (file.size > MAX_PDF_SIZE_BYTES) {
       const sizeInKb = (file.size / 1024).toFixed(1);
       toast.error(
-        `File size (${sizeInKb} KB) exceeds the 250 KB limit. Please upload a compressed PDF under 250 KB.`
+        `File size (${sizeInKb} KB) exceeds the 1 MB limit. Please upload a compressed PDF under 1 MB.`
       );
       setUploads((prev) => ({
         ...prev,
         [docKey]: {
           ...prev[docKey],
-          error: `File size is ${sizeInKb} KB (Max allowed is 250 KB)`,
+          error: `File size is ${sizeInKb} KB (Max allowed is 1 MB)`,
         },
       }));
       e.target.value = "";
@@ -435,7 +435,7 @@ export default function DigitalCertificateForm({
                 </>
               ) : (
                 <>
-                  <UploadCloud className={`w-3.5 h-3.5 ${colors.text}`} /> Upload PDF (≤ 250 KB)
+                  <UploadCloud className={`w-3.5 h-3.5 ${colors.text}`} /> Upload PDF (≤ 1 MB)
                 </>
               )}
             </Button>
@@ -896,14 +896,14 @@ export default function DigitalCertificateForm({
               <CardHeader className="bg-blue-50/40 border-b pb-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
-                    <ShieldCheck className="w-4 h-4 text-blue-600" /> C. Documents Enclosed (Upload PDF ≤ 250 KB)
+                    <ShieldCheck className="w-4 h-4 text-blue-600" /> C. Documents Enclosed (Upload PDF ≤ 1 MB)
                   </CardTitle>
                   <span className="text-xs font-semibold text-blue-700 bg-blue-100/80 px-2 py-0.5 rounded-full inline-flex items-center gap-1 w-fit">
-                    <UploadCloud className="w-3.5 h-3.5" /> PDF file under 250 KB in Cloudinary
+                    <UploadCloud className="w-3.5 h-3.5" /> PDF file under 1 MB in Cloudinary
                   </span>
                 </div>
                 <CardDescription className="text-xs">
-                  Tick the applicable documents and upload the supporting PDF file (Maximum 250 KB per document).
+                  Tick the applicable documents and upload the supporting PDF file (Maximum 1 MB per document).
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-4">
@@ -1000,7 +1000,7 @@ export default function DigitalCertificateForm({
                             </>
                           ) : (
                             <>
-                              <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload Supporting PDF (≤ 250 KB)
+                              <UploadCloud className="w-3.5 h-3.5 text-primary" /> Upload Supporting PDF (≤ 1 MB)
                             </>
                           )}
                         </Button>
@@ -1059,7 +1059,7 @@ export default function DigitalCertificateForm({
                   </span>
                 </div>
                 <CardDescription className="text-xs">
-                  Upload identity proof documents of family members for faster verification. All documents must be PDF under 250 KB.
+                  Upload identity proof documents of family members for faster verification. All documents must be PDF under 1 MB.
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-6 space-y-4">

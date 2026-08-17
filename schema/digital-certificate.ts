@@ -161,7 +161,7 @@ export type OfficeVerificationFormData = z.infer<typeof officeVerificationSchema
 // Filters schema – updated status options
 export const digitalCertificateFilterSchema = z.object({
   certificateType: z.enum(["ALL", "BIRTH", "DEATH"]).optional(),
-  status: z.enum(["ALL", "SUBMITTED", "UNDER_ENQUIRY", "APPROVED", "REJECTED"]).optional(),
+  status: z.enum(["ALL", "SUBMITTED", "UNDER_ENQUIRY", "APPROVED", "REJECTED", "UPLOAD_PENDING"]).optional(),
   search: z.string().optional(),
   year: z.string().optional(),
   page: z.number().default(1),
