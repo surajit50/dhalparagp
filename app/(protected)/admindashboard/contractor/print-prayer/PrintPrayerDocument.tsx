@@ -104,24 +104,22 @@ export default function PrintPrayerDocument({
       if (prayerType === "SECURITY_MONEY_RELEASE") {
         // For security release prayer, use current date as completion date (or work order date as fallback)
 
+        const bodyParagraph1 = `I am writing to kindly request the release of the security deposit for the work of "${workName} - ${activityCode}", vide Work Order No ${workOrderNumber} dated ${workOrderDateFormatted}.`;
+        const bodyParagraph2 = `The work has been completed successfully on ${
+          completionDate ? formatDate(completionDate) : "N/A"
+        } and all required documentation, including the completion report, has been submitted for verification. As per the terms of the agreement, I am now eligible for the refund of the security deposit amount.`;
+        const bodyParagraph3 = `I kindly request you to process the refund at the earliest. Your support and prompt action in this regard will be greatly appreciated.`;
+
         inputs = [
           {
+            date: currentDateFormatted,
             gpname: gpname,
-            gp_name: gpname,
             subject_label: `Subject: Request for Release of Security Deposit for the NIT NO ${nitDetails} Work Sl no ${workSlNo}`,
-            work_name: workName,
-            workOrderNumber: workOrderNumber,
-            workOrderDate: workOrderDateFormatted,
-            workSlNo: workSlNo.toString(),
-            workName: `${workName} - ${activityCode}`,
-            completion_date: completionDate
-              ? formatDate(completionDate)
-              : "N/A",
+            body_paragraph_1: bodyParagraph1,
+            body_paragraph_2: bodyParagraph2,
+            body_paragraph_3: bodyParagraph3,
             contractorName: contractorName,
             contractorAddress: contractorAddress || "N/A",
-            contractor_name: contractorName,
-            contractor_address: contractorAddress || "N/A",
-            completionDate: completionDate ? formatDate(completionDate) : "N/A",
             securityamount: securityamount,
           },
         ];

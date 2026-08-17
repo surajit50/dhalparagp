@@ -1,1 +1,351 @@
-{"schemas":[[{"name":"to_label","type":"text","content":"To","position":{"x":10,"y":85.14},"width":20,"height":5,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"pradhan_label","type":"text","content":"The Pradhan","position":{"x":10,"y":91.14},"width":50,"height":5,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"gp_name","type":"text","content":"{{gpname}}","position":{"x":10,"y":98},"width":100,"height":5,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":false,"required":false},{"name":"subject_label","type":"text","content":"Subject: Request for Release of Security Deposit for the NIT NO","position":{"x":10,"y":117.94},"width":190,"height":6,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":false,"required":false},{"name":"salutation","type":"text","content":"Respected Sir/Madam,","position":{"x":10,"y":130},"width":100,"height":5,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"paragraph1","type":"text","content":"I am writing to kindly request the release of the security deposit for the work of","position":{"x":10,"y":137},"width":190,"height":6,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":11,"lineHeight":1.4,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"work_name","type":"text","content":"{{workName}}","position":{"x":10,"y":143},"width":190,"height":8,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":11,"lineHeight":1.4,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"NotoSerifJP","readOnly":false,"required":false},{"name":"paragraph2","type":"text","content":"The work has been completed successfully on","position":{"x":10,"y":158},"width":80.43,"height":6.09,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":11,"lineHeight":1.4,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"completion_date","type":"text","content":"{{completionDate}}","position":{"x":91.91,"y":158.97},"width":66.67,"height":5.03,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#004100","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":false,"required":false},{"name":"paragraph2_continued","type":"text","content":"and all required documentation, including the completion report, has been submitted for verification. As per the terms of the agreement, I am now eligible for the refund of the security deposit amount.","position":{"x":10,"y":164},"width":190,"height":12,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":11,"lineHeight":1.4,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"paragraph3","type":"text","content":"I kindly request you to process the refund at the earliest. Your support and prompt action in this regard will be greatly appreciated.","position":{"x":10,"y":177},"width":190,"height":10,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":11,"lineHeight":1.4,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"thanking_you","type":"text","content":"Thanking You,","position":{"x":10,"y":200},"width":100,"height":5,"rotate":0,"alignment":"left","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"sincerely","type":"text","content":"Your Sincerely,","position":{"x":150,"y":224.28},"width":50,"height":5,"rotate":0,"alignment":"center","verticalAlignment":"top","fontSize":12,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"signature_label","type":"text","content":"Signature","position":{"x":152,"y":243},"width":48,"height":5,"rotate":0,"alignment":"center","verticalAlignment":"top","fontSize":11,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":true,"required":false},{"name":"contractor_name","type":"text","content":"{{contractorName}}","position":{"x":152,"y":250},"width":48,"height":5,"rotate":0,"alignment":"center","verticalAlignment":"top","fontSize":10,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":false,"required":false},{"name":"contractor_address","type":"text","content":"{{contractorAddress}}","position":{"x":152,"y":256},"width":48,"height":8,"rotate":0,"alignment":"center","verticalAlignment":"middle","fontSize":9,"lineHeight":1.2,"characterSpacing":0,"fontColor":"#666666","backgroundColor":"","opacity":1,"fontName":"Roboto","readOnly":false,"required":false},{"name":"securityamount","type":"text","content":"Security Amount: {{securityamount}}","position":{"x":10.26,"y":207.98},"width":90,"height":10.32,"rotate":0,"alignment":"left","verticalAlignment":"middle","fontSize":13,"lineHeight":1,"characterSpacing":0,"fontColor":"#000000","fontName":"Roboto","backgroundColor":"","opacity":1,"strikethrough":false,"underline":false,"required":false,"readOnly":false}]],"basePdf":{"width":210,"height":297,"padding":[10,10,10,10]},"pdfmeVersion":"5.5.6"}
+{
+  "schemas": [
+    [
+      {
+        "name": "date_label",
+        "type": "text",
+        "content": "Date: {{date}}",
+        "position": {
+          "x": 140,
+          "y": 35
+        },
+        "width": 50,
+        "height": 5,
+        "fontSize": 11,
+        "alignment": "right",
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "to_label",
+        "type": "text",
+        "content": "To,",
+        "position": {
+          "x": 20,
+          "y": 40
+        },
+        "width": 20,
+        "height": 5,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": true,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "pradhan_label",
+        "type": "text",
+        "content": "The Pradhan,",
+        "position": {
+          "x": 20,
+          "y": 46
+        },
+        "width": 50,
+        "height": 5,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": true,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "gpname",
+        "type": "text",
+        "content": "{{gpname}}",
+        "position": {
+          "x": 20,
+          "y": 52
+        },
+        "width": 100,
+        "height": 5,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "subject_label",
+        "type": "text",
+        "content": "{{subject_label}}",
+        "position": {
+          "x": 20,
+          "y": 68
+        },
+        "width": 170,
+        "height": 12,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "salutation",
+        "type": "text",
+        "content": "Respected Sir/Madam,",
+        "position": {
+          "x": 20,
+          "y": 85
+        },
+        "width": 100,
+        "height": 5,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": true,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "body_paragraph_1",
+        "type": "text",
+        "content": "{{body_paragraph_1}}",
+        "position": {
+          "x": 20,
+          "y": 95
+        },
+        "width": 170,
+        "height": 25,
+        "fontSize": 11,
+        "lineHeight": 1.5,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "body_paragraph_2",
+        "type": "text",
+        "content": "{{body_paragraph_2}}",
+        "position": {
+          "x": 20,
+          "y": 122
+        },
+        "width": 170,
+        "height": 25,
+        "fontSize": 11,
+        "lineHeight": 1.5,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "body_paragraph_3",
+        "type": "text",
+        "content": "{{body_paragraph_3}}",
+        "position": {
+          "x": 20,
+          "y": 147
+        },
+        "width": 170,
+        "height": 15,
+        "fontSize": 11,
+        "lineHeight": 1.5,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "securityamount",
+        "type": "text",
+        "content": "{{securityamount}}",
+        "position": {
+          "x": 20,
+          "y": 170
+        },
+        "width": 170,
+        "height": 8,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "thanking_you",
+        "type": "text",
+        "content": "Thanking You,",
+        "position": {
+          "x": 20,
+          "y": 185
+        },
+        "width": 100,
+        "height": 5,
+        "fontSize": 12,
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": true,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "sincerely",
+        "type": "text",
+        "content": "Yours Sincerely,",
+        "position": {
+          "x": 130,
+          "y": 205
+        },
+        "width": 60,
+        "height": 5,
+        "fontSize": 12,
+        "alignment": "center",
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": true,
+        "rotate": 0,
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "signature_label",
+        "type": "text",
+        "content": "Signature",
+        "position": {
+          "x": 130,
+          "y": 228
+        },
+        "width": 60,
+        "height": 5,
+        "fontSize": 11,
+        "alignment": "center",
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": true,
+        "rotate": 0,
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "contractorName",
+        "type": "text",
+        "content": "{{contractorName}}",
+        "position": {
+          "x": 130,
+          "y": 235
+        },
+        "width": 60,
+        "height": 5,
+        "fontSize": 11,
+        "alignment": "center",
+        "fontName": "Roboto",
+        "fontColor": "#000000",
+        "readOnly": false,
+        "rotate": 0,
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "contractorAddress",
+        "type": "text",
+        "content": "{{contractorAddress}}",
+        "position": {
+          "x": 130,
+          "y": 241
+        },
+        "width": 60,
+        "height": 12,
+        "fontSize": 10,
+        "lineHeight": 1.2,
+        "alignment": "center",
+        "fontName": "Roboto",
+        "fontColor": "#666666",
+        "readOnly": false,
+        "rotate": 0,
+        "verticalAlignment": "top",
+        "characterSpacing": 0,
+        "backgroundColor": "",
+        "opacity": 1,
+        "required": false
+      }
+    ]
+  ],
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [
+      10,
+      10,
+      10,
+      10
+    ]
+  },
+  "pdfmeVersion": "5.5.6"
+}
