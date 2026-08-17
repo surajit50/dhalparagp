@@ -5,8 +5,9 @@ export default function DashboardExtras({ data }: { data: any }) {
   const tender = data?.tenderStatusCounts || {};
   const workOrdersPending = data?.workOrdersPending ?? 0;
 
-  const tiedAmount = pending.tied?.amount || 0;
-  const untiedAmount = pending.untied?.amount || 0;
+  const tiedAmount = Number(pending.tied?.amount || 0);
+  const untiedAmount = Number(pending.untied?.amount || 0);
+  const unknownAmount = Number(pending.unknown?.amount || 0);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -26,13 +27,13 @@ export default function DashboardExtras({ data }: { data: any }) {
           </div>
           <div className="flex justify-between">
             <span>Unknown</span>
-            <span className="font-semibold">₹{(pending.unknown?.amount || 0).toLocaleString()} <span className="text-xs text-slate-500">({pending.unknown?.count || 0})</span></span>
+            <span className="font-semibold">₹{unknownAmount.toLocaleString()} <span className="text-xs text-slate-500">({pending.unknown?.count || 0})</span></span>
           </div>
 
           <div className="mt-3 pt-2 border-t text-sm text-slate-600">
             <div className="flex justify-between">
               <span className="font-medium">Total Pending</span>
-              <span className="font-bold">₹{(tiedAmount + untiedAmount + (pending.unknown?.amount || 0)).toLocaleString()}</span>
+              <span className="font-bold">₹{(tiedAmount + untiedAmount + unknownAmount).toLocaleString()}</span>
             </div>
             <div className="text-xs text-slate-400 mt-1">Tied vs Untied pending balances</div>
           </div>
@@ -58,7 +59,7 @@ export default function DashboardExtras({ data }: { data: any }) {
             Object.entries(tender).map(([k, v]) => (
               <div key={k} className="flex justify-between">
                 <span className="capitalize">{k}</span>
-                <span className="font-semibold">{v}</span>
+                <span className="font-semibold">{String(v)}</span>
               </div>
             ))
           )}
