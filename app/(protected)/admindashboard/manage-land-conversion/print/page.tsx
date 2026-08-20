@@ -318,7 +318,7 @@ async function generateNocPdf(noc: IssuedNOC) {
   doc.text("No. 3 Dhalpara Gram Panchayat", sigX + sigBlockW / 2, y, { align: "center" });
 
   // ─── QR CODE ─────────────────────────────────────────────────
-  const verifyUrl = `https://dhalparagp.gov.in/verify?noc=${noc.nocNo}`;
+  const verifyUrl = `https://www.dhalparagp.in/verify?noc=${noc.nocNo}`;
   const qr = await QRCode.toDataURL(verifyUrl, { margin: 1, width: 120 });
   const qrSize = 26;
   const qrX = ml;
