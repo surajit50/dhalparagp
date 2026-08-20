@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { villagenameOption, LAND_CLASSIFICATIONS } from "@/constants/index";
 import {
   Card,
   CardHeader,
@@ -272,7 +273,19 @@ async function generateNocPdf(noc: IssuedNOC) {
       ];
       let cx = ml;
       cells.forEach((cell, i) => {
-        const t = cell.length > 13 ? cell.slice(0, 12) + "…" : cell;
+        let displayCell = cell;
+        
+        // i=1 is Mouza, i=6 is Present Status, i=7 is Proposed Status
+        if (i === 1 && cell !== "—") {
+          const mouzaOpt = villagenameOption.find(v => v.value === cell);
+          if (mouzaOpt) displayCell = mouzaOpt.label;
+        } else if ((i === 6 || i === 7) && cell !== "—") {
+          const landOpt = LAND_CLASSIFICATIONS.find(l => l.code === cell);
+          if (landOpt) displayCell = landOpt.name;
+        }
+
+        const maxLen = cw[i] >= 30 ? 25 : (cw[i] >= 20 ? 18 : 12);
+        const t = displayCell.length > maxLen ? displayCell.slice(0, maxLen - 1) + "…" : displayCell;
         doc.text(t, cx + cw[i] / 2, y + 4.8, { align: "center" });
         cx += cw[i];
       });
