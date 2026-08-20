@@ -11,7 +11,7 @@ import {
   Hash,
 } from "lucide-react";
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// ── helpers ──────────────────────────────────────────────────────────────
 function fmt(d: Date | string | null | undefined) {
   if (!d) return "—";
   const date = d instanceof Date ? d : new Date(d);
@@ -22,12 +22,14 @@ function fmt(d: Date | string | null | undefined) {
   });
 }
 
-function isExpired(expiry: Date | null) {
+function isExpired(expiry: Date | null | undefined) {
   if (!expiry) return false;
-  return new Date() > new Date(expiry);
+  const expiryDate = expiry instanceof Date ? expiry : new Date(expiry);
+  if (Number.isNaN(expiryDate.getTime())) return false;
+  return new Date() > expiryDate;
 }
 
-// ── types ─────────────────────────────────────────────────────────────────────
+// ── types ───────────────────────────────────────────────────────────────
 interface PageProps {
   searchParams: Promise<{ noc?: string }>;
 }
