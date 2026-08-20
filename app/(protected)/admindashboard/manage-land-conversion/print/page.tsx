@@ -64,6 +64,14 @@ interface IssuedNOC {
   signatoryDesignation: string;
 }
 
+function obfuscateAppNo(appNo: string | null | undefined) {
+  if (!appNo) return "—";
+  if (appNo.length <= 6) return appNo;
+  const first = appNo.slice(0, 4);
+  const last = appNo.slice(-3);
+  return `${first}${"*".repeat(appNo.length - 7)}${last}`;
+}
+
 // ───────────────── PDF GENERATOR ─────────────────
 
 /** Fetches a public image and returns a base64 data-URL string */
@@ -183,7 +191,7 @@ async function generateNocPdf(noc: IssuedNOC) {
   doc.setFont("times", "normal");
   doc.setFontSize(9.5);
   doc.setTextColor(0, 0, 0);
-  doc.text(`Ref: Application No. ${noc.applicationNo}`, ml, y);
+  doc.text(`Ref: Application No. ${obfuscateAppNo(noc.applicationNo)}`, ml, y);
   y += 6;
 
   // Light separator
@@ -324,13 +332,11 @@ async function generateNocPdf(noc: IssuedNOC) {
   doc.line(sigX, y, sigX + sigBlockW, y);
   y += 5;
   doc.setFont("times", "normal");
-  doc.setFontSize(9);
-  doc.text(noc.signatoryDesignation, sigX + sigBlockW / 2, y, { align: "center" });
-  y += 5;
-  doc.text("No. 3 Dhalpara Gram Panchayat", sigX + sigBlockW / 2, y, { align: "center" });
+
 
   // ─── QR CODE ─────────────────────────────────────────────────
-  const verifyUrl = `https://www.dhalparagp.in/verify?noc=${noc.nocNo}`;
+  const encodedNoc = typeof btoa === "function" ? btoa(noc.nocNo) : Buffer.from(noc.nocNo).toString("base64");
+  const verifyUrl = `https://www.dhalparagp.in/verify?token=${encodedNoc}`;
   const qr = await QRCode.toDataURL(verifyUrl, { margin: 1, width: 120 });
   const qrSize = 26;
   const qrX = ml;
@@ -507,8 +513,8 @@ export default function NOCPrintPage() {
                       <TableRow
                         key={it.id}
                         className={`cursor-pointer transition-colors ${selected?.id === it.id
-                            ? "bg-orange-50 hover:bg-orange-50"
-                            : "hover:bg-gray-50"
+                          ? "bg-orange-50 hover:bg-orange-50"
+                          : "hover:bg-gray-50"
                           }`}
                         onClick={() =>
                           setSelected(selected?.id === it.id ? null : it)

@@ -955,7 +955,7 @@ export async function issueNOC(
           issueDate: new Date(),
           expiryDate: expiryDate,
           signatoryName: user?.name ?? "Authorized Signatory",
-          signatoryDesignation: "Pradhan",
+
         },
         update: {
           certificateNo,
@@ -963,7 +963,7 @@ export async function issueNOC(
           issueDate: new Date(),
           expiryDate: expiryDate,
           signatoryName: user?.name ?? "Authorized Signatory",
-          signatoryDesignation: "Pradhan",
+
         },
       })
 
