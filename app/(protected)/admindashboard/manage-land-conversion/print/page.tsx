@@ -91,11 +91,11 @@ async function generateNocPdf(noc: IssuedNOC) {
   }
 
   const doc = new jsPDF("p", "mm", "a4");
-  const pw  = doc.internal.pageSize.getWidth();   // 210 mm
-  const ph  = doc.internal.pageSize.getHeight();  // 297 mm
-  const ml  = 20;   // left margin
-  const mr  = 20;   // right margin
-  const tw  = pw - ml - mr;  // usable text width = 170 mm
+  const pw = doc.internal.pageSize.getWidth();   // 210 mm
+  const ph = doc.internal.pageSize.getHeight();  // 297 mm
+  const ml = 20;   // left margin
+  const mr = 20;   // right margin
+  const tw = pw - ml - mr;  // usable text width = 170 mm
 
   // ─── PAGE BORDER ─────────────────────────────────────────────
   doc.setDrawColor(0, 0, 0);
@@ -207,8 +207,7 @@ async function generateNocPdf(noc: IssuedNOC) {
   const lineH = 5.5;
 
   const paragraphs = [
-    `    This is to certify that Sri / Smt. ${noc.applicantName}, resident of ${
-      noc.applicantAddress || "N/A"
+    `    This is to certify that Sri / Smt. ${noc.applicantName}, resident of ${noc.applicantAddress || "N/A"
     }, has submitted an application for conversion of land vide Application No. ${noc.applicationNo} before this Gram Panchayat.`,
 
     `    After due examination of all relevant records, verification of submitted documents, physical field inspection of the concerned plot(s), and upon satisfaction of the applicable rules and regulations, this office finds no objection to the proposed conversion of land as detailed in the Schedule below.`,
@@ -237,8 +236,8 @@ async function generateNocPdf(noc: IssuedNOC) {
 
     // Column widths summing exactly to tw (170 mm)
     const cols = ["#", "Mouza", "JL No", "Khatian", "Plot No", "Area (Dec)", "Present Status", "Proposed Status"];
-    const cw   = [8, 35, 14, 22, 16, 16, 30, 30]; // total = 170
-    const rh   = 7;
+    const cw = [8, 35, 14, 22, 16, 16, 30, 30]; // total = 170
+    const rh = 7;
 
     // Header row – dark background
     doc.setFillColor(40, 40, 40);
@@ -265,16 +264,16 @@ async function generateNocPdf(noc: IssuedNOC) {
       doc.setTextColor(0, 0, 0);
       const cells = [
         String(idx + 1),
-        p.mouza       || "—", p.jlNo        || "—",
-        p.khatianNo   || "—", p.plotNo       || "—",
-        p.area        || "—",
-        p.presentLandUse  || "—",
+        p.mouza || "—", p.jlNo || "—",
+        p.khatianNo || "—", p.plotNo || "—",
+        p.area || "—",
+        p.presentLandUse || "—",
         p.proposedLandUse || "—",
       ];
       let cx = ml;
       cells.forEach((cell, i) => {
         let displayCell = cell;
-        
+
         // i=1 is Mouza, i=6 is Present Status, i=7 is Proposed Status
         if (i === 1 && cell !== "—") {
           const mouzaOpt = villagenameOption.find(v => v.value === cell);
@@ -343,7 +342,7 @@ async function generateNocPdf(noc: IssuedNOC) {
   doc.text("Scan to verify", qrX + qrSize / 2, qrY + qrSize + 3, { align: "center" });
 
   // ─── FOOTER ──────────────────────────────────────────────────
- 
+
 
   return doc;
 }
@@ -507,11 +506,10 @@ export default function NOCPrintPage() {
                     {filtered.map((it, idx) => (
                       <TableRow
                         key={it.id}
-                        className={`cursor-pointer transition-colors ${
-                          selected?.id === it.id
+                        className={`cursor-pointer transition-colors ${selected?.id === it.id
                             ? "bg-orange-50 hover:bg-orange-50"
                             : "hover:bg-gray-50"
-                        }`}
+                          }`}
                         onClick={() =>
                           setSelected(selected?.id === it.id ? null : it)
                         }
