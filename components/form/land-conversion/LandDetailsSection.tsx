@@ -21,7 +21,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { LandConversionApplicationInput } from "@/schema/land-conversion";
 import { LAND_CLASSIFICATIONS, villagenameOption } from "@/constants/index";
@@ -42,48 +42,37 @@ export default function LandDetailsSection() {
   };
 
   return (
-    <Card className="shadow-sm border-orange-100">
-      <CardHeader className="bg-gradient-to-r from-orange-50 to-orange-50/50 border-b border-orange-100">
-        <CardTitle className="text-orange-800 text-lg flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-orange-100 flex items-center justify-center">
-            <svg
-              className="h-4 w-4 text-orange-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-              />
-            </svg>
+    <Card className="shadow-lg border-indigo-100/60 bg-white/70 backdrop-blur-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-indigo-200/60 mt-8">
+      <CardHeader className="bg-gradient-to-r from-indigo-50/80 to-transparent border-b border-indigo-100/60 pb-5">
+        <CardTitle className="text-indigo-900 text-xl flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center border border-indigo-50">
+            <Map className="h-5 w-5 text-indigo-600" />
           </div>
           Land Details
         </CardTitle>
-        <p className="text-sm text-orange-600/70 mt-1">
+        <p className="text-sm text-indigo-600/70 mt-2 font-medium">
           Enter the primary land parcel information for conversion
         </p>
       </CardHeader>
-      <CardContent className="space-y-6 pt-6">
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-            <div className="h-1 w-8 rounded-full bg-orange-200"></div>
+      <CardContent className="space-y-8 pt-8">
+        <div className="space-y-5">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200/60"></div>
             Primary Parcel Information
+            <div className="h-px flex-1 bg-slate-200/60"></div>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={control}
               name="mouza"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-slate-700 font-medium">
+                  <FormLabel className="text-slate-700 font-semibold">
                     Mouza *
                   </FormLabel>
                   <Select onValueChange={handleMouzaChange} value={field.value}>
                     <FormControl>
-                      <SelectTrigger className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500">
+                      <SelectTrigger className="h-12 bg-white/50 border-slate-200/80 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm rounded-xl">
                         <SelectValue placeholder="Select mouza" />
                       </SelectTrigger>
                     </FormControl>
@@ -107,7 +96,7 @@ export default function LandDetailsSection() {
                   name={name}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-slate-700 font-medium">
+                      <FormLabel className="text-slate-700 font-semibold">
                         {name === "landAreaDec"
                           ? "Land Area (Decimal) *"
                           : `${name.replace(/([A-Z])/g, " $1").trim()} *`}
@@ -123,7 +112,7 @@ export default function LandDetailsSection() {
                               ? "e.g. 5.5"
                               : `Enter ${name}`
                           }
-                          className="h-11 bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500"
+                          className="h-12 bg-white/50 border-slate-200/80 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm rounded-xl"
                         />
                       </FormControl>
                       <FormMessage className="text-xs" />
@@ -134,18 +123,19 @@ export default function LandDetailsSection() {
             )}
           </div>
         </div>
-        <div className="space-y-4 pt-2">
-          <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-            <div className="h-1 w-8 rounded-full bg-orange-200"></div>
+        <div className="space-y-5 pt-2">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200/60"></div>
             Land Use Classification
+            <div className="h-px flex-1 bg-slate-200/60"></div>
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <FormField
               control={control}
               name="presentLandUse"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-slate-700 font-medium pb-2">
+                  <FormLabel className="text-slate-700 font-semibold pb-1">
                     Present Status *
                   </FormLabel>
                   <Popover open={presentOpen} onOpenChange={setPresentOpen}>
@@ -156,18 +146,20 @@ export default function LandDetailsSection() {
                           role="combobox"
                           aria-expanded={presentOpen}
                           className={cn(
-                            "h-11 w-full justify-between bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500 font-normal",
+                            "h-12 w-full justify-between bg-white/50 border-slate-200/80 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm rounded-xl font-normal",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value
-                            ? LAND_CLASSIFICATIONS.find((opt) => opt.code === field.value)?.name
-                            : "Select present land use"}
+                          <span className="truncate">
+                            {field.value
+                              ? LAND_CLASSIFICATIONS.find((opt) => opt.code === field.value)?.name
+                              : "Select present land use"}
+                          </span>
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0 rounded-xl" align="start">
                       <Command>
                         <CommandInput placeholder="Search present land use..." />
                         <CommandList>
@@ -205,7 +197,7 @@ export default function LandDetailsSection() {
               name="proposedLandUse"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-slate-700 font-medium pb-2">
+                  <FormLabel className="text-slate-700 font-semibold pb-1">
                     Proposed Status *
                   </FormLabel>
                   <Popover open={proposedOpen} onOpenChange={setProposedOpen}>
@@ -216,18 +208,20 @@ export default function LandDetailsSection() {
                           role="combobox"
                           aria-expanded={proposedOpen}
                           className={cn(
-                            "h-11 w-full justify-between bg-slate-50/50 border-slate-200 focus:ring-orange-500 focus:border-orange-500 font-normal",
+                            "h-12 w-full justify-between bg-white/50 border-slate-200/80 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm rounded-xl font-normal",
                             !field.value && "text-muted-foreground"
                           )}
                         >
-                          {field.value
-                            ? LAND_CLASSIFICATIONS.find((opt) => opt.code === field.value)?.name
-                            : "Select proposed land use"}
+                          <span className="truncate">
+                            {field.value
+                              ? LAND_CLASSIFICATIONS.find((opt) => opt.code === field.value)?.name
+                              : "Select proposed land use"}
+                          </span>
                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0 rounded-xl" align="start">
                       <Command>
                         <CommandInput placeholder="Search proposed land use..." />
                         <CommandList>
