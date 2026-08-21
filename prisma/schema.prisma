@@ -125,6 +125,8 @@ model User {
   procurementQuotations        ProcurementQuotation[]
   procurementOrders            ProcurementOrder[]
   digitalCertificateApplications DigitalCertificateApplication[]
+  vouchersEntered              Voucher[]                    @relation("VoucherEnteredBy")
+  vouchersVerified             Voucher[]                    @relation("VoucherVerifiedBy")
 }
 
 model Account {
@@ -4490,4 +4492,77 @@ model GpStaff {
   updatedAt   DateTime @updatedAt
 
   @@map("gp_staff")
+}
+
+
+// --- VOUCHER GENERATION MODELS ---
+
+enum VoucherType {
+  CREDIT
+  DEBIT
+  RECEIPT
+  PAYMENT
+  JOURNAL
+  CONTRA
+}
+
+model AccountHead {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  headOfAccount       String
+  accountCode         String    @unique
+  description         String?
+  nationalAccountCode String?
+  vouchers            Voucher[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@map("account_heads")
+}
+
+model VoucherParty {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  address   String?
+  vouchers  Voucher[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("voucher_parties")
+}
+
+model Voucher {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  voucherType     VoucherType  @default(CREDIT)
+  voucherId       String       @unique // E.g., 2526R000187
+  voucherNo       String?      // E.g., XXXXXXXXXXX
+  voucherDate     DateTime     @default(now())
+  
+  accountHeadId   String       @db.ObjectId
+  accountHead     AccountHead  @relation(fields: [accountHeadId], references: [id])
+  
+  partyId         String?      @db.ObjectId
+  party           VoucherParty? @relation(fields: [partyId], references: [id])
+  
+  receivedFrom    String?      // Fallback if not using party relation
+  address         String?
+  
+  description     String
+  amount          Float
+  amountInWords   String
+  
+  allotmentNo     String?
+  drawnOn         String?      // e.g., Bank name
+  chequeNo        String?
+  chequeDate      DateTime?
+  
+  enteredById     String?      @db.ObjectId
+  enteredBy       User?        @relation("VoucherEnteredBy", fields: [enteredById], references: [id])
+  
+  verifiedById    String?      @db.ObjectId
+  verifiedBy      User?        @relation("VoucherVerifiedBy", fields: [verifiedById], references: [id])
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@map("vouchers")
 }

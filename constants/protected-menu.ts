@@ -690,6 +690,8 @@ export const superAdminMenuItems: MenuItemProps[] = [
     createMenuItem("Change Password", ["superadmin"], `${BASE_URLS.superadmin}/profile/change-password`, FaChevronCircleRight, COLORS.red),
   ]),
 
+  createMenuItem("Vouchers", ["superadmin"], "/vouchers", MdReceipt, COLORS.green),
+
   createMenuItem("Birth Verification Report", ["superadmin"], `${BASE_URLS.superadmin}/birth-verification`, FaRegFileAlt, COLORS.orange),
 
   createMenuItem("System Management", ["superadmin"], undefined, MdSettingsApplications, COLORS.gray, [

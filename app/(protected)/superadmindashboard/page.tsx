@@ -55,6 +55,17 @@ const Page = () => {
         ))}
       </div>
 
+      {/* Quick Links */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="/vouchers" className="block p-6 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">
+          <div className="flex items-center space-x-3 text-blue-700">
+             <FileText className="w-6 h-6" />
+             <h3 className="font-semibold text-lg">Manage Vouchers</h3>
+          </div>
+          <p className="mt-2 text-sm text-blue-600">Create, view, and print credit/debit vouchers.</p>
+        </a>
+      </div>
+
       {/* Recent Activity */}
       <Card>
         <CardHeader>
