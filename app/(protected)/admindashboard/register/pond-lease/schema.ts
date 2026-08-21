@@ -60,7 +60,7 @@ export const PondLeaseSchema = z
       required_error: "Start date is required",
     }),
 
-    leasePeriod: z.enum(["1", "2", "3"], {
+    leasePeriod: z.enum(["1", "1.5", "2", "3", "CUSTOM"], {
       required_error: "Lease period is required",
     }),
 
@@ -76,6 +76,8 @@ export const PondLeaseSchema = z
 
     totalAmount: z.number().optional(),
     leaseYears: z.number().optional(),
+    customMonths: z.number().optional(),
+    customTotalAmount: z.number().optional(),
   });
 
 export type PondLeaseFormValues = z.infer<typeof PondLeaseSchema>;

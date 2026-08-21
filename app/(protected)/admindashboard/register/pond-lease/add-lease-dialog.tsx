@@ -3,7 +3,7 @@
 import { useState, useTransition, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addYears } from "date-fns";
+import { addYears, addMonths } from "date-fns";
 import { formatDate } from "@/utils/utils";
 
 import {
@@ -146,23 +146,37 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
     }
   };
 
-  const leaseYears = parseInt(leasePeriod || "1");
+  let leaseYears = parseFloat(leasePeriod || "1");
+  const isCustom = leasePeriod === "CUSTOM";
+  const customMonths = form.watch("customMonths") || 0;
+  if (isCustom) {
+    leaseYears = customMonths > 0 ? customMonths / 12 : 0;
+  }
 
-  const totalLeaseAmount = yearlyAmount || 0;
-  const actualYearlyAmount = leaseYears > 0 ? totalLeaseAmount / leaseYears : 0;
+  const customTotalAmount = form.watch("customTotalAmount") || 0;
+  
+  const totalLeaseAmount = isCustom ? customTotalAmount : (yearlyAmount || 0) * leaseYears;
+  const actualYearlyAmount = isCustom ? (leaseYears > 0 ? customTotalAmount / leaseYears : 0) : (yearlyAmount || 0);
 
   const onSubmit = (values: PondLeaseFormValues) => {
     startTransition(() => {
       try {
-        const calculatedEndDate = values.leaseStartDate
-          ? addYears(values.leaseStartDate, parseInt(values.leasePeriod))
-          : undefined;
+        let calculatedEndDate = undefined;
+        if (values.leaseStartDate) {
+          if (values.leasePeriod === "CUSTOM") {
+            calculatedEndDate = addMonths(values.leaseStartDate, values.customMonths || 0);
+          } else if (values.leasePeriod === "1.5") {
+            calculatedEndDate = addMonths(values.leaseStartDate, 18);
+          } else {
+            calculatedEndDate = addYears(values.leaseStartDate, parseInt(values.leasePeriod));
+          }
+        }
 
         createPondLease({
           ...values,
-          leaseAmountYearly: yearlyAmount || 0,
+          leaseAmountYearly: actualYearlyAmount,
           leaseEndDate: calculatedEndDate,
-          totalAmount: (yearlyAmount || 0) * leaseYears,
+          totalAmount: totalLeaseAmount,
           leaseYears,
         });
 
@@ -560,9 +574,9 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                             <RadioGroup
                               onValueChange={field.onChange}
                               defaultValue={field.value}
-                              className="flex gap-6 pt-2"
+                              className="flex gap-6 pt-2 flex-wrap"
                             >
-                              {["1", "2", "3"].map((year) => (
+                              {["1", "1.5", "2", "3"].map((year) => (
                                 <FormItem
                                   key={year}
                                   className="flex items-center space-x-2"
@@ -571,10 +585,18 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                                     <RadioGroupItem value={year} />
                                   </FormControl>
                                   <FormLabel className="font-normal cursor-pointer">
-                                    {year} Year
+                                    {year === "1.5" ? "1.5 Years" : `${year} Year${year === "1" ? "" : "s"}`}
                                   </FormLabel>
                                 </FormItem>
                               ))}
+                              <FormItem className="flex items-center space-x-2">
+                                <FormControl>
+                                  <RadioGroupItem value="CUSTOM" />
+                                </FormControl>
+                                <FormLabel className="font-normal cursor-pointer">
+                                  Custom
+                                </FormLabel>
+                              </FormItem>
                             </RadioGroup>
                           </FormControl>
 
@@ -584,7 +606,52 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                     />
                   </div>
 
-                  {leaseYears > 0 && (
+                  {isCustom && (
+                    <div className="grid md:grid-cols-2 gap-6 mt-4 p-4 border rounded-md bg-muted/20">
+                      <FormField
+                        control={form.control}
+                        name="customMonths"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Duration (Months)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min={1}
+                                className="bg-background"
+                                placeholder="e.g. 5"
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="customTotalAmount"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Total Amount (₹)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min={0}
+                                className="bg-background"
+                                placeholder="e.g. 5000"
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
+
+                  {((leaseYears > 0 || isCustom) && (totalLeaseAmount > 0)) && (
                     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-blue-600 mt-0.5" />
                       <div>
@@ -592,18 +659,16 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                           Summary
                         </div>
                         <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">
-                          Lease Period: {leaseYears} Year
-                          {leaseYears > 1 ? "s" : ""}
+                          Lease Period: {isCustom ? `${customMonths} Months` : `${leaseYears} Year${leaseYears > 1 ? "s" : ""}`}
                         </div>
                         {totalLeaseAmount > 0 && (
                           <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-1">
-                            Yearly Amount: ₹{totalLeaseAmount.toLocaleString()}
-                          </div>
-                        )}
-                        {totalLeaseAmount > 0 && (
-                          <div className="text-sm font-semibold text-blue-700 dark:text-blue-400 mt-1">
-                            Total Lease Amount: ₹
-                            {(totalLeaseAmount * leaseYears).toLocaleString()}
+                            {isCustom ? "Total Amount:" : "Yearly Amount:"} ₹{isCustom ? totalLeaseAmount.toLocaleString() : (yearlyAmount || 0).toLocaleString()}
+                            {!isCustom && (
+                              <span className="opacity-75 font-normal ml-2">
+                                (Total for duration: ₹{totalLeaseAmount.toLocaleString()})
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>

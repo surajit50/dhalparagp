@@ -3,7 +3,7 @@
 import { useState, useTransition, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addYears, differenceInYears } from "date-fns";
+import { addYears, differenceInYears, addMonths, differenceInMonths } from "date-fns";
 import { formatDate } from "@/utils/utils";
 
 import {
@@ -50,13 +50,23 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
   const [isPending, startTransition] = useTransition();
 
   // Calculate lease years from existing lease data
-  const existingLeaseYears =
-    Math.round(
-      differenceInYears(
-        new Date(lease.leaseEndDate),
-        new Date(lease.leaseStartDate),
-      ),
-    ) || 1;
+  const diffMonths = differenceInMonths(
+    new Date(lease.leaseEndDate),
+    new Date(lease.leaseStartDate)
+  );
+  let existingLeasePeriod = "1";
+  let existingCustomMonths = 0;
+  let existingCustomTotal = 0;
+  if (diffMonths === 12) existingLeasePeriod = "1";
+  else if (diffMonths === 18) existingLeasePeriod = "1.5";
+  else if (diffMonths === 24) existingLeasePeriod = "2";
+  else if (diffMonths === 36) existingLeasePeriod = "3";
+  else {
+    existingLeasePeriod = "CUSTOM";
+    existingCustomMonths = diffMonths;
+    existingCustomTotal = lease.totalAmount;
+  }
+  const existingLeaseYears = diffMonths > 0 ? diffMonths / 12 : 1;
 
   const form = useForm<PondLeaseFormValues>({
     resolver: zodResolver(PondLeaseSchema),
@@ -72,11 +82,9 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
       leaseAmountYearly:
         lease.leaseAmountYearly || lease.totalAmount / existingLeaseYears,
       leaseStartDate: new Date(lease.leaseStartDate),
-      leasePeriod: (existingLeaseYears === 1 ||
-      existingLeaseYears === 2 ||
-      existingLeaseYears === 3
-        ? String(existingLeaseYears)
-        : "1") as "1" | "2" | "3",
+      leasePeriod: existingLeasePeriod as "1" | "1.5" | "2" | "3" | "CUSTOM",
+      customMonths: existingCustomMonths,
+      customTotalAmount: existingCustomTotal,
       remarks: lease.remarks || "",
     },
   });
@@ -85,23 +93,36 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
   const yearlyAmount = form.watch("leaseAmountYearly");
   const leaseStartDate = form.watch("leaseStartDate");
 
-  const leaseYears = parseInt(leasePeriod || "1");
+  let leaseYears = parseFloat(leasePeriod || "1");
+  const isCustom = leasePeriod === "CUSTOM";
+  const customMonths = form.watch("customMonths") || 0;
+  if (isCustom) {
+    leaseYears = customMonths > 0 ? customMonths / 12 : 0;
+  }
 
-  const totalLeaseAmount = yearlyAmount || 0;
-  const actualYearlyAmount = leaseYears > 0 ? totalLeaseAmount / leaseYears : 0;
+  const customTotalAmount = form.watch("customTotalAmount") || 0;
+  const totalLeaseAmount = isCustom ? customTotalAmount : (yearlyAmount || 0) * leaseYears;
+  const actualYearlyAmount = isCustom ? (leaseYears > 0 ? customTotalAmount / leaseYears : 0) : (yearlyAmount || 0);
 
-  const calculatedEndDate = leaseStartDate
-    ? addYears(leaseStartDate, leaseYears)
-    : undefined;
+  let calculatedEndDate = undefined;
+  if (leaseStartDate) {
+    if (isCustom) {
+      calculatedEndDate = addMonths(leaseStartDate, customMonths);
+    } else if (leasePeriod === "1.5") {
+      calculatedEndDate = addMonths(leaseStartDate, 18);
+    } else {
+      calculatedEndDate = addYears(leaseStartDate, parseInt(leasePeriod));
+    }
+  }
 
   const onSubmit = (values: PondLeaseFormValues) => {
     startTransition(() => {
       try {
         updatePondLease(lease.id, {
           ...values,
-          leaseAmountYearly: yearlyAmount || 0,
+          leaseAmountYearly: actualYearlyAmount,
           leaseEndDate: calculatedEndDate,
-          totalAmount: (yearlyAmount || 0) * leaseYears,
+          totalAmount: totalLeaseAmount,
           leaseYears,
         });
 
@@ -238,9 +259,9 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="flex gap-6 pt-2"
+                          className="flex gap-6 pt-2 flex-wrap"
                         >
-                          {["1", "2", "3"].map((year) => (
+                          {["1", "1.5", "2", "3"].map((year) => (
                             <FormItem
                               key={year}
                               className="flex items-center space-x-2"
@@ -249,10 +270,18 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                                 <RadioGroupItem value={year} />
                               </FormControl>
                               <FormLabel className="font-normal cursor-pointer">
-                                {year} Year
+                                {year === "1.5" ? "1.5 Years" : `${year} Year${year === "1" ? "" : "s"}`}
                               </FormLabel>
                             </FormItem>
                           ))}
+                          <FormItem className="flex items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem value="CUSTOM" />
+                            </FormControl>
+                            <FormLabel className="font-normal cursor-pointer">
+                              Custom
+                            </FormLabel>
+                          </FormItem>
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
@@ -261,24 +290,69 @@ export function EditLeaseDialog({ lease }: { lease: any }) {
                 />
               </div>
 
-              {leaseYears > 0 && calculatedEndDate && (
+              {isCustom && (
+                <div className="grid md:grid-cols-2 gap-6 mt-4 p-4 border rounded-md bg-muted/20">
+                  <FormField
+                    control={form.control}
+                    name="customMonths"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Duration (Months)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={1}
+                            className="bg-background"
+                            placeholder="e.g. 5"
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="customTotalAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Total Amount (₹)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            className="bg-background"
+                            placeholder="e.g. 5000"
+                            value={field.value || ""}
+                            onChange={(e) => field.onChange(Number(e.target.value) || 0)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              {((leaseYears > 0 || isCustom) && calculatedEndDate) && (
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 flex items-start gap-3">
                   <CheckCircle2 className="h-5 w-5 text-blue-600 mt-0.5" />
                   <div>
                     <div className="font-semibold text-blue-800 dark:text-blue-300">
                       Lease Summary
                     </div>
-                    <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">
-                      Lease Period: {leaseYears} Year{leaseYears > 1 ? "s" : ""}
+                    <div className="text-sm text-muted-foreground mt-1">
+                      Lease Period: {isCustom ? `${customMonths} Months` : `${leaseYears} Year${leaseYears > 1 ? "s" : ""}`}
                     </div>
                     {totalLeaseAmount > 0 && (
-                      <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-1">
-                        Yearly Amount: ₹{totalLeaseAmount.toLocaleString()}
-                      </div>
-                    )}
-                    {totalLeaseAmount > 0 && (
-                      <div className="text-sm font-semibold text-blue-700 dark:text-blue-400 mt-1">
-                        Total Lease Amount: ₹{(totalLeaseAmount * leaseYears).toLocaleString()}
+                      <div className="text-sm font-medium mt-1">
+                        {isCustom ? "Total Amount:" : "Yearly Amount:"} ₹{isCustom ? totalLeaseAmount.toLocaleString() : (yearlyAmount || 0).toLocaleString()}
+                        {!isCustom && (
+                          <span className="opacity-75 font-normal ml-2">
+                            (Total for duration: ₹{totalLeaseAmount.toLocaleString()})
+                          </span>
+                        )}
                       </div>
                     )}
                     <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">

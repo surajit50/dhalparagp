@@ -89,7 +89,7 @@ export async function createPondLease(data: PondLeaseFormValues) {
   /* Use passed values or calculate as fallback */
 
   const leaseYears =
-    validated.leaseYears || parseInt(validated.leasePeriod) || 1;
+    validated.leaseYears ?? (parseFloat(validated.leasePeriod) || 1);
 
   const leaseEndDate =
     validated.leaseEndDate ||
@@ -104,6 +104,8 @@ export async function createPondLease(data: PondLeaseFormValues) {
     leaseYears: _ly,
     leasePeriod: _lp,
     leaseEndDate: _le,
+    customMonths: _cm,
+    customTotalAmount: _cta,
     ...dbData
   } = validated;
 
@@ -152,7 +154,7 @@ export async function updatePondLease(id: string, data: PondLeaseFormValues) {
   const newPendingAmount = (validated.totalAmount || currentLease.totalAmount) - currentLease.paidAmount;
 
   // Calculate lease years
-  const leaseYears = validated.leaseYears || parseInt(validated.leasePeriod) || 1;
+  const leaseYears = validated.leaseYears ?? (parseFloat(validated.leasePeriod) || 1);
 
   await db.pondLease.update({
     where: { id },
@@ -166,9 +168,9 @@ export async function updatePondLease(id: string, data: PondLeaseFormValues) {
       leasePartyPin: validated.leasePartyPin,
       remarks: validated.remarks,
       leaseStartDate: validated.leaseStartDate,
-      leaseEndDate: validated.leaseEndDate,
+      leaseEndDate: validated.leaseEndDate || addYears(validated.leaseStartDate, leaseYears),
       leaseAmountYearly: validated.leaseAmountYearly,
-      totalAmount: validated.totalAmount || currentLease.totalAmount,
+      totalAmount: validated.totalAmount || (validated.leaseAmountYearly * leaseYears),
       pendingAmount: Math.max(newPendingAmount, 0),
     },
   });
