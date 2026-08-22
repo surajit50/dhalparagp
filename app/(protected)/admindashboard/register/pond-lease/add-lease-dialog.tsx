@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Plus, Loader2, CalendarIcon, CheckCircle2 } from "lucide-react";
+import { Plus, Loader2, CalendarIcon, CheckCircle2, AlertCircle } from "lucide-react";
 
 import { PondLeaseSchema, PondLeaseFormValues } from "./schema";
 import { createPondLease } from "./actions";
@@ -67,13 +67,14 @@ import {
   parsePondAreaDecimal,
 } from "@/lib/utils/pond-lease";
 
-type AmountEditSource = "yearly" | "rate";
+type AmountEditSource = "yearly" | "rate" | "total";
 
 export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [ratePerDecimal, setRatePerDecimal] = useState(0);
   const [lastEdited, setLastEdited] = useState<AmountEditSource>("yearly");
+  const [amountMode, setAmountMode] = useState<"yearly" | "total">("yearly");
 
   const form = useForm<PondLeaseFormValues>({
     resolver: zodResolver(PondLeaseSchema),
@@ -146,6 +147,27 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
     }
   };
 
+  const handleTotalAmountChange = (value: number) => {
+    setLastEdited("total");
+    
+    let leaseYears = parseFloat(leasePeriod || "1");
+    const isCustom = leasePeriod === "CUSTOM";
+    const customMonths = form.watch("customMonths") || 0;
+    
+    if (isCustom && customMonths > 0) {
+      leaseYears = customMonths / 12;
+    }
+
+    if (leaseYears > 0 && value > 0) {
+      const calculatedYearly = value / leaseYears;
+      form.setValue("leaseAmountYearly", calculatedYearly);
+      
+      if (areaDecimal > 0) {
+        setRatePerDecimal(calculateRatePerDecimal(calculatedYearly, areaDecimal));
+      }
+    }
+  };
+
   let leaseYears = parseFloat(leasePeriod || "1");
   const isCustom = leasePeriod === "CUSTOM";
   const customMonths = form.watch("customMonths") || 0;
@@ -185,6 +207,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
         form.reset();
         setRatePerDecimal(0);
         setLastEdited("yearly");
+        setAmountMode("yearly");
         setOpen(false);
       } catch {
         toast.error("Failed to create pond lease");
@@ -305,73 +328,124 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                     </div>
                   )}
 
+                  <div className="space-y-3 rounded-lg border border-border/50 bg-white p-4">
+                    <FormLabel className="text-sm font-semibold">Amount Entry Mode</FormLabel>
+                    <RadioGroup value={amountMode} onValueChange={(val) => setAmountMode(val as "yearly" | "total")} className="flex gap-6">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="yearly" id="mode-yearly" />
+                        <FormLabel htmlFor="mode-yearly" className="font-normal cursor-pointer">
+                          Year-wise Amount
+                        </FormLabel>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="total" id="mode-total" />
+                        <FormLabel htmlFor="mode-total" className="font-normal cursor-pointer">
+                          Total (One-time Payment)
+                        </FormLabel>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
                   <p className="text-xs text-muted-foreground">
-                    Enter either yearly total or rate per decimal — the other
-                    value updates automatically using pond area.
+                    {amountMode === "yearly" 
+                      ? "Enter yearly lease amount or rate per decimal — the other value updates automatically."
+                      : "Enter total lease amount for the entire period — yearly amount will be calculated automatically."}
                   </p>
 
-                  <div className="grid md:grid-cols-2 gap-4">
+                  {amountMode === "yearly" ? (
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="leaseAmountYearly"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Yearly Lease Amount (₹)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min={0}
+                                className="bg-background font-medium text-lg"
+                                placeholder="e.g. 5000"
+                                value={field.value || ""}
+                                onChange={(e) =>
+                                  handleYearlyAmountChange(
+                                    Number(e.target.value) || 0,
+                                  )
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormItem>
+                        <FormLabel>Total Rate per Decimal (₹)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            className="bg-background font-medium text-lg"
+                            placeholder="e.g. 50"
+                            value={ratePerDecimal || ""}
+                            onChange={(e) =>
+                              handleRatePerDecimalChange(
+                                Number(e.target.value) || 0,
+                              )
+                            }
+                            disabled={areaDecimal <= 0}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    </div>
+                  ) : (
                     <FormField
                       control={form.control}
                       name="leaseAmountYearly"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Yearly Lease Amount (₹)</FormLabel>
+                          <FormLabel>Total Lease Amount (₹) - One Time Payment</FormLabel>
                           <FormControl>
                             <Input
                               type="number"
                               min={0}
-                              className="bg-background font-medium text-lg"
-                              placeholder="e.g. 5000"
-                              value={field.value || ""}
+                              className="bg-background font-medium text-lg border-green-500 border-2"
+                              placeholder="e.g. 15000"
+                              value={field.value ? (parseFloat(leasePeriod || "1") > 0 && !isCustom ? (field.value * parseFloat(leasePeriod || "1")) : (isCustom && customMonths > 0 ? field.value * (customMonths / 12) : field.value)) : ""}
                               onChange={(e) =>
-                                handleYearlyAmountChange(
+                                handleTotalAmountChange(
                                   Number(e.target.value) || 0,
                                 )
                               }
                             />
                           </FormControl>
+                          <p className="text-xs text-green-700 mt-1">
+                            This is a one-time payment for the entire lease period
+                          </p>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-
-                    <FormItem>
-                      <FormLabel>Total Rate per Decimal (₹)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          min={0}
-                          step="0.01"
-                          className="bg-background font-medium text-lg"
-                          placeholder="e.g. 50"
-                          value={ratePerDecimal || ""}
-                          onChange={(e) =>
-                            handleRatePerDecimalChange(
-                              Number(e.target.value) || 0,
-                            )
-                          }
-                          disabled={areaDecimal <= 0}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  </div>
+                  )}
 
                   {areaDecimal > 0 &&
                     yearlyAmount > 0 &&
                     ratePerDecimal > 0 && (
                       <p className="text-sm text-blue-700 font-medium">
-                        {lastEdited === "rate"
-                          ? formatYearlyFromRateCalculation(
-                              areaDecimal,
-                              ratePerDecimal,
-                              yearlyAmount,
-                            ).replace("/year", " total")
-                          : formatRatePerDecimalCalculation(
-                              yearlyAmount,
-                              areaDecimal,
-                              ratePerDecimal,
-                            ).replace(" per year", "")}
+                        {amountMode === "yearly" 
+                          ? (lastEdited === "rate"
+                              ? formatYearlyFromRateCalculation(
+                                  areaDecimal,
+                                  ratePerDecimal,
+                                  yearlyAmount,
+                                ).replace("/year", " total")
+                              : formatRatePerDecimalCalculation(
+                                  yearlyAmount,
+                                  areaDecimal,
+                                  ratePerDecimal,
+                                ).replace(" per year", ""))
+                          : ""}
                       </p>
                     )}
                 </div>
@@ -424,7 +498,7 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                     name="leasePartyFatherName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Father&apos;s Name</FormLabel>
+                        <FormLabel>Father's Name</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Father's Name"
@@ -654,23 +728,26 @@ export function AddLeaseDialog({ ponds }: { ponds: Pond[] }) {
                   {((leaseYears > 0 || isCustom) && (totalLeaseAmount > 0)) && (
                     <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md p-4 flex items-start gap-3">
                       <CheckCircle2 className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
+                      <div className="flex-1">
                         <div className="font-semibold text-blue-800 dark:text-blue-300">
-                          Summary
+                          Lease Summary
                         </div>
                         <div className="text-sm text-blue-700/80 dark:text-blue-400 mt-1">
                           Lease Period: {isCustom ? `${customMonths} Months` : `${leaseYears} Year${leaseYears > 1 ? "s" : ""}`}
                         </div>
-                        {totalLeaseAmount > 0 && (
-                          <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-1">
-                            {isCustom ? "Total Amount:" : "Yearly Amount:"} ₹{isCustom ? totalLeaseAmount.toLocaleString() : (yearlyAmount || 0).toLocaleString()}
-                            {!isCustom && (
-                              <span className="opacity-75 font-normal ml-2">
-                                (Total for duration: ₹{totalLeaseAmount.toLocaleString()})
-                              </span>
-                            )}
+                        <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mt-2 p-2 bg-white dark:bg-blue-950 rounded border border-blue-300 dark:border-blue-700">
+                          <div className="flex justify-between mb-2">
+                            <span>Yearly Amount:</span>
+                            <span>₹ {(yearlyAmount || 0).toLocaleString("en-IN")}</span>
                           </div>
-                        )}
+                          <div className="border-t border-blue-200 dark:border-blue-700 pt-2 flex justify-between font-bold text-base">
+                            <span>Total Lease Amount (One-time Payment):</span>
+                            <span className="text-green-700 dark:text-green-400">₹ {totalLeaseAmount.toLocaleString("en-IN")}</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-blue-600 dark:text-blue-400 mt-2 italic">
+                          The total amount is payable as a one-time payment at the start of the lease period.
+                        </p>
                       </div>
                     </div>
                   )}
