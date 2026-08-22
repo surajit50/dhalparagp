@@ -895,18 +895,18 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                 </div>
                 <div className="witness-columns">
                   <div className="witness-col">
-                    <p style={{ fontWeight: "bold", color: "#1e293b" }}>१नং साक्षी (Witness 1):</p>
-                    <p>स्वाक्षर / Signature: ____________________________________</p>
-                    <p>नाम / Name: _________________________________________</p>
-                    <p>पिता/स्वामी / Guardian: _________________________________</p>
-                    <p>ठिकाना ও मोबाः / Address &amp; Mob: __________________________</p>
+                    <p style={{ fontWeight: "bold", color: "#1e293b" }}> (Witness 1):</p>
+                    <p>Signature: ____________________________________</p>
+                    <p>Name: _________________________________________</p>
+                    <p>Guardian: _________________________________</p>
+                    <p>Address &amp; Mob: __________________________</p>
                   </div>
                   <div className="witness-col">
-                    <p style={{ fontWeight: "bold", color: "#1e293b" }}>२नং साक्षी (Witness 2):</p>
-                    <p>स्वाक्षर / Signature: ____________________________________</p>
-                    <p>नाम / Name: _________________________________________</p>
-                    <p>पिता/स्वामी / Guardian: _________________________________</p>
-                    <p>ठिकाना ও मोबाः / Address &amp; Mob: __________________________</p>
+                    <p style={{ fontWeight: "bold", color: "#1e293b" }}>(Witness 2):</p>
+                    <p> Signature: ____________________________________</p>
+                    <p> Name: _________________________________________</p>
+                    <p>Guardian: _________________________________</p>
+                    <p>Address &amp; Mob: __________________________</p>
                   </div>
                 </div>
               </div>
@@ -920,7 +920,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   </div>
                   <div className="sign-line">
                     <p className="sign-name-bn">
-                      २य् पक्ष / इजारादारे स्वाक्षर ও टिпसई
+                     
                     </p>
                     <p className="sign-title-en">
                       Signature / Thumb Impression of Lessee
@@ -938,7 +938,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   </div>
                   <div className="sign-line">
                     <p className="sign-name-bn">
-                      १म् पक्ष / प्रधान - ३ नং धालपाड़ा ग्राम पंचायत
+                     
                     </p>
                     <p className="sign-title-en">
                       Pradhan / Executive Assistant, {gpname}
