@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Printer, FileText, ShieldCheck } from "lucide-react";
 import { formatDate, getFinancialYear } from "@/utils/utils";
-import { differenceInYears } from "date-fns";
+import { differenceInYears, differenceInMonths } from "date-fns";
 import { gpname, gpcode, blockname } from "@/constants/gpinfor";
 import { POND_LEASE_TERMS } from "@/constants/pond-lease-terms";
 import {
@@ -48,10 +48,10 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
   const startFinancialYear = getFinancialYear(leaseStartDate);
   
   // Calculate total period in years and months based on start and end dates
-  const diffYears = differenceInYears(leaseEndDate, leaseStartDate);
-  const diffMonths = (leaseEndDate.getMonth() - leaseStartDate.getMonth()) + (diffYears * 12);
-  const years = Math.floor(diffMonths / 12);
-  const months = diffMonths % 12;
+  // Using differenceInMonths for accurate calculation
+  const totalMonths = differenceInMonths(leaseEndDate, leaseStartDate);
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
 
   // Build the period display string
   let displayLeasePeriod = "";
@@ -895,7 +895,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                 </div>
                 <div className="witness-columns">
                   <div className="witness-col">
-                    <p style={{ fontWeight: "bold", color: "#1e293b" }}>१नং साক্ষী (Witness 1):</p>
+                    <p style={{ fontWeight: "bold", color: "#1e293b" }}>१नং साक्षी (Witness 1):</p>
                     <p>स्वाक्षर / Signature: ____________________________________</p>
                     <p>नाम / Name: _________________________________________</p>
                     <p>पिता/स्वामी / Guardian: _________________________________</p>
@@ -920,7 +920,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   </div>
                   <div className="sign-line">
                     <p className="sign-name-bn">
-                      २य् पक्ष / इजारादारे स्वाक्षर ও टिпসई
+                      २य् पक्ष / इजारादारे स्वाक्षर ও टिпसई
                     </p>
                     <p className="sign-title-en">
                       Signature / Thumb Impression of Lessee
@@ -938,7 +938,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   </div>
                   <div className="sign-line">
                     <p className="sign-name-bn">
-                      १म् पक्ष / प्रधान - ३ नং धालपाड़ा ग्राम पंচायত
+                      १म् पक्ष / प्रधान - ३ नং धालपाड़ा ग्राम पंचायत
                     </p>
                     <p className="sign-title-en">
                       Pradhan / Executive Assistant, {gpname}
