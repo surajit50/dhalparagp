@@ -26,17 +26,24 @@ export const actionplanschema = z.object({
   locationofAsset: z.string().min(2, {
     message: "Location of asset must be at least 2 characters.",
   }),
-  estimatedCost: z.number().int().positive(),
+  estimatedCost: z.number().int().positive({
+    message: "Estimated cost must be a positive number",
+  }),
   totalduration: z.string().min(2, {
     message: "Total duration must be at least 2 characters.",
   }),
   schemeName: z.string().min(2, {
     message: "Scheme name must be at least 2 characters.",
   }),
-  generalFund: z.number().int().nonnegative(),
-  scFund: z.number().int().nonnegative(),
-  stFund: z.number().int().nonnegative(),
-  // NEW: fund type (Tied / Untied)
+  generalFund: z.number().int().nonnegative({
+    message: "General fund must be a non-negative number",
+  }),
+  scFund: z.number().int().nonnegative({
+    message: "SC fund must be a non-negative number",
+  }),
+  stFund: z.number().int().nonnegative({
+    message: "ST fund must be a non-negative number",
+  }),
   fundType: z.enum(["Tied", "Untied"], {
     required_error: "Please select a fund type",
     invalid_type_error: "Fund type must be Tied or Untied",
