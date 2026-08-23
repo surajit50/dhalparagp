@@ -465,6 +465,8 @@ model ApprovedActionPlanDetails {
   totalUnit        Int?    @default(0)
   implementedBy    String?
   remarks          String?
+createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
 
   WorksDetail    WorksDetail[]
   AggrementModel AggrementModel[]
