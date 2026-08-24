@@ -2379,6 +2379,9 @@ model LandConversionApplication {
   applicantPhone   String
   applicantEmail   String?
   applicantAddress String
+  gender           Gender?
+  fatherName       String?
+  husbandName      String?
 
   // Land details (first/primary land; additional lands in landDetails)
   khatianNo String

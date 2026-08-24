@@ -58,6 +58,9 @@ type LandConversionCertificatePrintData = {
   applicantName: string
   applicantAddress: string
   applicantPhone: string
+  gender: string | null
+  fatherName: string | null
+  husbandName: string | null
   lands: {
     khatianNo: string
     plotNo: string
@@ -179,6 +182,9 @@ export async function createLandConversionApplication(
         applicantAddress:
           formData.address ||
           `${formData.village}, PO: ${formData.postOffice}, PS: ${formData.ps}, Dist: ${formData.district}, State: ${formData.state}`,
+        gender: formData.gender || null,
+        fatherName: formData.fatherName || null,
+        husbandName: formData.husbandName || null,
         khatianNo: formData.khatianNo,
         plotNo: formData.plotNo,
         mouza: formData.mouza,
@@ -1004,6 +1010,9 @@ export async function getIssuedNOCs(): Promise<
         applicationNo: string
         applicantName: string
         applicantAddress: string
+        gender: string | null
+        fatherName: string | null
+        husbandName: string | null
         khatianNo: string
         plotNo: string
         mouza: string
@@ -1052,6 +1061,9 @@ export async function getIssuedNOCs(): Promise<
           applicationNo: cert.application.applicationNo,
           applicantName: cert.application.applicantName,
           applicantAddress: cert.application.applicantAddress,
+          gender: cert.application.gender,
+          fatherName: cert.application.fatherName,
+          husbandName: cert.application.husbandName,
           khatianNo: cert.application.khatianNo,
           plotNo: cert.application.plotNo,
           mouza: cert.application.mouza,
@@ -1198,7 +1210,14 @@ function buildLandConversionPdfInputs(
   certificateData: LandConversionCertificatePrintData,
   logoBase64: string | null,
 ) {
-  const paragraph1 = `This is to certify that ${certificateData.applicantName}, residing at ${certificateData.applicantAddress}, has been granted a No Objection Certificate for conversion of the land described below.`
+  let relationText = ""
+  if (certificateData.gender === "female" && certificateData.husbandName) {
+    relationText = `, wife of ${certificateData.husbandName},`
+  } else if (certificateData.fatherName) {
+    relationText = `, son of ${certificateData.fatherName},`
+  }
+
+  const paragraph1 = `This is to certify that ${certificateData.applicantName}${relationText} residing at ${certificateData.applicantAddress}, has been granted a No Objection Certificate for conversion of the land described below.`
 
   const landDetails = certificateData.lands
     .map((land, index) => [
@@ -1337,6 +1356,9 @@ export async function getCertificateForPrint(certificateId: string) {
         applicantName: app.applicantName,
         applicantAddress: app.applicantAddress,
         applicantPhone: app.applicantPhone,
+        gender: app.gender,
+        fatherName: app.fatherName,
+        husbandName: app.husbandName,
         lands,
       },
     }
@@ -1402,6 +1424,9 @@ export async function generateAndStoreCertificatePdf(
       applicantName: app.applicantName,
       applicantAddress: app.applicantAddress,
       applicantPhone: app.applicantPhone,
+      gender: app.gender,
+      fatherName: app.fatherName,
+      husbandName: app.husbandName,
       lands,
     }
 
@@ -1467,6 +1492,9 @@ export async function getIssuedNOCByNo(certificateNo: string): Promise<
     applicationNo: string
     applicantName: string
     applicantAddress: string
+    gender: string | null
+    fatherName: string | null
+    husbandName: string | null
     mouza: string
     jlNo: string
     khatianNo: string
@@ -1498,6 +1526,9 @@ export async function getIssuedNOCByNo(certificateNo: string): Promise<
         applicationNo: cert.application.applicationNo,
         applicantName: cert.application.applicantName,
         applicantAddress: cert.application.applicantAddress,
+        gender: cert.application.gender,
+        fatherName: cert.application.fatherName,
+        husbandName: cert.application.husbandName,
         mouza: cert.application.mouza,
         jlNo: cert.application.jlNo,
         khatianNo: cert.application.khatianNo,

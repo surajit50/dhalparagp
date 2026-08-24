@@ -10,11 +10,13 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { LandConversionApplicationInput } from "@/schema/land-conversion";
-import { User, Mail, Phone, MapPin } from "lucide-react";
+import { User, Mail, Phone, MapPin, UserCircle } from "lucide-react";
 
 export default function ApplicantInfoSection() {
-  const { control } = useFormContext<LandConversionApplicationInput>();
+  const { control, watch } = useFormContext<LandConversionApplicationInput>();
+  const gender = watch("gender");
 
   return (
     <Card className="shadow-lg border-indigo-100/60 bg-white/70 backdrop-blur-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-indigo-200/60">
@@ -33,7 +35,7 @@ export default function ApplicantInfoSection() {
         <div className="space-y-5">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
             <div className="h-px flex-1 bg-slate-200/60"></div>
-            Contact Details
+            Personal Details
             <div className="h-px flex-1 bg-slate-200/60"></div>
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -57,6 +59,125 @@ export default function ApplicantInfoSection() {
                 </FormItem>
               )}
             />
+            <FormField
+              control={control}
+              name="gender"
+              render={({ field }) => (
+                <FormItem className="group">
+                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2 group-focus-within:text-indigo-600 transition-colors">
+                    <UserCircle className="h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                    Gender *
+                  </FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex space-x-4 pt-2"
+                    >
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem
+                            value="male"
+                            id="gender-male"
+                            className="text-indigo-600"
+                          />
+                        </FormControl>
+                        <FormLabel
+                          htmlFor="gender-male"
+                          className="text-sm font-normal text-slate-700 cursor-pointer"
+                        >
+                          Male
+                        </FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem
+                            value="female"
+                            id="gender-female"
+                            className="text-indigo-600"
+                          />
+                        </FormControl>
+                        <FormLabel
+                          htmlFor="gender-female"
+                          className="text-sm font-normal text-slate-700 cursor-pointer"
+                        >
+                          Female
+                        </FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem
+                            value="other"
+                            id="gender-other"
+                            className="text-indigo-600"
+                          />
+                        </FormControl>
+                        <FormLabel
+                          htmlFor="gender-other"
+                          className="text-sm font-normal text-slate-700 cursor-pointer"
+                        >
+                          Other
+                        </FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            {gender === "female" ? (
+              <FormField
+                control={control}
+                name="husbandName"
+                render={({ field }) => (
+                  <FormItem className="group">
+                    <FormLabel className="text-slate-700 font-semibold flex items-center gap-2 group-focus-within:text-indigo-600 transition-colors">
+                      <User className="h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                      Husband Name *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter husband name"
+                        className="h-12 bg-white/50 border-slate-200/80 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm rounded-xl"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={control}
+                name="fatherName"
+                render={({ field }) => (
+                  <FormItem className="group">
+                    <FormLabel className="text-slate-700 font-semibold flex items-center gap-2 group-focus-within:text-indigo-600 transition-colors">
+                      <User className="h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                      Father Name *
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Enter father name"
+                        className="h-12 bg-white/50 border-slate-200/80 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm rounded-xl"
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
+        </div>
+
+        <div className="space-y-5">
+          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-3">
+            <div className="h-px flex-1 bg-slate-200/60"></div>
+            Contact Details
+            <div className="h-px flex-1 bg-slate-200/60"></div>
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <FormField
               control={control}
               name="applicantPhone"

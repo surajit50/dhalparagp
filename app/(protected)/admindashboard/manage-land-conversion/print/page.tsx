@@ -56,6 +56,9 @@ interface IssuedNOC {
   applicationNo: string;
   memoNumber: string;
   applicantName: string;
+  applicantGender: string | null;
+  applicantFatherName: string | null;
+  applicantHusbandName: string | null;
   applicantAddress: string;
   landParcels: LandParcel[];
   issueDate: string;
@@ -214,8 +217,15 @@ async function generateNocPdf(noc: IssuedNOC) {
   doc.setTextColor(0, 0, 0);
   const lineH = 5.5;
 
+  let relationSuffix = "";
+  if (noc.applicantGender === "female" && noc.applicantHusbandName) {
+    relationSuffix = `, wife of ${noc.applicantHusbandName},`;
+  } else if (noc.applicantFatherName) {
+    relationSuffix = `, son of ${noc.applicantFatherName},`;
+  }
+
   const paragraphs = [
-    `    This is to certify that Sri / Smt. ${noc.applicantName}, resident of ${noc.applicantAddress || "N/A"
+    `    This is to certify that Sri / Smt. ${noc.applicantName}${relationSuffix}, resident of ${noc.applicantAddress || "N/A"
     }, has submitted an application for conversion of land vide Application No. ${noc.applicationNo} before this Gram Panchayat.`,
 
     `    After due examination of all relevant records, verification of submitted documents, physical field inspection of the concerned plot(s), and upon satisfaction of the applicable rules and regulations, this office finds no objection to the proposed conversion of land as detailed in the Schedule below.`,
@@ -392,6 +402,9 @@ export default function NOCPrintPage() {
             nocNo: n.certificate.certificateNo,
             applicationNo: n.application.applicationNo,
             applicantName: n.application.applicantName,
+            applicantGender: n.application.gender,
+            applicantFatherName: n.application.fatherName,
+            applicantHusbandName: n.application.husbandName,
             memoNumber: n.certificate.memoNumber || "",
             applicantAddress: n.application.applicantAddress || "",
             landParcels: [primary, ...additional],

@@ -38,6 +38,12 @@ export const landConversionApplicationSchema = z.object({
   district: z.string().default("Dakshin Dinajpur"),
   address: z.string().optional(),
 
+  gender: z.enum(["male", "female", "other"], {
+    required_error: "Gender is required",
+  }),
+  fatherName: z.string().trim().optional(),
+  husbandName: z.string().trim().optional(),
+
   // First land (required); additional lands in lands array
   khatianNo: requiredText("Khatian number"),
   plotNo: requiredText("Plot number"),
@@ -50,6 +56,25 @@ export const landConversionApplicationSchema = z.object({
   // Additional land parcels (one certificate can cover multiple lands)
   additionalLands: z.array(landEntrySchema).optional().default([]),
 })
+  .superRefine((data, ctx) => {
+    if (data.gender === "female") {
+      if (!data.husbandName || data.husbandName.trim().length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Husband name is required for female applicants",
+          path: ["husbandName"],
+        })
+      }
+    } else {
+      if (!data.fatherName || data.fatherName.trim().length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Father name is required",
+          path: ["fatherName"],
+        })
+      }
+    }
+  })
 
 export type LandConversionApplicationInput = z.infer<typeof landConversionApplicationSchema>
 
