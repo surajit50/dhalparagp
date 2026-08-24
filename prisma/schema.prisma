@@ -550,8 +550,8 @@ model WorksDetail {
   biddingAgencies             Bidagency[]
   completionDate              DateTime?
   workCommencementDate        DateTime?
-  createdAt                   DateTime                  @default(now())
-  updatedAt                   DateTime                  @updatedAt
+  createdAt                   DateTime?                  @default(now())
+  updatedAt                   DateTime?                  @updatedAt
   AwardofContract             AwardofContract?          @relation(fields: [awardofContractId], references: [id])
   approvedActionPlanDetailsId String                    @db.ObjectId
   paymentDetails              PaymentDetails[]
