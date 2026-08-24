@@ -749,7 +749,7 @@ model SecrutityDeposit {
   paymentDate        DateTime?
   transactionID      String?
   paymentstatus      SecrutityDepositStatus @default(unpaid)
-  createdAt          DateTime               @default(now())
+  createdAt          DateTime?              @default(now())
 }
 
 enum PaymentMethod {
