@@ -40,13 +40,13 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
 
   const leaseStartDate = lease?.leaseStartDate ? new Date(lease.leaseStartDate) : new Date();
   const leaseEndDate = lease?.leaseEndDate ? new Date(lease.leaseEndDate) : new Date();
-  
+
   // Agreement date is the start date of the lease
   const agreementDate = formatDate(leaseStartDate);
-  
+
   // Financial Year determined by the first date of agreement start (e.g. "2024-25")
   const startFinancialYear = getFinancialYear(leaseStartDate);
-  
+
   // Calculate total period in years and months based on start and end dates
   // Using differenceInMonths for accurate calculation
   const totalMonths = differenceInMonths(leaseEndDate, leaseStartDate);
@@ -598,33 +598,30 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
               <button
                 type="button"
                 onClick={() => setLangMode("bilingual")}
-                className={`px-2.5 py-1 rounded transition-all ${
-                  langMode === "bilingual"
+                className={`px-2.5 py-1 rounded transition-all ${langMode === "bilingual"
                     ? "bg-blue-600 text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 বাংলা + English
               </button>
               <button
                 type="button"
                 onClick={() => setLangMode("bengali")}
-                className={`px-2.5 py-1 rounded transition-all ${
-                  langMode === "bengali"
+                className={`px-2.5 py-1 rounded transition-all ${langMode === "bengali"
                     ? "bg-blue-600 text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 বাংলা
               </button>
               <button
                 type="button"
                 onClick={() => setLangMode("english")}
-                className={`px-2.5 py-1 rounded transition-all ${
-                  langMode === "english"
+                className={`px-2.5 py-1 rounded transition-all ${langMode === "english"
                     ? "bg-blue-600 text-white shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
-                }`}
+                  }`}
               >
                 English
               </button>
@@ -745,7 +742,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                 )}
                 {(langMode === "bilingual" || langMode === "english") && (
                   <p style={langMode === "bilingual" ? { fontSize: "7.8pt", color: "#475569", marginTop: "3px", fontStyle: "italic" } : undefined}>
-                    This Deed of Lease Agreement is executed on this <strong>{agreementDate}</strong> between <strong>No. 3 Dhalpara Gram Panchayat</strong> (&apos;Lessor&apos; / First Party) and[...]
+                    This Deed of Lease Agreement is executed on this <strong>{agreementDate}</strong> between <strong>No. 3 Dhalpara Gram Panchayat</strong> (&apos;Lessor&apos; / First Party) and <strong>{lease?.leasePartyName}</strong> (&apos;Lessee&apos; / Second Party)
                   </p>
                 )}
               </div>
@@ -920,7 +917,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   </div>
                   <div className="sign-line">
                     <p className="sign-name-bn">
-                     
+
                     </p>
                     <p className="sign-title-en">
                       Signature / Thumb Impression of Lessee
@@ -938,7 +935,7 @@ export function LeaseAgreementPrint({ lease, trigger }: LeaseAgreementPrintProps
                   </div>
                   <div className="sign-line">
                     <p className="sign-name-bn">
-                     
+
                     </p>
                     <p className="sign-title-en">
                       Pradhan / Executive Assistant, {gpname}
