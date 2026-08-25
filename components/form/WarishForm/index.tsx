@@ -29,9 +29,167 @@ import {
   ChevronLeft,
   Eye,
   ChevronRight,
+  UploadCloud,
+  FileText,
+  FileCheck,
+  X,
+  AlertCircle,
 } from "lucide-react";
 import { formatDate } from "@/utils/utils";
 import { cn } from "@/lib/utils";
+
+// Document types required for warish application
+const DOCUMENT_TYPES = [
+  {
+    type: "death_certificate",
+    title: "Death Certificate / মৃত্যু সনদ",
+    description: "Scanned copy of official death certificate (PDF/Image)",
+    required: true,
+    accept: "application/pdf,image/jpeg,image/png",
+  },
+  {
+    type: "application_form",
+    title: "Application Form / আবেদন ফর্ম",
+    description: "Completed and signed application form (PDF)",
+    required: true,
+    accept: "application/pdf",
+  },
+  {
+    type: "affidavit",
+    title: "Affidavit / হলফনামা",
+    description: "Notarized affidavit document (PDF)",
+    required: false,
+    accept: "application/pdf",
+  },
+  {
+    type: "heir_proof",
+    title: "Heir Proof / উত্তরাধিকার প্রমাণ",
+    description: "Legal heir verification documents (PDF)",
+    required: false,
+    accept: "application/pdf",
+  },
+] as const;
+
+type DocumentType = (typeof DOCUMENT_TYPES)[number]["type"];
+type SelectedFiles = Partial<Record<DocumentType, File>>;
+
+// Document Upload Step Component
+const DocumentUploadStep = ({
+  selectedFiles,
+  onFileSelect,
+  onFileRemove,
+  uploading,
+}: {
+  selectedFiles: SelectedFiles;
+  onFileSelect: (docType: DocumentType, file: File) => void;
+  onFileRemove: (docType: DocumentType) => void;
+  uploading: boolean;
+}) => (
+  <div className="space-y-4">
+    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+      <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+      <p className="text-sm text-blue-800">
+        Upload required documents for your warish application. Documents marked as
+        <span className="font-semibold text-red-600"> Required</span> must be uploaded.
+        You can also upload optional documents to support your application.
+      </p>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {DOCUMENT_TYPES.map((docType) => {
+        const file = selectedFiles[docType.type];
+        return (
+          <div
+            key={docType.type}
+            className={cn(
+              "border rounded-xl p-4 transition-all duration-200",
+              file
+                ? "border-green-200 bg-green-50/50"
+                : "border-gray-200 bg-white hover:border-primary/30"
+            )}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <div
+                  className={cn(
+                    "p-1.5 rounded-md",
+                    file ? "bg-green-100" : "bg-primary/10"
+                  )}
+                >
+                  {file ? (
+                    <FileCheck className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <FileText className="h-4 w-4 text-primary" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {docType.title}
+                  </p>
+                  <p className="text-xs text-gray-500">{docType.description}</p>
+                </div>
+              </div>
+              {docType.required && (
+                <span className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">
+                  Required
+                </span>
+              )}
+            </div>
+
+            {/* File picker */}
+            {file ? (
+              <div className="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                <FileText className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span className="text-xs text-green-800 truncate flex-1">
+                  {file.name}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onFileRemove(docType.type)}
+                  disabled={uploading}
+                  className="p-1 rounded-full hover:bg-green-200 transition-colors"
+                >
+                  <X className="h-3 w-3 text-green-700" />
+                </button>
+              </div>
+            ) : (
+              <label
+                htmlFor={`warish-doc-${docType.type}`}
+                className={cn(
+                  "flex items-center justify-center gap-2 p-3 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                  "border-gray-300 hover:border-primary/50 hover:bg-primary/5",
+                  uploading && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                <UploadCloud className="h-4 w-4 text-gray-400" />
+                <span className="text-xs text-gray-500">
+                  Click to browse or drag & drop
+                </span>
+                <input
+                  id={`warish-doc-${docType.type}`}
+                  type="file"
+                  className="hidden"
+                  accept={docType.accept}
+                  disabled={uploading}
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) onFileSelect(docType.type, f);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+            )}
+          </div>
+        );
+      })}
+    </div>
+
+    <p className="text-xs text-gray-400 text-center">
+      Accepted formats: PDF, JPEG, PNG &bull; Max file size: 5MB per document
+    </p>
+  </div>
+);
 
 const FormPreview = ({ values }: { values: WarishFormValuesType }) => (
   <div className="space-y-6 focus:outline-none">
@@ -209,6 +367,9 @@ const FormPreview = ({ values }: { values: WarishFormValuesType }) => (
 
 export default function WarishFormComponent() {
   const [acnumber, setAcnumber] = useState("");
+  const [applicationId, setApplicationId] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<SelectedFiles>({});
+  const [uploadingDocs, setUploadingDocs] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -244,6 +405,21 @@ export default function WarishFormComponent() {
     []
   );
 
+  const handleFileSelect = useCallback(
+    (docType: DocumentType, file: File) => {
+      setSelectedFiles((prev) => ({ ...prev, [docType]: file }));
+    },
+    []
+  );
+
+  const handleFileRemove = useCallback((docType: DocumentType) => {
+    setSelectedFiles((prev) => {
+      const next = { ...prev };
+      delete next[docType];
+      return next;
+    });
+  }, []);
+
   const resetForm = useCallback(() => {
     form.reset(defaultValues);
     setStep(1);
@@ -260,6 +436,9 @@ export default function WarishFormComponent() {
       } else if (step === 2) {
         const isValid = await form.trigger(step2Fields);
         if (isValid) setStep(3);
+      } else if (step === 3) {
+        // Step 3 is document upload — optional, proceed to review
+        setStep(4);
       }
     },
     [step, form, step1Fields, step2Fields]
@@ -268,6 +447,62 @@ export default function WarishFormComponent() {
   const prevStep = useCallback(() => {
     if (step > 1) setStep(step - 1);
   }, [step]);
+
+  // Upload selected documents to the server after form submission
+  const uploadDocuments = useCallback(
+    async (warishId: string) => {
+      const fileEntries = Object.entries(selectedFiles) as [
+        DocumentType,
+        File,
+      ][];
+      if (fileEntries.length === 0) return;
+
+      setUploadingDocs(true);
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const [docType, file] of fileEntries) {
+        try {
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("warishId", warishId);
+          formData.append("documentType", docType);
+
+          const res = await fetch("/api/warish/upload", {
+            method: "POST",
+            body: formData,
+          });
+          if (res.ok) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch {
+          failCount++;
+        }
+      }
+
+      setUploadingDocs(false);
+
+      if (successCount > 0) {
+        toast({
+          title: `${successCount} document(s) uploaded`,
+          description:
+            failCount > 0
+              ? `${failCount} document(s) failed to upload.`
+              : "All documents uploaded successfully.",
+        });
+      }
+      if (failCount > 0 && successCount === 0) {
+        toast({
+          title: "Document upload failed",
+          description: "Some documents could not be uploaded. Please use the upload page to retry.",
+          variant: "destructive",
+        });
+      }
+    },
+    [selectedFiles, toast]
+  );
 
   const handleNextClick = useCallback(
     (e: React.MouseEvent) => {
@@ -280,49 +515,68 @@ export default function WarishFormComponent() {
 
   const onSubmit = useCallback(
     async (data: WarishFormValuesType) => {
-      if (step !== 3) {
-        console.log("Form submission prevented - not in step 3");
+      if (step !== 4) {
+        console.log("Form submission prevented - not in step 4");
         return;
       }
 
-      console.log("Submitting form in step 3");
-      startTransition(async () => {
-        try {
-          const result = await createNestedWarishDetails(data);
-          if (result?.errors) {
+      console.log("Submitting form in step 4");
+
+      let appId = "";
+      let ack = "";
+      let submissionSuccess = false;
+
+      await new Promise<void>((resolve) => {
+        startTransition(async () => {
+          try {
+            const result = await createNestedWarishDetails(data);
+            if (result?.errors) {
+              toast({
+                title: "Error / ত্রুটি",
+                description: result.message,
+                variant: "destructive",
+              });
+            } else if (result?.success) {
+              ack = result.data?.acknowlegment?.toString() || "";
+              appId = result.data?.id || "";
+              submissionSuccess = true;
+              setAcnumber(ack);
+              setApplicationId(appId);
+              toast({
+                title: "Success / সফল",
+                description: ack,
+              });
+            }
+          } catch (error) {
+            console.error("Failed to add warish details:", error);
             toast({
               title: "Error / ত্রুটি",
-              description: result.message,
+              description:
+                "An unexpected error occurred. Please try again. / একটি অপ্রত্যাশিত ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
               variant: "destructive",
             });
-          } else if (result?.success) {
-            resetForm();
-            toast({
-              title: "Success / সফল",
-              description: result.data?.acknowlegment?.toString(),
-            });
-            setAcnumber(result.data?.acknowlegment?.toString() || "");
+          } finally {
+            resolve();
           }
-        } catch (error) {
-          console.error("Failed to add warish details:", error);
-          toast({
-            title: "Error / ত্রুটি",
-            description:
-              "An unexpected error occurred. Please try again. / একটি অপ্রত্যাশিত ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
-            variant: "destructive",
-          });
-        } finally {
-          router.refresh();
-        }
+        });
       });
+
+      if (submissionSuccess) {
+        // Upload documents outside startTransition so async/await works correctly
+        if (appId && Object.keys(selectedFiles).length > 0) {
+          await uploadDocuments(appId);
+        }
+        resetForm();
+        router.refresh();
+      }
     },
-    [step, startTransition, toast, resetForm, router]
+    [step, startTransition, toast, resetForm, router, selectedFiles, uploadDocuments]
   );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter") {
-        if (step !== 3) {
+        if (step !== 4) {
           e.preventDefault();
           nextStep();
         } else {
@@ -338,7 +592,7 @@ export default function WarishFormComponent() {
   }, [nextStep, step]);
 
   useEffect(() => {
-    if (step === 3) {
+    if (step === 4) {
       previewRef.current?.focus({ preventScroll: true });
     }
   }, [step]);
@@ -367,11 +621,12 @@ export default function WarishFormComponent() {
           )}
 
           <div className="flex justify-center mb-8">
-            <ol className="flex items-center w-full max-w-2xl">
+            <ol className="flex items-center w-full max-w-3xl">
               {[
                 { number: 1, label: "Applicant & Deceased" },
                 { number: 2, label: "Warish Details" },
-                { number: 3, label: "Review & Submit" },
+                { number: 3, label: "Upload Documents" },
+                { number: 4, label: "Review & Submit" },
               ].map((stepData, index) => (
                 <li
                   key={stepData.number}
@@ -461,6 +716,30 @@ export default function WarishFormComponent() {
                     id="step3-heading"
                     className="text-xl font-bold text-primary flex items-center gap-3"
                   >
+                    <UploadCloud className="h-6 w-6" />
+                    Upload Documents / নথি আপলোড করুন
+                  </h2>
+                </div>
+                <div className="p-4 md:p-6">
+                  <DocumentUploadStep
+                    selectedFiles={selectedFiles}
+                    onFileSelect={handleFileSelect}
+                    onFileRemove={handleFileRemove}
+                    uploading={uploadingDocs}
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {step === 4 && (
+            <section aria-labelledby="step4-heading">
+              <div className="bg-white p-1 rounded-xl border border-gray-200 shadow-md">
+                <div className="bg-primary/10 px-5 py-4 rounded-t-xl">
+                  <h2
+                    id="step4-heading"
+                    className="text-xl font-bold text-primary flex items-center gap-3"
+                  >
                     <Eye className="h-6 w-6" />
                     Review Application / আবেদন পর্যালোচনা
                   </h2>
@@ -472,6 +751,31 @@ export default function WarishFormComponent() {
                     className="focus:outline-none"
                   >
                     <FormPreview values={form.getValues()} />
+                    {/* Show summary of selected documents */}
+                    {Object.keys(selectedFiles).length > 0 && (
+                      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                          <UploadCloud className="h-4 w-4" />
+                          Documents to be uploaded ({Object.keys(selectedFiles).length})
+                        </h4>
+                        <ul className="space-y-1">
+                          {(Object.entries(selectedFiles) as [DocumentType, File][]).map(
+                            ([docType, file]) => (
+                              <li
+                                key={docType}
+                                className="flex items-center gap-2 text-sm text-blue-700"
+                              >
+                                <FileCheck className="h-3.5 w-3.5 text-green-600" />
+                                <span className="font-medium capitalize">
+                                  {docType.replace(/_/g, " ")}:
+                                </span>
+                                <span className="truncate">{file.name}</span>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -493,13 +797,17 @@ export default function WarishFormComponent() {
 
             <div className="flex-1" />
 
-            {step < 3 ? (
+            {step < 4 ? (
               <Button
                 type="button"
                 onClick={handleNextClick}
                 className="py-6 w-full sm:w-auto bg-primary hover:bg-primary/90"
               >
-                {step === 1 ? "Next: Warish Details" : "Review Application"}
+                {step === 1
+                  ? "Next: Warish Details"
+                  : step === 2
+                  ? "Next: Upload Documents"
+                  : "Review Application"}
                 <ChevronRight className="h-5 w-5 ml-2" />
               </Button>
             ) : (
@@ -507,19 +815,21 @@ export default function WarishFormComponent() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(3)}
                   className="py-6"
                 >
-                  Edit Details
+                  Edit Documents
                 </Button>
                 <Button
                   type="submit"
                   className="py-6 bg-primary hover:bg-primary/90"
-                  disabled={isPending}
+                  disabled={isPending || uploadingDocs}
                 >
-                  {isPending ? (
+                  {isPending || uploadingDocs ? (
                     <span className="flex items-center gap-2">
-                      <span className="animate-pulse">Submitting...</span>
+                      <span className="animate-pulse">
+                        {uploadingDocs ? "Uploading documents..." : "Submitting..."}
+                      </span>
                     </span>
                   ) : (
                     <span className="flex items-center gap-2">

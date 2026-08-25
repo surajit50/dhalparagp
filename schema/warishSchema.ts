@@ -96,13 +96,6 @@ export const warishFormSchema = z
       required_error: "Date of death is required",
       invalid_type_error: "Invalid date format for date of death",
     }),
-    deathcertificate: z
-      .instanceof(File)
-      .optional()
-      .refine((file) => file === undefined || file.size > 0, {
-        message: "Uploaded file must not be empty",
-      }),
-
     gender: z.enum(["male", "female", "other"], {
       errorMap: () => ({ message: "Please select a valid gender" }),
     }),
