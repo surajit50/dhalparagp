@@ -4618,6 +4618,7 @@ model StreetLight {
   poleType  String? // Electric Pole / RCC / MS / Other
 
   // Condition & Status
+  bulbInstallationDate DateTime?
   lightCondition String   @default("GOOD") // GOOD / REPAIR_REQUIRED / DEFECTIVE / MISSING
   workingStatus  String   @default("WORKING") // WORKING / NOT_WORKING
   lastInspection DateTime?
