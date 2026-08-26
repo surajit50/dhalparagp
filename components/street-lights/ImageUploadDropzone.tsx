@@ -1,10 +1,11 @@
 "use client";
 
 import { useMemo, useState, useCallback, useRef } from "react";
-import { Loader2, X, Camera, Upload, CheckCircle2, RefreshCw } from "lucide-react";
+import { Loader2, X, Camera, Upload, CheckCircle2, RefreshCw, Crop } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { compressImageWithDetails, formatBytes, DEFAULT_TARGET_SIZE_BYTES } from "@/lib/utils/image";
 import { Button } from "@/components/ui/button";
+import { ImageCropDialog } from "./ImageCropDialog";
 
 type IconVariant = "upload" | "camera";
 
@@ -21,6 +22,10 @@ interface ImageUploadDropzoneProps {
   previewHeight?: string;
   compress?: boolean;
   targetSizeBytes?: number;
+  /** Enable the crop dialog before compression/upload (default: true) */
+  enableCrop?: boolean;
+  /** Aspect ratio for the crop box (default: 1 = square). Use 4/3, 16/9, etc. */
+  cropAspectRatio?: number;
 }
 
 export function ImageUploadDropzone({
@@ -36,12 +41,16 @@ export function ImageUploadDropzone({
   previewHeight = "h-44",
   compress = true,
   targetSizeBytes = DEFAULT_TARGET_SIZE_BYTES,
+  enableCrop = true,
+  cropAspectRatio = 1,
 }: ImageUploadDropzoneProps) {
   const [compressing, setCompressing] = useState(false);
   const [compressStats, setCompressStats] = useState<{
     size: number;
     reduction: number;
   } | null>(null);
+  const [cropFile, setCropFile] = useState<File | null>(null);
+  const [cropOpen, setCropOpen] = useState(false);
 
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -80,11 +89,30 @@ export function ImageUploadDropzone({
       const file = e.target.files?.[0];
       e.target.value = "";
       if (file) {
-        handleProcessFile(file);
+        if (enableCrop) {
+          setCropFile(file);
+          setCropOpen(true);
+        } else {
+          handleProcessFile(file);
+        }
       }
+    },
+    [handleProcessFile, enableCrop]
+  );
+
+  const handleCropComplete = useCallback(
+    (croppedFile: File) => {
+      setCropOpen(false);
+      setCropFile(null);
+      handleProcessFile(croppedFile);
     },
     [handleProcessFile]
   );
+
+  const handleCropCancel = useCallback(() => {
+    setCropOpen(false);
+    setCropFile(null);
+  }, []);
 
   const handleClear = useCallback(() => {
     setCompressStats(null);
@@ -216,6 +244,15 @@ export function ImageUploadDropzone({
           </div>
         </div>
       )}
+
+      {/* Crop Dialog */}
+      <ImageCropDialog
+        imageFile={cropFile}
+        open={cropOpen}
+        onCropComplete={handleCropComplete}
+        onCancel={handleCropCancel}
+        aspectRatio={cropAspectRatio}
+      />
     </div>
   );
 }

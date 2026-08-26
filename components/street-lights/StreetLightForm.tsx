@@ -99,7 +99,7 @@ export function StreetLightForm({
       .then((d) => {
         if (!cancelled) setLightPreviewId(d.nextId ?? null);
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       cancelled = true;
     };
