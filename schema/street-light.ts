@@ -56,6 +56,7 @@ export const StreetLightSchema = z.object({
     .enum(["GOOD", "REPAIR_REQUIRED", "DEFECTIVE", "MISSING"])
     .default("GOOD"),
   workingStatus: z.enum(["WORKING", "NOT_WORKING"]).default("WORKING"),
+  bulbInstallationDate: z.string().optional(),
   lastInspection: z.string().optional(),
   remarks: z.string().optional(),
 
