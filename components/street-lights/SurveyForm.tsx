@@ -2,11 +2,31 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import useSWR from "swr";
-import { Loader2, CheckCircle2, ChevronRight } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  MapPin,
+  Sparkles,
+  ChevronDown,
+  ChevronUp,
+  Zap,
+  Tag,
+  Layers,
+  ExternalLink,
+  ShieldCheck,
+} from "lucide-react";
 import { StreetLightSchema, type StreetLightInput } from "@/schema/street-light";
+import {
+  LIGHT_TYPE_OPTIONS,
+  POLE_TYPE_OPTIONS,
+  LIGHT_CONDITION_OPTIONS,
+  WORKING_STATUS_OPTIONS,
+} from "@/lib/utils/street-light";
+import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,28 +40,41 @@ import {
 } from "@/components/ui/select";
 import { GPSCaptureButton } from "./GPSCaptureButton";
 import { LightIDBadge } from "./LightIDBadge";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
-const STEPS = [
-  { id: 1, title: "Select Mouza", desc: "Choose the mouza for this light" },
-  { id: 2, title: "Capture GPS", desc: "Get the exact GPS location" },
-  { id: 3, title: "Take Photo", desc: "Photograph the light & pole" },
-  { id: 4, title: "Enter Details", desc: "Light type, condition, remarks" },
-  { id: 5, title: "Save", desc: "Review and submit" },
-];
+import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface MouzaOption {
   id: string;
   mouzaName: string;
   mouzaCode: string;
+  sansadCode?: string;
+  gramSansad?: string;
 }
 
+const QUICK_LANDMARK_CHIPS = [
+  "Primary School",
+  "High School",
+  "Mandir / Temple",
+  "Masjid",
+  "Pukur / Pond",
+  "Culvert / Bridge",
+  "GP Office",
+  "Sub-Center / Health",
+  "Market / Hat",
+  "Road Crossing",
+  "Transformer Pole",
+  "Playground",
+];
+
 export function SurveyForm() {
-  const [step, setStep] = useState(1);
+  const router = useRouter();
+
   const [lightPreviewId, setLightPreviewId] = useState<string | null>(null);
-  const [savedLight, setSavedLight] = useState<{ lightId: string } | null>(null);
+  const [savedLight, setSavedLight] = useState<{ id: string; lightId: string; landmark?: string | null } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [autoResolving, setAutoResolving] = useState(false);
+  const [showExtendedMenu, setShowExtendedMenu] = useState(false);
+  const [showMouzaSelector, setShowMouzaSelector] = useState(false);
+
   const [lightImagePreview, setLightImagePreview] = useState<string | null>(null);
   const [poleImagePreview, setPoleImagePreview] = useState<string | null>(null);
   const [uploadingLight, setUploadingLight] = useState(false);
@@ -49,367 +82,612 @@ export function SurveyForm() {
 
   const { data: mouzas } = useSWR<MouzaOption[]>("/api/mouza-master", fetcher);
 
-  const { control, watch, setValue, handleSubmit, reset, formState: { errors } } =
-    useForm<StreetLightInput>({
-      resolver: zodResolver(StreetLightSchema),
-      defaultValues: {
-        lightCondition: "GOOD",
-        workingStatus: "WORKING",
-      },
-    });
+  const {
+    register,
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<StreetLightInput>({
+    resolver: zodResolver(StreetLightSchema),
+    defaultValues: {
+      lightType: "LED",
+      wattage: 30,
+      poleType: "ELECTRIC_POLE",
+      lightCondition: "GOOD",
+      workingStatus: "WORKING",
+      ownership: "GP",
+    },
+  });
 
   const mouzaId = watch("mouzaId");
-  const latitude = watch("latitude");
-  const longitude = watch("longitude");
 
   useEffect(() => {
     if (!mouzaId) return;
+    let cancelled = false;
     fetch(`/api/street-lights/next-id?mouzaId=${mouzaId}`)
       .then((r) => r.json())
-      .then((d) => setLightPreviewId(d.nextId ?? null))
+      .then((d) => {
+        if (!cancelled && d.nextId) setLightPreviewId(d.nextId);
+      })
       .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [mouzaId]);
 
-  const uploadImage = async (file: File, type: "light" | "pole") => {
-    const setUploading = type === "light" ? setUploadingLight : setUploadingPole;
-    const setPreview = type === "light" ? setLightImagePreview : setPoleImagePreview;
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("folder", "street-lights");
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      if (!res.ok) throw new Error("Upload failed");
-      const data = await res.json();
-      setValue(type === "light" ? "lightImageUrl" : "poleImageUrl", data.url);
-      setValue(type === "light" ? "lightImagePublicId" : "poleImagePublicId", data.publicId);
-      setPreview(data.url);
-      toast.success(`${type === "light" ? "Light" : "Pole"} photo saved`);
-    } catch {
-      toast.error("Upload failed");
-    } finally {
-      setUploading(false);
-    }
-  };
+  const handleGPSCapture = useCallback(
+    async (coords: { latitude: number; longitude: number; accuracy: number }) => {
+      setValue("latitude", coords.latitude, { shouldValidate: true });
+      setValue("longitude", coords.longitude, { shouldValidate: true });
+      setValue("gpsAccuracy", coords.accuracy);
 
-  const onSubmit = async (data: StreetLightInput) => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/street-lights", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error("Failed to save");
-      const saved = await res.json();
-      setSavedLight(saved);
-      toast.success(`Saved! Light ID: ${saved.lightId}`);
-      setStep(6); // Success step
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+      setAutoResolving(true);
+      try {
+        const url = `/api/street-lights/nearest-mouza?lat=${coords.latitude}&lng=${coords.longitude}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Failed to resolve location");
+        const data = await res.json();
 
-  const handleReset = () => {
-    reset({ lightCondition: "GOOD", workingStatus: "WORKING" });
-    setStep(1);
+        if (data.mouzaId && data.mouza) {
+          setValue("mouzaId", data.mouzaId, { shouldValidate: true, shouldDirty: true });
+          if (data.mouza.gramSansad && !watch("sansad")) {
+            setValue("sansad", data.mouza.gramSansad);
+          }
+          if (data.mouza.sansadCode && !watch("ward")) {
+            setValue("ward", data.mouza.sansadCode);
+          }
+
+          if (data.suggestedLandmark && !watch("landmark")) {
+            setValue("landmark", data.suggestedLandmark, { shouldDirty: true });
+          }
+
+          toast.success(`📍 Mouza auto-detected: ${data.mouza.mouzaName} (${data.mouza.mouzaCode})`);
+        } else {
+          setShowMouzaSelector(true);
+        }
+      } catch (err) {
+        console.error("Auto-resolve failed:", err);
+        setShowMouzaSelector(true);
+      } finally {
+        setAutoResolving(false);
+      }
+    },
+    [setValue, watch]
+  );
+
+  const selectedMouza = useMemo(() => {
+    return mouzas?.find((m) => m.id === mouzaId);
+  }, [mouzas, mouzaId]);
+
+  const uploadImage = useCallback(
+    async (file: File, type: "light" | "pole") => {
+      const setUploading = type === "light" ? setUploadingLight : setUploadingPole;
+      const setPreview = type === "light" ? setLightImagePreview : setPoleImagePreview;
+      const urlField = type === "light" ? "lightImageUrl" : "poleImageUrl";
+      const idField = type === "light" ? "lightImagePublicId" : "poleImagePublicId";
+
+      setUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder", "street-lights");
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        if (!res.ok) throw new Error("Upload failed");
+        const data = await res.json();
+        const uploadedUrl = data.url || data.fileUrl;
+        setValue(urlField, uploadedUrl);
+        setValue(idField, data.publicId);
+        setPreview(uploadedUrl);
+        toast.success(
+          `⚡ ${type === "light" ? "Light" : "Pole"} photo saved (${Math.round(file.size / 1024)} KB)`
+        );
+      } catch {
+        toast.error("Photo upload failed");
+      } finally {
+        setUploading(false);
+      }
+    },
+    [setValue]
+  );
+
+  const handleClearImage = useCallback(
+    (type: "light" | "pole") => {
+      if (type === "light") {
+        setLightImagePreview(null);
+        setValue("lightImageUrl", undefined);
+        setValue("lightImagePublicId", undefined);
+      } else {
+        setPoleImagePreview(null);
+        setValue("poleImageUrl", undefined);
+        setValue("poleImagePublicId", undefined);
+      }
+    },
+    [setValue]
+  );
+
+  const handleAppendLandmarkChip = useCallback(
+    (chipText: string) => {
+      const current = (watch("landmark") || "").trim();
+      if (!current) {
+        setValue("landmark", `Near ${chipText}`, { shouldDirty: true });
+      } else if (!current.toLowerCase().includes(chipText.toLowerCase())) {
+        setValue("landmark", `${current}, near ${chipText}`, { shouldDirty: true });
+      }
+    },
+    [setValue, watch]
+  );
+
+  const onSubmit = useCallback(
+    async (data: StreetLightInput) => {
+      if (!data.mouzaId) {
+        toast.error("Please ensure a Mouza is selected");
+        setShowMouzaSelector(true);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const res = await fetch("/api/street-lights", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to save street light");
+        }
+        const saved = await res.json();
+        setSavedLight({
+          id: saved.id,
+          lightId: saved.lightId,
+          landmark: saved.landmark,
+        });
+        toast.success(`🎉 Saved! Light ID: ${saved.lightId}`, { duration: 4000 });
+      } catch (err: unknown) {
+        toast.error(err instanceof Error ? err.message : "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
+
+  const handleSurveyNext = useCallback(() => {
+    const prevMouzaId = mouzaId;
+    reset({
+      mouzaId: prevMouzaId,
+      lightType: "LED",
+      wattage: 30,
+      poleType: "ELECTRIC_POLE",
+      lightCondition: "GOOD",
+      workingStatus: "WORKING",
+      ownership: "GP",
+    });
     setSavedLight(null);
     setLightImagePreview(null);
     setPoleImagePreview(null);
-    setLightPreviewId(null);
-  };
+    setShowExtendedMenu(false);
+    toast.info("Ready for next light survey");
+  }, [mouzaId, reset]);
 
-  // ── Success Screen ────────────────────────────────────────────────────────
-  if (step === 6 && savedLight) {
+  if (savedLight) {
     return (
-      <div className="flex flex-col items-center justify-center gap-6 py-12 text-center">
-        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
-          <CheckCircle2 className="w-10 h-10 text-emerald-500" />
+      <div className="max-w-md mx-auto rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50/60 to-white dark:from-emerald-950/20 dark:to-card p-6 text-center space-y-6 shadow-sm">
+        <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 rounded-full flex items-center justify-center mx-auto shadow-inner text-emerald-600 dark:text-emerald-300">
+          <CheckCircle2 className="w-10 h-10" />
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-foreground">Street Light Recorded!</h2>
-          <p className="text-sm text-muted-foreground mt-1">Survey entry saved successfully</p>
+
+        <div className="space-y-1">
+          <h2 className="text-xl font-bold text-foreground">Street Light Saved!</h2>
+          <p className="text-xs text-muted-foreground">
+            Asset successfully registered in Gram Panchayat database
+          </p>
         </div>
-        <LightIDBadge lightId={savedLight.lightId} className="text-base" />
-        <div className="flex gap-3">
-          <Button onClick={handleReset} className="gap-2">
-            <ChevronRight className="w-4 h-4" />
+
+        <div className="p-3 bg-card border rounded-xl shadow-xs space-y-2">
+          <LightIDBadge lightId={savedLight.lightId} className="text-base font-bold" />
+          {savedLight.landmark && (
+            <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+              <MapPin className="w-3.5 h-3.5 text-orange-500" />
+              {savedLight.landmark}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2.5">
+          <Button
+            onClick={handleSurveyNext}
+            className="w-full h-12 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-2 shadow-sm"
+          >
+            <Zap className="w-4 h-4" />
             Survey Next Light
           </Button>
-          <Button variant="outline" onClick={() => window.location.href = "/admindashboard/street-lights/register"}>
-            View Register
-          </Button>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-10 text-xs gap-1.5"
+              onClick={() => router.push(`/admindashboard/street-lights/register/${savedLight.id}/edit`)}
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              Edit Full Specs
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="h-10 text-xs"
+              onClick={() => router.push("/admindashboard/street-lights/register")}
+            >
+              View Register
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-lg mx-auto space-y-6">
-      {/* Step Progress */}
-      <div className="flex gap-1">
-        {STEPS.map((s) => (
-          <div
-            key={s.id}
-            className={`flex-1 h-1.5 rounded-full transition-all ${
-              s.id < step ? "bg-emerald-500" : s.id === step ? "bg-orange-500" : "bg-muted"
-            }`}
-          />
-        ))}
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto space-y-5">
+      <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-900/40 text-xs">
+        <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
+          <Zap className="w-4 h-4 text-orange-600 animate-pulse" />
+          <span>Quick Field Survey · Auto-Mouza Active</span>
+        </div>
+        {lightPreviewId && (
+          <span className="font-mono font-bold text-orange-700 dark:text-orange-300">
+            Next: {lightPreviewId.split("-").slice(-1)[0]}
+          </span>
+        )}
       </div>
 
-      <div>
-        <p className="text-xs font-semibold text-orange-600 uppercase tracking-wide">
-          Step {step} of {STEPS.length}
-        </p>
-        <h2 className="text-xl font-bold">{STEPS[step - 1]?.title}</h2>
-        <p className="text-sm text-muted-foreground">{STEPS[step - 1]?.desc}</p>
-      </div>
+      <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3.5 shadow-xs">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
+              1
+            </span>
+            <h3 className="text-sm font-semibold text-foreground">
+              GPS Location & Mouza
+            </h3>
+          </div>
+          {autoResolving && (
+            <span className="text-xs text-orange-600 flex items-center gap-1">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Detecting Mouza…
+            </span>
+          )}
+        </div>
 
-      {/* Step 1: Mouza */}
-      {step === 1 && (
-        <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label>Select Mouza *</Label>
+        <GPSCaptureButton onCapture={handleGPSCapture} autoCaptureOnMount={false} />
+
+        {selectedMouza ? (
+          <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-emerald-600" />
+              <div>
+                <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-200">
+                  Mouza: {selectedMouza.mouzaName} ({selectedMouza.mouzaCode})
+                </p>
+                {selectedMouza.gramSansad && (
+                  <p className="text-[11px] text-emerald-700/80 dark:text-emerald-300">
+                    Sansad: {selectedMouza.gramSansad}
+                  </p>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowMouzaSelector((v) => !v)}
+              className="text-xs font-medium text-emerald-700 hover:text-emerald-900 underline underline-offset-2"
+            >
+              {showMouzaSelector ? "Hide" : "Change"}
+            </button>
+          </div>
+        ) : (
+          <div className="text-xs text-muted-foreground flex items-center justify-between px-3 py-2 rounded-xl bg-muted/40 border">
+            <span>Tap GPS button above to auto-detect Mouza</span>
+            <button
+              type="button"
+              onClick={() => setShowMouzaSelector(true)}
+              className="text-xs font-medium text-orange-600 hover:underline"
+            >
+              Select manually
+            </button>
+          </div>
+        )}
+
+        {showMouzaSelector && (
+          <div className="pt-1 space-y-1.5 animate-in fade-in slide-in-from-top-1">
+            <Label className="text-xs text-muted-foreground">Select Mouza Manually *</Label>
             <Controller
               control={control}
               name="mouzaId"
               render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-12 text-base">
-                    <SelectValue placeholder="Tap to select Mouza…" />
+                <Select
+                  onValueChange={(val) => {
+                    field.onChange(val);
+                    setShowMouzaSelector(false);
+                  }}
+                  value={field.value}
+                >
+                  <SelectTrigger className="h-10 text-sm">
+                    <SelectValue placeholder="Choose Mouza…" />
                   </SelectTrigger>
                   <SelectContent>
                     {mouzas?.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>{m.mouzaName}</SelectItem>
+                      <SelectItem key={m.id} value={m.id}>
+                        {m.mouzaName} ({m.mouzaCode}) · {m.gramSansad}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               )}
             />
-            {errors.mouzaId && <p className="text-xs text-destructive">{errors.mouzaId.message}</p>}
           </div>
-          {lightPreviewId && (
-            <div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
-              <p className="text-xs text-orange-600 mb-1">Next Light ID will be:</p>
-              <LightIDBadge lightId={lightPreviewId} />
-            </div>
-          )}
-          <Button onClick={() => { if (mouzaId) setStep(2); else toast.error("Please select a Mouza first"); }} className="w-full h-12 text-base gap-2">
-            Next <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
+        )}
+        {errors.mouzaId && (
+          <p className="text-xs text-destructive">{errors.mouzaId.message}</p>
+        )}
+      </div>
 
-      {/* Step 2: GPS */}
-      {step === 2 && (
-        <div className="space-y-4">
-          <GPSCaptureButton
-            onCapture={({ latitude, longitude, accuracy }) => {
-              setValue("latitude", latitude);
-              setValue("longitude", longitude);
-              setValue("gpsAccuracy", accuracy);
-            }}
+      <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
+            2
+          </span>
+          <h3 className="text-sm font-semibold text-foreground">
+            Landmark / Location Description
+          </h3>
+        </div>
+
+        <div className="space-y-2">
+          <Input
+            id="landmark"
+            {...register("landmark")}
+            placeholder="e.g. Near Lalpur High School Gate, opposite pond"
+            className="h-11 text-sm"
           />
-          <div className="grid grid-cols-3 gap-2">
-            <div className="space-y-1">
-              <Label className="text-xs">Latitude</Label>
-              <Controller control={control} name="latitude" render={({ field }) => (
-                <Input type="number" step="any" placeholder="22.xxx" value={field.value ?? ""} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
-              )} />
+
+          <div className="space-y-1.5">
+            <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+              <Tag className="w-3 h-3 text-orange-500" /> Tap to quickly insert landmark:
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {QUICK_LANDMARK_CHIPS.map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  onClick={() => handleAppendLandmarkChip(chip)}
+                  className="px-2.5 py-1 rounded-full text-xs font-medium bg-muted/60 hover:bg-orange-100 hover:text-orange-800 dark:hover:bg-orange-950/60 dark:hover:text-orange-200 border border-border/60 transition-all active:scale-95"
+                >
+                  +{chip}
+                </button>
+              ))}
             </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Longitude</Label>
-              <Controller control={control} name="longitude" render={({ field }) => (
-                <Input type="number" step="any" placeholder="88.xxx" value={field.value ?? ""} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
-              )} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Accuracy (m)</Label>
-              <Controller control={control} name="gpsAccuracy" render={({ field }) => (
-                <Input type="number" step="any" value={field.value ?? ""} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
-              )} />
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 h-12" onClick={() => setStep(1)}>Back</Button>
-            <Button className="flex-1 h-12 gap-2" onClick={() => setStep(3)}>
-              {latitude && longitude ? "GPS OK" : "Skip GPS"} <ChevronRight className="w-4 h-4" />
-            </Button>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Step 3: Photos */}
-      {step === 3 && (
-        <div className="space-y-4">
-          {/* Light Photo */}
-          <div className="space-y-2">
-            <Label>Light Photograph</Label>
-            <label className="flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed border-muted-foreground/30 cursor-pointer hover:border-orange-300 transition-colors overflow-hidden">
-              {lightImagePreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={lightImagePreview} alt="Light" className="w-full h-full object-cover" />
-              ) : uploadingLight ? (
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-              ) : (
-                <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                  <span className="text-3xl">📸</span>
-                  <span className="text-sm">Tap to capture light photo</span>
-                </div>
-              )}
-              <input type="file" accept="image/*" capture="environment" className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f, "light"); }}
-              />
-            </label>
+      <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
+              3
+            </span>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">
+                Photograph
+              </h3>
+              <p className="text-[11px] text-muted-foreground">
+                Camera capture · Optimized to ≤ 200 KB
+              </p>
+            </div>
           </div>
-
-          {/* Pole Photo */}
-          <div className="space-y-2">
-            <Label>Pole Photograph</Label>
-            <label className="flex flex-col items-center justify-center w-full h-40 rounded-xl border-2 border-dashed border-muted-foreground/30 cursor-pointer hover:border-orange-300 transition-colors overflow-hidden">
-              {poleImagePreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={poleImagePreview} alt="Pole" className="w-full h-full object-cover" />
-              ) : uploadingPole ? (
-                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-              ) : (
-                <div className="flex flex-col items-center gap-1 text-muted-foreground">
-                  <span className="text-3xl">🪧</span>
-                  <span className="text-sm">Tap to capture pole photo</span>
-                </div>
-              )}
-              <input type="file" accept="image/*" capture="environment" className="hidden"
-                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f, "pole"); }}
-              />
-            </label>
-          </div>
-
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 h-12" onClick={() => setStep(2)}>Back</Button>
-            <Button className="flex-1 h-12 gap-2" onClick={() => setStep(4)}>
-              Next <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
+          <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200/60">
+            <ShieldCheck className="w-3 h-3" /> Quick Upload
+          </span>
         </div>
-      )}
 
-      {/* Step 4: Light Details */}
-      {step === 4 && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1">
-              <Label>Light Type</Label>
-              <Controller control={control} name="lightType" render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-11"><SelectValue placeholder="Type" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="LED">LED</SelectItem>
-                    <SelectItem value="SODIUM">Sodium</SelectItem>
-                    <SelectItem value="CFL">CFL</SelectItem>
-                    <SelectItem value="HALOGEN">Halogen</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              )} />
-            </div>
-            <div className="space-y-1">
-              <Label htmlFor="wattage">Wattage (W)</Label>
-              <Controller control={control} name="wattage" render={({ field }) => (
-                <Input id="wattage" type="number" placeholder="e.g. 30" value={field.value ?? ""} onChange={(e) => field.onChange(parseInt(e.target.value))} className="h-11" />
-              )} />
-            </div>
-            <div className="space-y-1">
-              <Label>Condition</Label>
-              <Controller control={control} name="lightCondition" render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="GOOD">Good</SelectItem>
-                    <SelectItem value="REPAIR_REQUIRED">Repair Required</SelectItem>
-                    <SelectItem value="DEFECTIVE">Defective</SelectItem>
-                    <SelectItem value="MISSING">Missing</SelectItem>
-                  </SelectContent>
-                </Select>
-              )} />
-            </div>
-            <div className="space-y-1">
-              <Label>Working Status</Label>
-              <Controller control={control} name="workingStatus" render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-11"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="WORKING">Working</SelectItem>
-                    <SelectItem value="NOT_WORKING">Not Working</SelectItem>
-                  </SelectContent>
-                </Select>
-              )} />
-            </div>
+        <ImageUploadDropzone
+          preview={lightImagePreview}
+          uploading={uploadingLight}
+          onFile={(f) => uploadImage(f, "light")}
+          onClear={() => handleClearImage("light")}
+          label="Tap to capture Light photograph"
+          sublabel="Camera opens automatically on mobile · Max 200 KB"
+          iconVariant="camera"
+          previewHeight="h-44"
+        />
+      </div>
+
+      <div className="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-xs">
+        <button
+          type="button"
+          onClick={() => setShowExtendedMenu((v) => !v)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-muted/20 hover:bg-muted/40 transition-colors text-left"
+        >
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-muted-foreground" />
+            <span className="text-xs font-semibold text-foreground">
+              Extended Specifications & Pole Details (Optional)
+            </span>
           </div>
-
-          <div className="space-y-1">
-            <Label htmlFor="landmark">Landmark / Location</Label>
-            <Controller control={control} name="landmark" render={({ field }) => (
-              <Input id="landmark" placeholder="e.g. Near School Gate" value={field.value ?? ""} onChange={field.onChange} className="h-11" />
-            )} />
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <span>{showExtendedMenu ? "Hide" : "Expand"}</span>
+            {showExtendedMenu ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </div>
+        </button>
 
-          <div className="space-y-1">
-            <Label htmlFor="remarks">Remarks</Label>
-            <Controller control={control} name="remarks" render={({ field }) => (
-              <Textarea id="remarks" placeholder="Any observations…" value={field.value ?? ""} onChange={field.onChange} rows={2} />
-            )} />
-          </div>
-
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1 h-12" onClick={() => setStep(3)}>Back</Button>
-            <Button className="flex-1 h-12 gap-2" onClick={() => setStep(5)}>
-              Review <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 5: Review & Submit */}
-      {step === 5 && (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="rounded-xl border bg-muted/30 divide-y">
-            {lightPreviewId && (
-              <div className="flex items-center justify-between px-4 py-3">
-                <span className="text-sm text-muted-foreground">Light ID</span>
-                <LightIDBadge lightId={lightPreviewId} />
+        {showExtendedMenu && (
+          <div className="p-4 space-y-4 border-t border-border/50 bg-background/50 animate-in fade-in">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className="text-xs">Light Type</Label>
+                <Controller
+                  control={control}
+                  name="lightType"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-10 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LIGHT_TYPE_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
-            )}
-            <ReviewRow label="Mouza" value={mouzas?.find(m => m.id === mouzaId)?.mouzaName} />
-            <ReviewRow label="GPS" value={latitude && longitude ? `${latitude?.toFixed(4)}, ${longitude?.toFixed(4)}` : "Not captured"} />
-            <ReviewRow label="Light Type" value={watch("lightType") ?? "Not set"} />
-            <ReviewRow label="Wattage" value={watch("wattage") ? `${watch("wattage")} W` : "Not set"} />
-            <ReviewRow label="Condition" value={watch("lightCondition")?.replace(/_/g, " ")} />
-            <ReviewRow label="Status" value={watch("workingStatus")?.replace(/_/g, " ")} />
-            <ReviewRow label="Light Photo" value={lightImagePreview ? "✅ Captured" : "Not taken"} />
-            <ReviewRow label="Pole Photo" value={poleImagePreview ? "✅ Captured" : "Not taken"} />
-          </div>
 
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" className="flex-1 h-12" onClick={() => setStep(4)}>Back</Button>
-            <Button type="submit" className="flex-1 h-12 gap-2 bg-emerald-600 hover:bg-emerald-700" disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-              Save Entry
-            </Button>
-          </div>
-        </form>
-      )}
-    </div>
-  );
-}
+              <div className="space-y-1">
+                <Label className="text-xs">Wattage (W)</Label>
+                <Controller
+                  control={control}
+                  name="wattage"
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      placeholder="e.g. 30"
+                      value={field.value ?? ""}
+                      onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
+                      className="h-10 text-xs"
+                    />
+                  )}
+                />
+              </div>
 
-function ReviewRow({ label, value }: { label: string; value?: string | null }) {
-  return (
-    <div className="flex items-center justify-between px-4 py-3">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <span className="text-sm font-medium">{value ?? "—"}</span>
-    </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Pole Type</Label>
+                <Controller
+                  control={control}
+                  name="poleType"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-10 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {POLE_TYPE_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label className="text-xs">Pole No. (optional)</Label>
+                <Input
+                  {...register("poleNo")}
+                  placeholder="e.g. P-024"
+                  className="h-10 text-xs"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label className="text-xs">Condition</Label>
+                <Controller
+                  control={control}
+                  name="lightCondition"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-10 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {LIGHT_CONDITION_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label className="text-xs">Working Status</Label>
+                <Controller
+                  control={control}
+                  name="workingStatus"
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="h-10 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {WORKING_STATUS_OPTIONS.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs">Road Name</Label>
+              <Input
+                {...register("roadName")}
+                placeholder="e.g. Dhalpara-Lalpur Main Road"
+                className="h-10 text-xs"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs">Pole Photograph (optional)</Label>
+              <ImageUploadDropzone
+                preview={poleImagePreview}
+                uploading={uploadingPole}
+                onFile={(f) => uploadImage(f, "pole")}
+                onClear={() => handleClearImage("pole")}
+                label="Tap to capture pole photo"
+                iconVariant="camera"
+                previewHeight="h-32"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label className="text-xs">Remarks</Label>
+              <Textarea
+                {...register("remarks")}
+                placeholder="Any special notes or observations…"
+                rows={2}
+                className="text-xs"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="space-y-2 pt-1 sticky bottom-4 z-20">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full h-12 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg gap-2"
+        >
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <CheckCircle2 className="w-5 h-5" />
+          )}
+          ⚡ Save & Record Street Light
+        </Button>
+      </div>
+    </form>
   );
 }

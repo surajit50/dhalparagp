@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import {
@@ -12,6 +12,7 @@ import {
   ColumnDef,
 } from "@tanstack/react-table";
 import { Eye, Pencil, MapPin, Camera, Filter } from "lucide-react";
+import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,8 +33,6 @@ import {
 import { StatusBadge } from "./StatusBadge";
 import { LightIDBadge } from "./LightIDBadge";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 interface StreetLightRow {
   id: string;
   lightId: string;
@@ -49,39 +48,44 @@ interface StreetLightRow {
   lightImageUrl?: string;
 }
 
+interface MouzaOption {
+  id: string;
+  mouzaName: string;
+}
+
 export function StreetLightTable() {
   const router = useRouter();
-  const [mouzaFilter, setMouzaFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [conditionFilter, setConditionFilter] = useState("");
+  const [mouzaFilter, setMouzaFilter] = useState("ALL");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [conditionFilter, setConditionFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
-  const params = new URLSearchParams();
-  if (mouzaFilter) params.set("mouzaId", mouzaFilter);
-  if (statusFilter) params.set("workingStatus", statusFilter);
-  if (conditionFilter) params.set("lightCondition", conditionFilter);
-  params.set("limit", "200");
+  const queryUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (mouzaFilter && mouzaFilter !== "ALL") params.set("mouzaId", mouzaFilter);
+    if (statusFilter && statusFilter !== "ALL") params.set("workingStatus", statusFilter);
+    if (conditionFilter && conditionFilter !== "ALL") params.set("lightCondition", conditionFilter);
+    params.set("limit", "200");
+    return `/api/street-lights?${params.toString()}`;
+  }, [mouzaFilter, statusFilter, conditionFilter]);
 
-  const { data, isLoading } = useSWR(
-    `/api/street-lights?${params.toString()}`,
-    fetcher,
-    { refreshInterval: 30000 }
-  );
-  const { data: mouzas } = useSWR("/api/mouza-master", fetcher);
+  const { data, isLoading } = useSWR<{ lights: StreetLightRow[] }>(queryUrl, fetcher, {
+    refreshInterval: 30000,
+  });
+  const { data: mouzas } = useSWR<MouzaOption[]>("/api/mouza-master", fetcher);
 
-  const lights: StreetLightRow[] = data?.lights ?? [];
+  const lights = data?.lights ?? [];
 
-  // Client-side text search
-  const filtered = lights.filter((l) => {
-    if (!search) return true;
+  const filtered = useMemo(() => {
+    if (!search) return lights;
     const q = search.toLowerCase();
-    return (
+    return lights.filter((l) =>
       l.lightId.toLowerCase().includes(q) ||
       l.mouza?.mouzaName?.toLowerCase().includes(q) ||
       l.landmark?.toLowerCase().includes(q) ||
       l.sansad?.toLowerCase().includes(q)
     );
-  });
+  }, [lights, search]);
 
   const columns: ColumnDef<StreetLightRow>[] = [
     {
@@ -114,9 +118,12 @@ export function StreetLightTable() {
       cell: ({ row }) =>
         row.original.lightType ? (
           <span className="text-sm">
-            {row.original.lightType}{row.original.wattage ? ` ${row.original.wattage}W` : ""}
+            {row.original.lightType}
+            {row.original.wattage ? ` ${row.original.wattage}W` : ""}
           </span>
-        ) : "—",
+        ) : (
+          "—"
+        ),
     },
     {
       accessorKey: "workingStatus",
@@ -191,9 +198,14 @@ export function StreetLightTable() {
     initialState: { pagination: { pageSize: 25 } },
   });
 
+  const hasFilters =
+    mouzaFilter !== "ALL" ||
+    statusFilter !== "ALL" ||
+    conditionFilter !== "ALL" ||
+    search !== "";
+
   return (
     <div className="space-y-4">
-      {/* Filters */}
       <div className="flex flex-wrap gap-3 items-center p-4 bg-muted/30 rounded-xl border border-border/50">
         <Filter className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         <Input
@@ -207,9 +219,11 @@ export function StreetLightTable() {
             <SelectValue placeholder="All Mouzas" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Mouzas</SelectItem>
-            {(mouzas ?? []).map((m: { id: string; mouzaName: string }) => (
-              <SelectItem key={m.id} value={m.id}>{m.mouzaName}</SelectItem>
+            <SelectItem value="ALL">All Mouzas</SelectItem>
+            {(mouzas ?? []).map((m) => (
+              <SelectItem key={m.id} value={m.id}>
+                {m.mouzaName}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -218,7 +232,7 @@ export function StreetLightTable() {
             <SelectValue placeholder="All Statuses" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="ALL">All Statuses</SelectItem>
             <SelectItem value="WORKING">Working</SelectItem>
             <SelectItem value="NOT_WORKING">Not Working</SelectItem>
           </SelectContent>
@@ -228,18 +242,23 @@ export function StreetLightTable() {
             <SelectValue placeholder="All Conditions" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Conditions</SelectItem>
+            <SelectItem value="ALL">All Conditions</SelectItem>
             <SelectItem value="GOOD">Good</SelectItem>
             <SelectItem value="REPAIR_REQUIRED">Repair Required</SelectItem>
             <SelectItem value="DEFECTIVE">Defective</SelectItem>
             <SelectItem value="MISSING">Missing</SelectItem>
           </SelectContent>
         </Select>
-        {(mouzaFilter || statusFilter || conditionFilter || search) && (
+        {hasFilters && (
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => { setMouzaFilter(""); setStatusFilter(""); setConditionFilter(""); setSearch(""); }}
+            onClick={() => {
+              setMouzaFilter("ALL");
+              setStatusFilter("ALL");
+              setConditionFilter("ALL");
+              setSearch("");
+            }}
             className="h-8 text-xs"
           >
             Clear filters
@@ -250,14 +269,16 @@ export function StreetLightTable() {
         </span>
       </div>
 
-      {/* Table */}
       <div className="rounded-lg border border-border/50 shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((hg) => (
               <TableRow key={hg.id}>
                 {hg.headers.map((h) => (
-                  <TableHead key={h.id} className="px-4 py-3 font-semibold text-xs uppercase tracking-wide">
+                  <TableHead
+                    key={h.id}
+                    className="px-4 py-3 font-semibold text-xs uppercase tracking-wide"
+                  >
                     {flexRender(h.column.columnDef.header, h.getContext())}
                   </TableHead>
                 ))}
@@ -267,13 +288,19 @@ export function StreetLightTable() {
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-12 text-muted-foreground">
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center py-12 text-muted-foreground"
+                >
                   Loading street light register…
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-12 text-muted-foreground">
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-center py-12 text-muted-foreground"
+                >
                   No street lights found.
                 </TableCell>
               </TableRow>
@@ -292,14 +319,27 @@ export function StreetLightTable() {
         </Table>
       </div>
 
-      {/* Pagination */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
         </span>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>Previous</Button>
-          <Button size="sm" variant="outline" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>Next</Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
         </div>
       </div>
     </div>

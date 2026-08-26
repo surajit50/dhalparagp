@@ -2,27 +2,28 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import useSWR from "swr";
 import { Loader2 } from "lucide-react";
 import { MouzaMasterSchema, type MouzaMasterInput } from "@/schema/street-light";
+import { mapMouzaToFormInput } from "@/lib/utils/street-light";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 interface MouzaFormProps {
   defaultValues?: Partial<MouzaMasterInput>;
-  mouzaId?: string; // if editing
+  mouzaId?: string;
+  existing?: NonNullable<Parameters<typeof mapMouzaToFormInput>[0]> & { id: string };
 }
 
-export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
+export function MouzaForm({ defaultValues, mouzaId, existing }: MouzaFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const isEdit = !!mouzaId;
+
+  const initialDefaults = existing ? mapMouzaToFormInput(existing) : defaultValues;
 
   const {
     register,
@@ -32,20 +33,25 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
     formState: { errors },
   } = useForm<MouzaMasterInput>({
     resolver: zodResolver(MouzaMasterSchema),
-    defaultValues,
+    defaultValues: initialDefaults,
   });
 
-  // Auto-uppercase mouzaCode and sansadCode
-  const mouzaCodeVal = watch("mouzaCode");
-  const sansadCodeVal = watch("sansadCode");
+  const mouzaCode = watch("mouzaCode");
+  const sansadCode = watch("sansadCode");
 
-  useEffect(() => {
-    if (mouzaCodeVal) setValue("mouzaCode", mouzaCodeVal.toUpperCase());
-  }, [mouzaCodeVal, setValue]);
+  const handleMouzaCodeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("mouzaCode", e.target.value.toUpperCase(), { shouldDirty: true });
+    },
+    [setValue]
+  );
 
-  useEffect(() => {
-    if (sansadCodeVal) setValue("sansadCode", sansadCodeVal.toUpperCase());
-  }, [sansadCodeVal, setValue]);
+  const handleSansadCodeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setValue("sansadCode", e.target.value.toUpperCase(), { shouldDirty: true });
+    },
+    [setValue]
+  );
 
   const onSubmit = async (data: MouzaMasterInput) => {
     setLoading(true);
@@ -58,13 +64,13 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
         body: JSON.stringify(data),
       });
       if (!res.ok) {
-        const err = await res.json();
+        const err = await res.json().catch(() => ({}));
         throw new Error(err.error || "Failed to save");
       }
       toast.success(isEdit ? "Mouza updated successfully" : "Mouza created successfully");
       router.push("/admindashboard/street-lights/mouza");
       router.refresh();
-    } catch (err: unknown) {
+    } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
@@ -74,7 +80,6 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-2xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Mouza Name */}
         <div className="space-y-1.5 md:col-span-2">
           <Label htmlFor="mouzaName">Mouza Name *</Label>
           <Input id="mouzaName" {...register("mouzaName")} placeholder="e.g. Dhalpara" />
@@ -83,28 +88,28 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
           )}
         </div>
 
-        {/* JL No */}
         <div className="space-y-1.5">
           <Label htmlFor="jlNo">JL No.</Label>
           <Input id="jlNo" {...register("jlNo")} placeholder="e.g. 045" />
         </div>
 
-        {/* Gram Sansad */}
         <div className="space-y-1.5">
           <Label htmlFor="gramSansad">Gram Sansad *</Label>
-          <Input id="gramSansad" {...register("gramSansad")} placeholder="e.g. Lalpur Sansad" />
+          <Input
+            id="gramSansad"
+            {...register("gramSansad")}
+            placeholder="e.g. Lalpur Sansad"
+          />
           {errors.gramSansad && (
             <p className="text-xs text-destructive">{errors.gramSansad.message}</p>
           )}
         </div>
 
-        {/* Ward */}
         <div className="space-y-1.5">
           <Label htmlFor="ward">Ward / Area</Label>
           <Input id="ward" {...register("ward")} placeholder="e.g. Ward No. 3" />
         </div>
 
-        {/* Mouza Code */}
         <div className="space-y-1.5">
           <Label htmlFor="mouzaCode">
             Mouza Code *
@@ -114,7 +119,7 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
           </Label>
           <Input
             id="mouzaCode"
-            {...register("mouzaCode")}
+            {...register("mouzaCode", { onChange: handleMouzaCodeChange })}
             placeholder="e.g. DHP"
             maxLength={6}
             className="uppercase font-mono"
@@ -124,7 +129,6 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
           )}
         </div>
 
-        {/* Sansad Code */}
         <div className="space-y-1.5">
           <Label htmlFor="sansadCode">
             Sansad Code
@@ -134,7 +138,7 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
           </Label>
           <Input
             id="sansadCode"
-            {...register("sansadCode")}
+            {...register("sansadCode", { onChange: handleSansadCodeChange })}
             placeholder="e.g. LAL"
             maxLength={6}
             className="uppercase font-mono"
@@ -145,13 +149,12 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
         </div>
       </div>
 
-      {/* Light ID Preview */}
       <div className="rounded-lg border border-orange-200 bg-orange-50 p-4">
         <p className="text-sm font-medium text-orange-800 mb-1">
           Generated Light ID format:
         </p>
         <p className="font-mono text-base text-orange-700 font-bold">
-          GP-SL-{watch("mouzaCode") || "???"}-{watch("sansadCode") || "GEN"}-0001
+          GP-SL-{mouzaCode || "???"}-{sansadCode || "GEN"}-0001
         </p>
         <p className="text-xs text-orange-600 mt-1">
           Serial number auto-increments per Mouza when lights are added.
@@ -163,11 +166,7 @@ export function MouzaForm({ defaultValues, mouzaId }: MouzaFormProps) {
           {loading && <Loader2 className="w-4 h-4 animate-spin" />}
           {isEdit ? "Update Mouza" : "Create Mouza"}
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-        >
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

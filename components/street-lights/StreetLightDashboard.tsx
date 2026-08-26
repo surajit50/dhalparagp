@@ -12,8 +12,22 @@ import {
   Map,
   MessageSquareWarning,
 } from "lucide-react";
+import { fetcher } from "@/lib/utils";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+interface Stats {
+  totalLights: number;
+  workingLights: number;
+  notWorkingLights: number;
+  repairRequired: number;
+  ledLights: number;
+  totalWattage: number;
+  totalMouzas: number;
+  withGPS: number;
+  withoutGPS: number;
+  withPhoto: number;
+  withoutPhoto: number;
+  openComplaints: number;
+}
 
 function StatCard({
   icon: Icon,
@@ -49,13 +63,15 @@ function StatCard({
 }
 
 export function StreetLightDashboard() {
-  const { data: stats, isLoading } = useSWR("/api/street-lights/stats", fetcher, {
+  const { data: stats, isLoading } = useSWR<Stats>("/api/street-lights/stats", fetcher, {
     refreshInterval: 60000,
   });
 
+  const workingPercent =
+    stats?.totalLights ? Math.round((stats.workingLights / stats.totalLights) * 100) : 0;
+
   return (
     <div className="space-y-6">
-      {/* Primary Stats */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
         <StatCard
           icon={Lightbulb}
@@ -68,7 +84,7 @@ export function StreetLightDashboard() {
           icon={CheckCircle2}
           label="Working"
           value={stats?.workingLights ?? 0}
-          sub={stats ? `${Math.round((stats.workingLights / (stats.totalLights || 1)) * 100)}% of total` : ""}
+          sub={stats ? `${workingPercent}% of total` : ""}
           color="bg-emerald-500"
           loading={isLoading}
         />
@@ -119,8 +135,7 @@ export function StreetLightDashboard() {
         />
       </div>
 
-      {/* Open Complaints Alert */}
-      {!isLoading && stats?.openComplaints > 0 && (
+      {!isLoading && stats && stats.openComplaints > 0 && (
         <div className="flex items-center gap-3 rounded-xl border border-orange-200 bg-orange-50 px-5 py-4">
           <MessageSquareWarning className="w-5 h-5 text-orange-600 flex-shrink-0" />
           <p className="text-sm font-medium text-orange-800">

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import useSWR from "swr";
 import { MapPin, Loader2 } from "lucide-react";
+import { fetcher } from "@/lib/utils";
 import { StreetLightDetailCard } from "./StreetLightDetailCard";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 interface LightMapPoint {
   id: string;
@@ -31,14 +30,16 @@ interface LightMapPoint {
   lastInspection?: string | null;
 }
 
+type MapComponents = {
+  MapContainer: typeof import("react-leaflet")["MapContainer"];
+  TileLayer: typeof import("react-leaflet")["TileLayer"];
+  Marker: typeof import("react-leaflet")["Marker"];
+  Popup: typeof import("react-leaflet")["Popup"];
+  L: typeof import("leaflet");
+};
+
 export function StreetLightMapView() {
-  const [MapComponents, setMapComponents] = useState<{
-    MapContainer: typeof import("react-leaflet")["MapContainer"];
-    TileLayer: typeof import("react-leaflet")["TileLayer"];
-    Marker: typeof import("react-leaflet")["Marker"];
-    Popup: typeof import("react-leaflet")["Popup"];
-    L: typeof import("leaflet");
-  } | null>(null);
+  const [MapComponents, setMapComponents] = useState<MapComponents | null>(null);
   const [selected, setSelected] = useState<LightMapPoint | null>(null);
 
   const { data, isLoading } = useSWR<{ lights: LightMapPoint[] }>(
@@ -46,14 +47,16 @@ export function StreetLightMapView() {
     fetcher
   );
 
-  const lights = (data?.lights ?? []).filter((l) => l.latitude && l.longitude);
+  const lights = useMemo(
+    () => (data?.lights ?? []).filter((l) => l.latitude && l.longitude),
+    [data]
+  );
 
-  // Load Leaflet dynamically (client-side only)
   useEffect(() => {
-    Promise.all([import("react-leaflet"), import("leaflet")]).then(
-      ([rl, L]) => {
-        // Fix default icon paths for Next.js
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
+    let cancelled = false;
+    Promise.all([import("react-leaflet"), import("leaflet")])
+      .then(([rl, L]) => {
+        if (cancelled) return;
         delete (L.default.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
         L.default.Icon.Default.mergeOptions({
           iconRetinaUrl: "/leaflet/marker-icon-2x.png",
@@ -67,35 +70,43 @@ export function StreetLightMapView() {
           Popup: rl.Popup,
           L: L.default,
         });
-      }
-    );
+      })
+      .catch(() => {
+        if (!cancelled) console.warn("Failed to load Leaflet map libraries");
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const getMarkerIcon = (light: LightMapPoint, L: typeof import("leaflet")) => {
-    const color =
-      light.workingStatus === "NOT_WORKING"
-        ? "#ef4444" // red
-        : light.lightCondition === "REPAIR_REQUIRED"
-          ? "#f59e0b" // amber
+  const getMarkerIcon = useCallback(
+    (light: LightMapPoint, L: MapComponents["L"]) => {
+      const color =
+        light.workingStatus === "NOT_WORKING"
+          ? "#ef4444"
+          : light.lightCondition === "REPAIR_REQUIRED"
+          ? "#f59e0b"
           : light.lightCondition === "DEFECTIVE"
-            ? "#f97316" // orange
-            : "#22c55e"; // green
+          ? "#f97316"
+          : "#22c55e";
 
-    const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36" viewBox="0 0 24 36">
-        <path fill="${color}" stroke="white" stroke-width="2"
-          d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24S24 21 24 12C24 5.4 18.6 0 12 0z"/>
-        <circle fill="white" cx="12" cy="12" r="4"/>
-      </svg>`;
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="36" viewBox="0 0 24 36">
+          <path fill="${color}" stroke="white" stroke-width="2"
+            d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24S24 21 24 12C24 5.4 18.6 0 12 0z"/>
+          <circle fill="white" cx="12" cy="12" r="4"/>
+        </svg>`;
 
-    return L.divIcon({
-      html: svg,
-      className: "",
-      iconSize: [24, 36],
-      iconAnchor: [12, 36],
-      popupAnchor: [0, -36],
-    });
-  };
+      return L.divIcon({
+        html: svg,
+        className: "",
+        iconSize: [24, 36],
+        iconAnchor: [12, 36],
+        popupAnchor: [0, -36],
+      });
+    },
+    []
+  );
 
   if (isLoading || !MapComponents) {
     return (
@@ -110,7 +121,7 @@ export function StreetLightMapView() {
     return (
       <div className="flex flex-col items-center justify-center h-96 bg-muted/30 rounded-xl border border-border/50 gap-3">
         <MapPin className="w-10 h-10 text-muted-foreground" />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground text-sm text-center">
           No street lights with GPS coordinates found.
           <br />
           Add lights with GPS to see them on the map.
@@ -121,13 +132,14 @@ export function StreetLightMapView() {
 
   const { MapContainer, TileLayer, Marker, Popup, L } = MapComponents;
 
-  // Center on mean coordinates
-  const centerLat = lights.reduce((s, l) => s + (l.latitude ?? 0), 0) / lights.length;
-  const centerLng = lights.reduce((s, l) => s + (l.longitude ?? 0), 0) / lights.length;
+  const center = useMemo(() => {
+    const latSum = lights.reduce((s, l) => s + (l.latitude ?? 0), 0);
+    const lngSum = lights.reduce((s, l) => s + (l.longitude ?? 0), 0);
+    return [latSum / lights.length, lngSum / lights.length] as [number, number];
+  }, [lights]);
 
   return (
     <div className="space-y-4">
-      {/* Legend */}
       <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
         {[
           { color: "#22c55e", label: "Working / Good" },
@@ -136,7 +148,10 @@ export function StreetLightMapView() {
           { color: "#ef4444", label: "Not Working" },
         ].map((item) => (
           <span key={item.label} className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ backgroundColor: item.color }} />
+            <span
+              className="w-3 h-3 rounded-full border border-white shadow-sm"
+              style={{ backgroundColor: item.color }}
+            />
             {item.label}
           </span>
         ))}
@@ -145,13 +160,11 @@ export function StreetLightMapView() {
         </span>
       </div>
 
-      {/* Map */}
-      <div className="rounded-xl overflow-hidden border border-border/50 shadow-sm" style={{ height: "500px" }}>
-        <MapContainer
-          center={[centerLat, centerLng]}
-          zoom={14}
-          style={{ height: "100%", width: "100%" }}
-        >
+      <div
+        className="rounded-xl overflow-hidden border border-border/50 shadow-sm"
+        style={{ height: "500px" }}
+      >
+        <MapContainer center={center} zoom={14} style={{ height: "100%", width: "100%" }}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -164,7 +177,10 @@ export function StreetLightMapView() {
               eventHandlers={{ click: () => setSelected(light) }}
             >
               <Popup maxWidth={300}>
-                <StreetLightDetailCard light={light as Parameters<typeof StreetLightDetailCard>[0]['light']} compact />
+                <StreetLightDetailCard
+                  light={light as Parameters<typeof StreetLightDetailCard>[0]["light"]}
+                  compact
+                />
               </Popup>
             </Marker>
           ))}

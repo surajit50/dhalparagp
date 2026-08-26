@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, Lightbulb, CheckCircle2, XCircle } from "lucide-react";
+import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -26,8 +27,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 interface MouzaRecord {
   id: string;
   mouzaName: string;
@@ -43,18 +42,24 @@ interface MouzaRecord {
 
 export function MouzaTable() {
   const router = useRouter();
-  const { data: mouzas, isLoading, mutate } = useSWR<MouzaRecord[]>("/api/mouza-master", fetcher);
+  const { data: mouzas, isLoading, mutate } = useSWR<MouzaRecord[]>(
+    "/api/mouza-master",
+    fetcher
+  );
   const [deleting, setDeleting] = useState<string | null>(null);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, name: string) => {
     setDeleting(id);
     try {
       const res = await fetch(`/api/mouza-master/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Delete failed");
-      toast.success("Mouza deleted");
-      mutate();
-    } catch {
-      toast.error("Failed to delete mouza");
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Delete failed");
+      }
+      toast.success(`Mouza "${name}" deleted`);
+      await mutate();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete mouza");
     } finally {
       setDeleting(null);
     }
@@ -70,11 +75,13 @@ export function MouzaTable() {
     );
   }
 
+  const count = mouzas?.length ?? 0;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          {mouzas?.length ?? 0} Mouza{mouzas?.length !== 1 ? "s" : ""} registered
+          {count} Mouza{count !== 1 ? "s" : ""} registered
         </p>
         <Button
           onClick={() => router.push("/admindashboard/street-lights/mouza/add")}
@@ -100,9 +107,12 @@ export function MouzaTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {mouzas?.length === 0 && (
+            {count === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
+                <TableCell
+                  colSpan={8}
+                  className="text-center py-12 text-muted-foreground"
+                >
                   No Mouza records found. Add the first one.
                 </TableCell>
               </TableRow>
@@ -114,7 +124,8 @@ export function MouzaTable() {
                 <TableCell>{m.gramSansad}</TableCell>
                 <TableCell>
                   <span className="font-mono text-xs bg-orange-50 text-orange-700 border border-orange-200 px-2 py-0.5 rounded">
-                    {m.mouzaCode}{m.sansadCode ? `-${m.sansadCode}` : ""}
+                    {m.mouzaCode}
+                    {m.sansadCode ? `-${m.sansadCode}` : ""}
                   </span>
                 </TableCell>
                 <TableCell className="text-center">
@@ -169,7 +180,7 @@ export function MouzaTable() {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-destructive hover:bg-destructive/90"
-                            onClick={() => handleDelete(m.id)}
+                            onClick={() => handleDelete(m.id, m.mouzaName)}
                           >
                             Delete
                           </AlertDialogAction>

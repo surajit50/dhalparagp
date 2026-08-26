@@ -2,10 +2,12 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
-import { Loader2, X, Camera } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { ComplaintUpdateSchema, type ComplaintUpdateInput } from "@/schema/street-light";
+import { COMPLAINT_STATUS_OPTIONS } from "@/lib/utils/street-light";
+import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StatusBadge } from "./StatusBadge";
+import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface ComplaintUpdateFormProps {
   complaintId: string;
@@ -45,7 +48,7 @@ export function ComplaintUpdateForm({
     defaultValues: { status: currentStatus as ComplaintUpdateInput["status"] },
   });
 
-  const uploadImage = async (file: File) => {
+  const uploadImage = useCallback(async (file: File) => {
     setUploading(true);
     try {
       const formData = new FormData();
@@ -63,9 +66,15 @@ export function ComplaintUpdateForm({
     } finally {
       setUploading(false);
     }
-  };
+  }, [setValue]);
 
-  const onSubmit = async (data: ComplaintUpdateInput) => {
+  const handleClearImage = useCallback(() => {
+    setImagePreview(null);
+    setValue("completionImageUrl", undefined);
+    setValue("completionImagePublicId", undefined);
+  }, [setValue]);
+
+  const onSubmit = useCallback(async (data: ComplaintUpdateInput) => {
     setLoading(true);
     try {
       const res = await fetch(`/api/street-lights/complaints/${complaintId}`, {
@@ -81,7 +90,7 @@ export function ComplaintUpdateForm({
     } finally {
       setLoading(false);
     }
-  };
+  }, [complaintId, onSuccess]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -100,11 +109,9 @@ export function ComplaintUpdateForm({
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger><SelectValue placeholder="Select status" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="ASSIGNED">Assigned</SelectItem>
-                  <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                  <SelectItem value="RESOLVED">Resolved</SelectItem>
-                  <SelectItem value="CLOSED">Closed</SelectItem>
+                  {COMPLAINT_STATUS_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -141,34 +148,17 @@ export function ComplaintUpdateForm({
           />
         </div>
 
-        {/* Completion photo */}
         <div className="space-y-1.5 md:col-span-2">
           <Label>Completion / After-Repair Photo</Label>
-          <div className="rounded-xl border-2 border-dashed border-muted-foreground/25 p-4">
-            {imagePreview ? (
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imagePreview} alt="Completion" className="w-full h-32 object-cover rounded-lg" />
-                <button
-                  type="button"
-                  onClick={() => { setImagePreview(null); setValue("completionImageUrl", undefined); }}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ) : (
-              <label className="flex items-center gap-3 cursor-pointer">
-                {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Camera className="w-5 h-5 text-muted-foreground" />}
-                <span className="text-sm text-muted-foreground">
-                  {uploading ? "Uploading…" : "Attach after-repair photo"}
-                </span>
-                <input type="file" accept="image/*" capture="environment" className="hidden"
-                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); }}
-                />
-              </label>
-            )}
-          </div>
+          <ImageUploadDropzone
+            preview={imagePreview}
+            uploading={uploading}
+            onFile={uploadImage}
+            onClear={handleClearImage}
+            label="Attach after-repair photo"
+            iconVariant="camera"
+            previewHeight="h-32"
+          />
         </div>
       </div>
 

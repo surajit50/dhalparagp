@@ -3,6 +3,9 @@
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { Eye } from "lucide-react";
+import { fetcher } from "@/lib/utils";
+import { formatDate } from "@/lib/utils/date";
+import { toTitleCase } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -13,8 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { StatusBadge } from "./StatusBadge";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 interface Complaint {
   id: string;
@@ -34,7 +35,7 @@ interface Complaint {
 }
 
 interface ComplaintTableProps {
-  streetLightId?: string; // filter by light; omit for all complaints
+  streetLightId?: string;
 }
 
 export function ComplaintTable({ streetLightId }: ComplaintTableProps) {
@@ -43,21 +44,17 @@ export function ComplaintTable({ streetLightId }: ComplaintTableProps) {
     ? `/api/street-lights/${streetLightId}/complaints`
     : `/api/street-lights/complaints`;
 
-  const { data, isLoading } = useSWR(url, fetcher, {
-    refreshInterval: 30000,
-  });
+  const { data, isLoading } = useSWR<Complaint[] | { complaints: Complaint[]; total: number }>(
+    url,
+    fetcher,
+    { refreshInterval: 30000 }
+  );
 
-  // Per-light endpoint returns array; all-complaints returns { complaints, total }
   const complaints: Complaint[] = streetLightId
     ? (Array.isArray(data) ? data : [])
-    : (data?.complaints ?? []);
+    : (!Array.isArray(data) ? data?.complaints ?? [] : []);
 
-  const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+  const colSpan = streetLightId ? 7 : 8;
 
   return (
     <div className="rounded-lg border border-border/50 shadow-sm overflow-hidden">
@@ -77,20 +74,22 @@ export function ComplaintTable({ streetLightId }: ComplaintTableProps) {
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
+              <TableCell colSpan={colSpan} className="text-center py-10 text-muted-foreground">
                 Loading complaints…
               </TableCell>
             </TableRow>
           ) : !complaints?.length ? (
             <TableRow>
-              <TableCell colSpan={8} className="text-center py-10 text-muted-foreground">
+              <TableCell colSpan={colSpan} className="text-center py-10 text-muted-foreground">
                 No complaints found.
               </TableCell>
             </TableRow>
           ) : (
             complaints.map((c) => (
               <TableRow key={c.id} className="hover:bg-muted/30 transition-colors">
-                <TableCell className="font-mono text-xs font-semibold">{c.complaintNo}</TableCell>
+                <TableCell className="font-mono text-xs font-semibold">
+                  {c.complaintNo}
+                </TableCell>
                 {!streetLightId && (
                   <TableCell>
                     <span className="font-mono text-xs text-orange-700">
@@ -105,7 +104,7 @@ export function ComplaintTable({ streetLightId }: ComplaintTableProps) {
                 )}
                 <TableCell className="text-sm">{formatDate(c.complaintDate)}</TableCell>
                 <TableCell className="text-sm">
-                  {c.complaintType?.replace(/_/g, " ") ?? "—"}
+                  {c.complaintType ? toTitleCase(c.complaintType) : "—"}
                 </TableCell>
                 <TableCell>
                   <StatusBadge type="priority" value={c.priority} />

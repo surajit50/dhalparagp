@@ -2,10 +2,12 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
-import { Loader2, Camera, X, Image as ImageIcon } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { StreetLightComplaintSchema, type StreetLightComplaintInput } from "@/schema/street-light";
+import { COMPLAINT_TYPE_OPTIONS, PRIORITY_OPTIONS } from "@/lib/utils/street-light";
+import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface ComplaintFormProps {
   streetLightId: string;
@@ -41,7 +44,7 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
     defaultValues: { streetLightId, priority: "NORMAL" },
   });
 
-  const uploadImage = async (file: File) => {
+  const uploadImage = useCallback(async (file: File) => {
     setUploading(true);
     try {
       const formData = new FormData();
@@ -59,9 +62,15 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
     } finally {
       setUploading(false);
     }
-  };
+  }, [setValue]);
 
-  const onSubmit = async (data: StreetLightComplaintInput) => {
+  const handleClearImage = useCallback(() => {
+    setImagePreview(null);
+    setValue("complaintImageUrl", undefined);
+    setValue("complaintImagePublicId", undefined);
+  }, [setValue]);
+
+  const onSubmit = useCallback(async (data: StreetLightComplaintInput) => {
     setLoading(true);
     try {
       const res = await fetch(`/api/street-lights/${streetLightId}/complaints`, {
@@ -79,7 +88,7 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
     } finally {
       setLoading(false);
     }
-  };
+  }, [streetLightId, reset, onSuccess]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -97,11 +106,9 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="NOT_WORKING">Not Working</SelectItem>
-                  <SelectItem value="DAMAGED">Damaged / Broken</SelectItem>
-                  <SelectItem value="MISSING">Missing</SelectItem>
-                  <SelectItem value="WIRE_ISSUE">Wire Issue</SelectItem>
-                  <SelectItem value="OTHER">Other</SelectItem>
+                  {COMPLAINT_TYPE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -117,10 +124,9 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
               <Select onValueChange={field.onChange} value={field.value}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="LOW">Low</SelectItem>
-                  <SelectItem value="NORMAL">Normal</SelectItem>
-                  <SelectItem value="HIGH">High</SelectItem>
-                  <SelectItem value="URGENT">Urgent</SelectItem>
+                  {PRIORITY_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -141,34 +147,17 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
           <Input id="reporterMobile" {...register("reporterMobile")} placeholder="10-digit mobile" type="tel" />
         </div>
 
-        {/* Complaint Photo */}
         <div className="space-y-1.5 md:col-span-2">
           <Label>Complaint Photo (optional)</Label>
-          <div className="rounded-xl border-2 border-dashed border-muted-foreground/25 p-4">
-            {imagePreview ? (
-              <div className="relative">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={imagePreview} alt="Complaint" className="w-full h-32 object-cover rounded-lg" />
-                <button
-                  type="button"
-                  onClick={() => { setImagePreview(null); setValue("complaintImageUrl", undefined); }}
-                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            ) : (
-              <label className="flex items-center gap-3 cursor-pointer">
-                {uploading ? <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /> : <Camera className="w-5 h-5 text-muted-foreground" />}
-                <span className="text-sm text-muted-foreground">
-                  {uploading ? "Uploading…" : "Tap to attach a photo of the problem"}
-                </span>
-                <input type="file" accept="image/*" capture="environment" className="hidden"
-                  onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); }}
-                />
-              </label>
-            )}
-          </div>
+          <ImageUploadDropzone
+            preview={imagePreview}
+            uploading={uploading}
+            onFile={uploadImage}
+            onClear={handleClearImage}
+            label="Tap to attach a photo of the problem"
+            iconVariant="camera"
+            previewHeight="h-32"
+          />
         </div>
       </div>
 
