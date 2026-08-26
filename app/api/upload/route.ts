@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { v2 as cloudinary } from "cloudinary";
+import { v2 as cloudinary, type UploadApiResponse } from "cloudinary";
+import { Readable } from "node:stream";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -13,7 +15,6 @@ export async function OPTIONS() {
   });
 }
 
-
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -21,10 +22,29 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+/**
+ * Upload a buffer to Cloudinary using `upload_stream` (avoids the
+ * deprecated `url.parse()` path that the base64-dataURI method triggers).
+ */
+function uploadToCloudinary(
+  buffer: Buffer,
+  folder: string
+): Promise<UploadApiResponse> {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: "auto" },
+      (error, result) => {
+        if (error) return reject(error);
+        if (!result) return reject(new Error("Empty Cloudinary response"));
+        resolve(result);
+      }
+    );
+    Readable.from(buffer).pipe(stream);
+  });
+}
+
 export async function POST(request: Request) {
   try {
-
-
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
@@ -35,31 +55,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Convert file to base64
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    const base64String = buffer.toString('base64');
-    const dataURI = `data:${file.type};base64,${base64String}`;
+    const folder = (formData.get("folder") as string) || "street-lights";
 
-    // Upload to Cloudinary
-    const result = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload(
-        dataURI,
-        {
-          folder: "work-order-documents",
-          resource_type: "auto",
-        },
-        (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
-        }
-      );
-    });
+    // Upload via stream (no url.parse() deprecation)
+    const result = await uploadToCloudinary(buffer, folder);
 
-    return NextResponse.json({
-      fileUrl: (result as any).secure_url,
-      publicId: (result as any).public_id,
-    }, { headers: corsHeaders });
+    return NextResponse.json(
+      {
+        url: result.secure_url,
+        fileUrl: result.secure_url,
+        publicId: result.public_id,
+      },
+      { headers: corsHeaders }
+    );
   } catch (error) {
     console.error("File upload error:", error);
     return NextResponse.json(
@@ -67,4 +77,5 @@ export async function POST(request: Request) {
       { status: 500, headers: corsHeaders }
     );
   }
-} 
+}
+ 
