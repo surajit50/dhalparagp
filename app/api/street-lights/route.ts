@@ -73,13 +73,14 @@ export async function POST(request: Request) {
     const sansadCode = mouza.sansadCode || "GEN";
     const lightId = `GP-SL-${mouza.mouzaCode}-${sansadCode}-${serial}`;
 
-    const { lastInspection, ...rest } = data;
+    const { lastInspection, bulbInstallationDate, ...rest } = data;
 
     const light = await db.streetLight.create({
       data: {
         ...rest,
         lightId,
         ...(lastInspection ? { lastInspection: new Date(lastInspection) } : {}),
+        ...(bulbInstallationDate ? { bulbInstallationDate: new Date(bulbInstallationDate) } : {}),
       },
       include: { mouza: { select: { mouzaName: true } } },
     });

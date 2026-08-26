@@ -42,13 +42,14 @@ export async function PUT(
       );
     }
 
-    const { lastInspection, ...rest } = parsed.data;
+    const { lastInspection, bulbInstallationDate, ...rest } = parsed.data;
 
     const light = await db.streetLight.update({
       where: { id },
       data: {
         ...rest,
         ...(lastInspection ? { lastInspection: new Date(lastInspection) } : {}),
+        ...(bulbInstallationDate ? { bulbInstallationDate: new Date(bulbInstallationDate) } : {}),
       },
       include: { mouza: { select: { mouzaName: true } } },
     });
