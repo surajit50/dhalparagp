@@ -13,7 +13,7 @@ export function generateCertificateNumber(): string {
     .padStart(3, "0");
   return `${prefix}${timestamp}${random}`;
 }
-// lib/utils.ts
+
 export function formatCurrency(amount: number) {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -21,6 +21,49 @@ export function formatCurrency(amount: number) {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+export const fetcher = <T = unknown>(url: string): Promise<T> =>
+  fetch(url).then((res) => {
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    return res.json() as Promise<T>;
+  });
+
+export function toTitleCase(str: string): string {
+  return str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export function formatCsvValue(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "object") return JSON.stringify(value);
+  const str = String(value);
+  if (str.includes(",") || str.includes("\"") || str.includes("\n")) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+export function downloadCsv(rows: Record<string, unknown>[], filename: string): void {
+  if (!rows.length) return;
+  const headers = Object.keys(rows[0]);
+  const csvLines = [
+    headers.join(","),
+    ...rows.map((row) => headers.map((h) => formatCsvValue(row[h])).join(",")),
+  ];
+  const csv = csvLines.join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename.endsWith(".csv") ? filename : `${filename}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+export function extractEnumValues<T extends string>(obj: Record<string, T>): T[] {
+  return Object.values(obj);
 }
 
 export function numberToWords(num: number): string {
