@@ -4571,3 +4571,105 @@ model Voucher {
 
   @@map("vouchers")
 }
+
+// ===================================================
+// --- STREET LIGHT REGISTER SYSTEM ---
+// ===================================================
+
+model MouzaMaster {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  mouzaName    String
+  jlNo         String?
+  gramSansad   String
+  ward         String?
+  mouzaCode    String        @unique // e.g. "DHP" — used in Light ID generation
+  sansadCode   String? // e.g. "LAL" — used in Light ID generation
+  streetLights StreetLight[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@map("mouza_masters")
+}
+
+model StreetLight {
+  id       String      @id @default(auto()) @map("_id") @db.ObjectId
+  lightId  String      @unique // e.g. GP-SL-DHP-LAL-0001 (permanent ID)
+
+  mouzaId  String      @db.ObjectId
+  mouza    MouzaMaster @relation(fields: [mouzaId], references: [id])
+
+  sansad   String?
+  ward     String?
+  landmark String?
+  roadName String?
+  poleNo   String? // existing pole identification number
+
+  installYear Int?
+  ownership   String? // GP / Electricity Department / Other
+
+  // GPS Coordinates
+  latitude    Float?
+  longitude   Float?
+  gpsAccuracy Float?
+
+  // Light specification
+  lightType String? // LED / Sodium / Other
+  wattage   Int?
+  poleType  String? // Electric Pole / RCC / MS / Other
+
+  // Condition & Status
+  lightCondition String   @default("GOOD") // GOOD / REPAIR_REQUIRED / DEFECTIVE / MISSING
+  workingStatus  String   @default("WORKING") // WORKING / NOT_WORKING
+  lastInspection DateTime?
+  remarks        String?
+
+  // Cloudinary — Light photograph
+  lightImageUrl      String?
+  lightImagePublicId String?
+
+  // Cloudinary — Pole photograph
+  poleImageUrl      String?
+  poleImagePublicId String?
+
+  complaints StreetLightComplaint[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("street_lights")
+}
+
+model StreetLightComplaint {
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  complaintNo String      @unique // e.g. SLC-2526-000001
+
+  streetLightId String
+  streetLight   StreetLight @relation(fields: [streetLightId], references: [id])
+
+  complaintDate DateTime @default(now())
+  complaintType String? // NOT_WORKING / DAMAGED / MISSING / OTHER
+  description   String?
+
+  reportedBy     String?
+  reporterMobile String?
+  priority       String  @default("NORMAL") // LOW / NORMAL / HIGH / URGENT
+  status         String  @default("PENDING") // PENDING / ASSIGNED / IN_PROGRESS / RESOLVED / CLOSED
+
+  assignedTo   String?
+  assignedDate DateTime?
+
+  repairDate   DateTime?
+  resolvedDate DateTime?
+
+  complaintImageUrl       String?
+  complaintImagePublicId  String?
+  completionImageUrl      String?
+  completionImagePublicId String?
+
+  repairRemarks String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("street_light_complaints")
+}

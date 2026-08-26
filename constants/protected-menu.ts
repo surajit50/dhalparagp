@@ -8,7 +8,8 @@ import {
   MdWork, MdListAlt, MdAnalytics, MdReceipt, MdImportantDevices, MdBlock,
 
   MdHome, MdAccountCircle, MdSecurity, MdAttachMoney, MdHelp, MdFolder,
-  MdInsertChart, MdGavel, MdDescription as MdDoc, MdApartment, MdImage, MdBuild, MdWater
+  MdInsertChart, MdGavel, MdDescription as MdDoc, MdApartment, MdImage, MdBuild, MdWater,
+  MdLightbulb
 } from "react-icons/md";
 import { FaChevronCircleRight, FaChartBar, FaChevronDown, FaTruck, FaKey, FaMeetup, FaFileContract, FaRegFileAlt, FaRegListAlt } from "react-icons/fa";
 import { HiDocumentDuplicate } from "react-icons/hi";
@@ -450,6 +451,20 @@ export const adminMenuItems: MenuItemProps[] = [
     createMenuItem("Repair Requests", ["admin"], `${BASE_URLS.admin}/tubewell/requests`, FaChevronCircleRight, COLORS.red),
     createMenuItem("Work Orders", ["admin"], `${BASE_URLS.admin}/tubewell/work-orders`, FaChevronCircleRight, COLORS.purple),
     createMenuItem("Bills (Mustor)", ["admin"], `${BASE_URLS.admin}/tubewell/bills`, FaChevronCircleRight, COLORS.green),
+  ]),
+
+  // Street Light Register System
+  createMenuItem("Street Light Register", ["admin"], undefined, MdLightbulb, COLORS.orange, [
+    createMenuItem("Dashboard", ["admin"], `${BASE_URLS.admin}/street-lights`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Mouza Master", ["admin"], `${BASE_URLS.admin}/street-lights/mouza`, FaChevronCircleRight, COLORS.teal),
+    createMenuItem("Light Register", ["admin"], undefined, FaChevronDown, COLORS.blue, [
+      createMenuItem("All Lights", ["admin"], `${BASE_URLS.admin}/street-lights/register`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Add New Light", ["admin"], `${BASE_URLS.admin}/street-lights/register/add`, FaChevronCircleRight, COLORS.green),
+    ]),
+    createMenuItem("Complaints & Repairs", ["admin"], `${BASE_URLS.admin}/street-lights/complaints`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Map View", ["admin"], `${BASE_URLS.admin}/street-lights/map`, FaChevronCircleRight, COLORS.indigo),
+    createMenuItem("Reports", ["admin"], `${BASE_URLS.admin}/street-lights/reports`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("Field Survey", ["admin", "staff"], `${BASE_URLS.admin}/street-lights/survey`, FaChevronCircleRight, COLORS.cyan),
   ]),
 
   // Community Services
