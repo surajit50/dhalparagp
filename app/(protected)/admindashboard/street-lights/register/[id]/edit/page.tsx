@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { StreetLightForm } from "@/components/street-lights/StreetLightForm";
+import { mapStreetLightToFormInput } from "@/lib/utils/street-light";
 
 export default async function EditStreetLightPage({
   params,
@@ -27,30 +28,7 @@ export default async function EditStreetLightPage({
       <StreetLightForm
         lightDbId={id}
         existingLightId={light.lightId}
-        defaultValues={{
-          mouzaId: light.mouzaId,
-          sansad: light.sansad ?? undefined,
-          ward: light.ward ?? undefined,
-          landmark: light.landmark ?? undefined,
-          roadName: light.roadName ?? undefined,
-          poleNo: light.poleNo ?? undefined,
-          installYear: light.installYear ?? undefined,
-          ownership: light.ownership as "GP" | "ELECTRICITY_DEPARTMENT" | "OTHER" | undefined,
-          latitude: light.latitude ?? undefined,
-          longitude: light.longitude ?? undefined,
-          gpsAccuracy: light.gpsAccuracy ?? undefined,
-          lightType: light.lightType as "LED" | "SODIUM" | "CFL" | "HALOGEN" | "OTHER" | undefined,
-          wattage: light.wattage ?? undefined,
-          poleType: light.poleType as "ELECTRIC_POLE" | "RCC" | "MS" | "WOODEN" | "OTHER" | undefined,
-          lightCondition: light.lightCondition as "GOOD" | "REPAIR_REQUIRED" | "DEFECTIVE" | "MISSING",
-          workingStatus: light.workingStatus as "WORKING" | "NOT_WORKING",
-          lastInspection: light.lastInspection?.toISOString().split("T")[0] ?? undefined,
-          remarks: light.remarks ?? undefined,
-          lightImageUrl: light.lightImageUrl ?? undefined,
-          lightImagePublicId: light.lightImagePublicId ?? undefined,
-          poleImageUrl: light.poleImageUrl ?? undefined,
-          poleImagePublicId: light.poleImagePublicId ?? undefined,
-        }}
+        defaultValues={mapStreetLightToFormInput(light)}
       />
     </div>
   );

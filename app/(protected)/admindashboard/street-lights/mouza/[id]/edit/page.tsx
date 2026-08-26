@@ -26,14 +26,7 @@ export default async function EditMouzaPage({
       </div>
       <MouzaForm
         mouzaId={id}
-        defaultValues={{
-          mouzaName: mouza.mouzaName,
-          jlNo: mouza.jlNo ?? undefined,
-          gramSansad: mouza.gramSansad,
-          ward: mouza.ward ?? undefined,
-          mouzaCode: mouza.mouzaCode,
-          sansadCode: mouza.sansadCode ?? undefined,
-        }}
+        existing={mouza}
       />
     </div>
   );

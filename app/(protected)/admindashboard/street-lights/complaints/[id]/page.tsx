@@ -6,6 +6,8 @@ import { StatusBadge } from "@/components/street-lights/StatusBadge";
 import { LightIDBadge } from "@/components/street-lights/LightIDBadge";
 import { ComplaintUpdateForm } from "@/components/street-lights/ComplaintUpdateForm";
 import Image from "next/image";
+import { formatDate } from "@/lib/utils/date";
+import { toTitleCase } from "@/lib/utils";
 
 export default async function ComplaintDetailPage({
   params,
@@ -20,9 +22,6 @@ export default async function ComplaintDetailPage({
     },
   });
   if (!complaint) notFound();
-
-  const formatDate = (d: Date | null) =>
-    d ? new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "—";
 
   return (
     <div className="space-y-6 max-w-3xl">
@@ -60,12 +59,12 @@ export default async function ComplaintDetailPage({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <DetailRow label="Complaint No." value={complaint.complaintNo} />
           <DetailRow label="Date" value={formatDate(complaint.complaintDate)} />
-          <DetailRow label="Type" value={complaint.complaintType?.replace(/_/g, " ") ?? "—"} />
+          <DetailRow label="Type" value={complaint.complaintType ? toTitleCase(complaint.complaintType) : "—"} />
           <DetailRow label="Reported By" value={complaint.reportedBy ?? "—"} />
           <DetailRow label="Mobile" value={complaint.reporterMobile ?? "—"} />
           <DetailRow label="Assigned To" value={complaint.assignedTo ?? "Not assigned"} />
-          <DetailRow label="Repair Date" value={formatDate(complaint.repairDate)} />
-          <DetailRow label="Resolved Date" value={formatDate(complaint.resolvedDate)} />
+          <DetailRow label="Repair Date" value={complaint.repairDate ? formatDate(complaint.repairDate) : "—"} />
+          <DetailRow label="Resolved Date" value={complaint.resolvedDate ? formatDate(complaint.resolvedDate) : "—"} />
         </div>
         {complaint.description && (
           <div className="rounded-lg bg-muted/40 p-3 text-sm">
