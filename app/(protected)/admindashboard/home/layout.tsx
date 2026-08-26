@@ -37,10 +37,7 @@ export default function Adminhomelayoutprops({
 
       
 
-      {/* Live Dashboard Content */}
-      <div className="bg-white/50 backdrop-blur-sm rounded-3xl p-1 border border-slate-100 shadow-sm">
-        {livedashboard}
-      </div>
+      
 
       {/* Charts Section */}
       <div className="w-full">
