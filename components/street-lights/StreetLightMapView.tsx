@@ -108,6 +108,13 @@ export function StreetLightMapView() {
     []
   );
 
+  const center = useMemo(() => {
+    if (lights.length === 0) return [0, 0] as [number, number];
+    const latSum = lights.reduce((s, l) => s + (l.latitude ?? 0), 0);
+    const lngSum = lights.reduce((s, l) => s + (l.longitude ?? 0), 0);
+    return [latSum / lights.length, lngSum / lights.length] as [number, number];
+  }, [lights]);
+
   if (isLoading || !MapComponents) {
     return (
       <div className="flex flex-col items-center justify-center h-96 bg-muted/30 rounded-xl border border-border/50 gap-3">
@@ -131,12 +138,6 @@ export function StreetLightMapView() {
   }
 
   const { MapContainer, TileLayer, Marker, Popup, L } = MapComponents;
-
-  const center = useMemo(() => {
-    const latSum = lights.reduce((s, l) => s + (l.latitude ?? 0), 0);
-    const lngSum = lights.reduce((s, l) => s + (l.longitude ?? 0), 0);
-    return [latSum / lights.length, lngSum / lights.length] as [number, number];
-  }, [lights]);
 
   return (
     <div className="space-y-4">
