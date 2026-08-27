@@ -46,6 +46,24 @@ export const tenderColDef: ColumnDef<TenderColDefProps>[] = [
     header: "Estimate Amount",
     // Format the date
   },
+  {
+    accessorKey: "nitDetails.nitMode",
+    header: "Mode",
+    cell: ({ row }) => {
+      const mode = row.original.nitDetails?.nitMode || "ONLINE";
+      return (
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+            mode === "MANUAL"
+              ? "bg-amber-100 text-amber-800"
+              : "bg-blue-100 text-blue-800"
+          }`}
+        >
+          {mode}
+        </span>
+      );
+    },
+  },
 
   {
     id: "action",
