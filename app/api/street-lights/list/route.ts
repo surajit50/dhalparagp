@@ -11,6 +11,8 @@ export async function GET() {
         landmark: true,
         roadName: true,
         ward: true,
+        latitude: true,
+        longitude: true,
         mouza: {
           select: {
             mouzaName: true,
