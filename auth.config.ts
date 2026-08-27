@@ -49,6 +49,7 @@ export default {
         session.user.email = token.email as string;
         session.user.isOAuth = token.isOAuth as boolean;
         session.user.agencyDetailsId = token.agencyDetailsId as string | null;
+        session.user.agencyCategory = token.agencyCategory as string | undefined;
       }
 
       return session;

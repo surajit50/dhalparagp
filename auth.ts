@@ -88,6 +88,8 @@ export const {
       token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
       token.agencyDetailsId = existingUser.agencyDetailsId;
+      // @ts-ignore - Prisma returns agencyDetails as we included it in data/user.ts
+      token.agencyCategory = existingUser.agencyDetails?.agencyCategory;
 
       return token;
     },

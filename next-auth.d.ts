@@ -10,6 +10,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
   agencyDetailsId: string | null;
+  agencyCategory?: string;
 };
 
 declare module "next-auth" {
@@ -25,6 +26,7 @@ declare module "next-auth/jwt" {
     id: UserId;
     role: UserRole;
     agencyDetailsId: string | null;
+    agencyCategory?: string;
   }
 }
 
@@ -37,6 +39,7 @@ declare module "next-auth" {
       id: UserId;
       role: UserRole;
       agencyDetailsId: string | null;
+      agencyCategory?: string;
     };
   }
 }

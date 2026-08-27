@@ -660,7 +660,11 @@ export const agencyMenuItems: MenuItemProps[] = [
     createMenuItem("Site Inspection Reports", ["agency"], `${BASE_URLS.agency}/works/inspection`, MdAssignment, COLORS.blue),
   ]),
 
-
+  createMenuItem("Street Light Survey and Repair", ["agency"], undefined, MdLightbulb, COLORS.orange, [
+    createMenuItem("Survey Dashboard", ["agency"], `${BASE_URLS.agency}/street-lights`, FaChevronCircleRight, COLORS.orange),
+    createMenuItem("Field Survey", ["agency"], `${BASE_URLS.agency}/street-lights/survey`, FaChevronCircleRight, COLORS.cyan),
+    createMenuItem("Complaints & Repairs", ["agency"], `${BASE_URLS.agency}/street-lights/complaints`, FaChevronCircleRight, COLORS.red),
+  ]),
 
   createMenuItem("Contract & AOC", ["agency"], undefined, MdDescription, COLORS.orange, [
     createMenuItem("AOC Details", ["agency"], `${BASE_URLS.agency}/aoc`, FaChevronCircleRight, COLORS.orange),

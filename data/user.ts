@@ -20,6 +20,9 @@ export const getUserById = async (id: string | undefined) => {
       where: {
         id,
       },
+      include: {
+        agencyDetails: true,
+      },
     });
 
     return user;

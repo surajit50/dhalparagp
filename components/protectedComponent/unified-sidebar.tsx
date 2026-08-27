@@ -28,6 +28,7 @@ import {
 } from "@/constants/protected-menu";
 import type { RootState } from "@/redux/store";
 import { toggleMenu } from "@/redux/slices/menuSlice";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 type Role = "user" | "admin" | "staff" | "superadmin" | "agency" | "citizen";
 
@@ -165,6 +166,23 @@ function SidebarContent({
   onClose?: () => void;
 }) {
   const config = DASHBOARD_CONFIG[role];
+  const user = useCurrentUser();
+
+  let items = config.items;
+  if (role === "agency") {
+    if (user?.agencyCategory === "ELECTRIC") {
+      items = items.filter(
+        (item) =>
+          item.menuItemText === "Street Light Survey and Repair" ||
+          item.menuItemText === "Dashboard" ||
+          item.menuItemText === "Profile & Account"
+      );
+    } else {
+      items = items.filter(
+        (item) => item.menuItemText !== "Street Light Survey and Repair"
+      );
+    }
+  }
 
   return (
     <div className="w-80 h-screen flex flex-col bg-white border-r border-slate-200 fixed left-0 top-0 z-30 shadow-sm">
@@ -203,7 +221,7 @@ function SidebarContent({
             Main Menu
           </p>
           <nav className="space-y-1">
-            {config.items.map((item) => (
+            {items.map((item) => (
               <MenuItem
                 key={item.menuItemText}
                 item={item}

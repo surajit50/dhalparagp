@@ -412,10 +412,16 @@ enum AgencyType {
   INDIVIDUAL
 }
 
+enum AgencyCategory {
+  ELECTRIC
+  OTHER
+}
+
 model AgencyDetails {
   id                 String              @id @default(auto()) @map("_id") @db.ObjectId
   name               String              @unique
   agencyType         AgencyType          @default(INDIVIDUAL)
+  agencyCategory     AgencyCategory      @default(OTHER)
   proprietorName     String? // Added for farm agencies
   mobileNumber       String?
   email              String?
