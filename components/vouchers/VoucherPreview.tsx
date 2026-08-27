@@ -32,14 +32,14 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
 
     return (
         <div className="max-w-4xl mx-auto p-6 flex flex-col items-center">
-            <button 
+            <button
                 onClick={handlePrint}
                 className="mb-6 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
             >
                 Print Voucher
             </button>
 
-            <div 
+            <div
                 ref={printRef}
                 className="w-full bg-white p-12 shadow-lg"
                 style={{ minHeight: "1123px", width: "794px" }} // A4 dimensions at 96 DPI
@@ -52,9 +52,9 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                         <h3 className="text-sm font-semibold">DAKSHIN DINAJPUR, HILI, DHALPA</h3>
                     </div>
                     <div className="w-48 flex justify-end">
-                        <img 
-                            src="/sahajlogo.jpg" 
-                            alt="SAHAJ SARAL" 
+                        <img
+                            src="/sahajlogo.jpg"
+                            alt="SAHAJ SARAL"
                             className="object-contain w-full h-auto"
                         />
                     </div>
@@ -118,7 +118,7 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                         </div>
                     </div>
                     <div className="mt-8 space-y-1 text-sm italic">
-                        <div>Voucher Entered by: {voucher.enteredBy?.name || "Bithika Ghosh, Pradhan"}</div>
+                        <div>Voucher Entered by: Arpan Sarkar</div>
                         <div>Voucher Verified By: {voucher.verifiedBy?.name || "Arpan Sarkar, Sahayak"}</div>
                     </div>
                 </div>
