@@ -111,22 +111,22 @@ export default function UserInfoDetailPage({ user }: UserInfoDetailPageProps) {
   };
 
   return (
-    <Card className="w-full max-w-[600px] shadow-xl bg-white/50 backdrop-blur-sm">
-      <CardHeader className="pb-4">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-2xl font-bold">User Profile</CardTitle>
+    <Card className="w-full max-w-[600px] shadow-2xl border-slate-200/60 overflow-hidden bg-white/90 backdrop-blur-md rounded-2xl relative transition-all duration-300">
+      <div className="h-2 w-full bg-gradient-to-r from-slate-800 via-slate-600 to-slate-800 absolute top-0 left-0" />
+      <CardHeader className="pb-4 pt-8 bg-slate-50/50 border-b border-slate-100">
+        <div className="flex justify-between items-center px-2">
+          <CardTitle className="text-2xl font-extrabold text-slate-800">User Profile</CardTitle>
           <Button
             onClick={() => setIsEditing((prev) => !prev)}
-            variant="outline"
+            variant={isEditing ? "outline" : "default"}
             size="sm"
-            className="hover:bg-secondary"
+            className={!isEditing ? "bg-slate-800 hover:bg-slate-700 text-white shadow-md hover:shadow-lg transition-all" : "hover:bg-slate-100"}
           >
             {isEditing ? "Cancel" : "Edit Profile"}
           </Button>
         </div>
-        <Separator className="mt-4" />
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-8 px-8">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="flex flex-col items-center gap-4 mb-6">

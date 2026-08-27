@@ -572,13 +572,7 @@ export const agencyMenuItems: MenuItemProps[] = [
     createMenuItem("Site Inspection Reports", ["agency"], `${BASE_URLS.agency}/works/inspection`, MdAssignment, COLORS.blue),
   ]),
 
-  createMenuItem("Measurement & Billing", ["agency"], undefined, MdReceipt, COLORS.purple, [
-    createMenuItem("Measurement Book", ["agency"], `${BASE_URLS.agency}/mb`, FaChevronCircleRight, COLORS.blue),
-    createMenuItem("Bill Submission", ["agency"], `${BASE_URLS.agency}/bill/submit`, MdPayment, COLORS.green),
-    createMenuItem("Bill Status", ["agency"], `${BASE_URLS.agency}/bill/status`, MdAnalytics, COLORS.orange),
-    createMenuItem("Deduction Details", ["agency"], `${BASE_URLS.agency}/bill/deduction`, MdMoney, COLORS.red),
-  ]),
-
+  
   createMenuItem("Contract & AOC", ["agency"], undefined, MdDescription, COLORS.orange, [
     createMenuItem("AOC Details", ["agency"], `${BASE_URLS.agency}/aoc`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Agreement Documents", ["agency"], `${BASE_URLS.agency}/agreement`, FaFileContract, COLORS.red),
@@ -588,19 +582,10 @@ export const agencyMenuItems: MenuItemProps[] = [
   createMenuItem("Payments", ["agency"], undefined, MdPayment, COLORS.teal, [
     createMenuItem("Payment History", ["agency"], `${BASE_URLS.agency}/payments`, MdPayment, COLORS.green),
     createMenuItem("Pending Payments", ["agency"], `${BASE_URLS.agency}/payments/pending`, MdMoney, COLORS.red),
-    createMenuItem("Receipts", ["agency"], `${BASE_URLS.agency}/payments/receipts`, MdReceipt, COLORS.blue),
+    
   ]),
 
-  createMenuItem("Documents", ["agency"], undefined, MdFolder, COLORS.indigo, [
-    createMenuItem("Upload Documents", ["agency"], `${BASE_URLS.agency}/documents/upload`, MdCloudUpload, COLORS.blue),
-    createMenuItem("My Documents", ["agency"], `${BASE_URLS.agency}/documents`, MdFolder, COLORS.green),
-  ]),
-
-  createMenuItem("Communication", ["agency"], undefined, MdAnnouncement, COLORS.cyan, [
-    createMenuItem("Notices", ["agency"], `${BASE_URLS.agency}/notices`, MdAnnouncement, COLORS.orange),
-    createMenuItem("Messages", ["agency"], `${BASE_URLS.agency}/messages`, MdFeedback, COLORS.blue),
-    createMenuItem("Meeting Schedule", ["agency"], `${BASE_URLS.agency}/meetings`, MdCalendarToday, COLORS.green),
-  ]),
+  
 
   createMenuItem("Profile", ["agency"], `${BASE_URLS.agency}/profile`, MdAccountCircle, COLORS.purple),
 ];

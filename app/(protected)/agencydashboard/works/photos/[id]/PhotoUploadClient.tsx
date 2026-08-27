@@ -295,19 +295,20 @@ export default function PhotoUploadClient({
   };
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Camera className="h-5 w-5" />
-            Capture New Photo
+    <div className="grid gap-8 lg:grid-cols-12 mt-4">
+      <Card className="lg:col-span-5 shadow-sm border-slate-200/60 overflow-visible bg-white/60 backdrop-blur-md rounded-2xl h-fit">
+        <CardHeader className="bg-gradient-to-b from-slate-50/50 to-white/0 border-b border-slate-100/80 pb-5 rounded-t-2xl">
+          <CardTitle className="flex items-center gap-3 text-lg md:text-xl font-bold text-slate-800">
+            <div className="p-2 bg-orange-100/50 rounded-xl text-orange-600 shadow-sm border border-orange-100">
+              <Camera className="h-4 w-4 md:h-5 md:w-5" />
+            </div>
+            Capture Photo
           </CardTitle>
-          <CardDescription>
-            Use your device camera to take a photo of the work site. Max size:
-            500KB.
+          <CardDescription className="text-xs md:text-sm text-slate-500 font-medium mt-1">
+            Use your device camera to take a photo of the work site. Max size: 500KB.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 p-5 md:p-6">
           {availableOptions.length === 0 ? (
             <div
               className={
@@ -321,18 +322,18 @@ export default function PhotoUploadClient({
           ) : (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Work Stage</label>
+                <label className="text-sm font-semibold text-slate-700">Work Stage</label>
                 <Select
                   value={status}
                   onValueChange={(val: WorkPhotoStatus) => setStatus(val)}
                   disabled={isUploading}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full bg-white h-12 rounded-xl border-slate-200 shadow-sm focus:ring-orange-500/20 focus:border-orange-400 transition-all font-medium text-slate-700">
                     <SelectValue placeholder="Select work stage" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border-slate-200 shadow-xl">
                     {availableOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
+                      <SelectItem key={opt.value} value={opt.value} className="rounded-lg cursor-pointer mx-1 my-0.5 py-2.5 font-medium">
                         {opt.label}
                       </SelectItem>
                     ))}
@@ -340,7 +341,7 @@ export default function PhotoUploadClient({
                 </Select>
               </div>
 
-              <div className="pt-4 flex flex-col gap-4">
+              <div className="pt-2 flex flex-col gap-4">
                 <input
                   type="file"
                   accept="image/*"
@@ -352,20 +353,24 @@ export default function PhotoUploadClient({
                 />
 
                 <Button
-                  className="w-full h-24 text-lg"
+                  className="w-full h-32 md:h-40 border-2 border-dashed border-orange-200 hover:border-orange-400 hover:bg-orange-50/50 bg-orange-50/20 transition-all duration-300 rounded-2xl group"
                   variant="outline"
                   disabled={isUploading || availableOptions.length === 0}
                   onClick={() => fileInputRef.current?.click()}
                 >
                   {isUploading ? (
-                    <div className="flex flex-col items-center gap-2">
-                      <Loader2 className="h-6 w-6 animate-spin text-orange-600" />
-                      <span>Uploading... {uploadProgress}%</span>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="h-10 w-10 bg-orange-100/80 rounded-full flex items-center justify-center shadow-sm">
+                        <Loader2 className="h-5 w-5 animate-spin text-orange-600" />
+                      </div>
+                      <span className="text-sm font-semibold text-orange-700">Uploading... {uploadProgress}%</span>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center gap-2">
-                      <Camera className="h-8 w-8 text-orange-600" />
-                      <span>Open Camera / Select File</span>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-orange-100 group-hover:scale-110 transition-transform duration-300">
+                        <Camera className="h-5 w-5 text-orange-500" />
+                      </div>
+                      <span className="font-semibold text-slate-600 text-sm md:text-base">Tap to Open Camera</span>
                     </div>
                   )}
                 </Button>
@@ -375,20 +380,24 @@ export default function PhotoUploadClient({
         </CardContent>
       </Card>
 
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Uploaded Photos</h3>
+      <div className="lg:col-span-7 space-y-5">
+        <h3 className="text-xl font-bold text-slate-800 px-1">Uploaded Photos</h3>
         {photos.length === 0 ? (
-          <div className="text-center p-8 bg-slate-50 rounded-lg border border-dashed">
-            <p className="text-muted-foreground">No photos uploaded yet.</p>
+          <div className="flex flex-col items-center justify-center text-center p-12 bg-white/40 backdrop-blur-sm rounded-2xl border-2 border-dashed border-slate-200 shadow-sm mt-2">
+            <div className="h-16 w-16 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 border border-slate-100">
+              <Camera className="h-8 w-8 text-slate-300" />
+            </div>
+            <p className="text-slate-600 font-semibold text-lg">No photos uploaded yet</p>
+            <p className="text-sm text-slate-400 mt-2 max-w-[250px]">Select a stage and capture a photo to begin tracking progress.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {photos.map((photo) => (
               <Card
                 key={photo.id}
-                className={`overflow-hidden relative group ${photo.isRejected ? "ring-2 ring-red-400" : ""}`}
+                className={`overflow-hidden relative group rounded-2xl border-slate-200/60 shadow-sm hover:shadow-md transition-all duration-300 bg-white/80 backdrop-blur-sm ${photo.isRejected ? "ring-2 ring-red-400 shadow-red-500/10" : ""}`}
               >
-                <div className="relative h-48 w-full bg-slate-100">
+                <div className="relative h-56 w-full bg-slate-100/50">
                   {photo.isRejected ? (
                     <div className="absolute inset-0 bg-red-50 flex flex-col items-center justify-center gap-2">
                       <XCircle className="h-10 w-10 text-red-400" />
@@ -411,31 +420,31 @@ export default function PhotoUploadClient({
                     </div>
                   )}
                   {/* Status Badge */}
-                  <div className="absolute top-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded capitalize">
+                  <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-md capitalize shadow-sm">
                     {photo.status}
                   </div>
                   {/* Verification Badge */}
                   {!photo.isRejected && (
-                    <div className="absolute top-2 right-2">
+                    <div className="absolute top-3 right-3">
                       {photo.isVerified ? (
                         <div
-                          className="bg-green-500 text-white p-1 rounded-full shadow"
+                          className="bg-green-500/90 backdrop-blur-sm text-white p-1.5 rounded-full shadow-md"
                           title="Verified by Admin"
                         >
                           <CheckCircle className="h-4 w-4" />
                         </div>
                       ) : (
                         <div
-                          className="bg-yellow-500 text-white p-1 rounded-full shadow"
+                          className="bg-amber-500/90 backdrop-blur-sm text-white p-1.5 rounded-full shadow-md"
                           title="Pending Verification"
                         >
-                          <XCircle className="h-4 w-4" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         </div>
                       )}
                     </div>
                   )}
                 </div>
-                <div className="p-3 flex flex-col gap-1 bg-white">
+                <div className="p-4 flex flex-col gap-2 bg-white/60 backdrop-blur-sm">
                   {photo.isRejected ? (
                     <div className="text-xs text-red-600 font-medium flex items-start gap-1">
                       <span className="shrink-0">Reason:</span>

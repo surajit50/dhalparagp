@@ -76,17 +76,18 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <div className="container mx-auto p-4 max-w-md">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Change Password</CardTitle>
-          <CardDescription>Update your account password</CardDescription>
+    <div className="container mx-auto p-4 max-w-md pt-12">
+      <Card className="shadow-2xl border-slate-200/60 overflow-hidden bg-white/90 backdrop-blur-md rounded-2xl relative transition-all duration-300">
+        <div className="h-2 w-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-500 absolute top-0 left-0" />
+        <CardHeader className="pb-4 pt-8 bg-slate-50/50 border-b border-slate-100">
+          <CardTitle className="text-2xl font-extrabold text-slate-800">Change Password</CardTitle>
+          <CardDescription className="font-medium text-slate-500">Update your account password</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Important</AlertTitle>
-            <AlertDescription>
+        <CardContent className="pt-6 px-8 pb-8">
+          <Alert className="bg-rose-50 border-rose-200 text-rose-800 rounded-xl">
+            <AlertCircle className="h-4 w-4 text-rose-600" />
+            <AlertTitle className="font-bold text-rose-900">Important</AlertTitle>
+            <AlertDescription className="text-rose-700 font-medium text-xs mt-1">
               Choose a strong, unique password that you don't use for other
               accounts.
             </AlertDescription>

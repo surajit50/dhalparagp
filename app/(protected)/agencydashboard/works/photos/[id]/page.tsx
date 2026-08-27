@@ -30,20 +30,21 @@ export default async function WorkPhotoUploadPage({
   const existingPhotos = await getWorkPhotos(id);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" asChild>
+    <div className="space-y-6 md:space-y-8 p-4 md:p-6 max-w-5xl mx-auto">
+      <div className="flex items-start gap-3 md:gap-4">
+        <Button variant="outline" size="icon" asChild className="mt-1 md:mt-1.5 shadow-sm hover:shadow hover:-translate-x-1 transition-all h-8 w-8 md:h-10 md:w-10 rounded-xl bg-white/80 backdrop-blur-sm border-slate-200">
           <Link href="/agencydashboard/works/photos">
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 text-slate-600" />
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Upload Photos</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-slate-900 bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-600 to-violet-600">Upload Photos</h1>
+          <p className="text-sm md:text-base font-medium text-slate-500 mt-1.5 md:mt-2 max-w-3xl leading-relaxed">
             {workDetail.ApprovedActionPlanDetails?.activityDescription}
           </p>
         </div>
       </div>
+
 
       <PhotoUploadClient worksDetailId={id} existingPhotos={existingPhotos} />
     </div>
