@@ -62,7 +62,7 @@ export default function CertificatePageClient({
   const router = useRouter();
 
   const handlePrint = useReactToPrint({
-    contentRef: printRef,
+    contentRef: printRef as any,
     documentTitle: `Certificate-${certificate.certificateNumber}_${work.workId}`,
   });
 
