@@ -88,7 +88,7 @@ interface MouzaOption {
 ============================================================ */
 
 const QUICK_LANDMARK_CHIPS = [
-  "Near house of ",
+  "House of ",
   "Primary School",
   "High School",
   "Mandir / Temple",
