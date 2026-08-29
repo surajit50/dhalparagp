@@ -11,7 +11,6 @@ import {
   Loader2,
   CheckCircle2,
   MapPin,
-  Sparkles,
   ChevronDown,
   ChevronUp,
   Zap,
@@ -22,7 +21,7 @@ import {
   Search,
   Check,
   ChevronsUpDown,
-  Map,
+  Map as MapIcon,
   X,
 } from "lucide-react";
 
@@ -72,6 +71,10 @@ import { GPSCaptureButton } from "./GPSCaptureButton";
 import { LightIDBadge } from "./LightIDBadge";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
+/* ============================================================
+   TYPES
+============================================================ */
+
 interface MouzaOption {
   id: string;
   mouzaName: string;
@@ -79,6 +82,10 @@ interface MouzaOption {
   sansadCode?: string;
   gramSansad?: string;
 }
+
+/* ============================================================
+   LANDMARK QUICK OPTIONS
+============================================================ */
 
 const QUICK_LANDMARK_CHIPS = [
   "Near house of ",
@@ -96,10 +103,19 @@ const QUICK_LANDMARK_CHIPS = [
   "Playground",
 ];
 
+/* ============================================================
+   COMPONENT
+============================================================ */
+
 export function SurveyForm() {
   const router = useRouter();
 
-  const [lightPreviewId, setLightPreviewId] = useState<string | null>(null);
+  /* ----------------------------------------------------------
+     STATE
+  ---------------------------------------------------------- */
+
+  const [lightPreviewId, setLightPreviewId] =
+    useState<string | null>(null);
 
   const [savedLight, setSavedLight] = useState<{
     id: string;
@@ -108,7 +124,9 @@ export function SurveyForm() {
   } | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const [showExtendedMenu, setShowExtendedMenu] = useState(false);
+
+  const [showExtendedMenu, setShowExtendedMenu] =
+    useState(false);
 
   const [lightImagePreview, setLightImagePreview] =
     useState<string | null>(null);
@@ -116,23 +134,36 @@ export function SurveyForm() {
   const [poleImagePreview, setPoleImagePreview] =
     useState<string | null>(null);
 
-  const [uploadingLight, setUploadingLight] = useState(false);
-  const [uploadingPole, setUploadingPole] = useState(false);
+  const [uploadingLight, setUploadingLight] =
+    useState(false);
 
-  // ------------------------------------------------------------
-  // Mouza selection
-  // ------------------------------------------------------------
+  const [uploadingPole, setUploadingPole] =
+    useState(false);
+
+  /* ----------------------------------------------------------
+     MOUZA STATE
+  ---------------------------------------------------------- */
 
   const [mouzaOpen, setMouzaOpen] = useState(false);
-  const [mouzaSearch, setMouzaSearch] = useState("");
 
-  const { data: mouzas, isLoading: mouzasLoading } = useSWR<
-    MouzaOption[]
-  >("/api/mouza-master", fetcher);
+  const [mouzaSearch, setMouzaSearch] =
+    useState("");
 
-  // ------------------------------------------------------------
-  // Form
-  // ------------------------------------------------------------
+  /* ----------------------------------------------------------
+     LOAD MOUZAS
+  ---------------------------------------------------------- */
+
+  const {
+    data: mouzas,
+    isLoading: mouzasLoading,
+  } = useSWR<MouzaOption[]>(
+    "/api/mouza-master",
+    fetcher
+  );
+
+  /* ----------------------------------------------------------
+     FORM
+  ---------------------------------------------------------- */
 
   const {
     register,
@@ -155,21 +186,31 @@ export function SurveyForm() {
     },
   });
 
+  /* ----------------------------------------------------------
+     WATCH MOUZA
+  ---------------------------------------------------------- */
+
   const mouzaId = watch("mouzaId");
 
-  // ------------------------------------------------------------
-  // Selected Mouza
-  // ------------------------------------------------------------
+  /* ============================================================
+     SELECTED MOUZA
+  ============================================================ */
 
   const selectedMouza = useMemo(() => {
-    if (!mouzas || !mouzaId) return null;
+    if (!mouzas || !mouzaId) {
+      return null;
+    }
 
-    return mouzas.find((m) => m.id === mouzaId) ?? null;
+    return (
+      mouzas.find(
+        (mouza) => mouza.id === mouzaId
+      ) ?? null
+    );
   }, [mouzas, mouzaId]);
 
-  // ------------------------------------------------------------
-  // Generate next Light ID
-  // ------------------------------------------------------------
+  /* ============================================================
+     NEXT LIGHT ID
+  ============================================================ */
 
   useEffect(() => {
     if (!mouzaId) {
@@ -179,11 +220,13 @@ export function SurveyForm() {
 
     let cancelled = false;
 
-    fetch(`/api/street-lights/next-id?mouzaId=${mouzaId}`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (!cancelled && d.nextId) {
-          setLightPreviewId(d.nextId);
+    fetch(
+      `/api/street-lights/next-id?mouzaId=${mouzaId}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!cancelled && data.nextId) {
+          setLightPreviewId(data.nextId);
         }
       })
       .catch(() => {
@@ -195,9 +238,9 @@ export function SurveyForm() {
     };
   }, [mouzaId]);
 
-  // ------------------------------------------------------------
-  // GPS
-  // ------------------------------------------------------------
+  /* ============================================================
+     GPS CAPTURE
+  ============================================================ */
 
   const handleGPSCapture = useCallback(
     (coords: {
@@ -205,27 +248,43 @@ export function SurveyForm() {
       longitude: number;
       accuracy: number;
     }) => {
-      setValue("latitude", coords.latitude, {
-        shouldValidate: true,
-      });
+      setValue(
+        "latitude",
+        coords.latitude,
+        {
+          shouldValidate: true,
+        }
+      );
 
-      setValue("longitude", coords.longitude, {
-        shouldValidate: true,
-      });
+      setValue(
+        "longitude",
+        coords.longitude,
+        {
+          shouldValidate: true,
+        }
+      );
 
-      setValue("gpsAccuracy", coords.accuracy);
+      setValue(
+        "gpsAccuracy",
+        coords.accuracy
+      );
 
-      toast.success("📍 Location captured successfully");
+      toast.success(
+        "📍 Location captured successfully"
+      );
     },
     [setValue]
   );
 
-  // ------------------------------------------------------------
-  // Image Upload
-  // ------------------------------------------------------------
+  /* ============================================================
+     IMAGE UPLOAD
+  ============================================================ */
 
   const uploadImage = useCallback(
-    async (file: File, type: "light" | "pole") => {
+    async (
+      file: File,
+      type: "light" | "pole"
+    ) => {
       const setUploading =
         type === "light"
           ? setUploadingLight
@@ -251,34 +310,64 @@ export function SurveyForm() {
       try {
         const formData = new FormData();
 
-        formData.append("file", file);
-        formData.append("folder", "street-lights");
+        formData.append(
+          "file",
+          file
+        );
 
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
+        formData.append(
+          "folder",
+          "street-lights"
+        );
 
-        if (!res.ok) {
-          throw new Error("Upload failed");
+        const response = await fetch(
+          "/api/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            "Upload failed"
+          );
         }
 
-        const data = await res.json();
+        const data =
+          await response.json();
 
-        const uploadedUrl = data.url || data.fileUrl;
+        const uploadedUrl =
+          data.url ||
+          data.fileUrl;
 
-        setValue(urlField, uploadedUrl);
-        setValue(idField, data.publicId);
+        setValue(
+          urlField,
+          uploadedUrl
+        );
 
-        setPreview(uploadedUrl);
+        setValue(
+          idField,
+          data.publicId
+        );
+
+        setPreview(
+          uploadedUrl
+        );
 
         toast.success(
           `⚡ ${
-            type === "light" ? "Light" : "Pole"
-          } photo saved (${Math.round(file.size / 1024)} KB)`
+            type === "light"
+              ? "Light"
+              : "Pole"
+          } photo saved (${Math.round(
+            file.size / 1024
+          )} KB)`
         );
       } catch {
-        toast.error("Photo upload failed");
+        toast.error(
+          "Photo upload failed"
+        );
       } finally {
         setUploading(false);
       }
@@ -286,92 +375,121 @@ export function SurveyForm() {
     [setValue]
   );
 
-  // ------------------------------------------------------------
-  // Clear Image
-  // ------------------------------------------------------------
+  /* ============================================================
+     CLEAR IMAGE
+  ============================================================ */
 
   const handleClearImage = useCallback(
     (type: "light" | "pole") => {
       if (type === "light") {
         setLightImagePreview(null);
-        setValue("lightImageUrl", undefined);
-        setValue("lightImagePublicId", undefined);
+
+        setValue(
+          "lightImageUrl",
+          undefined
+        );
+
+        setValue(
+          "lightImagePublicId",
+          undefined
+        );
       } else {
         setPoleImagePreview(null);
-        setValue("poleImageUrl", undefined);
-        setValue("poleImagePublicId", undefined);
+
+        setValue(
+          "poleImageUrl",
+          undefined
+        );
+
+        setValue(
+          "poleImagePublicId",
+          undefined
+        );
       }
     },
     [setValue]
   );
 
-  // ------------------------------------------------------------
-  // Landmark Chips
-  // ------------------------------------------------------------
+  /* ============================================================
+     LANDMARK QUICK CHIP
+  ============================================================ */
 
-  const handleAppendLandmarkChip = useCallback(
-    (chipText: string) => {
-      const current = (watch("landmark") || "").trim();
+  const handleAppendLandmarkChip =
+    useCallback(
+      (chipText: string) => {
+        const current = (
+          watch("landmark") || ""
+        ).trim();
 
-      if (!current) {
-        setValue(
-          "landmark",
-          `Near ${chipText}`,
-          {
-            shouldDirty: true,
-          }
-        );
-      } else if (
-        !current
-          .toLowerCase()
-          .includes(chipText.toLowerCase())
-      ) {
-        setValue(
-          "landmark",
-          `${current}, near ${chipText}`,
-          {
-            shouldDirty: true,
-          }
-        );
-      }
-    },
-    [setValue, watch]
-  );
+        if (!current) {
+          setValue(
+            "landmark",
+            `Near ${chipText}`,
+            {
+              shouldDirty: true,
+            }
+          );
+        } else if (
+          !current
+            .toLowerCase()
+            .includes(
+              chipText.toLowerCase()
+            )
+        ) {
+          setValue(
+            "landmark",
+            `${current}, near ${chipText}`,
+            {
+              shouldDirty: true,
+            }
+          );
+        }
+      },
+      [setValue, watch]
+    );
 
-  // ------------------------------------------------------------
-  // Submit
-  // ------------------------------------------------------------
+  /* ============================================================
+     SUBMIT
+  ============================================================ */
 
   const onSubmit = useCallback(
     async (data: StreetLightInput) => {
       if (!data.mouzaId) {
-        toast.error("Please select a Mouza");
+        toast.error(
+          "Please select a Mouza"
+        );
         return;
       }
 
       setLoading(true);
 
       try {
-        const res = await fetch("/api/street-lights", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
+        const response = await fetch(
+          "/api/street-lights",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify(data),
+          }
+        );
 
-        if (!res.ok) {
-          const errData = await res
-            .json()
-            .catch(() => ({}));
+        if (!response.ok) {
+          const errorData =
+            await response
+              .json()
+              .catch(() => ({}));
 
           throw new Error(
-            errData.error ||
+            errorData.error ||
               "Failed to save street light"
           );
         }
 
-        const saved = await res.json();
+        const saved =
+          await response.json();
 
         setSavedLight({
           id: saved.id,
@@ -379,7 +497,11 @@ export function SurveyForm() {
           landmark: saved.landmark,
         });
 
-        if (navigator.vibrate) {
+        if (
+          typeof navigator !==
+            "undefined" &&
+          navigator.vibrate
+        ) {
           navigator.vibrate(50);
         }
 
@@ -389,10 +511,10 @@ export function SurveyForm() {
             duration: 4000,
           }
         );
-      } catch (err: unknown) {
+      } catch (error: unknown) {
         toast.error(
-          err instanceof Error
-            ? err.message
+          error instanceof Error
+            ? error.message
             : "Something went wrong"
         );
       } finally {
@@ -402,99 +524,146 @@ export function SurveyForm() {
     []
   );
 
-  // ------------------------------------------------------------
-  // Next Survey
-  // ------------------------------------------------------------
+  /* ============================================================
+     NEXT SURVEY
+  ============================================================ */
 
-  const handleSurveyNext = useCallback(() => {
-    const prevMouzaId = mouzaId;
+  const handleSurveyNext =
+    useCallback(() => {
+      const previousMouzaId =
+        mouzaId;
 
-    reset({
-      mouzaId: prevMouzaId,
+      reset({
+        mouzaId:
+          previousMouzaId,
 
-      lightType: "LED",
-      wattage: 30,
-      poleType: "ELECTRIC_POLE",
-      lightCondition: "GOOD",
-      workingStatus: "WORKING",
-      ownership: "GP",
-    });
+        lightType: "LED",
 
-    setSavedLight(null);
+        wattage: 30,
 
-    setLightImagePreview(null);
-    setPoleImagePreview(null);
+        poleType:
+          "ELECTRIC_POLE",
 
-    setShowExtendedMenu(false);
+        lightCondition:
+          "GOOD",
 
-    toast.info("Ready for next light survey");
-  }, [mouzaId, reset]);
+        workingStatus:
+          "WORKING",
 
-  // ------------------------------------------------------------
-  // Search Mouzas
-  // ------------------------------------------------------------
+        ownership: "GP",
+      });
+
+      setSavedLight(null);
+
+      setLightImagePreview(
+        null
+      );
+
+      setPoleImagePreview(
+        null
+      );
+
+      setShowExtendedMenu(
+        false
+      );
+
+      toast.info(
+        "Ready for next light survey"
+      );
+    }, [mouzaId, reset]);
+
+  /* ============================================================
+     FILTER MOUZAS
+  ============================================================ */
 
   const filteredMouzas = useMemo(() => {
-    if (!mouzas) return [];
+    if (!mouzas) {
+      return [];
+    }
 
-    const query = mouzaSearch
-      .trim()
-      .toLowerCase();
+    const query =
+      mouzaSearch
+        .trim()
+        .toLowerCase();
 
     if (!query) {
       return mouzas;
     }
 
-    return mouzas.filter((m) => {
-      return (
-        m.mouzaName
-          ?.toLowerCase()
-          .includes(query) ||
-        m.mouzaCode
-          ?.toLowerCase()
-          .includes(query) ||
-        m.gramSansad
-          ?.toLowerCase()
-          .includes(query) ||
-        m.sansadCode
-          ?.toLowerCase()
-          .includes(query)
-      );
-    });
-  }, [mouzas, mouzaSearch]);
+    return mouzas.filter(
+      (mouza) => {
+        return (
+          mouza.mouzaName
+            ?.toLowerCase()
+            .includes(query) ||
 
-  // ------------------------------------------------------------
-  // Group Mouzas
-  // ------------------------------------------------------------
+          mouza.mouzaCode
+            ?.toLowerCase()
+            .includes(query) ||
 
-  const groupedMouzas = useMemo(() => {
-    const groups = new Map<
-      string,
-      MouzaOption[]
-    >();
+          mouza.gramSansad
+            ?.toLowerCase()
+            .includes(query) ||
 
-    filteredMouzas.forEach((m) => {
-      const key =
-        m.gramSansad?.trim() ||
-        "Other Mouzas";
-
-      if (!groups.has(key)) {
-        groups.set(key, []);
+          mouza.sansadCode
+            ?.toLowerCase()
+            .includes(query)
+        );
       }
+    );
+  }, [
+    mouzas,
+    mouzaSearch,
+  ]);
 
-      groups.get(key)!.push(m);
-    });
+  /* ============================================================
+     GROUP MOUZAS
+     
+     IMPORTANT:
+     Native JavaScript Map is used here.
+     Lucide Map icon is imported as MapIcon.
+  ============================================================ */
 
-    return Array.from(groups.entries());
-  }, [filteredMouzas]);
+  const groupedMouzas =
+    useMemo(() => {
+      const groups =
+        new Map<
+          string,
+          MouzaOption[]
+        >();
 
-  // ------------------------------------------------------------
-  // Saved Screen
-  // ------------------------------------------------------------
+      filteredMouzas.forEach(
+        (mouza) => {
+          const key =
+            mouza.gramSansad?.trim() ||
+            "Other Mouzas";
+
+          if (!groups.has(key)) {
+            groups.set(
+              key,
+              []
+            );
+          }
+
+          groups
+            .get(key)!
+            .push(mouza);
+        }
+      );
+
+      return Array.from(
+        groups.entries()
+      );
+    }, [filteredMouzas]);
+
+  /* ============================================================
+     SAVED SCREEN
+  ============================================================ */
 
   if (savedLight) {
     return (
       <div className="max-w-md mx-auto rounded-2xl border border-emerald-200 bg-gradient-to-b from-emerald-50/60 to-white dark:from-emerald-950/20 dark:to-card p-6 text-center space-y-6 shadow-sm">
+
         <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/50 rounded-full flex items-center justify-center mx-auto shadow-inner text-emerald-600 dark:text-emerald-300">
           <CheckCircle2 className="w-10 h-10" />
         </div>
@@ -505,28 +674,37 @@ export function SurveyForm() {
           </h2>
 
           <p className="text-xs text-muted-foreground">
-            Asset successfully registered in Gram Panchayat database
+            Asset successfully registered
+            in Gram Panchayat database
           </p>
         </div>
 
         <div className="p-3 bg-card border rounded-xl shadow-xs space-y-2">
+
           <LightIDBadge
-            lightId={savedLight.lightId}
+            lightId={
+              savedLight.lightId
+            }
             className="text-base font-bold"
           />
 
           {savedLight.landmark && (
             <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
+
               <MapPin className="w-3.5 h-3.5 text-orange-500" />
 
               {savedLight.landmark}
+
             </p>
           )}
         </div>
 
         <div className="space-y-2.5">
+
           <Button
-            onClick={handleSurveyNext}
+            onClick={
+              handleSurveyNext
+            }
             className="w-full h-12 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white gap-2 shadow-sm"
           >
             <Zap className="w-4 h-4" />
@@ -535,6 +713,7 @@ export function SurveyForm() {
           </Button>
 
           <div className="grid grid-cols-2 gap-2">
+
             <Button
               variant="outline"
               size="sm"
@@ -562,85 +741,126 @@ export function SurveyForm() {
             >
               View Register
             </Button>
+
           </div>
         </div>
       </div>
     );
   }
 
-  // ------------------------------------------------------------
-  // Main Form
-  // ------------------------------------------------------------
+  /* ============================================================
+     MAIN FORM
+  ============================================================ */
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(
+        onSubmit
+      )}
       className="max-w-xl mx-auto space-y-4 pb-6"
     >
-      {/* Header */}
+
+      {/* ========================================================
+          QUICK SURVEY HEADER
+      ======================================================== */}
+
       <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-900/40 text-xs">
+
         <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
+
           <Zap className="w-4 h-4 text-orange-600 animate-pulse" />
 
-          <span>Quick Field Survey</span>
+          <span>
+            Quick Field Survey
+          </span>
+
         </div>
 
         {lightPreviewId && (
           <span className="font-mono font-bold text-orange-700 dark:text-orange-300">
             Next:{" "}
-            {lightPreviewId
-              .split("-")
-              .slice(-1)[0]}
+            {
+              lightPreviewId
+                .split("-")
+                .slice(-1)[0]
+            }
           </span>
         )}
+
       </div>
 
-      {/* ====================================================== */}
-      {/* SECTION 1 - MOUZA */}
-      {/* ====================================================== */}
+      {/* ========================================================
+          SECTION 1 - MOUZA
+      ======================================================== */}
 
       <div className="rounded-2xl border border-orange-200/80 dark:border-orange-900/40 bg-card overflow-hidden shadow-sm">
-        {/* Section Header */}
+
+        {/* Section heading */}
+
         <div className="px-4 pt-4 pb-3">
+
           <div className="flex items-center gap-2">
+
             <span className="w-7 h-7 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold shadow-sm">
               1
             </span>
 
             <div>
+
               <h3 className="text-sm font-bold text-foreground">
                 Select Mouza
               </h3>
 
               <p className="text-[11px] text-muted-foreground mt-0.5">
-                Select the survey area carefully
+                Choose the correct survey
+                area before recording
+                the light
               </p>
+
             </div>
+
           </div>
+
         </div>
 
         <Controller
           control={control}
           name="mouzaId"
           render={({ field }) => {
+
             const currentSelected =
               mouzas?.find(
-                (m) => m.id === field.value
+                (mouza) =>
+                  mouza.id ===
+                  field.value
               ) ?? null;
 
             return (
               <div className="px-4 pb-4 space-y-3">
-                {/* Selection Button */}
+
+                {/* =================================================
+                    MOUZA SELECT BUTTON
+                ================================================= */}
+
                 <Popover
                   open={mouzaOpen}
-                  onOpenChange={setMouzaOpen}
+                  onOpenChange={
+                    setMouzaOpen
+                  }
                 >
-                  <PopoverTrigger asChild>
+
+                  <PopoverTrigger
+                    asChild
+                  >
+
                     <button
                       type="button"
+                      aria-label="Select Mouza"
                       className={`
-                        w-full text-left rounded-xl border
-                        transition-all duration-200
+                        w-full text-left
+                        rounded-xl border
+                        transition-all
+                        duration-200
                         focus:outline-none
                         focus:ring-2
                         focus:ring-orange-500/30
@@ -651,12 +871,18 @@ export function SurveyForm() {
                         }
                       `}
                     >
+
                       <div className="flex items-center gap-3 p-3">
+
                         {/* Icon */}
+
                         <div
                           className={`
-                            shrink-0 w-10 h-10 rounded-xl
-                            flex items-center justify-center
+                            shrink-0
+                            w-10 h-10
+                            rounded-xl
+                            flex items-center
+                            justify-center
                             ${
                               currentSelected
                                 ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300"
@@ -664,18 +890,23 @@ export function SurveyForm() {
                             }
                           `}
                         >
+
                           {currentSelected ? (
                             <CheckCircle2 className="w-5 h-5" />
                           ) : (
-                            <Map className="w-5 h-5" />
+                            <MapIcon className="w-5 h-5" />
                           )}
+
                         </div>
 
-                        {/* Text */}
+                        {/* Selected text */}
+
                         <div className="flex-1 min-w-0">
+
                           {currentSelected ? (
                             <>
                               <div className="flex items-center gap-2">
+
                                 <span className="font-bold text-sm truncate">
                                   {
                                     currentSelected.mouzaName
@@ -687,6 +918,7 @@ export function SurveyForm() {
                                     currentSelected.mouzaCode
                                   }
                                 </span>
+
                               </div>
 
                               <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
@@ -702,45 +934,60 @@ export function SurveyForm() {
                               </p>
 
                               <p className="text-[11px] text-muted-foreground">
-                                Tap here to search and select
+                                Search by name,
+                                code or Sansad
                               </p>
                             </>
                           )}
+
                         </div>
 
                         <ChevronsUpDown className="w-4 h-4 shrink-0 text-muted-foreground" />
+
                       </div>
+
                     </button>
+
                   </PopoverTrigger>
 
-                  {/* ================================================= */}
-                  {/* MOUZA SEARCH PANEL */}
-                  {/* ================================================= */}
+                  {/* =================================================
+                      MOUZA SEARCH POPUP
+                  ================================================= */}
 
                   <PopoverContent
                     align="start"
                     sideOffset={6}
                     className="w-[var(--radix-popover-trigger-width)] min-w-[320px] max-w-[calc(100vw-24px)] p-0 rounded-xl overflow-hidden shadow-xl"
                   >
+
                     <Command
                       shouldFilter={false}
                       className="rounded-xl"
                     >
-                      {/* Search Header */}
+
+                      {/* Search */}
+
                       <div className="border-b bg-muted/20">
+
                         <CommandInput
                           placeholder="Search Mouza, code or Sansad..."
-                          value={mouzaSearch}
+                          value={
+                            mouzaSearch
+                          }
                           onValueChange={
                             setMouzaSearch
                           }
                           className="h-12 text-sm"
                         />
+
                       </div>
 
-                      {/* Result Count */}
+                      {/* Result count */}
+
                       <div className="px-3 py-2 border-b bg-background flex items-center justify-between">
+
                         <span className="text-[11px] font-medium text-muted-foreground">
+
                           {mouzasLoading
                             ? "Loading Mouzas..."
                             : `${filteredMouzas.length} Mouza${
@@ -749,13 +996,16 @@ export function SurveyForm() {
                                   ? ""
                                   : "s"
                               } found`}
+
                         </span>
 
                         {mouzaSearch && (
                           <button
                             type="button"
                             onClick={() =>
-                              setMouzaSearch("")
+                              setMouzaSearch(
+                                ""
+                              )
                             }
                             className="text-[11px] text-orange-600 hover:underline flex items-center gap-1"
                           >
@@ -763,10 +1013,15 @@ export function SurveyForm() {
                             Clear
                           </button>
                         )}
+
                       </div>
 
+                      {/* List */}
+
                       <CommandList className="max-h-[55vh] overflow-y-auto p-1.5">
+
                         <CommandEmpty className="py-8 text-center">
+
                           <Search className="w-7 h-7 mx-auto mb-2 text-muted-foreground/50" />
 
                           <p className="text-sm font-medium">
@@ -774,17 +1029,27 @@ export function SurveyForm() {
                           </p>
 
                           <p className="text-[11px] text-muted-foreground mt-1">
-                            Try another name, code or Sansad
+                            Try another name,
+                            code or Sansad
                           </p>
+
                         </CommandEmpty>
 
-                        {/* Groups */}
+                        {/* =================================================
+                            GROUPED MOUZAS
+                        ================================================= */}
+
                         {groupedMouzas.map(
-                          ([sansad, mouzaList]) => (
+                          ([
+                            sansad,
+                            mouzaList,
+                          ]) => (
+
                             <CommandGroup
                               key={sansad}
                               heading={
                                 <div className="flex items-center gap-2 px-1 py-1">
+
                                   <MapPin className="w-3 h-3 text-orange-500" />
 
                                   <span className="font-bold text-xs">
@@ -792,162 +1057,212 @@ export function SurveyForm() {
                                   </span>
 
                                   <span className="text-[10px] text-muted-foreground">
-                                    ({mouzaList.length})
+                                    (
+                                    {
+                                      mouzaList.length
+                                    }
+                                    )
                                   </span>
+
                                 </div>
                               }
                             >
-                              {mouzaList.map((m) => {
-                                const isSelected =
-                                  field.value ===
-                                  m.id;
 
-                                return (
-                                  <CommandItem
-                                    key={m.id}
-                                    value={m.id}
-                                    onSelect={() => {
-                                      field.onChange(
-                                        m.id
-                                      );
+                              {mouzaList.map(
+                                (mouza) => {
 
-                                      if (
-                                        m.gramSansad
-                                      ) {
-                                        setValue(
-                                          "sansad",
-                                          m.gramSansad,
-                                          {
-                                            shouldDirty:
-                                              true,
-                                          }
+                                  const isSelected =
+                                    field.value ===
+                                    mouza.id;
+
+                                  return (
+                                    <CommandItem
+                                      key={
+                                        mouza.id
+                                      }
+                                      value={
+                                        mouza.id
+                                      }
+                                      onSelect={() => {
+
+                                        /* Set Mouza */
+
+                                        field.onChange(
+                                          mouza.id
                                         );
-                                      }
 
-                                      if (
-                                        m.sansadCode
-                                      ) {
-                                        setValue(
-                                          "ward",
-                                          m.sansadCode,
-                                          {
-                                            shouldDirty:
-                                              true,
-                                          }
+                                        /* Auto-fill Sansad */
+
+                                        if (
+                                          mouza.gramSansad
+                                        ) {
+                                          setValue(
+                                            "sansad",
+                                            mouza.gramSansad,
+                                            {
+                                              shouldDirty:
+                                                true,
+                                            }
+                                          );
+                                        }
+
+                                        /* Auto-fill Ward/Sansad Code */
+
+                                        if (
+                                          mouza.sansadCode
+                                        ) {
+                                          setValue(
+                                            "ward",
+                                            mouza.sansadCode,
+                                            {
+                                              shouldDirty:
+                                                true,
+                                            }
+                                          );
+                                        }
+
+                                        /* Close */
+
+                                        setMouzaOpen(
+                                          false
                                         );
-                                      }
 
-                                      setMouzaOpen(
-                                        false
-                                      );
+                                        setMouzaSearch(
+                                          ""
+                                        );
 
-                                      setMouzaSearch(
-                                        ""
-                                      );
-
-                                      toast.success(
-                                        `Mouza selected: ${m.mouzaName}`
-                                      );
-                                    }}
-                                    className={`
-                                      relative mb-1
-                                      rounded-lg
-                                      px-3 py-3
-                                      cursor-pointer
-                                      items-start
-                                      ${
-                                        isSelected
-                                          ? "bg-emerald-50 dark:bg-emerald-950/30"
-                                          : ""
-                                      }
-                                    `}
-                                  >
-                                    {/* Selection icon */}
-                                    <div
+                                        toast.success(
+                                          `Mouza selected: ${mouza.mouzaName}`
+                                        );
+                                      }}
                                       className={`
-                                        mt-0.5 mr-3
-                                        w-7 h-7
+                                        relative
+                                        mb-1
                                         rounded-lg
-                                        flex items-center justify-center
-                                        shrink-0
+                                        px-3 py-3
+                                        cursor-pointer
+                                        items-start
                                         ${
                                           isSelected
-                                            ? "bg-emerald-500 text-white"
-                                            : "bg-muted text-muted-foreground"
+                                            ? "bg-emerald-50 dark:bg-emerald-950/30"
+                                            : ""
                                         }
                                       `}
                                     >
-                                      {isSelected ? (
-                                        <Check className="w-4 h-4" />
-                                      ) : (
-                                        <MapPin className="w-3.5 h-3.5" />
-                                      )}
-                                    </div>
 
-                                    {/* Mouza details */}
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex flex-wrap items-center gap-2">
-                                        <span
-                                          className={`
-                                            text-sm
-                                            ${
-                                              isSelected
-                                                ? "font-bold text-emerald-700 dark:text-emerald-300"
-                                                : "font-semibold"
-                                            }
-                                          `}
-                                        >
-                                          {
-                                            m.mouzaName
+                                      {/* Selection icon */}
+
+                                      <div
+                                        className={`
+                                          mt-0.5
+                                          mr-3
+                                          w-7 h-7
+                                          rounded-lg
+                                          flex
+                                          items-center
+                                          justify-center
+                                          shrink-0
+                                          ${
+                                            isSelected
+                                              ? "bg-emerald-500 text-white"
+                                              : "bg-muted text-muted-foreground"
                                           }
-                                        </span>
+                                        `}
+                                      >
 
-                                        <span className="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-muted border">
-                                          Code:{" "}
-                                          {
-                                            m.mouzaCode
-                                          }
-                                        </span>
-                                      </div>
-
-                                      <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-                                        {m.gramSansad && (
-                                          <span className="text-[10px] text-muted-foreground">
-                                            Sansad:{" "}
-                                            {
-                                              m.gramSansad
-                                            }
-                                          </span>
+                                        {isSelected ? (
+                                          <Check className="w-4 h-4" />
+                                        ) : (
+                                          <MapPin className="w-3.5 h-3.5" />
                                         )}
 
-                                        {m.sansadCode && (
-                                          <span className="text-[10px] text-muted-foreground">
-                                            Sansad Code:{" "}
+                                      </div>
+
+                                      {/* Details */}
+
+                                      <div className="flex-1 min-w-0">
+
+                                        <div className="flex flex-wrap items-center gap-2">
+
+                                          <span
+                                            className={`
+                                              text-sm
+                                              ${
+                                                isSelected
+                                                  ? "font-bold text-emerald-700 dark:text-emerald-300"
+                                                  : "font-semibold"
+                                              }
+                                            `}
+                                          >
                                             {
-                                              m.sansadCode
+                                              mouza.mouzaName
                                             }
                                           </span>
-                                        )}
+
+                                          <span className="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-muted border">
+                                            Code:{" "}
+                                            {
+                                              mouza.mouzaCode
+                                            }
+                                          </span>
+
+                                        </div>
+
+                                        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+
+                                          {mouza.gramSansad && (
+                                            <span className="text-[10px] text-muted-foreground">
+                                              Sansad:{" "}
+                                              {
+                                                mouza.gramSansad
+                                              }
+                                            </span>
+                                          )}
+
+                                          {mouza.sansadCode && (
+                                            <span className="text-[10px] text-muted-foreground">
+                                              Sansad Code:{" "}
+                                              {
+                                                mouza.sansadCode
+                                              }
+                                            </span>
+                                          )}
+
+                                        </div>
+
                                       </div>
-                                    </div>
-                                  </CommandItem>
-                                );
-                              })}
+
+                                    </CommandItem>
+                                  );
+                                }
+                              )}
+
                             </CommandGroup>
+
                           )
                         )}
+
                       </CommandList>
+
                     </Command>
+
                   </PopoverContent>
+
                 </Popover>
 
-                {/* Selected Information Card */}
+                {/* =================================================
+                    SELECTED MOUZA SUMMARY
+                ================================================= */}
+
                 {currentSelected && (
                   <div className="rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-emerald-50/60 dark:bg-emerald-950/20 p-3">
+
                     <div className="flex items-start gap-2">
+
                       <CheckCircle2 className="w-4 h-4 mt-0.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
 
                       <div className="flex-1 min-w-0">
+
                         <p className="text-[10px] font-bold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
                           Selected Survey Area
                         </p>
@@ -959,6 +1274,7 @@ export function SurveyForm() {
                         </p>
 
                         <div className="flex flex-wrap gap-1.5 mt-2">
+
                           <span className="text-[10px] font-mono font-semibold px-2 py-1 rounded-md bg-white dark:bg-card border">
                             Mouza Code:{" "}
                             {
@@ -977,39 +1293,56 @@ export function SurveyForm() {
 
                           {currentSelected.sansadCode && (
                             <span className="text-[10px] font-semibold px-2 py-1 rounded-md bg-white dark:bg-card border">
-                              Code:{" "}
+                              Sansad Code:{" "}
                               {
                                 currentSelected.sansadCode
                               }
                             </span>
                           )}
+
                         </div>
+
                       </div>
+
                     </div>
+
                   </div>
                 )}
 
-                {/* Error */}
+                {/* Validation error */}
+
                 {errors.mouzaId && (
                   <p className="text-xs text-destructive flex items-center gap-1">
+
                     <X className="w-3.5 h-3.5" />
 
-                    {errors.mouzaId.message}
+                    {
+                      errors.mouzaId
+                        .message
+                    }
+
                   </p>
                 )}
+
               </div>
             );
           }}
         />
+
       </div>
 
-      {/* ====================================================== */}
-      {/* SECTION 2 - GPS */}
-      {/* ====================================================== */}
+      {/* ========================================================
+          SECTION 2 - GPS
+      ======================================================== */}
 
       <div
         className={`
-          rounded-2xl border p-4 space-y-3.5 shadow-xs transition-colors
+          rounded-2xl
+          border
+          p-4
+          space-y-3.5
+          shadow-xs
+          transition-colors
           ${
             watch("latitude") &&
             watch("longitude")
@@ -1018,8 +1351,11 @@ export function SurveyForm() {
           }
         `}
       >
+
         <div className="flex items-center justify-between">
+
           <div className="flex items-center gap-2">
+
             <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
               2
             </span>
@@ -1027,30 +1363,42 @@ export function SurveyForm() {
             <h3 className="text-sm font-semibold text-foreground">
               GPS Location
             </h3>
+
           </div>
+
         </div>
 
         <GPSCaptureButton
-          onCapture={handleGPSCapture}
-          autoCaptureOnMount={false}
+          onCapture={
+            handleGPSCapture
+          }
+          autoCaptureOnMount={
+            false
+          }
         />
 
         {watch("latitude") &&
           watch("longitude") && (
             <p className="text-xs text-emerald-600 flex items-center gap-1 mt-2">
+
               <CheckCircle2 className="w-4 h-4" />
 
-              Location captured successfully
+              Location captured
+              successfully
+
             </p>
           )}
+
       </div>
 
-      {/* ====================================================== */}
-      {/* SECTION 3 - LANDMARK */}
-      {/* ====================================================== */}
+      {/* ========================================================
+          SECTION 3 - LANDMARK
+      ======================================================== */}
 
       <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
+
         <div className="flex items-center gap-2">
+
           <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
             3
           </span>
@@ -1058,24 +1406,33 @@ export function SurveyForm() {
           <h3 className="text-sm font-semibold text-foreground">
             Landmark / Location Description
           </h3>
+
         </div>
 
         <div className="space-y-2">
+
           <Input
             id="landmark"
-            {...register("landmark")}
+            {...register(
+              "landmark"
+            )}
             placeholder="e.g. Near Lalpur High School Gate, opposite pond"
             className="h-11 text-sm"
           />
 
           <div className="space-y-1.5">
+
             <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
+
               <Tag className="w-3 h-3 text-orange-500" />
 
-              Tap to quickly insert landmark:
+              Tap to quickly insert
+              landmark:
+
             </p>
 
             <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+
               {QUICK_LANDMARK_CHIPS.map(
                 (chip) => (
                   <button
@@ -1092,83 +1449,113 @@ export function SurveyForm() {
                   </button>
                 )
               )}
+
             </div>
+
           </div>
+
         </div>
+
       </div>
 
-      {/* ====================================================== */}
-      {/* SECTION 4 - PHOTO */}
-      {/* ====================================================== */}
+      {/* ========================================================
+          SECTION 4 - PHOTOGRAPH
+      ======================================================== */}
 
       <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
+
         <div className="flex items-center justify-between">
+
           <div className="flex items-center gap-2">
+
             <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
               4
             </span>
 
             <div>
+
               <h3 className="text-sm font-semibold text-foreground">
                 Photograph
               </h3>
 
               <p className="text-[11px] text-muted-foreground">
-                Camera capture · Optimized to ≤ 200 KB
+                Camera capture · Optimized
+                to ≤ 200 KB
               </p>
+
             </div>
+
           </div>
 
           <span className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-200/60">
+
             <ShieldCheck className="w-3 h-3" />
 
             Quick Upload
+
           </span>
+
         </div>
 
         <ImageUploadDropzone
-          preview={lightImagePreview}
-          uploading={uploadingLight}
-          onFile={(f) =>
-            uploadImage(f, "light")
+          preview={
+            lightImagePreview
+          }
+          uploading={
+            uploadingLight
+          }
+          onFile={(file) =>
+            uploadImage(
+              file,
+              "light"
+            )
           }
           onClear={() =>
-            handleClearImage("light")
+            handleClearImage(
+              "light"
+            )
           }
           label="Tap to capture Light photograph"
           sublabel="Camera opens automatically on mobile · Max 200 KB"
           iconVariant="camera"
           previewHeight="h-48"
         />
+
       </div>
 
-      {/* ====================================================== */}
-      {/* EXTENDED SPECIFICATIONS */}
-      {/* ====================================================== */}
+      {/* ========================================================
+          EXTENDED SPECIFICATIONS
+      ======================================================== */}
 
       <div className="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-xs">
+
         <button
           type="button"
           onClick={() =>
             setShowExtendedMenu(
-              (v) => !v
+              (value) => !value
             )
           }
           className="w-full flex items-center justify-between px-4 py-3 bg-muted/20 hover:bg-muted/40 transition-colors text-left"
         >
+
           <div className="flex items-center gap-2">
+
             <Layers className="w-4 h-4 text-muted-foreground" />
 
             <span className="text-xs font-semibold text-foreground">
-              Extended Specifications & Pole Details
+              Extended Specifications &
+              Pole Details
             </span>
 
             <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
               OPTIONAL
             </span>
+
           </div>
 
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+
             <span>
               {showExtendedMenu
                 ? "Hide"
@@ -1180,228 +1567,331 @@ export function SurveyForm() {
             ) : (
               <ChevronDown className="w-4 h-4" />
             )}
+
           </div>
+
         </button>
 
         {showExtendedMenu && (
           <div className="p-4 space-y-4 border-t border-border/50 bg-background/50 animate-in fade-in">
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
               {/* Light Type */}
+
               <div className="space-y-1">
+
                 <Label className="text-sm font-medium text-foreground">
                   Light Type
                 </Label>
 
                 <Controller
-                  control={control}
+                  control={
+                    control
+                  }
                   name="lightType"
-                  render={({ field }) => (
+                  render={({
+                    field,
+                  }) => (
                     <Select
                       onValueChange={
                         field.onChange
                       }
-                      value={field.value}
+                      value={
+                        field.value
+                      }
                     >
+
                       <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
 
                       <SelectContent>
                         {LIGHT_TYPE_OPTIONS.map(
-                          (o) => (
+                          (option) => (
                             <SelectItem
-                              key={o.value}
-                              value={o.value}
+                              key={
+                                option.value
+                              }
+                              value={
+                                option.value
+                              }
                             >
-                              {o.label}
+                              {
+                                option.label
+                              }
                             </SelectItem>
                           )
                         )}
                       </SelectContent>
+
                     </Select>
                   )}
                 />
+
               </div>
 
               {/* Wattage */}
+
               <div className="space-y-1">
+
                 <Label className="text-sm font-medium text-foreground">
                   Wattage (W)
                 </Label>
 
                 <Controller
-                  control={control}
+                  control={
+                    control
+                  }
                   name="wattage"
-                  render={({ field }) => (
+                  render={({
+                    field,
+                  }) => (
                     <Input
                       type="number"
                       placeholder="e.g. 10"
                       value={
-                        field.value ?? ""
+                        field.value ??
+                        ""
                       }
-                      onChange={(e) =>
+                      onChange={(
+                        event
+                      ) =>
                         field.onChange(
                           parseInt(
-                            e.target.value
-                          ) || undefined
+                            event
+                              .target
+                              .value
+                          ) ||
+                            undefined
                         )
                       }
                       className="h-10 text-sm"
                     />
                   )}
                 />
+
               </div>
 
               {/* Pole Type */}
+
               <div className="space-y-1">
+
                 <Label className="text-sm font-medium text-foreground">
                   Pole Type
                 </Label>
 
                 <Controller
-                  control={control}
+                  control={
+                    control
+                  }
                   name="poleType"
-                  render={({ field }) => (
+                  render={({
+                    field,
+                  }) => (
                     <Select
                       onValueChange={
                         field.onChange
                       }
-                      value={field.value}
+                      value={
+                        field.value
+                      }
                     >
+
                       <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
 
                       <SelectContent>
                         {POLE_TYPE_OPTIONS.map(
-                          (o) => (
+                          (option) => (
                             <SelectItem
-                              key={o.value}
-                              value={o.value}
+                              key={
+                                option.value
+                              }
+                              value={
+                                option.value
+                              }
                             >
-                              {o.label}
+                              {
+                                option.label
+                              }
                             </SelectItem>
                           )
                         )}
                       </SelectContent>
+
                     </Select>
                   )}
                 />
+
               </div>
 
               {/* Pole Number */}
+
               <div className="space-y-1">
+
                 <Label className="text-sm font-medium text-foreground">
                   Pole No. (optional)
                 </Label>
 
                 <Input
-                  {...register("poleNo")}
+                  {...register(
+                    "poleNo"
+                  )}
                   placeholder="e.g. P-024"
                   className="h-10 text-sm"
                 />
+
               </div>
 
               {/* Condition */}
+
               <div className="space-y-1">
+
                 <Label className="text-sm font-medium text-foreground">
                   Condition
                 </Label>
 
                 <Controller
-                  control={control}
+                  control={
+                    control
+                  }
                   name="lightCondition"
-                  render={({ field }) => (
+                  render={({
+                    field,
+                  }) => (
                     <Select
                       onValueChange={
                         field.onChange
                       }
-                      value={field.value}
+                      value={
+                        field.value
+                      }
                     >
+
                       <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
 
                       <SelectContent>
                         {LIGHT_CONDITION_OPTIONS.map(
-                          (o) => (
+                          (option) => (
                             <SelectItem
-                              key={o.value}
-                              value={o.value}
+                              key={
+                                option.value
+                              }
+                              value={
+                                option.value
+                              }
                             >
-                              {o.label}
+                              {
+                                option.label
+                              }
                             </SelectItem>
                           )
                         )}
                       </SelectContent>
+
                     </Select>
                   )}
                 />
+
               </div>
 
               {/* Working Status */}
+
               <div className="space-y-1">
+
                 <Label className="text-sm font-medium text-foreground">
                   Working Status
                 </Label>
 
                 <Controller
-                  control={control}
+                  control={
+                    control
+                  }
                   name="workingStatus"
-                  render={({ field }) => (
+                  render={({
+                    field,
+                  }) => (
                     <Select
                       onValueChange={
                         field.onChange
                       }
-                      value={field.value}
+                      value={
+                        field.value
+                      }
                     >
+
                       <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
 
                       <SelectContent>
                         {WORKING_STATUS_OPTIONS.map(
-                          (o) => (
+                          (option) => (
                             <SelectItem
-                              key={o.value}
-                              value={o.value}
+                              key={
+                                option.value
+                              }
+                              value={
+                                option.value
+                              }
                             >
-                              {o.label}
+                              {
+                                option.label
+                              }
                             </SelectItem>
                           )
                         )}
                       </SelectContent>
+
                     </Select>
                   )}
                 />
+
               </div>
+
             </div>
 
-            {/* Road */}
+            {/* Road Name */}
+
             <div className="space-y-1">
+
               <Label className="text-sm font-medium text-foreground">
                 Road Name
               </Label>
 
               <Input
-                {...register("roadName")}
+                {...register(
+                  "roadName"
+                )}
                 placeholder="e.g. Dhalpara-Lalpur Main Road"
                 className="h-10 text-sm"
               />
+
             </div>
 
-            {/* Pole Photo */}
+            {/* Pole Photograph */}
+
             <div className="space-y-1">
+
               <Label className="text-sm font-medium text-foreground">
-                Pole Photograph (optional)
+                Pole Photograph
+                (optional)
               </Label>
 
               <ImageUploadDropzone
-                preview={poleImagePreview}
-                uploading={uploadingPole}
-                onFile={(f) =>
+                preview={
+                  poleImagePreview
+                }
+                uploading={
+                  uploadingPole
+                }
+                onFile={(file) =>
                   uploadImage(
-                    f,
+                    file,
                     "pole"
                   )
                 }
@@ -1414,35 +1904,45 @@ export function SurveyForm() {
                 iconVariant="camera"
                 previewHeight="h-36"
               />
+
             </div>
 
             {/* Remarks */}
+
             <div className="space-y-1">
+
               <Label className="text-sm font-medium text-foreground">
                 Remarks
               </Label>
 
               <Textarea
-                {...register("remarks")}
+                {...register(
+                  "remarks"
+                )}
                 placeholder="Any special notes or observations…"
                 rows={2}
                 className="text-sm"
               />
+
             </div>
+
           </div>
         )}
+
       </div>
 
-      {/* ====================================================== */}
-      {/* SAVE BUTTON */}
-      {/* ====================================================== */}
+      {/* ========================================================
+          SAVE BUTTON
+      ======================================================== */}
 
       <div className="space-y-2 pt-1 sticky bottom-4 z-20 pb-[env(safe-area-inset-bottom)]">
+
         <Button
           type="submit"
           disabled={loading}
           className="w-full h-12 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg gap-2"
         >
+
           {loading ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -1456,8 +1956,11 @@ export function SurveyForm() {
               ⚡ Save & Record Street Light
             </>
           )}
+
         </Button>
+
       </div>
+
     </form>
   );
 }
