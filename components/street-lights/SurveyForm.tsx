@@ -71,9 +71,7 @@ export function SurveyForm() {
   const [lightPreviewId, setLightPreviewId] = useState<string | null>(null);
   const [savedLight, setSavedLight] = useState<{ id: string; lightId: string; landmark?: string | null } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [autoResolving, setAutoResolving] = useState(false);
   const [showExtendedMenu, setShowExtendedMenu] = useState(false);
-  const [showMouzaSelector, setShowMouzaSelector] = useState(false);
 
   const [lightImagePreview, setLightImagePreview] = useState<string | null>(null);
   const [poleImagePreview, setPoleImagePreview] = useState<string | null>(null);
@@ -119,48 +117,14 @@ export function SurveyForm() {
   }, [mouzaId]);
 
   const handleGPSCapture = useCallback(
-    async (coords: { latitude: number; longitude: number; accuracy: number }) => {
+    (coords: { latitude: number; longitude: number; accuracy: number }) => {
       setValue("latitude", coords.latitude, { shouldValidate: true });
       setValue("longitude", coords.longitude, { shouldValidate: true });
       setValue("gpsAccuracy", coords.accuracy);
-
-      setAutoResolving(true);
-      try {
-        const url = `/api/street-lights/nearest-mouza?lat=${coords.latitude}&lng=${coords.longitude}`;
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Failed to resolve location");
-        const data = await res.json();
-
-        if (data.mouzaId && data.mouza) {
-          setValue("mouzaId", data.mouzaId, { shouldValidate: true, shouldDirty: true });
-          if (data.mouza.gramSansad && !watch("sansad")) {
-            setValue("sansad", data.mouza.gramSansad);
-          }
-          if (data.mouza.sansadCode && !watch("ward")) {
-            setValue("ward", data.mouza.sansadCode);
-          }
-
-          if (data.suggestedLandmark && !watch("landmark")) {
-            setValue("landmark", data.suggestedLandmark, { shouldDirty: true });
-          }
-
-          toast.success(`📍 Mouza auto-detected: ${data.mouza.mouzaName} (${data.mouza.mouzaCode})`);
-        } else {
-          setShowMouzaSelector(true);
-        }
-      } catch (err) {
-        console.error("Auto-resolve failed:", err);
-        setShowMouzaSelector(true);
-      } finally {
-        setAutoResolving(false);
-      }
+      toast.success("📍 Location captured successfully");
     },
-    [setValue, watch]
+    [setValue]
   );
-
-  const selectedMouza = useMemo(() => {
-    return mouzas?.find((m) => m.id === mouzaId);
-  }, [mouzas, mouzaId]);
 
   const uploadImage = useCallback(
     async (file: File, type: "light" | "pole") => {
@@ -224,7 +188,6 @@ export function SurveyForm() {
     async (data: StreetLightInput) => {
       if (!data.mouzaId) {
         toast.error("Please ensure a Mouza is selected");
-        setShowMouzaSelector(true);
         return;
       }
 
@@ -335,7 +298,7 @@ export function SurveyForm() {
       <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-900/40 text-xs">
         <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
           <Zap className="w-4 h-4 text-orange-600 animate-pulse" />
-          <span>Quick Field Survey · Auto-Mouza Active</span>
+          <span>Quick Field Survey</span>
         </div>
         {lightPreviewId && (
           <span className="font-mono font-bold text-orange-700 dark:text-orange-300">
@@ -351,92 +314,82 @@ export function SurveyForm() {
               1
             </span>
             <h3 className="text-sm font-semibold text-foreground">
-              GPS Location & Mouza
+              Select Mouza
             </h3>
           </div>
-          {autoResolving && (
-            <span className="text-xs text-orange-600 flex items-center gap-1">
-              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Detecting Mouza…
-            </span>
-          )}
         </div>
 
-        <GPSCaptureButton onCapture={handleGPSCapture} autoCaptureOnMount={false} />
-
-        {selectedMouza ? (
-          <div className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-emerald-600" />
-              <div>
-                <p className="text-xs font-semibold text-emerald-900 dark:text-emerald-200">
-                  Mouza: {selectedMouza.mouzaName} ({selectedMouza.mouzaCode})
-                </p>
-                {selectedMouza.gramSansad && (
-                  <p className="text-[11px] text-emerald-700/80 dark:text-emerald-300">
-                    Sansad: {selectedMouza.gramSansad}
-                  </p>
-                )}
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => setShowMouzaSelector((v) => !v)}
-              className="text-xs font-medium text-emerald-700 hover:text-emerald-900 underline underline-offset-2"
-            >
-              {showMouzaSelector ? "Hide" : "Change"}
-            </button>
-          </div>
-        ) : (
-          <div className="text-xs text-muted-foreground flex items-center justify-between px-3 py-2 rounded-xl bg-muted/40 border">
-            <span>Tap GPS button above to auto-detect Mouza</span>
-            <button
-              type="button"
-              onClick={() => setShowMouzaSelector(true)}
-              className="text-xs font-medium text-orange-600 hover:underline"
-            >
-              Select manually
-            </button>
-          </div>
-        )}
-
-        {showMouzaSelector && (
-          <div className="pt-1 space-y-1.5 animate-in fade-in slide-in-from-top-1">
-            <Label className="text-xs text-muted-foreground">Select Mouza Manually *</Label>
-            <Controller
-              control={control}
-              name="mouzaId"
-              render={({ field }) => (
-                <Select
-                  onValueChange={(val) => {
-                    field.onChange(val);
-                    setShowMouzaSelector(false);
-                  }}
-                  value={field.value}
-                >
-                  <SelectTrigger className="h-10 text-sm">
+        <div className="pt-1 space-y-1.5">
+          <Controller
+            control={control}
+            name="mouzaId"
+            render={({ field }) => (
+              <Select
+                onValueChange={(val) => {
+                  field.onChange(val);
+                  const m = mouzas?.find((x) => x.id === val);
+                  if (m) {
+                    if (m.gramSansad) setValue("sansad", m.gramSansad);
+                    if (m.sansadCode) setValue("ward", m.sansadCode);
+                  }
+                }}
+                value={field.value}
+              >
+                <SelectTrigger className="h-auto min-h-10 py-2.5 text-sm text-left leading-tight">
+                  <div className="flex-1 whitespace-normal text-left">
                     <SelectValue placeholder="Choose Mouza…" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mouzas?.map((m) => (
-                      <SelectItem key={m.id} value={m.id}>
-                        {m.mouzaName} ({m.mouzaCode}) · {m.gramSansad}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+                  </div>
+                </SelectTrigger>
+                <SelectContent className="max-h-[60vh]">
+                  {mouzas?.map((m) => (
+                    <SelectItem 
+                      key={m.id} 
+                      value={m.id} 
+                      className="whitespace-normal py-2.5 items-start text-left"
+                    >
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold">{m.mouzaName} ({m.mouzaCode})</span>
+                        {m.gramSansad && (
+                          <span className="text-xs text-muted-foreground">
+                            Sansad: {m.gramSansad}
+                          </span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {errors.mouzaId && (
+            <p className="text-xs text-destructive">{errors.mouzaId.message}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3.5 shadow-xs">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
+              2
+            </span>
+            <h3 className="text-sm font-semibold text-foreground">
+              GPS Location
+            </h3>
           </div>
-        )}
-        {errors.mouzaId && (
-          <p className="text-xs text-destructive">{errors.mouzaId.message}</p>
+        </div>
+        <GPSCaptureButton onCapture={handleGPSCapture} autoCaptureOnMount={false} />
+        {watch("latitude") && watch("longitude") && (
+          <p className="text-xs text-emerald-600 flex items-center gap-1 mt-2">
+            <CheckCircle2 className="w-4 h-4" /> Location captured successfully
+          </p>
         )}
       </div>
 
       <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
         <div className="flex items-center gap-2">
           <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
-            2
+            3
           </span>
           <h3 className="text-sm font-semibold text-foreground">
             Landmark / Location Description
@@ -475,7 +428,7 @@ export function SurveyForm() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
-              3
+              4
             </span>
             <div>
               <h3 className="text-sm font-semibold text-foreground">
