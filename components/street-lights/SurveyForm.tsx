@@ -18,6 +18,9 @@ import {
   Layers,
   ExternalLink,
   ShieldCheck,
+  Search,
+  Check,
+  ChevronsUpDown,
 } from "lucide-react";
 import { StreetLightSchema, type StreetLightInput } from "@/schema/street-light";
 import {
@@ -38,6 +41,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { GPSCaptureButton } from "./GPSCaptureButton";
 import { LightIDBadge } from "./LightIDBadge";
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
@@ -78,6 +94,10 @@ export function SurveyForm() {
   const [uploadingLight, setUploadingLight] = useState(false);
   const [uploadingPole, setUploadingPole] = useState(false);
 
+  // Mouza selection state
+  const [mouzaOpen, setMouzaOpen] = useState(false);
+  const [mouzaSearch, setMouzaSearch] = useState("");
+
   const { data: mouzas } = useSWR<MouzaOption[]>("/api/mouza-master", fetcher);
 
   const {
@@ -92,7 +112,7 @@ export function SurveyForm() {
     resolver: zodResolver(StreetLightSchema),
     defaultValues: {
       lightType: "LED",
-      wattage: 30,
+      wattage: 10,
       poleType: "ELECTRIC_POLE",
       lightCondition: "GOOD",
       workingStatus: "WORKING",
@@ -110,7 +130,7 @@ export function SurveyForm() {
       .then((d) => {
         if (!cancelled && d.nextId) setLightPreviewId(d.nextId);
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       cancelled = true;
     };
@@ -208,6 +228,7 @@ export function SurveyForm() {
           lightId: saved.lightId,
           landmark: saved.landmark,
         });
+        if (navigator.vibrate) navigator.vibrate(50);
         toast.success(`🎉 Saved! Light ID: ${saved.lightId}`, { duration: 4000 });
       } catch (err: unknown) {
         toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -235,6 +256,31 @@ export function SurveyForm() {
     setShowExtendedMenu(false);
     toast.info("Ready for next light survey");
   }, [mouzaId, reset]);
+
+  // Filter mouzas based on search
+  const filteredMouzas = useMemo(() => {
+    if (!mouzas) return [];
+    if (!mouzaSearch.trim()) return mouzas;
+    const query = mouzaSearch.toLowerCase();
+    return mouzas.filter(
+      (m) =>
+        m.mouzaName.toLowerCase().includes(query) ||
+        m.mouzaCode.toLowerCase().includes(query) ||
+        m.gramSansad?.toLowerCase().includes(query) ||
+        m.sansadCode?.toLowerCase().includes(query)
+    );
+  }, [mouzas, mouzaSearch]);
+
+  // Group filtered mouzas by gramSansad (if available)
+  const groupedMouzas = useMemo(() => {
+    const groups = new Map<string, MouzaOption[]>();
+    filteredMouzas.forEach((m) => {
+      const key = m.gramSansad || "Other";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(m);
+    });
+    return Array.from(groups.entries());
+  }, [filteredMouzas]);
 
   if (savedLight) {
     return (
@@ -294,7 +340,7 @@ export function SurveyForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto space-y-4">
       <div className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-orange-50 dark:bg-orange-950/30 border border-orange-200/80 dark:border-orange-900/40 text-xs">
         <div className="flex items-center gap-2 font-medium text-orange-800 dark:text-orange-300">
           <Zap className="w-4 h-4 text-orange-600 animate-pulse" />
@@ -307,6 +353,7 @@ export function SurveyForm() {
         )}
       </div>
 
+      {/* Section 1: Mouza Selection - Improved Searchable Combobox */}
       <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3.5 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -319,55 +366,100 @@ export function SurveyForm() {
           </div>
         </div>
 
-        <div className="pt-1 space-y-1.5">
-          <Controller
-            control={control}
-            name="mouzaId"
-            render={({ field }) => (
-              <Select
-                onValueChange={(val) => {
-                  field.onChange(val);
-                  const m = mouzas?.find((x) => x.id === val);
-                  if (m) {
-                    if (m.gramSansad) setValue("sansad", m.gramSansad);
-                    if (m.sansadCode) setValue("ward", m.sansadCode);
-                  }
-                }}
-                value={field.value}
-              >
-                <SelectTrigger className="h-auto min-h-10 py-2.5 text-sm text-left leading-tight">
-                  <div className="flex-1 whitespace-normal text-left">
-                    <SelectValue placeholder="Choose Mouza…" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="max-h-[60vh]">
-                  {mouzas?.map((m) => (
-                    <SelectItem 
-                      key={m.id} 
-                      value={m.id} 
-                      className="whitespace-normal py-2.5 items-start text-left"
-                    >
-                      <div className="flex flex-col gap-1">
-                        <span className="font-semibold">{m.mouzaName} ({m.mouzaCode})</span>
-                        {m.gramSansad && (
+        <Controller
+          control={control}
+          name="mouzaId"
+          render={({ field }) => {
+            const selectedMouza = mouzas?.find((m) => m.id === field.value);
+            return (
+              <Popover open={mouzaOpen} onOpenChange={setMouzaOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={mouzaOpen}
+                    className="w-full justify-between h-auto min-h-11 py-2.5 px-3 text-left font-normal"
+                  >
+                    {selectedMouza ? (
+                      <span className="flex flex-col gap-0.5">
+                        <span className="font-semibold text-sm">
+                          {selectedMouza.mouzaName} ({selectedMouza.mouzaCode})
+                        </span>
+                        {selectedMouza.gramSansad && (
                           <span className="text-xs text-muted-foreground">
-                            Sansad: {m.gramSansad}
+                            Sansad: {selectedMouza.gramSansad}
                           </span>
                         )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.mouzaId && (
-            <p className="text-xs text-destructive">{errors.mouzaId.message}</p>
-          )}
-        </div>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        Choose Mouza…
+                      </span>
+                    )}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search mouza name, code, sansad..."
+                      value={mouzaSearch}
+                      onValueChange={setMouzaSearch}
+                      className="h-11"
+                    />
+                    <CommandList className="max-h-[60vh] overflow-y-auto">
+                      <CommandEmpty>No mouza found.</CommandEmpty>
+                      {groupedMouzas.map(([sansad, mouzaList]) => (
+                        <CommandGroup key={sansad} heading={sansad}>
+                          {mouzaList.map((m) => (
+                            <CommandItem
+                              key={m.id}
+                              value={`${m.mouzaName} ${m.mouzaCode} ${m.gramSansad || ""} ${m.sansadCode || ""}`}
+                              onSelect={() => {
+                                field.onChange(m.id);
+                                if (m.gramSansad) setValue("sansad", m.gramSansad);
+                                if (m.sansadCode) setValue("ward", m.sansadCode);
+                                setMouzaOpen(false);
+                                setMouzaSearch("");
+                              }}
+                              className="py-2.5 px-3 cursor-pointer"
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <div className="flex flex-col gap-0.5">
+                                  <span className="font-medium">
+                                    {m.mouzaName} ({m.mouzaCode})
+                                  </span>
+                                  {m.gramSansad && (
+                                    <span className="text-xs text-muted-foreground">
+                                      Sansad: {m.gramSansad}
+                                    </span>
+                                  )}
+                                </div>
+                                {field.value === m.id && (
+                                  <Check className="h-4 w-4 text-emerald-600" />
+                                )}
+                              </div>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      ))}
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            );
+          }}
+        />
+        {errors.mouzaId && (
+          <p className="text-xs text-destructive">{errors.mouzaId.message}</p>
+        )}
       </div>
 
-      <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3.5 shadow-xs">
+      {/* Section 2: GPS Location */}
+      <div className={`rounded-2xl border p-4 space-y-3.5 shadow-xs transition-colors ${watch("latitude") && watch("longitude")
+        ? "border-emerald-200 bg-emerald-50/50 dark:border-emerald-900/50 dark:bg-emerald-950/20"
+        : "border-border/70 bg-card"
+        }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
@@ -386,6 +478,7 @@ export function SurveyForm() {
         )}
       </div>
 
+      {/* Section 3: Landmark */}
       <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
         <div className="flex items-center gap-2">
           <span className="w-6 h-6 rounded-full bg-orange-500 text-white flex items-center justify-center text-xs font-bold">
@@ -408,13 +501,13 @@ export function SurveyForm() {
             <p className="text-[11px] font-medium text-muted-foreground flex items-center gap-1">
               <Tag className="w-3 h-3 text-orange-500" /> Tap to quickly insert landmark:
             </p>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
               {QUICK_LANDMARK_CHIPS.map((chip) => (
                 <button
                   key={chip}
                   type="button"
                   onClick={() => handleAppendLandmarkChip(chip)}
-                  className="px-2.5 py-1 rounded-full text-xs font-medium bg-muted/60 hover:bg-orange-100 hover:text-orange-800 dark:hover:bg-orange-950/60 dark:hover:text-orange-200 border border-border/60 transition-all active:scale-95"
+                  className="shrink-0 px-3 py-1.5 rounded-full text-sm font-medium bg-muted/60 hover:bg-orange-100 hover:text-orange-800 dark:hover:bg-orange-950/60 dark:hover:text-orange-200 border border-border/60 transition-all active:scale-95"
                 >
                   +{chip}
                 </button>
@@ -424,6 +517,7 @@ export function SurveyForm() {
         </div>
       </div>
 
+      {/* Section 4: Photograph */}
       <div className="rounded-2xl border border-border/70 bg-card p-4 space-y-3 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -452,10 +546,11 @@ export function SurveyForm() {
           label="Tap to capture Light photograph"
           sublabel="Camera opens automatically on mobile · Max 200 KB"
           iconVariant="camera"
-          previewHeight="h-44"
+          previewHeight="h-48"
         />
       </div>
 
+      {/* Extended Specifications */}
       <div className="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-xs">
         <button
           type="button"
@@ -476,15 +571,15 @@ export function SurveyForm() {
 
         {showExtendedMenu && (
           <div className="p-4 space-y-4 border-t border-border/50 bg-background/50 animate-in fade-in">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label className="text-xs">Light Type</Label>
+                <Label className="text-sm font-medium text-foreground">Light Type</Label>
                 <Controller
                   control={control}
                   name="lightType"
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-10 text-xs">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -500,30 +595,30 @@ export function SurveyForm() {
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs">Wattage (W)</Label>
+                <Label className="text-sm font-medium text-foreground">Wattage (W)</Label>
                 <Controller
                   control={control}
                   name="wattage"
                   render={({ field }) => (
                     <Input
                       type="number"
-                      placeholder="e.g. 30"
+                      placeholder="e.g. 10"
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(parseInt(e.target.value) || undefined)}
-                      className="h-10 text-xs"
+                      className="h-10 text-sm"
                     />
                   )}
                 />
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs">Pole Type</Label>
+                <Label className="text-sm font-medium text-foreground">Pole Type</Label>
                 <Controller
                   control={control}
                   name="poleType"
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-10 text-xs">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -539,22 +634,22 @@ export function SurveyForm() {
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs">Pole No. (optional)</Label>
+                <Label className="text-sm font-medium text-foreground">Pole No. (optional)</Label>
                 <Input
                   {...register("poleNo")}
                   placeholder="e.g. P-024"
-                  className="h-10 text-xs"
+                  className="h-10 text-sm"
                 />
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs">Condition</Label>
+                <Label className="text-sm font-medium text-foreground">Condition</Label>
                 <Controller
                   control={control}
                   name="lightCondition"
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-10 text-xs">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -570,13 +665,13 @@ export function SurveyForm() {
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs">Working Status</Label>
+                <Label className="text-sm font-medium text-foreground">Working Status</Label>
                 <Controller
                   control={control}
                   name="workingStatus"
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-10 text-xs">
+                      <SelectTrigger className="h-10 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -593,16 +688,16 @@ export function SurveyForm() {
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Road Name</Label>
+              <Label className="text-sm font-medium text-foreground">Road Name</Label>
               <Input
                 {...register("roadName")}
                 placeholder="e.g. Dhalpara-Lalpur Main Road"
-                className="h-10 text-xs"
+                className="h-10 text-sm"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Pole Photograph (optional)</Label>
+              <Label className="text-sm font-medium text-foreground">Pole Photograph (optional)</Label>
               <ImageUploadDropzone
                 preview={poleImagePreview}
                 uploading={uploadingPole}
@@ -610,24 +705,25 @@ export function SurveyForm() {
                 onClear={() => handleClearImage("pole")}
                 label="Tap to capture pole photo"
                 iconVariant="camera"
-                previewHeight="h-32"
+                previewHeight="h-36"
               />
             </div>
 
             <div className="space-y-1">
-              <Label className="text-xs">Remarks</Label>
+              <Label className="text-sm font-medium text-foreground">Remarks</Label>
               <Textarea
                 {...register("remarks")}
                 placeholder="Any special notes or observations…"
                 rows={2}
-                className="text-xs"
+                className="text-sm"
               />
             </div>
           </div>
         )}
       </div>
 
-      <div className="space-y-2 pt-1 sticky bottom-4 z-20">
+      {/* Sticky Save Button */}
+      <div className="space-y-2 pt-1 sticky bottom-4 z-20 pb-[env(safe-area-inset-bottom)]">
         <Button
           type="submit"
           disabled={loading}
