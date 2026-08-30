@@ -11,7 +11,7 @@ import {
   getFilteredRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Eye, Pencil, MapPin, Camera, Filter } from "lucide-react";
+import { Eye, Pencil, MapPin, Camera, Filter, X, Search } from "lucide-react";
 import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,6 +60,7 @@ export function StreetLightTable() {
   const [conditionFilter, setConditionFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
+  // Build query URL with filters
   const queryUrl = useMemo(() => {
     const params = new URLSearchParams();
     if (mouzaFilter && mouzaFilter !== "ALL") params.set("mouzaId", mouzaFilter);
@@ -69,6 +70,7 @@ export function StreetLightTable() {
     return `/api/street-lights?${params.toString()}`;
   }, [mouzaFilter, statusFilter, conditionFilter]);
 
+  // Fetch data
   const { data, isLoading } = useSWR<{ lights: StreetLightRow[] }>(queryUrl, fetcher, {
     refreshInterval: 30000,
   });
@@ -76,17 +78,20 @@ export function StreetLightTable() {
 
   const lights = data?.lights ?? [];
 
+  // Local search filter (client‑side)
   const filtered = useMemo(() => {
     if (!search) return lights;
     const q = search.toLowerCase();
-    return lights.filter((l) =>
-      l.lightId.toLowerCase().includes(q) ||
-      l.mouza?.mouzaName?.toLowerCase().includes(q) ||
-      l.landmark?.toLowerCase().includes(q) ||
-      l.sansad?.toLowerCase().includes(q)
+    return lights.filter(
+      (l) =>
+        l.lightId.toLowerCase().includes(q) ||
+        l.mouza?.mouzaName?.toLowerCase().includes(q) ||
+        l.landmark?.toLowerCase().includes(q) ||
+        l.sansad?.toLowerCase().includes(q)
     );
   }, [lights, search]);
 
+  // ----- Table columns (unchanged) -----
   const columns: ColumnDef<StreetLightRow>[] = [
     {
       accessorKey: "lightId",
@@ -189,6 +194,7 @@ export function StreetLightTable() {
     },
   ];
 
+  // React Table instance
   const table = useReactTable({
     data: filtered,
     columns,
@@ -198,77 +204,135 @@ export function StreetLightTable() {
     initialState: { pagination: { pageSize: 25 } },
   });
 
-  const hasFilters =
-    mouzaFilter !== "ALL" ||
-    statusFilter !== "ALL" ||
-    conditionFilter !== "ALL" ||
-    search !== "";
+  // Count active filters
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (mouzaFilter !== "ALL") count++;
+    if (statusFilter !== "ALL") count++;
+    if (conditionFilter !== "ALL") count++;
+    if (search !== "") count++;
+    return count;
+  }, [mouzaFilter, statusFilter, conditionFilter, search]);
+
+  const clearAllFilters = () => {
+    setMouzaFilter("ALL");
+    setStatusFilter("ALL");
+    setConditionFilter("ALL");
+    setSearch("");
+  };
+
+  // ----- Debug wrappers for Select (remove after testing) -----
+  const handleMouzaChange = (value: string) => {
+    console.log("[Mouza filter] changed to:", value);
+    setMouzaFilter(value);
+  };
+  const handleStatusChange = (value: string) => {
+    console.log("[Status filter] changed to:", value);
+    setStatusFilter(value);
+  };
+  const handleConditionChange = (value: string) => {
+    console.log("[Condition filter] changed to:", value);
+    setConditionFilter(value);
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-3 items-center p-4 bg-muted/30 rounded-xl border border-border/50">
-        <Filter className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-        <Input
-          placeholder="Search by ID, Mouza, location…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-8 w-64 bg-white"
-        />
-        <Select value={mouzaFilter} onValueChange={setMouzaFilter}>
-          <SelectTrigger className="h-8 w-44 bg-white">
-            <SelectValue placeholder="All Mouzas" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All Mouzas</SelectItem>
-            {(mouzas ?? []).map((m) => (
-              <SelectItem key={m.id} value={m.id}>
-                {m.mouzaName}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="h-8 w-40 bg-white">
-            <SelectValue placeholder="All Statuses" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All Statuses</SelectItem>
-            <SelectItem value="WORKING">Working</SelectItem>
-            <SelectItem value="NOT_WORKING">Not Working</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={conditionFilter} onValueChange={setConditionFilter}>
-          <SelectTrigger className="h-8 w-44 bg-white">
-            <SelectValue placeholder="All Conditions" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All Conditions</SelectItem>
-            <SelectItem value="GOOD">Good</SelectItem>
-            <SelectItem value="REPAIR_REQUIRED">Repair Required</SelectItem>
-            <SelectItem value="DEFECTIVE">Defective</SelectItem>
-            <SelectItem value="MISSING">Missing</SelectItem>
-          </SelectContent>
-        </Select>
-        {hasFilters && (
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => {
-              setMouzaFilter("ALL");
-              setStatusFilter("ALL");
-              setConditionFilter("ALL");
-              setSearch("");
-            }}
-            className="h-8 text-xs"
-          >
-            Clear filters
-          </Button>
-        )}
-        <span className="ml-auto text-xs text-muted-foreground">
-          {filtered.length} light{filtered.length !== 1 ? "s" : ""}
-        </span>
+    <div className="space-y-6">
+      {/* ----- Improved Filter Bar ----- */}
+      <div className="bg-card rounded-xl border shadow-sm p-4 space-y-4">
+        <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+          <Filter className="w-4 h-4" />
+          <span>Filters</span>
+          {activeFilterCount > 0 && (
+            <span className="ml-auto text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+              {activeFilterCount} active
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by ID, Mouza, landmark…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9 h-10 w-full"
+            />
+          </div>
+
+          {/* Mouza filter */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Mouza</label>
+            <Select value={mouzaFilter} onValueChange={handleMouzaChange}>
+              <SelectTrigger className="h-10 w-full bg-background">
+                <SelectValue placeholder="All Mouzas" />
+              </SelectTrigger>
+              <SelectContent className="z-50"> {/* Ensure dropdown appears above other elements */}
+                <SelectItem value="ALL">All Mouzas</SelectItem>
+                {(mouzas ?? []).map((m) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.mouzaName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Status filter */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Status</label>
+            <Select value={statusFilter} onValueChange={handleStatusChange}>
+              <SelectTrigger className="h-10 w-full bg-background">
+                <SelectValue placeholder="All Statuses" />
+              </SelectTrigger>
+              <SelectContent className="z-50">
+                <SelectItem value="ALL">All Statuses</SelectItem>
+                <SelectItem value="WORKING">Working</SelectItem>
+                <SelectItem value="NOT_WORKING">Not Working</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Condition filter */}
+          <div className="space-y-1">
+            <label className="text-xs font-medium text-muted-foreground">Condition</label>
+            <Select value={conditionFilter} onValueChange={handleConditionChange}>
+              <SelectTrigger className="h-10 w-full bg-background">
+                <SelectValue placeholder="All Conditions" />
+              </SelectTrigger>
+              <SelectContent className="z-50">
+                <SelectItem value="ALL">All Conditions</SelectItem>
+                <SelectItem value="GOOD">Good</SelectItem>
+                <SelectItem value="REPAIR_REQUIRED">Repair Required</SelectItem>
+                <SelectItem value="DEFECTIVE">Defective</SelectItem>
+                <SelectItem value="MISSING">Missing</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Clear button */}
+          <div className="flex items-end justify-end">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={clearAllFilters}
+              disabled={activeFilterCount === 0}
+              className="h-10 px-3 w-full sm:w-auto"
+            >
+              <X className="w-4 h-4 mr-1" />
+              Clear
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center text-xs text-muted-foreground border-t pt-3 mt-2">
+          <span>{filtered.length} light{filtered.length !== 1 ? "s" : ""}</span>
+          <span>Last updated: {new Date().toLocaleTimeString()}</span>
+        </div>
       </div>
 
+      {/* ----- Table ----- */}
       <div className="rounded-lg border border-border/50 shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-muted/50">
@@ -319,6 +383,7 @@ export function StreetLightTable() {
         </Table>
       </div>
 
+      {/* ----- Pagination ----- */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
