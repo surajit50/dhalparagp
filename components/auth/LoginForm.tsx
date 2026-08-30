@@ -25,7 +25,6 @@ import Image from "next/image"
 const LoginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  
   code: z.string().optional(),
 })
 
@@ -53,7 +52,6 @@ export default function LoginForm() {
     defaultValues: {
       email: "",
       password: "",
-      
       code: "",
     },
   })
@@ -78,8 +76,6 @@ export default function LoginForm() {
     setSuccess("")
     setIsLoading(true)
 
-    
-
     startTransition(() => {
       login(values)
         .then((data) => {
@@ -88,7 +84,6 @@ export default function LoginForm() {
               form.setValue("code", "")
             } else {
               form.setValue("password", "")
-              
               form.setValue("code", "")
               generateCaptcha()
             }
@@ -111,7 +106,6 @@ export default function LoginForm() {
             form.setValue("code", "")
           } else {
             form.setValue("password", "")
-            
             form.setValue("code", "")
             generateCaptcha()
           }
@@ -292,9 +286,9 @@ export default function LoginForm() {
                       </FormItem>
                     )}
                   />
-
-                  
                 </>
+              )}
+
               <Button
                 type="submit"
                 className="w-full py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 mt-6 bg-orange-600 hover:bg-orange-700 text-white"
@@ -314,11 +308,7 @@ export default function LoginForm() {
               </Button>
             </form>
           </Form>
-
         </CardContent>
-
-
-      
       </Card>
 
       {/* Email Verification Dialog */}
