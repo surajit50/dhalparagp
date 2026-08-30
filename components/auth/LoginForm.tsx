@@ -25,7 +25,7 @@ import Image from "next/image"
 const LoginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  captcha: z.string().length(6, { message: "CAPTCHA must be 6 characters" }),
+  
   code: z.string().optional(),
 })
 
@@ -53,7 +53,7 @@ export default function LoginForm() {
     defaultValues: {
       email: "",
       password: "",
-      captcha: "",
+      
       code: "",
     },
   })
@@ -78,13 +78,7 @@ export default function LoginForm() {
     setSuccess("")
     setIsLoading(true)
 
-    if (values.captcha !== captchaCode) {
-      setError("Invalid CAPTCHA. Please try again.")
-      generateCaptcha()
-      form.setValue("captcha", "")
-      setIsLoading(false)
-      return
-    }
+    
 
     startTransition(() => {
       login(values)
@@ -94,7 +88,7 @@ export default function LoginForm() {
               form.setValue("code", "")
             } else {
               form.setValue("password", "")
-              form.setValue("captcha", "")
+              
               form.setValue("code", "")
               generateCaptcha()
             }
@@ -117,7 +111,7 @@ export default function LoginForm() {
             form.setValue("code", "")
           } else {
             form.setValue("password", "")
-            form.setValue("captcha", "")
+            
             form.setValue("code", "")
             generateCaptcha()
           }
@@ -299,46 +293,7 @@ export default function LoginForm() {
                     )}
                   />
 
-                  <div className="space-y-2 pt-2 bg-orange-50/40 rounded-lg p-3.5 border border-orange-200/50">
-                    <FormLabel className="text-sm font-semibold text-foreground block">Security Code</FormLabel>
-                    <div className="flex gap-2 items-end">
-                      <div className="flex-1 bg-background border-2 border-orange-200 rounded-lg p-3 flex items-center justify-between">
-                        <span className="text-lg font-bold text-foreground font-mono tracking-[0.25em] select-none">
-                          {captchaCode}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={generateCaptcha}
-                          disabled={isRefreshingCaptcha}
-                          className="text-orange-500 hover:text-orange-700 transition-colors p-1"
-                          aria-label="Refresh security code"
-                          title="Refresh"
-                        >
-                          <RefreshCw className={`h-4 w-4 ${isRefreshingCaptcha ? "animate-spin" : ""}`} />
-                        </button>
-                      </div>
-                      <FormField
-                        control={form.control}
-                        name="captcha"
-                        render={({ field }) => (
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                placeholder="Enter code"
-                                className="py-2.5 font-mono font-semibold tracking-wider text-center focus:ring-orange-500 focus:border-orange-500"
-                                disabled={isPending}
-                                maxLength={6}
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                </>
-              )}
+                  
 
               <Button
                 type="submit"
