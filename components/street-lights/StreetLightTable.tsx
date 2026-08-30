@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import {
@@ -60,7 +60,12 @@ export function StreetLightTable() {
   const [conditionFilter, setConditionFilter] = useState("ALL");
   const [search, setSearch] = useState("");
 
-  // Build query URL with filters
+  // Keys to force re‑render of uncontrolled Selects when cleared
+  const [mouzaKey, setMouzaKey] = useState(0);
+  const [statusKey, setStatusKey] = useState(0);
+  const [conditionKey, setConditionKey] = useState(0);
+
+  // Build query URL
   const queryUrl = useMemo(() => {
     const params = new URLSearchParams();
     if (mouzaFilter && mouzaFilter !== "ALL") params.set("mouzaId", mouzaFilter);
@@ -78,7 +83,7 @@ export function StreetLightTable() {
 
   const lights = data?.lights ?? [];
 
-  // Local search filter (client‑side)
+  // Local search filter
   const filtered = useMemo(() => {
     if (!search) return lights;
     const q = search.toLowerCase();
@@ -91,7 +96,7 @@ export function StreetLightTable() {
     );
   }, [lights, search]);
 
-  // ----- Table columns (unchanged) -----
+  // Table columns (unchanged)
   const columns: ColumnDef<StreetLightRow>[] = [
     {
       accessorKey: "lightId",
@@ -194,7 +199,6 @@ export function StreetLightTable() {
     },
   ];
 
-  // React Table instance
   const table = useReactTable({
     data: filtered,
     columns,
@@ -204,7 +208,6 @@ export function StreetLightTable() {
     initialState: { pagination: { pageSize: 25 } },
   });
 
-  // Count active filters
   const activeFilterCount = useMemo(() => {
     let count = 0;
     if (mouzaFilter !== "ALL") count++;
@@ -219,25 +222,26 @@ export function StreetLightTable() {
     setStatusFilter("ALL");
     setConditionFilter("ALL");
     setSearch("");
+    // Force uncontrolled Selects to reset by changing their keys
+    setMouzaKey((k) => k + 1);
+    setStatusKey((k) => k + 1);
+    setConditionKey((k) => k + 1);
   };
 
-  // ----- Debug wrappers for Select (remove after testing) -----
+  // Handle selection changes – update state and URL
   const handleMouzaChange = (value: string) => {
-    console.log("[Mouza filter] changed to:", value);
     setMouzaFilter(value);
   };
   const handleStatusChange = (value: string) => {
-    console.log("[Status filter] changed to:", value);
     setStatusFilter(value);
   };
   const handleConditionChange = (value: string) => {
-    console.log("[Condition filter] changed to:", value);
     setConditionFilter(value);
   };
 
   return (
     <div className="space-y-6">
-      {/* ----- Improved Filter Bar ----- */}
+      {/* Filter Bar */}
       <div className="bg-card rounded-xl border shadow-sm p-4 space-y-4">
         <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
           <Filter className="w-4 h-4" />
@@ -261,14 +265,18 @@ export function StreetLightTable() {
             />
           </div>
 
-          {/* Mouza filter */}
+          {/* Mouza filter – uncontrolled with key */}
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">Mouza</label>
-            <Select value={mouzaFilter} onValueChange={handleMouzaChange}>
+            <Select
+              key={mouzaKey}
+              defaultValue="ALL"
+              onValueChange={handleMouzaChange}
+            >
               <SelectTrigger className="h-10 w-full bg-background">
                 <SelectValue placeholder="All Mouzas" />
               </SelectTrigger>
-              <SelectContent className="z-50"> {/* Ensure dropdown appears above other elements */}
+              <SelectContent className="z-50">
                 <SelectItem value="ALL">All Mouzas</SelectItem>
                 {(mouzas ?? []).map((m) => (
                   <SelectItem key={m.id} value={m.id}>
@@ -279,10 +287,14 @@ export function StreetLightTable() {
             </Select>
           </div>
 
-          {/* Status filter */}
+          {/* Status filter – uncontrolled */}
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">Status</label>
-            <Select value={statusFilter} onValueChange={handleStatusChange}>
+            <Select
+              key={statusKey}
+              defaultValue="ALL"
+              onValueChange={handleStatusChange}
+            >
               <SelectTrigger className="h-10 w-full bg-background">
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
@@ -294,10 +306,14 @@ export function StreetLightTable() {
             </Select>
           </div>
 
-          {/* Condition filter */}
+          {/* Condition filter – uncontrolled */}
           <div className="space-y-1">
             <label className="text-xs font-medium text-muted-foreground">Condition</label>
-            <Select value={conditionFilter} onValueChange={handleConditionChange}>
+            <Select
+              key={conditionKey}
+              defaultValue="ALL"
+              onValueChange={handleConditionChange}
+            >
               <SelectTrigger className="h-10 w-full bg-background">
                 <SelectValue placeholder="All Conditions" />
               </SelectTrigger>
@@ -332,7 +348,7 @@ export function StreetLightTable() {
         </div>
       </div>
 
-      {/* ----- Table ----- */}
+      {/* Table */}
       <div className="rounded-lg border border-border/50 shadow-sm overflow-hidden">
         <Table>
           <TableHeader className="bg-muted/50">
@@ -383,7 +399,7 @@ export function StreetLightTable() {
         </Table>
       </div>
 
-      {/* ----- Pagination ----- */}
+      {/* Pagination */}
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
           Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
