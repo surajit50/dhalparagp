@@ -129,6 +129,17 @@ export default async function ComplaintDetailPage({
           <ComplaintUpdateForm 
             complaintId={complaint.id} 
             currentStatus={complaint.status} 
+            defaultValues={{
+              assignedTo: complaint.assignedTo || undefined,
+              assignedStaffId: complaint.assignedStaffId || undefined,
+              assignedAgencyId: complaint.assignedAgencyId || undefined,
+              assignedDate: complaint.assignedDate ? complaint.assignedDate.toISOString().split('T')[0] : undefined,
+              repairDate: complaint.repairDate ? complaint.repairDate.toISOString().split('T')[0] : undefined,
+              resolvedDate: complaint.resolvedDate ? complaint.resolvedDate.toISOString().split('T')[0] : undefined,
+              repairRemarks: complaint.repairRemarks || undefined,
+              completionImageUrl: complaint.completionImageUrl || undefined,
+              completionImagePublicId: complaint.completionImagePublicId || undefined,
+            }}
             staffList={staffUsers}
             agencyList={electricAgencies}
           />

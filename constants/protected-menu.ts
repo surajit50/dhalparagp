@@ -462,6 +462,7 @@ export const adminMenuItems: MenuItemProps[] = [
       createMenuItem("Add New Light", ["admin"], `${BASE_URLS.admin}/street-lights/register/add`, FaChevronCircleRight, COLORS.green),
     ]),
     createMenuItem("Complaints & Repairs", ["admin"], `${BASE_URLS.admin}/street-lights/complaints`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Issue Work Orders", ["admin"], `${BASE_URLS.admin}/street-lights/work-orders`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Map View", ["admin"], `${BASE_URLS.admin}/street-lights/map`, FaChevronCircleRight, COLORS.indigo),
     createMenuItem("Reports", ["admin"], `${BASE_URLS.admin}/street-lights/reports`, FaChevronCircleRight, COLORS.purple),
     createMenuItem("Field Survey", ["admin", "staff"], `${BASE_URLS.admin}/street-lights/survey`, FaChevronCircleRight, COLORS.cyan),
@@ -668,7 +669,7 @@ export const agencyMenuItems: MenuItemProps[] = [
   createMenuItem("Street Light Survey and Repair", ["agency"], undefined, MdLightbulb, COLORS.orange, [
     createMenuItem("Survey Dashboard", ["agency"], `${BASE_URLS.agency}/street-lights`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Field Survey", ["agency"], `${BASE_URLS.agency}/street-lights/survey`, FaChevronCircleRight, COLORS.cyan),
-    createMenuItem("Complaints & Repairs", ["agency"], `${BASE_URLS.agency}/street-lights/complaints`, FaChevronCircleRight, COLORS.red),
+    createMenuItem("Assigned Repairs", ["agency"], `${BASE_URLS.agency}/street-lights/repairs`, FaChevronCircleRight, COLORS.red),
   ]),
 
   createMenuItem("Contract & AOC", ["agency"], undefined, MdDescription, COLORS.orange, [

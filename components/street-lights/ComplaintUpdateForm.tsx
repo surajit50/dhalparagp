@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ComplaintUpdateSchema, type ComplaintUpdateInput } from "@/schema/street-light";
 import { COMPLAINT_STATUS_OPTIONS } from "@/lib/utils/street-light";
 import { fetcher } from "@/lib/utils";
@@ -25,20 +26,27 @@ import { ImageUploadDropzone } from "./ImageUploadDropzone";
 interface ComplaintUpdateFormProps {
   complaintId: string;
   currentStatus: string;
+  defaultValues?: Partial<ComplaintUpdateInput>;
   staffList?: { id: string; name: string | null }[];
   agencyList?: { id: string; name: string }[];
+  hideStaffAssignment?: boolean;
   onSuccess?: () => void;
 }
 
 export function ComplaintUpdateForm({
   complaintId,
   currentStatus,
+  defaultValues,
   staffList = [],
   agencyList = [],
+  hideStaffAssignment = false,
   onSuccess,
 }: ComplaintUpdateFormProps) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    defaultValues?.completionImageUrl || null
+  );
   const [uploading, setUploading] = useState(false);
 
   const {
@@ -50,7 +58,10 @@ export function ComplaintUpdateForm({
     formState: { errors },
   } = useForm<ComplaintUpdateInput>({
     resolver: zodResolver(ComplaintUpdateSchema),
-    defaultValues: { status: currentStatus as ComplaintUpdateInput["status"] },
+    defaultValues: {
+      status: currentStatus as ComplaintUpdateInput["status"],
+      ...defaultValues,
+    },
   });
 
   const uploadImage = useCallback(async (file: File) => {
@@ -89,21 +100,24 @@ export function ComplaintUpdateForm({
       });
       if (!res.ok) throw new Error("Failed to update complaint");
       toast.success("Complaint updated successfully");
+      router.refresh();
       onSuccess?.();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
-  }, [complaintId, onSuccess]);
+  }, [complaintId, onSuccess, router]);
 
   const status = watch("status");
   const STATUS_RANK: Record<string, number> = {
     PENDING: 1,
     ASSIGNED: 2,
-    IN_PROGRESS: 3,
-    RESOLVED: 4,
-    CLOSED: 5,
+    ENQUIRY_COMPLETED: 3,
+    WORK_ORDER_ISSUED: 4,
+    IN_PROGRESS: 5,
+    RESOLVED: 6,
+    CLOSED: 7,
   };
   const currentRank = STATUS_RANK[status || "PENDING"] || 1;
 
@@ -133,7 +147,7 @@ export function ComplaintUpdateForm({
           />
         </div>
 
-        {currentRank >= 1 && (
+        {currentRank >= 1 && !hideStaffAssignment && (
           <>
             <div className="space-y-1.5">
               <Label htmlFor="assignedTo">Assigned To (Other)</Label>
@@ -166,7 +180,7 @@ export function ComplaintUpdateForm({
           </>
         )}
 
-        {currentRank >= 2 && (
+        {currentRank >= 4 && (
           <div className="space-y-1.5">
             <Label>Assign Agency (Repair)</Label>
             <Controller
@@ -187,7 +201,7 @@ export function ComplaintUpdateForm({
           </div>
         )}
 
-        {currentRank >= 3 && (
+        {currentRank >= 5 && (
           <>
             <div className="space-y-1.5">
               <Label htmlFor="repairDate">Repair Date</Label>

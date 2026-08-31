@@ -94,7 +94,7 @@ export type StreetLightComplaintInput = z.infer<
 
 export const ComplaintUpdateSchema = z.object({
   status: z
-    .enum(["PENDING", "ASSIGNED", "IN_PROGRESS", "RESOLVED", "CLOSED"])
+    .enum(["PENDING", "ASSIGNED", "ENQUIRY_COMPLETED", "WORK_ORDER_ISSUED", "IN_PROGRESS", "RESOLVED", "CLOSED"])
     .optional(),
   assignedTo: z.string().optional(),
   assignedStaffId: z.string().optional(),

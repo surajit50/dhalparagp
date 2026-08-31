@@ -53,6 +53,8 @@ export const PRIORITY_OPTIONS = [
 export const COMPLAINT_STATUS_OPTIONS = [
   { value: "PENDING", label: "Pending" },
   { value: "ASSIGNED", label: "Assigned" },
+  { value: "ENQUIRY_COMPLETED", label: "Enquiry Completed" },
+  { value: "WORK_ORDER_ISSUED", label: "Work Order Issued" },
   { value: "IN_PROGRESS", label: "In Progress" },
   { value: "RESOLVED", label: "Resolved" },
   { value: "CLOSED", label: "Closed" },
