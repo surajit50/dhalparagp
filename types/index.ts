@@ -133,8 +133,7 @@ export type WarishApplicationProps = {
   digitallySigned: boolean;
   createdAt: Date;
   updatedAt: Date;
- 
-  
+  WarishDocument?: any[];
 };
 export type WarishApplicationPayloadProps = Prisma.WarishApplicationGetPayload<{
   include: {

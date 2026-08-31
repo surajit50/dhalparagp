@@ -51,7 +51,7 @@ export async function getWarishApplicationDetails(id: string) {
   try {
     const application = await db.warishApplication.findUnique({
       where: { id },
-      include: { warishDetails: true },
+      include: { warishDetails: true, WarishDocument: true },
     });
 
     if (application) {

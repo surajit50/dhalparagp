@@ -7,6 +7,7 @@ import PrintRegisterButton from "./PrintRegisterButton";
 const page = async () => {
   const application = await db.warishApplication.findMany({
     orderBy: { acknowlegment: "desc" },
+    include: { WarishDocument: true },
   });
   return (
     <div className="container mx-auto py-10">

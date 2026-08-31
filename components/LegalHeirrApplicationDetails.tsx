@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { UserCheck, UserX, Users, FileText } from "lucide-react";
+import { UserCheck, UserX, Users, FileText, Eye } from "lucide-react";
 import { WarishDetailProps, WarishApplicationProps } from "@/types";
 import { capitalizeFirstLetter, formatText } from "@/utils/formatText";
 import { cn } from "@/lib/utils";
@@ -166,8 +166,8 @@ export default function LegalHeirrApplicationDetails({
         </div>
       </CardHeader>
 
-      <CardContent className="p-0">
-        <ScrollArea className="h-[400px]">
+      <CardContent className="p-0 border-b border-border/50">
+        <ScrollArea className="h-[300px]">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40">
@@ -188,6 +188,28 @@ export default function LegalHeirrApplicationDetails({
           </Table>
         </ScrollArea>
       </CardContent>
+
+      {application.WarishDocument && application.WarishDocument.length > 0 && (
+        <CardContent className="p-4 bg-muted/20">
+          <h3 className="text-sm font-semibold mb-3 text-muted-foreground uppercase tracking-wide">
+            Uploaded Documents
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {application.WarishDocument.map((doc: any) => (
+              <a
+                key={doc.id}
+                href={doc.cloudinaryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 bg-background border border-border shadow-sm rounded-lg hover:border-primary hover:text-primary transition-colors text-sm font-medium group"
+              >
+                <Eye className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                {doc.documentType}
+              </a>
+            ))}
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 }

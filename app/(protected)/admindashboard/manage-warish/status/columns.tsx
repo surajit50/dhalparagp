@@ -3,6 +3,7 @@
 import { ShowWarishDetails } from "@/components/ShowWarishDetails";
 import { WarishApplication, WarishApplicationStatus } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
+import { Eye } from "lucide-react";
 
 export const warishapplicationColref: ColumnDef<WarishApplication>[] = [
   {
@@ -63,6 +64,32 @@ export const warishapplicationColref: ColumnDef<WarishApplication>[] = [
         >
           <span className="h-2 w-2 rounded-full mr-2" style={{ backgroundColor: style.split(' ')[1].split('-')[2] === '100' ? style.split(' ')[3].split('-')[2] : style.split(' ')[1].split('-')[2] }} />
           {status.charAt(0).toUpperCase() + status.slice(1)}
+        </div>
+      );
+    },
+  },
+  {
+    header: () => <span className="font-bold text-gray-800 uppercase text-sm">Documents</span>,
+    id: "documents",
+    cell: (info) => {
+      const row = info.row.original as any;
+      const docs = row.WarishDocument || [];
+      return (
+        <div className="flex flex-wrap gap-1.5 max-w-[180px]">
+          {docs.length === 0 && <span className="text-xs text-gray-400">None</span>}
+          {docs.map((doc: any) => (
+            <a
+              key={doc.id}
+              href={doc.cloudinaryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 bg-blue-50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded border border-blue-200 transition-colors"
+              title={doc.documentType}
+            >
+              <Eye className="w-3 h-3" />
+              <span className="truncate max-w-[60px]">{doc.documentType}</span>
+            </a>
+          ))}
         </div>
       );
     },
