@@ -411,6 +411,10 @@ enum AgencyType {
   FARM
   INDIVIDUAL
 }
+enum AgencyCategory {
+  ELECTRIC
+  OTHER
+}
 
 model AgencyDetails {
   id                 String              @id @default(auto()) @map("_id") @db.ObjectId
