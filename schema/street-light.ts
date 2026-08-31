@@ -97,6 +97,8 @@ export const ComplaintUpdateSchema = z.object({
     .enum(["PENDING", "ASSIGNED", "IN_PROGRESS", "RESOLVED", "CLOSED"])
     .optional(),
   assignedTo: z.string().optional(),
+  assignedStaffId: z.string().optional(),
+  assignedAgencyId: z.string().optional(),
   assignedDate: z.string().optional(),
   repairDate: z.string().optional(),
   resolvedDate: z.string().optional(),

@@ -5,7 +5,10 @@
         "name": "field1",
         "type": "text",
         "content": "No 3 Dhalpara Gram Panchayat",
-        "position": { "x": 20, "y": 12 },
+        "position": {
+          "x": 20,
+          "y": 12
+        },
         "width": 170,
         "height": 7.94,
         "rotate": 0,
@@ -27,7 +30,10 @@
         "name": "field2",
         "type": "text",
         "content": "Hili Development Block, Dakshin Dinajpur",
-        "position": { "x": 20, "y": 20.06 },
+        "position": {
+          "x": 20,
+          "y": 20.06
+        },
         "width": 170,
         "height": 6.29,
         "rotate": 0,
@@ -49,7 +55,10 @@
         "name": "field4",
         "type": "text",
         "content": "Certificate No:",
-        "position": { "x": 20, "y": 27.8 },
+        "position": {
+          "x": 20,
+          "y": 27.8
+        },
         "width": 32.27,
         "height": 8.4,
         "rotate": 0,
@@ -71,7 +80,10 @@
         "name": "ref",
         "type": "text",
         "content": "",
-        "position": { "x": 52.52, "y": 28.01 },
+        "position": {
+          "x": 52.52,
+          "y": 28.01
+        },
         "width": 46.59,
         "height": 7.08,
         "rotate": 0,
@@ -94,7 +106,10 @@
         "name": "field6",
         "type": "text",
         "content": "Date: ",
-        "position": { "x": 142.2, "y": 27.95 },
+        "position": {
+          "x": 142.2,
+          "y": 27.95
+        },
         "width": 11.91,
         "height": 6.35,
         "rotate": 0,
@@ -116,7 +131,10 @@
         "name": "refdate",
         "type": "text",
         "content": "",
-        "position": { "x": 154.53, "y": 27.89 },
+        "position": {
+          "x": 154.53,
+          "y": 27.89
+        },
         "width": 35.45,
         "height": 7.14,
         "rotate": 0,
@@ -138,7 +156,10 @@
         "name": "body1",
         "type": "text",
         "content": "This is to certify that Chhanoyar Mondal, son of Maniraj Mondal, residing at Kismatdapat Village, under Hili Police Station of Dakshin Dinajpur District, West Bengal State, expired on 01-Feb-2018, leaving behind the following persons as his/her legal heirs",
-        "position": { "x": 21.45, "y": 43.44 },
+        "position": {
+          "x": 21.45,
+          "y": 43.44
+        },
         "width": 168.28,
         "height": 18.71,
         "rotate": 0,
@@ -160,7 +181,10 @@
         "name": "field10",
         "type": "text",
         "content": "All the particulars regarding them are provided below: ",
-        "position": { "x": 20.53, "y": 63.29 },
+        "position": {
+          "x": 20.53,
+          "y": 63.29
+        },
         "width": 152.69,
         "height": 5.23,
         "rotate": 0,
@@ -181,7 +205,10 @@
       {
         "name": "table",
         "type": "table",
-        "position": { "x": 20.379999999999995, "y": 70.48 },
+        "position": {
+          "x": 20.379999999999995,
+          "y": 70.48
+        },
         "width": 169.62,
         "height": 10.3504,
         "content": "[]",
@@ -194,10 +221,16 @@
           "Husband Name"
         ],
         "headWidthPercentages": [
-          6.951363946319921, 28.49377920837113, 22.94811148728734,
-          18.987272644815633, 22.619472713205973
+          6.951363946319921,
+          28.49377920837113,
+          22.94811148728734,
+          18.987272644815633,
+          22.619472713205973
         ],
-        "tableStyles": { "borderWidth": 0.1, "borderColor": "#000000" },
+        "tableStyles": {
+          "borderWidth": 0.1,
+          "borderColor": "#000000"
+        },
         "headStyles": {
           "fontName": "NotoSerifJP-Regular",
           "fontSize": 9,
@@ -214,7 +247,12 @@
             "bottom": 0.1,
             "left": 0.1
           },
-          "padding": { "top": 2, "right": 2, "bottom": 2, "left": 2 }
+          "padding": {
+            "top": 2,
+            "right": 2,
+            "bottom": 2,
+            "left": 2
+          }
         },
         "bodyStyles": {
           "fontName": "NotoSerifJP-Regular",
@@ -233,7 +271,12 @@
             "bottom": 0.1,
             "left": 0.1
           },
-          "padding": { "top": 3, "right": 3, "bottom": 2, "left": 3 }
+          "padding": {
+            "top": 3,
+            "right": 3,
+            "bottom": 2,
+            "left": 3
+          }
         },
         "columnStyles": {
           "alignment": {
@@ -250,7 +293,10 @@
         "name": "field12",
         "type": "text",
         "content": "",
-        "position": { "x": 20.26, "y": 81.77 },
+        "position": {
+          "x": 20.26,
+          "y": 81.77
+        },
         "width": 169.08,
         "height": 9.46,
         "rotate": 0,
@@ -272,7 +318,10 @@
         "name": "field13",
         "type": "text",
         "content": "This legal heir certificate is issued based on the recommendation of the concerned Gram Sansad Member.",
-        "position": { "x": 20.909999999999997, "y": 99.46 },
+        "position": {
+          "x": 20.909999999999997,
+          "y": 99.46
+        },
         "width": 169.09,
         "height": 7.33,
         "rotate": 0,
@@ -289,13 +338,20 @@
         "required": false,
         "readOnly": true,
         "fontName": "NotoSerifJP-Regular",
-        "dynamicFontSize": { "min": 4, "max": 72, "fit": "vertical" }
+        "dynamicFontSize": {
+          "min": 4,
+          "max": 72,
+          "fit": "vertical"
+        }
       },
       {
         "name": "field14",
         "type": "text",
-        "content": "Prodhan\t\nDhalpara Gram Panchayat\t\nHili Block, Dakshin Dinajpur\t",
-        "position": { "x": 120.94, "y": 118.47 },
+        "content": "No 3 Dhalpara Gram Panchayat\t\nHili Block, Dakshin Dinajpur\t",
+        "position": {
+          "x": 120.94,
+          "y": 118.47
+        },
         "width": 69.06,
         "height": 15.02,
         "rotate": 0,
@@ -316,7 +372,10 @@
       {
         "name": "field15",
         "type": "line",
-        "position": { "x": 20, "y": 27.23 },
+        "position": {
+          "x": 20,
+          "y": 27.23
+        },
         "width": 170,
         "height": 0.4,
         "rotate": 0,
@@ -330,7 +389,10 @@
         "name": "field16",
         "type": "text",
         "content": "Note:",
-        "position": { "x": 20, "y": 92.08 },
+        "position": {
+          "x": 20,
+          "y": 92.08
+        },
         "width": 14.3,
         "height": 7.62,
         "rotate": 0,
@@ -352,7 +414,10 @@
         "name": "field17",
         "type": "text",
         "content": "Legal Heir Certificate",
-        "position": { "x": 89.85, "y": 36.43 },
+        "position": {
+          "x": 89.85,
+          "y": 36.43
+        },
         "width": 46.43,
         "height": 8.4,
         "rotate": 0,
@@ -369,13 +434,20 @@
         "required": false,
         "readOnly": true,
         "fontName": "NotoSansJP-Regular",
-        "dynamicFontSize": { "min": 4, "max": 72, "fit": "horizontal" }
+        "dynamicFontSize": {
+          "min": 4,
+          "max": 72,
+          "fit": "horizontal"
+        }
       },
       {
         "name": "field19",
         "type": "text",
-        "content": "Signature of Pradhan",
-        "position": { "x": 120.41, "y": 108.18 },
+        "content": "Authorised Signatory",
+        "position": {
+          "x": 120.41,
+          "y": 108.18
+        },
         "width": 68.54,
         "height": 8.14,
         "rotate": 0,
@@ -397,7 +469,10 @@
         "name": "field18",
         "type": "text",
         "content": "Office of The Pradhan",
-        "position": { "x": 20, "y": 6.38 },
+        "position": {
+          "x": 20,
+          "y": 6.38
+        },
         "width": 170,
         "height": 5.23,
         "rotate": 0,
@@ -419,7 +494,10 @@
         "name": "field20",
         "type": "qrcode",
         "content": "https://pdfme.com/",
-        "position": { "x": 29.84, "y": 108.13 },
+        "position": {
+          "x": 29.84,
+          "y": 108.13
+        },
         "backgroundColor": "#ffffff",
         "barColor": "#000000",
         "width": 18.79,
@@ -432,7 +510,10 @@
         "name": "field21",
         "type": "text",
         "content": "https://www.dhalparagp.in",
-        "position": { "x": 20, "y": 128.29 },
+        "position": {
+          "x": 20,
+          "y": 128.29
+        },
         "width": 40.75,
         "height": 4.16,
         "rotate": 0,
@@ -453,7 +534,10 @@
         "name": "field22",
         "type": "text",
         "content": "Certificate Valid for 6 Months",
-        "position": { "x": 21.32, "y": 132.74 },
+        "position": {
+          "x": 21.32,
+          "y": 132.74
+        },
         "width": 41.27,
         "height": 4.23,
         "rotate": 0,
@@ -475,7 +559,10 @@
         "name": "logo",
         "type": "image",
         "content": "",
-        "position": { "x": 21.3, "y": 5 },
+        "position": {
+          "x": 21.3,
+          "y": 5
+        },
         "width": 25.4,
         "height": 21.43,
         "rotate": 0,
@@ -487,7 +574,10 @@
         "name": "digitally_signed",
         "type": "text",
         "content": "",
-        "position": { "x": 120, "y": 100 },
+        "position": {
+          "x": 120,
+          "y": 100
+        },
         "width": 70,
         "height": 10,
         "rotate": 0,
@@ -507,6 +597,15 @@
       }
     ]
   ],
-  "basePdf": { "width": 210, "height": 297, "padding": [5, 20, 5, 20] },
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [
+      5,
+      20,
+      5,
+      20
+    ]
+  },
   "pdfmeVersion": "5.4.0"
 }

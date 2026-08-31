@@ -25,12 +25,16 @@ import { ImageUploadDropzone } from "./ImageUploadDropzone";
 interface ComplaintUpdateFormProps {
   complaintId: string;
   currentStatus: string;
+  staffList?: { id: string; name: string | null }[];
+  agencyList?: { id: string; name: string }[];
   onSuccess?: () => void;
 }
 
 export function ComplaintUpdateForm({
   complaintId,
   currentStatus,
+  staffList = [],
+  agencyList = [],
   onSuccess,
 }: ComplaintUpdateFormProps) {
   const [loading, setLoading] = useState(false);
@@ -42,6 +46,7 @@ export function ComplaintUpdateForm({
     handleSubmit,
     control,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ComplaintUpdateInput>({
     resolver: zodResolver(ComplaintUpdateSchema),
@@ -92,6 +97,16 @@ export function ComplaintUpdateForm({
     }
   }, [complaintId, onSuccess]);
 
+  const status = watch("status");
+  const STATUS_RANK: Record<string, number> = {
+    PENDING: 1,
+    ASSIGNED: 2,
+    IN_PROGRESS: 3,
+    RESOLVED: 4,
+    CLOSED: 5,
+  };
+  const currentRank = STATUS_RANK[status || "PENDING"] || 1;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="flex items-center gap-3">
@@ -118,48 +133,96 @@ export function ComplaintUpdateForm({
           />
         </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="assignedTo">Assigned To</Label>
-          <Input id="assignedTo" {...register("assignedTo")} placeholder="Staff / person name" />
-        </div>
+        {currentRank >= 1 && (
+          <>
+            <div className="space-y-1.5">
+              <Label htmlFor="assignedTo">Assigned To (Other)</Label>
+              <Input id="assignedTo" {...register("assignedTo")} placeholder="Staff / person name" />
+            </div>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="assignedDate">Assigned Date</Label>
-          <Input id="assignedDate" type="date" {...register("assignedDate")} />
-        </div>
+            <div className="space-y-1.5">
+              <Label>Assign Staff (Enquiry)</Label>
+              <Controller
+                control={control}
+                name="assignedStaffId"
+                render={({ field }) => (
+                  <Select onValueChange={(v) => field.onChange(v === "none" ? undefined : v)} value={field.value || "none"}>
+                    <SelectTrigger><SelectValue placeholder="Select Staff" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None</SelectItem>
+                      {staffList.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>{s.name ?? "Unnamed"}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+            
+            <div className="space-y-1.5">
+              <Label htmlFor="assignedDate">Assigned Date</Label>
+              <Input id="assignedDate" type="date" {...register("assignedDate")} />
+            </div>
+          </>
+        )}
 
-        <div className="space-y-1.5">
-          <Label htmlFor="repairDate">Repair Date</Label>
-          <Input id="repairDate" type="date" {...register("repairDate")} />
-        </div>
+        {currentRank >= 2 && (
+          <div className="space-y-1.5">
+            <Label>Assign Agency (Repair)</Label>
+            <Controller
+              control={control}
+              name="assignedAgencyId"
+              render={({ field }) => (
+                <Select onValueChange={(v) => field.onChange(v === "none" ? undefined : v)} value={field.value || "none"}>
+                  <SelectTrigger><SelectValue placeholder="Select Agency" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    {agencyList.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
+        )}
 
-        <div className="space-y-1.5">
-          <Label htmlFor="resolvedDate">Resolved Date</Label>
-          <Input id="resolvedDate" type="date" {...register("resolvedDate")} />
-        </div>
+        {currentRank >= 3 && (
+          <>
+            <div className="space-y-1.5">
+              <Label htmlFor="repairDate">Repair Date</Label>
+              <Input id="repairDate" type="date" {...register("repairDate")} />
+            </div>
 
-        <div className="space-y-1.5 md:col-span-2">
-          <Label htmlFor="repairRemarks">Repair Remarks</Label>
-          <Textarea
-            id="repairRemarks"
-            {...register("repairRemarks")}
-            placeholder="Describe the repair work done…"
-            rows={3}
-          />
-        </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="resolvedDate">Resolved Date</Label>
+              <Input id="resolvedDate" type="date" {...register("resolvedDate")} />
+            </div>
 
-        <div className="space-y-1.5 md:col-span-2">
-          <Label>Completion / After-Repair Photo</Label>
-          <ImageUploadDropzone
-            preview={imagePreview}
-            uploading={uploading}
-            onFile={uploadImage}
-            onClear={handleClearImage}
-            label="Attach after-repair photo"
-            iconVariant="camera"
-            previewHeight="h-32"
-          />
-        </div>
+            <div className="space-y-1.5 md:col-span-2">
+              <Label htmlFor="repairRemarks">Repair Remarks</Label>
+              <Textarea
+                id="repairRemarks"
+                {...register("repairRemarks")}
+                placeholder="Describe the repair work done…"
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-1.5 md:col-span-2">
+              <Label>Completion / After-Repair Photo</Label>
+              <ImageUploadDropzone
+                preview={imagePreview}
+                uploading={uploading}
+                onFile={uploadImage}
+                onClear={handleClearImage}
+                label="Attach after-repair photo"
+                iconVariant="camera"
+                previewHeight="h-32"
+              />
+            </div>
+          </>
+        )}
       </div>
 
       <Button type="submit" disabled={loading} className="gap-2">

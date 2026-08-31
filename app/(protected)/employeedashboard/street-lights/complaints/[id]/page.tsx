@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { StatusBadge } from "@/components/street-lights/StatusBadge";
@@ -8,12 +8,18 @@ import { ComplaintUpdateForm } from "@/components/street-lights/ComplaintUpdateF
 import Image from "next/image";
 import { formatDate } from "@/lib/utils/date";
 import { toTitleCase } from "@/lib/utils";
+import { currentUser } from "@/lib/auth";
 
-export default async function ComplaintDetailPage({
+export default async function StaffComplaintDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const user = await currentUser();
+  if (!user || user.role !== "staff") {
+    redirect("/auth/login");
+  }
+
   const { id } = await params;
   const complaint = await db.streetLightComplaint.findUnique({
     where: { id },
@@ -23,7 +29,11 @@ export default async function ComplaintDetailPage({
       assignedAgency: { select: { name: true } },
     },
   });
+
   if (!complaint) notFound();
+
+  // Optionally ensure that the staff is only viewing their own complaints
+  // if (complaint.assignedStaffId !== user.id) notFound();
 
   const staffUsers = await db.user.findMany({
     where: { role: "staff" },
@@ -41,7 +51,7 @@ export default async function ComplaintDetailPage({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-border/40">
         <div className="flex items-center gap-4">
           <Link
-            href="/admindashboard/street-lights/complaints"
+            href="/employeedashboard/street-lights/assigned"
             className="w-10 h-10 bg-card rounded-xl flex items-center justify-center border border-border/40 shadow-sm hover:bg-muted transition-colors group"
           >
             <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -65,12 +75,6 @@ export default async function ComplaintDetailPage({
         <p className="text-sm text-muted-foreground">
           {complaint.streetLight.mouza?.mouzaName} • {complaint.streetLight.landmark ?? "—"}
         </p>
-        <Link
-          href={`/admindashboard/street-lights/register/${complaint.streetLightId}`}
-          className="text-xs text-orange-600 underline underline-offset-2"
-        >
-          View Light Details →
-        </Link>
       </div>
 
       {/* Complaint details */}

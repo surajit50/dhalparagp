@@ -1,8 +1,7 @@
 "use client";
-
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { StreetLightComplaintSchema, type StreetLightComplaintInput } from "@/schema/street-light";
@@ -22,8 +21,8 @@ import {
 import { ImageUploadDropzone } from "./ImageUploadDropzone";
 
 interface ComplaintFormProps {
-  streetLightId: string;
-  lightId: string;
+  streetLightId?: string;
+  lightId?: string;
   onSuccess?: () => void;
 }
 
@@ -32,17 +31,44 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
+  const [lights, setLights] = useState<any[]>([]);
+  const [loadingLights, setLoadingLights] = useState(false);
+  const [selectedMouza, setSelectedMouza] = useState<string>("");
+
+  const uniqueMouzas = useMemo(() => {
+    const mouzas = lights.map((l) => l.mouza?.mouzaName).filter(Boolean);
+    return Array.from(new Set(mouzas)).sort();
+  }, [lights]);
+
+  const filteredLights = useMemo(() => {
+    if (!selectedMouza) return lights;
+    return lights.filter((l) => l.mouza?.mouzaName === selectedMouza);
+  }, [lights, selectedMouza]);
+  useEffect(() => {
+    if (!streetLightId) {
+      setLoadingLights(true);
+      fetch("/api/street-lights/list")
+        .then(res => res.json())
+        .then(data => setLights(Array.isArray(data) ? data : []))
+        .catch(err => console.error(err))
+        .finally(() => setLoadingLights(false));
+    }
+  }, [streetLightId]);
+
   const {
     register,
     handleSubmit,
     control,
     setValue,
+    watch,
     reset,
     formState: { errors },
   } = useForm<StreetLightComplaintInput>({
     resolver: zodResolver(StreetLightComplaintSchema),
-    defaultValues: { streetLightId, priority: "NORMAL" },
+    defaultValues: { streetLightId: streetLightId || "", priority: "NORMAL" },
   });
+
+  const selectedStreetLightId = watch("streetLightId");
 
   const uploadImage = useCallback(async (file: File) => {
     setUploading(true);
@@ -73,14 +99,14 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
   const onSubmit = useCallback(async (data: StreetLightComplaintInput) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/street-lights/${streetLightId}/complaints`, {
+      const res = await fetch(`/api/street-lights/${data.streetLightId}/complaints`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error("Failed to file complaint");
       toast.success("Complaint filed successfully");
-      reset({ streetLightId, priority: "NORMAL" });
+      reset({ streetLightId: streetLightId || "", priority: "NORMAL" });
       setImagePreview(null);
       onSuccess?.();
     } catch (err: unknown) {
@@ -92,9 +118,55 @@ export function ComplaintForm({ streetLightId, lightId, onSuccess }: ComplaintFo
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="rounded-lg bg-muted/40 px-4 py-3 text-sm">
-        Filing complaint for: <span className="font-mono font-semibold text-orange-700">{lightId}</span>
-      </div>
+      {streetLightId && lightId ? (
+        <div className="rounded-lg bg-muted/40 px-4 py-3 text-sm">
+          Filing complaint for: <span className="font-mono font-semibold text-orange-700">{lightId}</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>Select Mouza <span className="text-red-500">*</span></Label>
+            <Select onValueChange={(val) => {
+              setSelectedMouza(val);
+              setValue("streetLightId", "");
+            }} value={selectedMouza}>
+              <SelectTrigger>
+                <SelectValue placeholder={loadingLights ? "Loading..." : "Select Mouza"} />
+              </SelectTrigger>
+              <SelectContent>
+                {uniqueMouzas.map((m) => (
+                  <SelectItem key={m as string} value={m as string}>
+                    {m as string}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Select Street Light <span className="text-red-500">*</span></Label>
+            <Controller
+              control={control}
+              name="streetLightId"
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value} disabled={!selectedMouza}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={!selectedMouza ? "Select Mouza first" : "Select a street light"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredLights.map((l) => (
+                      <SelectItem key={l.id} value={l.id}>
+                        {l.lightId} {l.landmark ? `(${l.landmark})` : ""}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.streetLightId && <p className="text-xs text-red-500">{errors.streetLightId.message}</p>}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-1.5">

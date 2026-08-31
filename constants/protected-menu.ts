@@ -647,6 +647,11 @@ export const employeeMenuItems: MenuItemProps[] = [
     createMenuItem("Document Archive", ["staff"], `${BASE_URLS.staff}/documents/archive`, MdFolder, COLORS.orange),
     createMenuItem("Templates", ["staff"], `${BASE_URLS.staff}/documents/templates`, MdDescription, COLORS.purple),
   ]),
+
+  // Street Light Management
+  createMenuItem("Street Light Register", ["staff"], undefined, MdLightbulb, COLORS.orange, [
+    createMenuItem("Assigned Complaints", ["staff"], `${BASE_URLS.staff}/street-lights/assigned`, FaChevronCircleRight, COLORS.red),
+  ]),
 ];
 
 // =============== AGENCY MENU ===============

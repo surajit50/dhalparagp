@@ -127,6 +127,7 @@ model User {
   digitalCertificateApplications DigitalCertificateApplication[]
   vouchersEntered              Voucher[]                    @relation("VoucherEnteredBy")
   vouchersVerified             Voucher[]                    @relation("VoucherVerifiedBy")
+  streetLightComplaintsEnquired StreetLightComplaint[]      @relation("ComplaintStaffEnquiry")
 }
 
 model Account {
@@ -436,6 +437,7 @@ model AgencyDetails {
   Notice             Notice[]
   procurementBidders ProcurementBidder[]
   procurementOrders  ProcurementOrder[]
+  streetLightComplaintsRepaired StreetLightComplaint[] @relation("ComplaintAgencyRepair")
 }
 
 model ApprovedActionPlanDetails {
@@ -4663,6 +4665,12 @@ model StreetLightComplaint {
 
   assignedTo   String?
   assignedDate DateTime?
+
+  assignedStaffId String? @db.ObjectId
+  assignedStaff   User?   @relation("ComplaintStaffEnquiry", fields: [assignedStaffId], references: [id])
+
+  assignedAgencyId String? @db.ObjectId
+  assignedAgency   AgencyDetails? @relation("ComplaintAgencyRepair", fields: [assignedAgencyId], references: [id])
 
   repairDate   DateTime?
   resolvedDate DateTime?

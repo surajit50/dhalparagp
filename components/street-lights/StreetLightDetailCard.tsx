@@ -160,7 +160,7 @@ export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardP
           value={light.installYear?.toString()}
           icon={<Calendar className="w-3.5 h-3.5 text-muted-foreground" />}
         />
-        <DetailRow label="Last Inspection" value={formatDate(light.lastInspection!)} />
+        <DetailRow label="Last Inspection" value={light.lastInspection ? formatDate(light.lastInspection) : undefined} />
       </div>
 
       {light.latitude && light.longitude && (

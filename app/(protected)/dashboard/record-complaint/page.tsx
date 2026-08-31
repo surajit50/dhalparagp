@@ -1,5 +1,6 @@
-import { ComplaintForm } from "@/components/form/complaint-form";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ComplaintForm } from "@/components/street-lights/ComplaintForm";
 
 
 export default function RecordComplaintPage() {
@@ -19,7 +20,7 @@ export default function RecordComplaintPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ComplaintForm />
+          < ComplaintForm />
         </CardContent>
       </Card>
     </div>
