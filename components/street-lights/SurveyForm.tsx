@@ -842,28 +842,13 @@ export function SurveyForm() {
                     MOUZA SELECT BUTTON
                 ================================================= */}
 
-                <Popover
-                  open={mouzaOpen}
-                  onOpenChange={
-                    setMouzaOpen
-                  }
-                >
-
-                  <PopoverTrigger
-                    asChild
-                  >
-
+                <Popover open={mouzaOpen} onOpenChange={setMouzaOpen}>
+                  <PopoverTrigger asChild>
                     <button
                       type="button"
-                      aria-label="Select Mouza"
+                      disabled={mouzasLoading}
                       className={`
-                        w-full text-left
-                        rounded-xl border
-                        transition-all
-                        duration-200
-                        focus:outline-none
-                        focus:ring-2
-                        focus:ring-orange-500/30
+                        w-full h-auto p-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500/30 flex items-center justify-between
                         ${
                           currentSelected
                             ? "border-emerald-300 bg-emerald-50/70 dark:border-emerald-800 dark:bg-emerald-950/20"
@@ -871,18 +856,10 @@ export function SurveyForm() {
                         }
                       `}
                     >
-
-                      <div className="flex items-center gap-3 p-3">
-
-                        {/* Icon */}
-
+                      <div className="flex items-center gap-3 text-left w-full overflow-hidden">
                         <div
                           className={`
-                            shrink-0
-                            w-10 h-10
-                            rounded-xl
-                            flex items-center
-                            justify-center
+                            shrink-0 w-10 h-10 rounded-xl flex items-center justify-center
                             ${
                               currentSelected
                                 ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/50 dark:text-emerald-300"
@@ -890,364 +867,107 @@ export function SurveyForm() {
                             }
                           `}
                         >
-
                           {currentSelected ? (
                             <CheckCircle2 className="w-5 h-5" />
                           ) : (
                             <MapIcon className="w-5 h-5" />
                           )}
-
                         </div>
-
-                        {/* Selected text */}
-
                         <div className="flex-1 min-w-0">
-
                           {currentSelected ? (
                             <>
                               <div className="flex items-center gap-2">
-
                                 <span className="font-bold text-sm truncate">
-                                  {
-                                    currentSelected.mouzaName
-                                  }
+                                  {currentSelected.mouzaName}
                                 </span>
-
-                                <span className="shrink-0 text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300">
-                                  {
-                                    currentSelected.mouzaCode
-                                  }
-                                </span>
-
                               </div>
-
                               <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
                                 {currentSelected.gramSansad
-                                  ? `Gram Sansad: ${currentSelected.gramSansad}`
+                                  ? `Sansad: ${currentSelected.gramSansad}`
                                   : "Mouza selected"}
                               </p>
                             </>
                           ) : (
                             <>
-                              <p className="text-sm font-semibold">
-                                Choose Mouza
-                              </p>
-
+                              <p className="text-sm font-semibold">Choose Mouza</p>
                               <p className="text-[11px] text-muted-foreground">
-                                Search by name,
-                                code or Sansad
+                                {mouzasLoading ? "Loading..." : "Tap to search & select area"}
                               </p>
                             </>
                           )}
-
                         </div>
-
-                        <ChevronsUpDown className="w-4 h-4 shrink-0 text-muted-foreground" />
-
                       </div>
-
+                      <ChevronsUpDown className="w-4 h-4 text-muted-foreground shrink-0 opacity-50 ml-2" />
                     </button>
-
                   </PopoverTrigger>
-
-                  {/* =================================================
-                      MOUZA SEARCH POPUP
-                  ================================================= */}
-
-                  <PopoverContent
+                  <PopoverContent 
+                    className="w-[calc(100vw-2rem)] sm:w-[var(--radix-popover-trigger-width)] p-0 rounded-xl" 
                     align="start"
-                    sideOffset={6}
-                    className="w-[var(--radix-popover-trigger-width)] min-w-[320px] max-w-[calc(100vw-24px)] p-0 rounded-xl overflow-hidden shadow-xl"
                   >
-
-                    <Command
-                      shouldFilter={false}
-                      className="rounded-xl"
-                    >
-
-                      {/* Search */}
-
-                      <div className="border-b bg-muted/20">
-
-                        <CommandInput
-                          placeholder="Search Mouza, code or Sansad..."
-                          value={
-                            mouzaSearch
-                          }
-                          onValueChange={
-                            setMouzaSearch
-                          }
-                          className="h-12 text-sm"
-                        />
-
-                      </div>
-
-                      {/* Result count */}
-
-                      <div className="px-3 py-2 border-b bg-background flex items-center justify-between">
-
-                        <span className="text-[11px] font-medium text-muted-foreground">
-
-                          {mouzasLoading
-                            ? "Loading Mouzas..."
-                            : `${filteredMouzas.length} Mouza${
-                                filteredMouzas.length ===
-                                1
-                                  ? ""
-                                  : "s"
-                              } found`}
-
-                        </span>
-
-                        {mouzaSearch && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setMouzaSearch(
-                                ""
-                              )
-                            }
-                            className="text-[11px] text-orange-600 hover:underline flex items-center gap-1"
-                          >
-                            <X className="w-3 h-3" />
-                            Clear
-                          </button>
-                        )}
-
-                      </div>
-
-                      {/* List */}
-
-                      <CommandList className="max-h-[55vh] overflow-y-auto p-1.5">
-
-                        <CommandEmpty className="py-8 text-center">
-
-                          <Search className="w-7 h-7 mx-auto mb-2 text-muted-foreground/50" />
-
-                          <p className="text-sm font-medium">
-                            No Mouza found
-                          </p>
-
-                          <p className="text-[11px] text-muted-foreground mt-1">
-                            Try another name,
-                            code or Sansad
-                          </p>
-
+                    <Command shouldFilter={false} className="max-h-[60vh] sm:max-h-[350px]">
+                      <CommandInput 
+                        placeholder="Search mouza, sansad, or code..." 
+                        value={mouzaSearch}
+                        onValueChange={setMouzaSearch}
+                        className="h-12 sm:h-11 border-none focus:ring-0 text-base sm:text-sm"
+                      />
+                      <CommandList className="max-h-[calc(60vh-48px)] sm:max-h-[300px] overflow-y-auto">
+                        <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">
+                          No survey area found.
                         </CommandEmpty>
-
-                        {/* =================================================
-                            GROUPED MOUZAS
-                        ================================================= */}
-
-                        {groupedMouzas.map(
-                          ([
-                            sansad,
-                            mouzaList,
-                          ]) => (
-
-                            <CommandGroup
-                              key={sansad}
-                              heading={
-                                <div className="flex items-center gap-2 px-1 py-1">
-
-                                  <MapPin className="w-3 h-3 text-orange-500" />
-
-                                  <span className="font-bold text-xs">
-                                    {sansad}
-                                  </span>
-
-                                  <span className="text-[10px] text-muted-foreground">
-                                    (
-                                    {
-                                      mouzaList.length
-                                    }
-                                    )
-                                  </span>
-
+                        {groupedMouzas.map(([sansad, mouzaList]) => (
+                          <CommandGroup 
+                            key={sansad} 
+                            heading={
+                              <div className="flex items-center gap-1.5 text-orange-600 dark:text-orange-400">
+                                <MapPin className="w-3.5 h-3.5" />
+                                <span className="font-bold tracking-wider">{sansad}</span>
+                              </div>
+                            }
+                            className="px-1"
+                          >
+                            {mouzaList.map((mouza) => (
+                              <CommandItem
+                                key={mouza.id}
+                                value={mouza.id}
+                                onSelect={() => {
+                                  field.onChange(mouza.id);
+                                  if (mouza.gramSansad) {
+                                    setValue("sansad", mouza.gramSansad, { shouldDirty: true });
+                                  }
+                                  if (mouza.sansadCode) {
+                                    setValue("ward", mouza.sansadCode, { shouldDirty: true });
+                                  }
+                                  toast.success(`Selected: ${mouza.mouzaName}`);
+                                  setMouzaOpen(false);
+                                  setMouzaSearch("");
+                                }}
+                                className={`
+                                  py-3 px-3 cursor-pointer my-0.5 rounded-lg
+                                  ${currentSelected?.id === mouza.id ? "bg-emerald-50 dark:bg-emerald-950/30" : ""}
+                                `}
+                              >
+                                <div className="flex items-start gap-3 w-full">
+                                  <Check
+                                    className={`mt-0.5 h-4 w-4 shrink-0 transition-opacity ${
+                                      currentSelected?.id === mouza.id ? "opacity-100 text-emerald-600" : "opacity-0"
+                                    }`}
+                                  />
+                                  <div className="flex flex-col gap-1 flex-1 overflow-hidden">
+                                    <span className="font-semibold text-sm text-foreground truncate">{mouza.mouzaName}</span>
+                                    <div className="flex flex-wrap gap-2 text-[10px] text-muted-foreground font-medium">
+                                      <span className="bg-muted px-1.5 py-0.5 rounded-sm">Code: {mouza.mouzaCode}</span>
+                                      {mouza.sansadCode && <span className="bg-muted px-1.5 py-0.5 rounded-sm">Ward: {mouza.sansadCode}</span>}
+                                    </div>
+                                  </div>
                                 </div>
-                              }
-                            >
-
-                              {mouzaList.map(
-                                (mouza) => {
-
-                                  const isSelected =
-                                    field.value ===
-                                    mouza.id;
-
-                                  return (
-                                    <CommandItem
-                                      key={
-                                        mouza.id
-                                      }
-                                      value={
-                                        mouza.id
-                                      }
-                                      onSelect={() => {
-
-                                        /* Set Mouza */
-
-                                        field.onChange(
-                                          mouza.id
-                                        );
-
-                                        /* Auto-fill Sansad */
-
-                                        if (
-                                          mouza.gramSansad
-                                        ) {
-                                          setValue(
-                                            "sansad",
-                                            mouza.gramSansad,
-                                            {
-                                              shouldDirty:
-                                                true,
-                                            }
-                                          );
-                                        }
-
-                                        /* Auto-fill Ward/Sansad Code */
-
-                                        if (
-                                          mouza.sansadCode
-                                        ) {
-                                          setValue(
-                                            "ward",
-                                            mouza.sansadCode,
-                                            {
-                                              shouldDirty:
-                                                true,
-                                            }
-                                          );
-                                        }
-
-                                        /* Close */
-
-                                        setMouzaOpen(
-                                          false
-                                        );
-
-                                        setMouzaSearch(
-                                          ""
-                                        );
-
-                                        toast.success(
-                                          `Mouza selected: ${mouza.mouzaName}`
-                                        );
-                                      }}
-                                      className={`
-                                        relative
-                                        mb-1
-                                        rounded-lg
-                                        px-3 py-3
-                                        cursor-pointer
-                                        items-start
-                                        ${
-                                          isSelected
-                                            ? "bg-emerald-50 dark:bg-emerald-950/30"
-                                            : ""
-                                        }
-                                      `}
-                                    >
-
-                                      {/* Selection icon */}
-
-                                      <div
-                                        className={`
-                                          mt-0.5
-                                          mr-3
-                                          w-7 h-7
-                                          rounded-lg
-                                          flex
-                                          items-center
-                                          justify-center
-                                          shrink-0
-                                          ${
-                                            isSelected
-                                              ? "bg-emerald-500 text-white"
-                                              : "bg-muted text-muted-foreground"
-                                          }
-                                        `}
-                                      >
-
-                                        {isSelected ? (
-                                          <Check className="w-4 h-4" />
-                                        ) : (
-                                          <MapPin className="w-3.5 h-3.5" />
-                                        )}
-
-                                      </div>
-
-                                      {/* Details */}
-
-                                      <div className="flex-1 min-w-0">
-
-                                        <div className="flex flex-wrap items-center gap-2">
-
-                                          <span
-                                            className={`
-                                              text-sm
-                                              ${
-                                                isSelected
-                                                  ? "font-bold text-emerald-700 dark:text-emerald-300"
-                                                  : "font-semibold"
-                                              }
-                                            `}
-                                          >
-                                            {
-                                              mouza.mouzaName
-                                            }
-                                          </span>
-
-                                          <span className="font-mono text-[10px] font-semibold px-1.5 py-0.5 rounded bg-muted border">
-                                            Code:{" "}
-                                            {
-                                              mouza.mouzaCode
-                                            }
-                                          </span>
-
-                                        </div>
-
-                                        <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-
-                                          {mouza.gramSansad && (
-                                            <span className="text-[10px] text-muted-foreground">
-                                              Sansad:{" "}
-                                              {
-                                                mouza.gramSansad
-                                              }
-                                            </span>
-                                          )}
-
-                                          {mouza.sansadCode && (
-                                            <span className="text-[10px] text-muted-foreground">
-                                              Sansad Code:{" "}
-                                              {
-                                                mouza.sansadCode
-                                              }
-                                            </span>
-                                          )}
-
-                                        </div>
-
-                                      </div>
-
-                                    </CommandItem>
-                                  );
-                                }
-                              )}
-
-                            </CommandGroup>
-
-                          )
-                        )}
-
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        ))}
                       </CommandList>
-
                     </Command>
-
                   </PopoverContent>
-
                 </Popover>
 
                 {/* =================================================

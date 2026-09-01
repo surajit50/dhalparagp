@@ -12,7 +12,7 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
 
     const handlePrint = () => {
         if (printRef.current) {
-            const printContent = printRef.current.innerHTML;
+            const printContent = printRef.current.outerHTML;
             const originalContent = document.body.innerHTML;
             document.body.innerHTML = printContent;
             window.print();
@@ -118,7 +118,7 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                         </div>
                     </div>
                     <div className="space-y-[2px] text-[13px] italic font-bold">
-                        <div>Voucher Entered by: {voucher.enteredBy || "Arpan Sarkar, Sahayak"} on {voucher.voucherDate ? formatDate(voucher.voucherDate) : "31.08.2026"}</div>
+                        <div>Voucher Entered by: {voucher.enteredBy?.name || "Arpan Sarkar, Sahayak"} on {voucher.voucherDate ? formatDate(voucher.voucherDate) : "31.08.2026"}</div>
                         <div>Voucher Verified By: {voucher.verifiedBy?.name}</div>
                     </div>
                 </div>
@@ -134,16 +134,6 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                         margin: 0;
                         padding: 0;
                         background: white;
-                    }
-                    body > *:not(.max-w-4xl) {
-                        display: none !important;
-                    }
-                    .max-w-4xl {
-                        max-width: none !important;
-                        margin: 0 !important;
-                        padding: 0 !important;
-                        box-shadow: none !important;
-                        background: transparent !important;
                     }
                     .print-container {
                         box-shadow: none !important;
