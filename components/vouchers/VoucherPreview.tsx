@@ -22,36 +22,37 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
     };
 
     const formatDate = (dateString: string) => {
+        if (!dateString) return "";
         const date = new Date(dateString);
-        return date.toLocaleDateString("en-IN", {
+        return date.toLocaleDateString("en-GB", {
             day: "2-digit",
             month: "2-digit",
             year: "numeric"
-        });
+        }).replace(/\//g, '.');
     };
 
     return (
         <div className="max-w-4xl mx-auto p-6 flex flex-col items-center">
             <button
                 onClick={handlePrint}
-                className="mb-6 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
+                className="mb-6 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 print:hidden"
             >
                 Print Voucher
             </button>
 
             <div
                 ref={printRef}
-                className="w-full bg-white p-12 shadow-lg"
-                style={{ minHeight: "1123px", width: "794px" }} // A4 dimensions at 96 DPI
+                className="w-full bg-white px-10 py-12 shadow-lg print-container"
+                style={{ minHeight: "1123px", width: "794px", fontFamily: '"Times New Roman", Times, serif' }}
             >
                 {/* Header Section */}
                 <div className="flex justify-between items-start mb-8">
-                    <div className="flex-1 flex flex-col items-center ml-16">
-                        <h1 className="text-xl font-bold uppercase tracking-wide">{voucher.voucherType} VOUCHER</h1>
-                        <h2 className="text-lg font-bold">DHALPARA GRAM PANCHAYAT</h2>
-                        <h3 className="text-sm font-semibold">DAKSHIN DINAJPUR, HILI, DHALPA</h3>
+                    <div className="flex-1 flex flex-col items-center ml-[120px]">
+                        <h1 className="text-[17px] uppercase tracking-wide">{voucher.voucherType || 'CREDIT'} VOUCHER</h1>
+                        <h2 className="text-[15px] font-bold">DHALPARA GRAM PANCHAYAT</h2>
+                        <h3 className="text-[13px] font-bold">DAKSHIN DINAJPUR, HILI, DHALPA</h3>
                     </div>
-                    <div className="w-48 flex justify-end">
+                    <div className="w-[120px] flex justify-end">
                         <img
                             src="/sahajlogo.jpg"
                             alt="SAHAJ SARAL"
@@ -61,65 +62,64 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                 </div>
 
                 {/* Info Section */}
-                <div className="flex justify-between mb-8 text-sm">
-                    <div className="space-y-2">
-                        <div className="font-semibold"><span className="font-bold">Head of Account:</span> {voucher.accountHead?.headOfAccount || "OWN FUND-MISCELLANEOUS"}</div>
-                        <div className="font-semibold"><span className="font-bold">Account Codes:</span> {voucher.accountHead?.accountCode || "101501000"}</div>
-                        <div className="font-semibold"><span className="font-bold">Account Code Desc:</span> {voucher.accountHead?.description || "Receipt- PRI Own Resource"}</div>
-                        <div className="font-semibold"><span className="font-bold">National A/C Code:</span> {voucher.accountHead?.nationalAccountCode || "0035-101-0000-80-0000-0000"}</div>
+                <div className="flex justify-between mb-8 text-[13px] font-bold">
+                    <div className="space-y-1">
+                        <div>Head of Account: {voucher.accountHead?.headOfAccount || "OWN FUND-MISCELLANEOUS"}</div>
+                        <div>Account Codes: {voucher.accountHead?.accountCode || "101501000"}</div>
+                        <div>Account Code Desc: {voucher.accountHead?.description || "Receipt- PRI Own Resource"}</div>
+                        <div>National A/C Code: {voucher.accountHead?.nationalAccountCode || "0035-101-0000-80-0000-0000"}</div>
                     </div>
-                    <div className="space-y-2 text-right">
-                        <div className="font-semibold"><span className="font-bold">Voucher Date:</span> {formatDate(voucher.voucherDate)}</div>
-                        <div className="font-semibold"><span className="font-bold">Voucher ID:</span> {voucher.voucherId}</div>
-                        <div className="font-semibold"><span className="font-bold">Voucher No.:</span> {voucher.voucherNo || "XXXXXXXXXXX"}</div>
+                    <div className="space-y-1 text-right">
+                        <div>Voucher Date: {voucher.voucherDate ? formatDate(voucher.voucherDate) : "31.08.2026"}</div>
+                        <div>Voucher ID: {voucher.voucherId || "2627R001353"}</div>
+                        <div>Voucher No.: {voucher.voucherNo || "XXXXXXXXXXX"}</div>
                     </div>
                 </div>
 
                 {/* Details Section */}
-                <div className="space-y-4 text-sm mb-16">
-                    <div className="font-semibold">
-                        <span className="font-bold">Received from: </span> {voucher.receivedFrom?.toUpperCase()}
+                <div className="space-y-[8px] text-[13px] font-bold mb-16">
+                    <div>
+                        Received from: {voucher.receivedFrom || "Mohai Mondal"}
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">of: </span> {voucher.address?.toUpperCase()}
+                    <div>
+                        of: {voucher.address || "Chakdapat"}
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">Description: </span> {voucher.description?.toUpperCase()}
+                    <div className="pt-2">
+                        Description: {voucher.description || "Legal hair certificate fee"}
                     </div>
-                    <br />
-                    <div className="font-semibold">
-                        <span className="font-bold">Rs.: {voucher.amount}/-</span> (Rs.{voucher.amountInWords})
+                    <div className="pt-4">
+                        Rs.: {voucher.amount || "100"}/- (Rs.{voucher.amountInWords || "One Hundred Only"})
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">Received by: </span> None
+                    <div className="pt-2">
+                        Received by: {voucher.receivedBy || "None"}
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">No.: </span>
+                    <div>
+                        No.:
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">Dated: </span>
+                    <div>
+                        Dated:
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">Drawn on: </span> {voucher.drawnOn}
+                    <div>
+                        Drawn on: {voucher.drawnOn}
                     </div>
-                    <div className="font-semibold">
-                        <span className="font-bold">Allotment No: </span> {voucher.allotmentNo}
+                    <div>
+                        Allotment No: {voucher.allotmentNo}
                     </div>
                 </div>
 
                 {/* Signatures Section */}
-                <div className="mt-32 pt-8">
-                    <div className="flex justify-between items-end">
-                        <div className="font-semibold">
+                <div className="mt-32">
+                    <div className="flex justify-between items-end text-[13px] font-bold mb-6">
+                        <div>
                             Secretary/Authorized employee of GP
                         </div>
-                        <div className="font-semibold">
+                        <div>
                             Authorised Signatory
                         </div>
                     </div>
-                    <div className="mt-8 space-y-1 text-sm italic">
-                        <div>Voucher Entered by: Arpan Sarkar</div>
-                        <div>Voucher Verified By: {voucher.verifiedBy?.name || "Arpan Sarkar, Sahayak"}</div>
+                    <div className="space-y-[2px] text-[13px] italic font-bold">
+                        <div>Voucher Entered by: {voucher.enteredBy || "Arpan Sarkar, Sahayak"} on {voucher.voucherDate ? formatDate(voucher.voucherDate) : "31.08.2026"}</div>
+                        <div>Voucher Verified By: {voucher.verifiedBy?.name}</div>
                     </div>
                 </div>
             </div>
@@ -131,6 +131,29 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                     body {
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
+                        margin: 0;
+                        padding: 0;
+                        background: white;
+                    }
+                    body > *:not(.max-w-4xl) {
+                        display: none !important;
+                    }
+                    .max-w-4xl {
+                        max-width: none !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        box-shadow: none !important;
+                        background: transparent !important;
+                    }
+                    .print-container {
+                        box-shadow: none !important;
+                        width: 100% !important;
+                        height: 100% !important;
+                        padding: 40px !important;
+                        margin: 0 !important;
+                    }
+                    button {
+                        display: none !important;
                     }
                 }
             `}</style>
