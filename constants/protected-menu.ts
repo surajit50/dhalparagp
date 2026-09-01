@@ -339,6 +339,7 @@ export const adminMenuItems: MenuItemProps[] = [
       ]),
       createMenuItem("Active Tenders", ["admin"], `${BASE_URLS.admin}/manage-tender/view`, FaChevronCircleRight, COLORS.green),
       createMenuItem("Upload Tenders", ["admin"], `${BASE_URLS.admin}/manage-tender/upload`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Tender Document Upload", ["admin"], `${BASE_URLS.admin}/manage-tender/document-upload`, FaChevronCircleRight, COLORS.orange),
       createMenuItem("Tender Status Report", ["admin"], `${BASE_URLS.admin}/manage-tender/tender-status-report`, FaChevronCircleRight, COLORS.blue),
       createMenuItem("Tender Report", ["admin"], `${BASE_URLS.admin}/manage-tender/report`, FaChevronCircleRight, COLORS.purple),
       createMenuItem("Terms Management", ["admin"], undefined, FaChevronDown, COLORS.orange, [
