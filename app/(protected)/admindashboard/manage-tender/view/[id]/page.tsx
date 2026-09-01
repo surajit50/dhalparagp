@@ -7,6 +7,7 @@ import { Calendar, Clock, FileText, DollarSign, Tag, Building, MapPin, CalendarD
 import { CopyNameButton } from "@/components/CopyNameButton";
 import { CopyEstimateButton } from "@/components/CopyEstimateButton";
 import { BoqToggleButton } from "@/components/BoqToggleButton";
+import { UploadEstimateButton } from "@/components/UploadEstimateButton";
 
 export default async function NITDetailsPage({
   params,
@@ -358,9 +359,13 @@ export default async function NITDetailsPage({
                           </div>
 
                           {/* Action Buttons */}
-                          <div className="mt-4 flex items-center gap-3 border-t pt-4">
+                          <div className="mt-4 flex flex-wrap items-center gap-3 border-t pt-4">
                             <CopyNameButton workName={workName} />
                             <CopyEstimateButton estimateAmount={work.finalEstimateAmount || 0} />
+                            <UploadEstimateButton 
+                              workId={work.id} 
+                              initialEstimateDocument={work.estimateDocument} 
+                            />
                             <BoqToggleButton
                               workId={work.id}
                               initialBoqPrepared={work.boqPrepared || false}

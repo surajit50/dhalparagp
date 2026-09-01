@@ -564,6 +564,7 @@ model WorksDetail {
   paymentDetails              PaymentDetails[]
   workStatus                  workStatus                @default(approved)
   boqPrepared                 Boolean                   @default(false)
+  estimateDocument            String?
   ApprovedActionPlanDetails   ApprovedActionPlanDetails @relation(fields: [approvedActionPlanDetailsId], references: [id])
   awardofContractId           String?                   @db.ObjectId
   WorkOrderCancellation       WorkOrderCancellation[]
