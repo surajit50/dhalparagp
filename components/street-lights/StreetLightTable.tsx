@@ -11,7 +11,8 @@ import {
   getFilteredRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Eye, Pencil, MapPin, Camera, Filter, X, Search } from "lucide-react";
+import { Eye, Pencil, MapPin, Camera, Filter, X, Search, MoreVertical, Ban, Copy, Trash2, PowerOff } from "lucide-react";
+import { toast } from "sonner";
 import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,12 @@ import {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { StatusBadge } from "./StatusBadge";
 import { LightIDBadge } from "./LightIDBadge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DataTable } from "../data-table";
 
 interface StreetLightRow {
@@ -79,10 +86,42 @@ export function StreetLightTable() {
   }, [mouzaFilter, statusFilter, conditionFilter]);
 
   // Fetch data
-  const { data, isLoading } = useSWR<{ lights: StreetLightRow[] }>(queryUrl, fetcher, {
+  const { data, isLoading, mutate } = useSWR<{ lights: StreetLightRow[] }>(queryUrl, fetcher, {
     refreshInterval: 30000,
   });
   const { data: mouzas } = useSWR<MouzaOption[]>("/api/mouza-master", fetcher);
+
+  const handleDeactivate = async (id: string) => {
+    try {
+      const res = await fetch(`/api/street-lights/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workingStatus: "NOT_WORKING" }),
+      });
+      if (!res.ok) throw new Error("Failed to deactivate");
+      toast.success("Street light deactivated");
+      mutate();
+    } catch (error) {
+      toast.error("Error deactivating street light");
+    }
+  };
+
+  const handleRemovePole = async (id: string) => {
+    try {
+      const res = await fetch(`/api/street-lights/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ workingStatus: "NOT_WORKING", lightCondition: "MISSING" }),
+      });
+      if (!res.ok) throw new Error("Failed to remove pole");
+      toast.success("Pole marked as removed");
+      mutate();
+    } catch (error) {
+      toast.error("Error removing pole");
+    }
+  };
+
+
 
   const lights = data?.lights ?? [];
 
@@ -201,6 +240,29 @@ export function StreetLightTable() {
           >
             <Pencil className="w-3.5 h-3.5" />
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => handleDeactivate(row.original.id)}
+              >
+                <PowerOff className="mr-2 h-4 w-4" />
+                <span>Deactivate Light</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleRemovePole(row.original.id)}
+                className="text-orange-600 focus:text-orange-600"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Remove Pole</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       ),
     },
