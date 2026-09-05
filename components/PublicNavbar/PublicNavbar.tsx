@@ -113,6 +113,14 @@ const navItems: NavItem[] = [
       { name: "FAQs", href: "/resources/faqs" },
     ],
   },
+  {
+    name: "Help Desk",
+    href: "#",
+    submenu: [
+      { name: "File Complaint", href: "/record-complaint" },
+      { name: "Submit Feedback", href: "/feedback" },
+    ],
+  },
   { name: "Contact Us", href: "/contact" },
 ];
 
