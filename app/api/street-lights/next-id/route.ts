@@ -17,8 +17,31 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Mouza not found" }, { status: 404 });
     }
 
-    const existingCount = await db.streetLight.count({ where: { mouzaId } });
-    const serial = String(existingCount + 1).padStart(4, "0");
+    const existingLights = await db.streetLight.findMany({
+      where: { mouzaId },
+      select: { lightId: true },
+    });
+
+    const serials = existingLights
+      .map((light) => {
+        const parts = light.lightId.split("-");
+        const serialStr = parts[parts.length - 1];
+        return parseInt(serialStr, 10);
+      })
+      .filter((n) => !isNaN(n))
+      .sort((a, b) => a - b);
+
+    let nextSerialNum = 1;
+    for (const num of serials) {
+      if (num === nextSerialNum) {
+        nextSerialNum++;
+      } else if (num > nextSerialNum) {
+        break;
+      }
+    }
+
+    const existingCount = existingLights.length;
+    const serial = String(nextSerialNum).padStart(4, "0");
     const sansadCode = mouza.sansadCode || "GEN";
     const nextId = `GP-SL-${mouza.mouzaCode}-${sansadCode}-${serial}`;
 

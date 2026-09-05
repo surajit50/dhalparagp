@@ -65,11 +65,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Mouza not found" }, { status: 404 });
     }
 
-    // Count existing lights for this mouza to generate serial
-    const existingCount = await db.streetLight.count({
+    // Find existing lights for this mouza to find gaps in the sequence
+    const existingLights = await db.streetLight.findMany({
       where: { mouzaId: data.mouzaId },
+      select: { lightId: true },
     });
-    const serial = String(existingCount + 1).padStart(4, "0");
+
+    const serials = existingLights
+      .map((light) => {
+        const parts = light.lightId.split("-");
+        const serialStr = parts[parts.length - 1];
+        return parseInt(serialStr, 10);
+      })
+      .filter((n) => !isNaN(n))
+      .sort((a, b) => a - b);
+
+    let nextSerialNum = 1;
+    for (const num of serials) {
+      if (num === nextSerialNum) {
+        nextSerialNum++;
+      } else if (num > nextSerialNum) {
+        break; // Gap found!
+      }
+    }
+
+    const serial = String(nextSerialNum).padStart(4, "0");
     const sansadCode = mouza.sansadCode || "GEN";
     const lightId = `GP-SL-${mouza.mouzaCode}-${sansadCode}-${serial}`;
 
