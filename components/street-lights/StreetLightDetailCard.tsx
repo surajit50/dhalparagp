@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MapPin, Zap, Calendar, ExternalLink } from "lucide-react";
+import { MapPin, Zap, Calendar, ExternalLink, X } from "lucide-react"; // added X
 import { formatDate } from "@/lib/utils/date";
 import { toTitleCase } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { LightIDBadge } from "./LightIDBadge";
+import { useState, useEffect } from "react"; // added useState, useEffect
 
 interface StreetLightDetailCardProps {
   light: {
@@ -39,6 +40,16 @@ interface StreetLightDetailCardProps {
 
 export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardProps) {
   const router = useRouter();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedImage(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   if (compact) {
     return (
@@ -64,7 +75,10 @@ export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardP
           </p>
         )}
         {light.lightImageUrl && (
-          <div className="rounded-lg overflow-hidden border">
+          <div
+            className="rounded-lg overflow-hidden border cursor-pointer"
+            onClick={() => setSelectedImage(light.lightImageUrl!)}
+          >
             <Image
               src={light.lightImageUrl}
               alt="Light"
@@ -121,7 +135,10 @@ export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardP
           {light.lightImageUrl && (
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground">Light Photo</p>
-              <div className="rounded-xl overflow-hidden border aspect-video relative">
+              <div
+                className="rounded-xl overflow-hidden border aspect-video relative cursor-pointer"
+                onClick={() => setSelectedImage(light.lightImageUrl!)}
+              >
                 <Image src={light.lightImageUrl} alt="Light" fill className="object-cover" />
               </div>
             </div>
@@ -129,7 +146,10 @@ export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardP
           {light.poleImageUrl && (
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground">Pole Photo</p>
-              <div className="rounded-xl overflow-hidden border aspect-video relative">
+              <div
+                className="rounded-xl overflow-hidden border aspect-video relative cursor-pointer"
+                onClick={() => setSelectedImage(light.poleImageUrl!)}
+              >
                 <Image src={light.poleImageUrl} alt="Pole" fill className="object-cover" />
               </div>
             </div>
@@ -201,6 +221,30 @@ export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardP
         <div className="rounded-lg bg-muted/50 p-4 text-sm">
           <p className="text-xs font-semibold text-muted-foreground mb-1">Remarks</p>
           <p>{light.remarks}</p>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+            <img
+              src={selectedImage}
+              alt="Enlarged view"
+              className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              className="absolute top-2 right-2 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
+              onClick={() => setSelectedImage(null)}
+              aria-label="Close image"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
       )}
     </div>
