@@ -11,7 +11,7 @@ import {
   getFilteredRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Eye, Pencil, MapPin, Camera, Filter, X, Search, MoreVertical, Ban, Copy, Trash2, PowerOff } from "lucide-react";
+import { Eye, Pencil, MapPin, Camera, Filter, X, Search, MoreVertical, Ban, Copy, Trash2, PowerOff, Activity, AlertTriangle, CheckCircle2, Lightbulb, Map as MapIcon } from "lucide-react";
 import { toast } from "sonner";
 import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -118,6 +118,20 @@ export function StreetLightTable() {
       mutate();
     } catch (error) {
       toast.error("Error removing pole");
+    }
+  };
+
+  const handleHardDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to permanently delete this entry? This action cannot be undone.")) return;
+    try {
+      const res = await fetch(`/api/street-lights/${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete entry");
+      toast.success("Mistake entry permanently deleted");
+      mutate();
+    } catch (error) {
+      toast.error("Error deleting entry");
     }
   };
 
@@ -261,6 +275,13 @@ export function StreetLightTable() {
                 <Trash2 className="mr-2 h-4 w-4" />
                 <span>Remove Pole</span>
               </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleHardDelete(row.original.id)}
+                className="text-red-600 focus:text-red-600"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Delete Mistake Entry</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -270,10 +291,104 @@ export function StreetLightTable() {
 
 
 
+  // Stats calculation
+  const stats = useMemo(() => {
+    const total = lights.length;
+    const working = lights.filter((l) => l.workingStatus === "WORKING").length;
+    const notWorking = lights.filter((l) => l.workingStatus === "NOT_WORKING").length;
+    const repairable = lights.filter((l) => l.workingStatus === "REPAIRABLE").length;
+
+    const mouzaMap = new globalThis.Map<string, { total: number; working: number; notWorking: number }>();
+    lights.forEach((l) => {
+      const mName = l.mouza?.mouzaName || "Unknown";
+      const current = mouzaMap.get(mName) || { total: 0, working: 0, notWorking: 0 };
+      current.total += 1;
+      if (l.workingStatus === "WORKING") current.working += 1;
+      else if (l.workingStatus === "NOT_WORKING") current.notWorking += 1;
+      mouzaMap.set(mName, current);
+    });
+
+    const mouzaStats = [...mouzaMap.entries()]
+      .map(([name, data]) => ({ name, ...data }))
+      .sort((a, b) => b.total - a.total);
+
+    return { total, working, notWorking, repairable, mouzaStats };
+  }, [lights]);
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Dashboard Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-card p-4 rounded-xl border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
+            <Lightbulb className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Total Lights</p>
+            <h3 className="text-2xl font-bold">{stats.total}</h3>
+          </div>
+        </div>
+        <div className="bg-card p-4 rounded-xl border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg">
+            <CheckCircle2 className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Working</p>
+            <h3 className="text-2xl font-bold">{stats.working}</h3>
+          </div>
+        </div>
+        <div className="bg-card p-4 rounded-xl border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg">
+            <AlertTriangle className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Not Working</p>
+            <h3 className="text-2xl font-bold">{stats.notWorking}</h3>
+          </div>
+        </div>
+        <div className="bg-card p-4 rounded-xl border shadow-sm flex items-center space-x-4 transition-all hover:shadow-md">
+          <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-lg">
+            <Activity className="w-6 h-6" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Repairable</p>
+            <h3 className="text-2xl font-bold">{stats.repairable}</h3>
+          </div>
+        </div>
+      </div>
+
+      {/* Mouza-wise Report */}
+      {stats.mouzaStats.length > 0 && (
+        <div className="bg-card rounded-xl border shadow-sm overflow-hidden transition-all">
+          <div className="p-4 border-b bg-muted/30 flex items-center gap-2">
+            <MapIcon className="w-5 h-5 text-muted-foreground" />
+            <h3 className="font-semibold text-foreground">Mouza-wise Distribution</h3>
+          </div>
+          <div className="p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {stats.mouzaStats.map((m) => (
+                <div key={m.name} className="flex flex-col p-3 rounded-lg border bg-muted/10 hover:bg-muted/30 transition-colors">
+                  <span className="font-medium text-sm mb-2 truncate" title={m.name}>{m.name}</span>
+                  <div className="flex justify-between items-end">
+                    <span className="text-2xl font-bold text-foreground/90">{m.total}</span>
+                    <div className="text-[11px] font-medium text-muted-foreground flex flex-col items-end gap-0.5">
+                      <span className="text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {m.working} W
+                      </span>
+                      <span className="text-red-600 dark:text-red-400 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> {m.notWorking} NW
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Filters Toolbar */}
-      <div className="flex flex-col sm:flex-row gap-4 items-center bg-background p-4 rounded-xl border shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-4 items-center bg-card p-4 rounded-xl border shadow-sm">
         {/* Search */}
         <div className="relative flex-1 w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />

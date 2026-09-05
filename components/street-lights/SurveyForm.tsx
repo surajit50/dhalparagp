@@ -149,6 +149,8 @@ export function SurveyForm() {
   const [mouzaSearch, setMouzaSearch] =
     useState("");
 
+  const [refreshKey, setRefreshKey] = useState(0);
+
   /* ----------------------------------------------------------
      LOAD MOUZAS
   ---------------------------------------------------------- */
@@ -170,6 +172,7 @@ export function SurveyForm() {
     control,
     watch,
     setValue,
+    getValues,
     handleSubmit,
     reset,
     formState: { errors },
@@ -236,7 +239,7 @@ export function SurveyForm() {
     return () => {
       cancelled = true;
     };
-  }, [mouzaId]);
+  }, [mouzaId, refreshKey]);
 
   /* ============================================================
      GPS CAPTURE
@@ -455,9 +458,19 @@ export function SurveyForm() {
   const onSubmit = useCallback(
     async (data: StreetLightInput) => {
       if (!data.mouzaId) {
-        toast.error(
-          "Please select a Mouza"
-        );
+        toast.error("Please select a Mouza");
+        return;
+      }
+      if (!data.landmark || data.landmark.trim() === "") {
+        toast.error("Landmark is required to save data");
+        return;
+      }
+      if (!data.latitude || !data.longitude) {
+        toast.error("GPS location is required to save data");
+        return;
+      }
+      if (!data.lightImageUrl) {
+        toast.error("Street Light photo is required to save data");
         return;
       }
 
@@ -528,49 +541,29 @@ export function SurveyForm() {
      NEXT SURVEY
   ============================================================ */
 
-  const handleSurveyNext =
-    useCallback(() => {
-      const previousMouzaId =
-        mouzaId;
+  const handleSurveyNext = useCallback(() => {
+    const current = getValues();
 
-      reset({
-        mouzaId:
-          previousMouzaId,
+    reset({
+      ...current,
+      lightImageUrl: undefined,
+      lightImagePublicId: undefined,
+      poleImageUrl: undefined,
+      poleImagePublicId: undefined,
+      latitude: undefined,
+      longitude: undefined,
+      gpsAccuracy: undefined,
+      landmark: "", // Usually different for each pole
+    });
 
-        lightType: "LED",
+    setSavedLight(null);
+    setLightImagePreview(null);
+    setPoleImagePreview(null);
+    setShowExtendedMenu(false);
+    setRefreshKey(k => k + 1);
 
-        wattage: 30,
-
-        poleType:
-          "ELECTRIC_POLE",
-
-        lightCondition:
-          "GOOD",
-
-        workingStatus:
-          "WORKING",
-
-        ownership: "GP",
-      });
-
-      setSavedLight(null);
-
-      setLightImagePreview(
-        null
-      );
-
-      setPoleImagePreview(
-        null
-      );
-
-      setShowExtendedMenu(
-        false
-      );
-
-      toast.info(
-        "Ready for next light survey"
-      );
-    }, [mouzaId, reset]);
+    toast.info("Ready for next light survey. Common settings retained.");
+  }, [getValues, reset]);
 
   /* ============================================================
      FILTER MOUZAS
@@ -755,7 +748,14 @@ export function SurveyForm() {
   return (
     <form
       onSubmit={handleSubmit(
-        onSubmit
+        onSubmit,
+        (formErrors) => {
+          if (formErrors.mouzaId) {
+            toast.error(formErrors.mouzaId.message || "Please select a Mouza");
+          } else {
+            toast.error("Please fill all required fields");
+          }
+        }
       )}
       className="max-w-xl mx-auto space-y-4 pb-6"
     >
