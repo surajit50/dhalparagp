@@ -446,6 +446,11 @@ export const adminMenuItems: MenuItemProps[] = [
 
   // Tubewell Management
   createMenuItem("Tubewell Management", ["admin"], undefined, MdBuild, COLORS.teal, [
+    createMenuItem("Tubewell Register", ["admin"], undefined, FaChevronDown, COLORS.blue, [
+      createMenuItem("All Tubewells", ["admin"], `${BASE_URLS.admin}/tubewells/register`, FaChevronCircleRight, COLORS.blue),
+      createMenuItem("Add New Tubewell", ["admin"], `${BASE_URLS.admin}/tubewells/register/add`, FaChevronCircleRight, COLORS.green),
+    ]),
+    createMenuItem("Field Survey", ["admin", "staff"], `${BASE_URLS.admin}/tubewells/survey`, FaChevronCircleRight, COLORS.cyan),
     createMenuItem("Material Stock", ["admin"], `${BASE_URLS.admin}/tubewell/materials`, FaChevronCircleRight, COLORS.blue),
     createMenuItem("Mistri Management", ["admin"], `${BASE_URLS.admin}/tubewell/mistri`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Labor Rates", ["admin"], `${BASE_URLS.admin}/tubewell/labor-rate`, FaChevronCircleRight, COLORS.purple),
