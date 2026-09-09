@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MapPin, Zap, Calendar, ExternalLink, X } from "lucide-react"; // added X
+import { MapPin, Zap, Calendar, ExternalLink, X, Navigation } from "lucide-react";
 import { formatDate } from "@/lib/utils/date";
 import { toTitleCase } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "./StatusBadge";
 import { LightIDBadge } from "./LightIDBadge";
-import { useState, useEffect } from "react"; // added useState, useEffect
+import { useState, useEffect } from "react";
 
 interface StreetLightDetailCardProps {
   light: {
@@ -53,196 +53,230 @@ export function StreetLightDetailCard({ light, compact }: StreetLightDetailCardP
 
   if (compact) {
     return (
-      <div className="min-w-[240px] max-w-[280px] space-y-2 text-sm">
-        <LightIDBadge lightId={light.lightId} />
-        <div className="space-y-0.5 text-muted-foreground">
-          <p><span className="font-medium text-foreground">Mouza:</span> {light.mouza?.mouzaName}</p>
-          <p><span className="font-medium text-foreground">Sansad:</span> {light.sansad ?? "—"}</p>
-          <p><span className="font-medium text-foreground">Landmark:</span> {light.landmark ?? "—"}</p>
+      <div className="min-w-[250px] max-w-[280px] flex flex-col gap-3 font-sans">
+        <div className="flex items-center justify-between">
+          <LightIDBadge lightId={light.lightId} />
         </div>
+        
+        <div className="space-y-1 text-muted-foreground bg-muted/30 p-2.5 rounded-lg border border-border/40">
+          <p className="flex justify-between items-center"><span className="text-xs font-medium uppercase tracking-wider text-muted-foreground/80">Mouza</span> <span className="font-medium text-foreground">{light.mouza?.mouzaName}</span></p>
+          <p className="flex justify-between items-center"><span className="text-xs font-medium uppercase tracking-wider text-muted-foreground/80">Sansad</span> <span className="font-medium text-foreground">{light.sansad ?? "—"}</span></p>
+        </div>
+
         <div className="flex gap-2 flex-wrap">
           <StatusBadge type="working" value={light.workingStatus} />
           <StatusBadge type="condition" value={light.lightCondition} />
         </div>
+
         {light.lightType && (
-          <p className="text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-md w-fit">
+            <Zap className="w-3.5 h-3.5" />
             {light.lightType}{light.wattage ? ` · ${light.wattage}W` : ""}
-          </p>
+          </div>
         )}
-        {light.latitude && light.longitude && (
-          <p className="text-xs font-mono text-muted-foreground">
-            {light.latitude.toFixed(6)}, {light.longitude.toFixed(6)}
-          </p>
-        )}
+
         {light.lightImageUrl && (
           <div
-            className="rounded-lg overflow-hidden border cursor-pointer"
+            className="rounded-xl overflow-hidden border border-border/50 shadow-sm cursor-pointer group relative mt-1"
             onClick={() => setSelectedImage(light.lightImageUrl!)}
           >
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
             <Image
               src={light.lightImageUrl}
               alt="Light"
               width={280}
               height={140}
-              className="object-cover w-full h-28"
+              className="object-cover w-full h-32 transform group-hover:scale-105 transition-transform duration-500"
             />
           </div>
         )}
+
         <Button
           size="sm"
-          className="w-full gap-1.5"
+          className="w-full gap-2 mt-1 shadow-md hover:shadow-lg transition-all rounded-xl"
           onClick={() => router.push(`/admindashboard/street-lights/register/${light.id}`)}
         >
-          <ExternalLink className="w-3.5 h-3.5" />
           View Full Details
+          <ExternalLink className="w-3.5 h-3.5" />
         </Button>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="space-y-2">
-          <LightIDBadge lightId={light.lightId} className="text-base" />
-          <div className="flex gap-2 flex-wrap">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row items-start justify-between gap-6 pb-6 border-b border-border/40">
+        <div className="space-y-3">
+          <LightIDBadge lightId={light.lightId} className="text-lg px-3 py-1 shadow-sm" />
+          <div className="flex gap-2.5 flex-wrap">
             <StatusBadge type="working" value={light.workingStatus} />
             <StatusBadge type="condition" value={light.lightCondition} />
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3 w-full md:w-auto">
           <Button
             variant="outline"
-            size="sm"
-            className="gap-1.5"
+            className="flex-1 md:flex-none gap-2 hover:bg-muted/50 transition-colors shadow-sm rounded-xl"
             onClick={() => router.push(`/admindashboard/street-lights/register/${light.id}/edit`)}
           >
             Edit Details
           </Button>
           <Button
-            size="sm"
-            className="gap-1.5"
+            className="flex-1 md:flex-none gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all rounded-xl"
             onClick={() => router.push(`/admindashboard/street-lights/complaints?lightId=${light.id}`)}
           >
-            <Zap className="w-4 h-4" />
+            <Zap className="w-4 h-4 fill-current" />
             File Complaint
           </Button>
         </div>
       </div>
 
+      {/* Photos Section */}
       {(light.lightImageUrl || light.poleImageUrl) && (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {light.lightImageUrl && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">Light Photo</p>
+            <div className="space-y-2 group">
+              <p className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" /> Light Unit
+              </p>
               <div
-                className="rounded-xl overflow-hidden border aspect-video relative cursor-pointer"
+                className="rounded-2xl overflow-hidden border border-border/50 shadow-sm aspect-[4/3] relative cursor-pointer"
                 onClick={() => setSelectedImage(light.lightImageUrl!)}
               >
-                <Image src={light.lightImageUrl} alt="Light" fill className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Image src={light.lightImageUrl} alt="Light" fill className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
               </div>
             </div>
           )}
           {light.poleImageUrl && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">Pole Photo</p>
+            <div className="space-y-2 group">
+              <p className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" /> Pole & Surroundings
+              </p>
               <div
-                className="rounded-xl overflow-hidden border aspect-video relative cursor-pointer"
+                className="rounded-2xl overflow-hidden border border-border/50 shadow-sm aspect-[4/3] relative cursor-pointer"
                 onClick={() => setSelectedImage(light.poleImageUrl!)}
               >
-                <Image src={light.poleImageUrl} alt="Pole" fill className="object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Image src={light.poleImageUrl} alt="Pole" fill className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out" />
               </div>
             </div>
           )}
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <DetailRow
-          label="Mouza"
-          value={`${light.mouza?.mouzaName}${light.mouza?.jlNo ? ` (JL: ${light.mouza.jlNo})` : ""}`}
-        />
-        <DetailRow label="Sansad" value={light.sansad} />
-        <DetailRow label="Ward" value={light.ward} />
-        <DetailRow label="Landmark" value={light.landmark} />
-        <DetailRow label="Road Name" value={light.roadName} />
-        <DetailRow label="Pole No." value={light.poleNo} />
-        <DetailRow label="Light Type" value={light.lightType} />
-        <DetailRow
-          label="Wattage"
-          value={light.wattage ? `${light.wattage} W` : undefined}
-          icon={<Zap className="w-3.5 h-3.5 text-yellow-500" />}
-        />
-        <DetailRow label="Pole Type" value={light.poleType ? toTitleCase(light.poleType) : undefined} />
-        <DetailRow label="Ownership" value={light.ownership ? toTitleCase(light.ownership) : undefined} />
-        <DetailRow
-          label="Installation Year"
-          value={light.installYear?.toString()}
-          icon={<Calendar className="w-3.5 h-3.5 text-muted-foreground" />}
-        />
-        <DetailRow label="Last Inspection" value={light.lastInspection ? formatDate(light.lastInspection) : undefined} />
+      {/* Details Grid */}
+      <div className="bg-card rounded-2xl border border-border/50 shadow-sm p-6 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/40 via-primary to-primary/40" />
+        <h3 className="text-lg font-semibold mb-6 flex items-center gap-2">
+          Technical Specifications
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-8 gap-x-6">
+          <DetailRow
+            label="Mouza"
+            value={`${light.mouza?.mouzaName}${light.mouza?.jlNo ? ` (JL: ${light.mouza.jlNo})` : ""}`}
+          />
+          <DetailRow label="Sansad" value={light.sansad} />
+          <DetailRow label="Ward" value={light.ward} />
+          <DetailRow label="Landmark" value={light.landmark} />
+          <DetailRow label="Road Name" value={light.roadName} />
+          <DetailRow label="Pole No." value={light.poleNo} />
+          <DetailRow label="Light Type" value={light.lightType} />
+          <DetailRow
+            label="Wattage"
+            value={light.wattage ? `${light.wattage} W` : undefined}
+            icon={<Zap className="w-4 h-4 text-amber-500" />}
+          />
+          <DetailRow label="Pole Type" value={light.poleType ? toTitleCase(light.poleType) : undefined} />
+          <DetailRow label="Ownership" value={light.ownership ? toTitleCase(light.ownership) : undefined} />
+          <DetailRow
+            label="Installation Year"
+            value={light.installYear?.toString()}
+            icon={<Calendar className="w-4 h-4 text-blue-500" />}
+          />
+          <DetailRow label="Last Inspection" value={light.lastInspection ? formatDate(light.lastInspection) : undefined} />
+        </div>
       </div>
 
+      {/* GPS Location Section */}
       {light.latitude && light.longitude && (
-        <div className="rounded-xl border border-teal-200 bg-teal-50 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <MapPin className="w-4 h-4 text-teal-600" />
-            <span className="text-sm font-semibold text-teal-800">GPS Location</span>
-          </div>
-          <div className="grid grid-cols-3 gap-4 font-mono text-sm">
-            <div>
-              <p className="text-xs text-teal-600">Latitude</p>
-              <p className="font-semibold">{light.latitude.toFixed(6)}</p>
+        <div className="rounded-2xl border border-teal-200/60 dark:border-teal-900/50 bg-gradient-to-br from-teal-50 to-emerald-50/50 dark:from-teal-950/20 dark:to-emerald-900/10 p-6 relative overflow-hidden group">
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-teal-100 dark:bg-teal-900/30 rounded-full blur-3xl group-hover:bg-teal-200 dark:group-hover:bg-teal-800/40 transition-colors duration-700" />
+          
+          <div className="flex items-center gap-3 mb-6 relative z-10">
+            <div className="p-2.5 bg-teal-100 dark:bg-teal-900/50 rounded-xl">
+              <Navigation className="w-5 h-5 text-teal-700 dark:text-teal-400" />
             </div>
             <div>
-              <p className="text-xs text-teal-600">Longitude</p>
-              <p className="font-semibold">{light.longitude.toFixed(6)}</p>
+              <h3 className="text-base font-semibold text-teal-900 dark:text-teal-300">GPS Coordinates</h3>
+              <p className="text-sm text-teal-700/80 dark:text-teal-400/70">Geospatial location data</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 font-mono text-sm relative z-10 bg-white/60 dark:bg-black/20 p-4 rounded-xl border border-white/40 dark:border-white/5 backdrop-blur-sm">
+            <div>
+              <p className="text-xs font-sans font-medium text-teal-600/80 dark:text-teal-400/80 uppercase tracking-wider mb-1">Latitude</p>
+              <p className="font-semibold text-teal-900 dark:text-teal-100 text-base">{light.latitude.toFixed(6)}°</p>
+            </div>
+            <div>
+              <p className="text-xs font-sans font-medium text-teal-600/80 dark:text-teal-400/80 uppercase tracking-wider mb-1">Longitude</p>
+              <p className="font-semibold text-teal-900 dark:text-teal-100 text-base">{light.longitude.toFixed(6)}°</p>
             </div>
             {light.gpsAccuracy && (
-              <div>
-                <p className="text-xs text-teal-600">Accuracy</p>
-                <p className="font-semibold">±{Math.round(light.gpsAccuracy)} m</p>
+              <div className="col-span-2 md:col-span-1 border-t md:border-t-0 md:border-l border-teal-200 dark:border-teal-800/50 pt-4 md:pt-0 md:pl-6">
+                <p className="text-xs font-sans font-medium text-teal-600/80 dark:text-teal-400/80 uppercase tracking-wider mb-1">Accuracy</p>
+                <div className="flex items-center gap-2">
+                  <span className="flex h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
+                  <p className="font-semibold text-teal-900 dark:text-teal-100 text-base">±{Math.round(light.gpsAccuracy)}m</p>
+                </div>
               </div>
             )}
           </div>
-          <a
-            href={`https://www.google.com/maps?q=${light.latitude},${light.longitude}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 mt-2 text-xs text-teal-700 underline underline-offset-2 hover:text-teal-900"
-          >
-            <ExternalLink className="w-3 h-3" />
-            Open in Google Maps
-          </a>
+          
+          <div className="mt-5 relative z-10">
+            <a
+              href={`https://www.google.com/maps?q=${light.latitude},${light.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-teal-950 text-sm font-medium text-teal-700 dark:text-teal-300 rounded-lg shadow-sm border border-teal-100 dark:border-teal-800 hover:shadow-md hover:bg-teal-50 dark:hover:bg-teal-900 transition-all"
+            >
+              Open in Google Maps
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       )}
 
+      {/* Remarks Section */}
       {light.remarks && (
-        <div className="rounded-lg bg-muted/50 p-4 text-sm">
-          <p className="text-xs font-semibold text-muted-foreground mb-1">Remarks</p>
-          <p>{light.remarks}</p>
+        <div className="rounded-xl border border-amber-200/50 bg-amber-50/50 dark:bg-amber-950/20 p-5 relative overflow-hidden">
+          <div className="absolute left-0 top-0 w-1 h-full bg-amber-400" />
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-800/70 dark:text-amber-400/70 mb-2">Remarks / Notes</p>
+          <p className="text-amber-950 dark:text-amber-100/90 leading-relaxed">{light.remarks}</p>
         </div>
       )}
 
       {/* Image Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-[90vw] max-h-[90vh] flex items-center justify-center">
+          <div className="relative max-w-[95vw] max-h-[95vh] flex items-center justify-center animate-in zoom-in-95 duration-300">
+            <div className="absolute inset-0 bg-black rounded-2xl shadow-2xl -z-10" />
             <img
               src={selectedImage}
               alt="Enlarged view"
-              className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg shadow-2xl"
+              className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl"
               onClick={(e) => e.stopPropagation()}
             />
             <button
-              className="absolute top-2 right-2 text-white bg-black/50 rounded-full p-2 hover:bg-black/70 transition-colors"
+              className="absolute -top-4 -right-4 md:top-4 md:right-4 text-white bg-black/60 backdrop-blur-md rounded-full p-2.5 hover:bg-red-500 hover:text-white transition-all shadow-xl border border-white/10"
               onClick={() => setSelectedImage(null)}
               aria-label="Close image"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -261,12 +295,15 @@ function DetailRow({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex items-start gap-2">
-      {icon}
+    <div className="flex items-start gap-3 group">
+      <div className="mt-0.5 p-1.5 rounded-md bg-muted/50 group-hover:bg-primary/10 group-hover:text-primary transition-colors text-muted-foreground">
+        {icon || <div className="w-1.5 h-1.5 m-1 rounded-full bg-current opacity-50" />}
+      </div>
       <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="font-medium text-foreground">{value ?? "—"}</p>
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground/70 mb-0.5">{label}</p>
+        <p className="font-medium text-foreground text-base leading-snug">{value || <span className="text-muted-foreground/40 italic">Not specified</span>}</p>
       </div>
     </div>
   );
 }
+
