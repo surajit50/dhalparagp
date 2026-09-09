@@ -230,12 +230,12 @@ export function TubewellSurveyForm() {
           </h3>
           <div className="px-2 pb-2">
             <ImageUploadDropzone
-              onUpload={uploadImage}
-              isUploading={uploading}
-              previewUrl={imagePreview}
+              onFile={uploadImage}
+              uploading={uploading}
+              preview={imagePreview}
               onClear={clearImage}
               label="Capture Tubewell Photo"
-              description="Take a clear photo showing the tubewell and its immediate surroundings"
+              sublabel="Take a clear photo showing the tubewell and its immediate surroundings"
             />
           </div>
         </div>
@@ -243,7 +243,7 @@ export function TubewellSurveyForm() {
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-500/20 transition-all hover:shadow-blue-500/40 hover:-translate-y-0.5"
+          className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg shadow-blue-500/20 transition-all hover:shadow-blue-500/30"
         >
           {loading ? "Saving..." : (
             <>
