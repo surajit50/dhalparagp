@@ -16,6 +16,7 @@ import {
   Clock,
   ShieldCheck,
   XCircle,
+  FileEdit,
 } from "lucide-react";
 import LandConversionLayout from "./components/LandConversionLayout";
 import { getLandConversionDashboardStats } from "@/action/land-conversion-actions";
@@ -66,6 +67,15 @@ const MODULES = [
     color: "from-purple-500 to-violet-600",
     bgLight: "bg-purple-50",
     textColor: "text-purple-700",
+  },
+  {
+    title: "Make Correction",
+    description: "Correct mistakes in land details if any",
+    icon: FileEdit,
+    href: "/admindashboard/manage-land-conversion/correction",
+    color: "from-yellow-500 to-amber-600",
+    bgLight: "bg-yellow-50",
+    textColor: "text-yellow-700",
   },
   {
     title: "Issue NOC",

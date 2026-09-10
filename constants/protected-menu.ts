@@ -174,6 +174,7 @@ const certificateManagementItems = (baseUrl: string): MenuItemProps[] => [
     createMenuItem("Document Verification", ["admin"], `${baseUrl}/manage-land-conversion/verify`, FaChevronCircleRight, COLORS.teal),
     createMenuItem("Site Inspection", ["admin"], `${baseUrl}/manage-land-conversion/inspection`, FaChevronCircleRight, COLORS.blue),
     createMenuItem("Approval Workflow", ["admin"], `${baseUrl}/manage-land-conversion/approve`, FaChevronCircleRight, COLORS.purple),
+    createMenuItem("Make Correction", ["admin"], `${baseUrl}/manage-land-conversion/correction`, FaChevronCircleRight, COLORS.yellow),
     createMenuItem("NOC Issuance", ["admin"], `${baseUrl}/manage-land-conversion/issue`, FaChevronCircleRight, COLORS.orange),
     createMenuItem("Print Certificate", ["admin"], `${baseUrl}/manage-land-conversion/print`, FaChevronCircleRight, COLORS.cyan),
     createMenuItem("Compliance Check", ["admin"], `${baseUrl}/manage-land-conversion/compliance`, FaChevronCircleRight, COLORS.red),

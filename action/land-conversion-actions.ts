@@ -1610,3 +1610,43 @@ export async function getLandConversionDashboardStats(): Promise<ActionResult<{
     return { success: false, error: "Failed to fetch dashboard statistics" };
   }
 }
+
+export async function searchLandConversionByNo(applicationNo: string): Promise<ActionResult<LandConversionApplication>> {
+  try {
+    const application = await db.landConversionApplication.findFirst({
+      where: { applicationNo }
+    });
+    if (!application) return { success: false, error: "Application not found" };
+    return { success: true, data: application };
+  } catch (error) {
+    console.error("Error searching land conversion application:", error);
+    return { success: false, error: "Failed to search application" };
+  }
+}
+
+export async function updateLandConversionDetails(id: string, data: any): Promise<ActionResult> {
+  try {
+    const application = await db.landConversionApplication.findUnique({ where: { id } });
+    if (!application) return { success: false, error: "Application not found" };
+
+    await db.landConversionApplication.update({
+      where: { id },
+      data: {
+        applicantName: data.applicantName,
+        khatianNo: data.khatianNo,
+        plotNo: data.plotNo,
+        mouza: data.mouza,
+        jlNo: data.jlNo,
+        landAreaDec: data.landAreaDec,
+        presentLandUse: data.presentLandUse,
+        proposedLandUse: data.proposedLandUse,
+      }
+    });
+    
+    revalidatePath("/admindashboard/manage-land-conversion/correction");
+    return { success: true, message: "Application details updated successfully" };
+  } catch (error) {
+    console.error("Error updating land conversion details:", error);
+    return { success: false, error: "Failed to update application details" };
+  }
+}
