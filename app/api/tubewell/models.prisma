@@ -1,0 +1,546 @@
+// ============================================
+// TUBE WELL MANAGEMENT SYSTEM - MONGODB MODELS
+// ============================================
+// Append these models to the existing prisma/schema.prisma
+
+// ============================================
+// MASTER DATA MODELS FOR TUBE WELLS
+// ============================================
+
+model TubeWellType {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWells TubeWell[]
+
+  @@map("tubewell_types")
+}
+
+model TubeWellStatusMaster {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique // Functional, Partially Functional, Non-Functional, Under Repair, Abandoned, Seasonal, Water Not Available, Unknown
+  code      String   @unique
+  color     String   // Tailwind color for UI
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWells TubeWell[]
+
+  @@map("tubewell_status_masters")
+}
+
+model WaterQualityStatus {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique // Good, Average, Poor, Not Tested
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWells TubeWell[]
+
+  @@map("water_quality_statuses")
+}
+
+model TubeWellComplaintCategory {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  complaints TubeWellComplaint[]
+
+  @@map("tubewell_complaint_categories")
+}
+
+model TubeWellRepairCategory {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  repairs TubeWellRepair[]
+
+  @@map("tubewell_repair_categories")
+}
+
+model TubeWellSchemeSource {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique // PMAY, NRLM, State Scheme, etc.
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWells TubeWell[]
+
+  @@map("tubewell_scheme_sources")
+}
+
+model PhysicalConditionItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique // Platform condition, Hand pump condition, etc.
+  code      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assessments TubeWellConditionAssessment[]
+
+  @@map("physical_condition_items")
+}
+
+// ============================================
+// TUBE WELL CORE MODELS
+// ============================================
+
+model TubeWell {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  assetId   String   @unique // GP-TW-2026-0001 format
+  tubeWellNumber String
+
+  // Location Information
+  panchayatId String
+  villageId   String
+  mouzaId     String
+  wardId      String
+  sansadId    String
+  habitationId String?
+  landmark    String?
+
+  // Technical Details
+  typeId           String   @db.ObjectId
+  schemSourceId    String?  @db.ObjectId
+  installationYear Int?
+  installationAgency String?
+  depth            Float? // meters
+  diameter         Float? // meters
+
+  // Infrastructure
+  platformAvailable Boolean @default(false)
+  drainageAvailable Boolean @default(false)
+  soakPitAvailable  Boolean @default(false)
+
+  // Current Status
+  statusId             String   @db.ObjectId
+  waterQualityStatusId String?  @db.ObjectId
+  functionalStatus     String // Functional, Partially Functional, Non-Functional, etc.
+  lastStatusUpdate     DateTime?
+
+  // Water Availability
+  waterAvailable           Boolean?
+  waterAvailabilityLevel   String? // High, Medium, Low
+  seasonalAvailability     Boolean @default(false)
+  approximateUsersPerDay   Int?
+  approximateHouseholdsServed Int?
+  drinkingWaterUse         Boolean @default(true)
+  otherDomesticUse         Boolean @default(false)
+  lastWaterVerificationDate DateTime?
+
+  // Location Coordinates
+  latitude  Float?
+  longitude Float?
+  gpsAccuracy Float?
+  gpsTimestamp DateTime?
+  surveyedBy String? // User ID of surveyor
+
+  // Beneficiary Information
+  nearestHouseholdName String?
+  nearestHouseholdDistance Float? // meters
+  nearestHouseholdPhone String?
+  caretakerId String? @db.ObjectId
+  publicInstitutionNearby Boolean @default(false)
+  schoolNearby Boolean @default(false)
+  anganwadiNearby Boolean @default(false)
+  otherPublicFacilityNearby String?
+
+  // Data Management
+  verificationStatus String @default("Draft") // Draft, Pending Verification, Verified, Rejected
+  verifiedBy String?
+  verificationDate DateTime?
+  verificationRemarks String?
+
+  isDraft Boolean @default(true)
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  type              TubeWellType @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  schemeSource      TubeWellSchemeSource? @relation(fields: [schemSourceId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  status            TubeWellStatusMaster @relation(fields: [statusId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  waterQualityStatus WaterQualityStatus? @relation(fields: [waterQualityStatusId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  caretaker         TubeWellCaretaker? @relation(fields: [caretakerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  photos       TubeWellPhoto[]
+  inspections  TubeWellInspection[]
+  complaints   TubeWellComplaint[]
+  repairs      TubeWellRepair[]
+  assessments  TubeWellConditionAssessment[]
+  locations    TubeWellLocation[]
+  auditLogs    TubeWellAuditLog[]
+  qrCode       TubeWellQRCode?
+
+  @@index([assetId])
+  @@index([statusId])
+  @@index([villageId])
+  @@index([mouzaId])
+  @@index([wardId])
+  @@index([latitude, longitude])
+  @@index([createdAt])
+  @@index([verificationStatus])
+  @@map("tube_wells")
+}
+
+// ============================================
+// TUBE WELL PHOTOS
+// ============================================
+
+model TubeWellPhoto {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubeWellId String @db.ObjectId
+  photoType String   // Front, Platform, Drainage, Nearby, Identification, Repair, Other
+  cloudinaryId String
+  secureUrl String
+  uploadedBy String   // User ID
+  uploadDate DateTime @default(now())
+  isDeleted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+
+  @@index([tubeWellId])
+  @@index([photoType])
+  @@map("tubewell_photos")
+}
+
+// ============================================
+// TUBE WELL LOCATION TRACKING
+// ============================================
+
+model TubeWellLocation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubeWellId String @db.ObjectId
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+  timestamp DateTime @default(now())
+  recordedBy String  // User ID
+  remarks   String?
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+
+  @@index([tubeWellId])
+  @@index([latitude, longitude])
+  @@map("tubewell_locations")
+}
+
+// ============================================
+// TUBE WELL CARETAKER
+// ============================================
+
+model TubeWellCaretaker {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  mobileNumber String
+  alternateNumber String?
+  email     String?
+  address   String?
+  notes     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  tubeWells TubeWell[]
+
+  @@index([mobileNumber])
+  @@map("tubewell_caretakers")
+}
+
+// ============================================
+// TUBE WELL INSPECTION
+// ============================================
+
+model TubeWellInspection {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubeWellId String @db.ObjectId
+  inspectionDate DateTime
+  inspectorId String  // User ID
+  inspectorName String
+
+  // Location at inspection time
+  latitude  Float?
+  longitude Float?
+  accuracy  Float?
+
+  // Status & Condition
+  functionalStatus String // Functional, Partially Functional, Non-Functional, etc.
+  waterAvailable   Boolean?
+  waterLevel       String? // High, Medium, Low, None
+  cleanliness      String // Good, Average, Poor
+  repairRequired   Boolean @default(false)
+  priority         String? // Low, Medium, High
+
+  // Observations
+  remarks String?
+  nextActionRequired Boolean @default(false)
+  nextAction String?
+
+  verificationHistoryId String? // Link to verification if needed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+  assessments TubeWellConditionAssessment[]
+  photos TubeWellInspectionPhoto[]
+
+  @@index([tubeWellId])
+  @@index([inspectionDate])
+  @@index([functionalStatus])
+  @@map("tubewell_inspections")
+}
+
+// ============================================
+// INSPECTION PHOTOS
+// ============================================
+
+model TubeWellInspectionPhoto {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  inspectionId String @db.ObjectId
+  cloudinaryId String
+  secureUrl String
+  photoType String? // Before, After, General, etc.
+  uploadedBy String  // User ID
+  uploadDate DateTime @default(now())
+  isDeleted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  inspection TubeWellInspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([inspectionId])
+  @@map("tubewell_inspection_photos")
+}
+
+// ============================================
+// CONDITION ASSESSMENT
+// ============================================
+
+model TubeWellConditionAssessment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubeWellId String @db.ObjectId
+  inspectionId String? @db.ObjectId
+  itemId    String   @db.ObjectId // Physical condition item
+  condition String   // Good, Average, Poor, Not Applicable
+  remarks   String?
+  recordedBy String  // User ID
+  recordedDate DateTime @default(now())
+  isDeleted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+  inspection TubeWellInspection? @relation(fields: [inspectionId], references: [id], onDelete: SetNull)
+  item PhysicalConditionItem @relation(fields: [itemId], references: [id], onDelete: Restrict)
+
+  @@index([tubeWellId])
+  @@index([inspectionId])
+  @@map("tubewell_condition_assessments")
+}
+
+// ============================================
+// TUBE WELL COMPLAINT
+// ============================================
+
+model TubeWellComplaint {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  complaintId String  @unique // Auto-generated
+  tubeWellId String @db.ObjectId
+  categoryId String @db.ObjectId
+
+  // Complainant Details
+  complainantName String
+  complainantPhone String
+  complainantEmail String?
+  complainantAddress String?
+
+  // Complaint Details
+  description String
+  priority    String   @default("Medium") // Low, Medium, High, Critical
+  status      String   @default("Submitted") // Submitted, Verified, Assigned, In Progress, Repaired, Closed, Rejected
+  location    String?  // Specific location at tube well
+
+  // Assignment
+  assignedTo  String?  // User ID
+  assignedDate DateTime?
+  assignmentRemarks String?
+
+  // Resolution
+  resolvedBy  String?  // User ID
+  resolvedDate DateTime?
+  resolutionRemarks String?
+  resolvedRepairId String? // Link to repair if applicable
+
+  isPublic Boolean @default(true) // Can public see this complaint
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+  category TubeWellComplaintCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  photos TubeWellComplaintPhoto[]
+
+  @@index([tubeWellId])
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+  @@index([assignedTo])
+  @@map("tubewell_complaints")
+}
+
+// ============================================
+// COMPLAINT PHOTOS
+// ============================================
+
+model TubeWellComplaintPhoto {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  complaintId String @db.ObjectId
+  cloudinaryId String
+  secureUrl String
+  uploadedBy String  // User ID
+  uploadDate DateTime @default(now())
+  isDeleted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  complaint TubeWellComplaint @relation(fields: [complaintId], references: [id], onDelete: Cascade)
+
+  @@index([complaintId])
+  @@map("tubewell_complaint_photos")
+}
+
+// ============================================
+// TUBE WELL REPAIR & MAINTENANCE
+// ============================================
+
+model TubeWellRepair {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  repairId  String   @unique // Auto-generated
+  tubeWellId String @db.ObjectId
+  categoryId String @db.ObjectId
+  complaintId String?
+
+  // Repair Details
+  problem   String
+  repairType String // Material, Labor, Both, Replacement, etc.
+  estimatedCost Float @default(0)
+  actualCost     Float @default(0)
+  materialsUsed  String?
+
+  // Personnel
+  staffResponsible String? // User ID
+  contractorVendor String?
+
+  // Dates
+  repairDate      DateTime
+  completionDate  DateTime?
+  completionStatus String @default("Pending") // Pending, Completed, Partial, Abandoned
+
+  // Documentation
+  beforePhotoId String?  // Photo ID
+  afterPhotoId  String?  // Photo ID
+  remarks       String?
+
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+  category TubeWellRepairCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  photos TubeWellRepairPhoto[]
+
+  @@index([tubeWellId])
+  @@index([repairDate])
+  @@index([completionStatus])
+  @@index([repairId])
+  @@map("tubewell_repairs")
+}
+
+// ============================================
+// REPAIR PHOTOS
+// ============================================
+
+model TubeWellRepairPhoto {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  repairId  String @db.ObjectId
+  cloudinaryId String
+  secureUrl String
+  photoType String? // Before, After, Progress, Material, etc.
+  uploadedBy String  // User ID
+  uploadDate DateTime @default(now())
+  isDeleted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  repair TubeWellRepair @relation(fields: [repairId], references: [id], onDelete: Cascade)
+
+  @@index([repairId])
+  @@map("tubewell_repair_photos")
+}
+
+// ============================================
+// QR CODE
+// ============================================
+
+model TubeWellQRCode {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubeWellId String   @unique @db.ObjectId
+  qrCode    String   @unique // TW-DHALPARA-0001
+  generatedAt DateTime @default(now())
+  isDeleted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+
+  @@index([qrCode])
+  @@map("tubewell_qrcodes")
+}
+
+// ============================================
+// AUDIT LOG FOR TUBE WELLS
+// ============================================
+
+model TubeWellAuditLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  tubeWellId String @db.ObjectId
+  userId    String
+  userName  String
+  action    String   // Created, Updated, Deleted, Verified, Approved, Rejected, Inspected, Complained, Repaired
+  recordType String  // TubeWell, Inspection, Complaint, Repair, etc.
+  recordId  String?  // The ID of the related record
+  description String
+  previousValue String?
+  newValue  String?
+  ipAddress String?
+  userAgent String?
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tubeWell TubeWell @relation(fields: [tubeWellId], references: [id], onDelete: Cascade)
+
+  @@index([tubeWellId])
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("tubewell_audit_logs")
+}
