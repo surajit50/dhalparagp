@@ -1,49 +1,105 @@
 import Link from "next/link";
-import { ChevronLeft, Plus, Droplets } from "lucide-react";
+import { Plus, Wrench, Download, AlertTriangle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TubewellTable } from "@/components/tubewells/TubewellTable";
+import { getTubewells } from "@/action/tubewell";
+import { DataTable } from "@/components/data-table";
+import { columns } from "./columns";
+import { PageHeader } from "../_components/page-header";
+import { StatsCard } from "../_components/stats-card";
+import { ExportTubewellsButton } from "./export-button";
 
-export const metadata = {
-  title: "Tubewell Register | Dhalpara GP",
-  description: "Complete register of all tubewells in Dhalpara Gram Panchayat.",
-};
+export const dynamic = "force-dynamic";
 
-export default function TubewellRegisterPage() {
+export default async function TubewellRegisterPage() {
+  const tubewells = await getTubewells();
+
+  const total = tubewells.length;
+  const working = tubewells.filter((t) => t.condition === "WORKING").length;
+  const defective = tubewells.filter((t) => t.condition === "DEFECTIVE").length;
+  const abandoned = tubewells.filter((t) => t.condition === "ABANDONED").length;
+
   return (
-    <div className="space-y-8 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-background to-muted/30 min-h-screen">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-border/40">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/admindashboard"
-            className="w-10 h-10 bg-card rounded-xl flex items-center justify-center border border-border/40 shadow-sm hover:bg-muted transition-colors group"
-          >
-            <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
-          </Link>
-          <div>
-            <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-              Tubewell Register
-            </h1>
-            <p className="text-sm font-medium text-muted-foreground mt-1 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-              Complete register — all Mouzas, all tubewells
-            </p>
+    <div className="min-h-screen bg-[#f8fafc]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        <PageHeader
+          title="Tubewell Register"
+          description="Complete register of all tubewell assets in Dhalpara Gram Panchayat. Track by Mouza, condition, and GPS location."
+          icon="Wrench"
+        >
+          <div className="flex gap-3 flex-wrap">
+            <ExportTubewellsButton tubewells={tubewells} />
+            <Button
+              asChild
+              className="gap-2 rounded-xl px-6 py-6 shadow-md hover:shadow-lg transition-all duration-200"
+            >
+              <Link href="/admindashboard/tubewell/register/add">
+                <Plus className="w-5 h-5" />
+                Add Tubewell
+              </Link>
+            </Button>
           </div>
-        </div>
-        <div className="flex gap-3 flex-wrap">
-          <Button asChild className="gap-2 rounded-xl h-11 px-6 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40">
-            <Link href="/admindashboard/tubewells/register/add">
-              <Plus className="w-5 h-5" />
-              Add Tubewell
-            </Link>
-          </Button>
-        </div>
-      </div>
+        </PageHeader>
 
-      {/* Table Section */}
-      <div className="bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out fill-mode-both">
-        <div className="p-6">
-          <TubewellTable />
+        {/* STATS */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatsCard
+            label="Total Tubewells Registered"
+            value={total}
+            color="slate"
+            icon="Wrench"
+          />
+          <StatsCard
+            label="Working Condition"
+            value={working}
+            color="emerald"
+            icon="CheckCircle2"
+          />
+          <StatsCard
+            label="Defective (Needs Repair)"
+            value={defective}
+            color="rose"
+            icon="AlertTriangle"
+            isWarning={defective > 0}
+            description={
+              defective > 0
+                ? "Prioritize for maintenance"
+                : "All in good condition"
+            }
+          />
+          <StatsCard
+            label="Abandoned"
+            value={abandoned}
+            color="amber"
+            icon="AlertTriangle"
+          />
+        </div>
+
+        {/* TABLE SECTION */}
+        <div className="bg-white rounded-3xl border shadow-sm overflow-hidden">
+          {tubewells.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="p-4 bg-slate-50 rounded-full mb-6">
+                <Wrench className="h-12 w-12 text-slate-300" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-900">
+                No Tubewells Registered Yet
+              </h3>
+              <p className="text-slate-500 mt-2 max-w-xs mx-auto">
+                The register is empty. Start by adding your first tubewell with GPS coordinates.
+              </p>
+
+              <Button asChild className="mt-8 gap-2 rounded-xl px-8 shadow-sm">
+                <Link href="/admindashboard/tubewell/register/add">
+                  <Plus className="h-4 w-4" />
+                  Add First Tubewell
+                </Link>
+              </Button>
+            </div>
+          ) : (
+            <div className="p-6">
+              <DataTable columns={columns} data={tubewells} />
+            </div>
+          )}
         </div>
       </div>
     </div>

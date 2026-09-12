@@ -7,6 +7,7 @@ import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import { PageHeader } from "../_components/page-header";
 import { StatsCard } from "../_components/stats-card";
+import { ExportMaterialsButton } from "./export-button";
 
 export const dynamic = "force-dynamic";
 
