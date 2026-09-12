@@ -824,3 +824,161 @@ export async function adjustWorkOrderStock(
   revalidatePath("/admindashboard/tubewell/materials");
   return true;
 }
+
+// ==========================================
+// TUBEWELL REGISTER ACTIONS
+// ==========================================
+
+export async function createTubewell(data: {
+  tubewellNo?: string;
+  tubewellType: "MARK_II" | "ORDINARY" | "SUBMERSIBLE" | "MINI_PIPED";
+  condition: "WORKING" | "DEFECTIVE" | "ABANDONED";
+  landmark: string;
+  latitude: number;
+  longitude: number;
+  mouza: string;
+  sansad?: string;
+  ward?: string;
+  installYear?: number;
+  remarks?: string;
+  imageUrl?: string;
+  imagePublicId?: string;
+}) {
+  try {
+    const year = getYear();
+    if (!data.tubewellNo) {
+      const last = await db.tubewell.findFirst({
+        where: { tubewellNo: { startsWith: `DGP-TW/${year}/` } },
+        orderBy: { tubewellNo: "desc" },
+        select: { tubewellNo: true },
+      });
+      data.tubewellNo = `DGP-TW/${year}/${String(nextSerial(last?.tubewellNo)).padStart(3, "0")}`;
+    }
+
+    const tubewell = await db.tubewell.create({ data });
+    revalidateTag("tubewells", "max");
+    revalidatePath("/admindashboard/tubewell/register");
+    return tubewell;
+  } catch (error) {
+    console.error("Error creating tubewell:", error);
+    throw new Error("Failed to create tubewell. Number may already exist.");
+  }
+}
+
+export async function updateTubewell(
+  id: string,
+  data: {
+    tubewellNo?: string;
+    tubewellType?: "MARK_II" | "ORDINARY" | "SUBMERSIBLE" | "MINI_PIPED";
+    condition?: "WORKING" | "DEFECTIVE" | "ABANDONED";
+    landmark?: string;
+    latitude?: number;
+    longitude?: number;
+    mouza?: string;
+    sansad?: string;
+    ward?: string;
+    installYear?: number;
+    remarks?: string;
+    imageUrl?: string;
+    imagePublicId?: string;
+  }
+) {
+  try {
+    const updated = await db.tubewell.update({ where: { id }, data });
+    revalidateTag("tubewells", "max");
+    revalidatePath("/admindashboard/tubewell/register");
+    return updated;
+  } catch (error) {
+    console.error("Error updating tubewell:", error);
+    throw new Error("Failed to update tubewell");
+  }
+}
+
+export async function deleteTubewell(id: string) {
+  try {
+    await db.tubewell.delete({ where: { id } });
+    revalidateTag("tubewells", "max");
+    revalidatePath("/admindashboard/tubewell/register");
+    return true;
+  } catch (error) {
+    console.error("Error deleting tubewell:", error);
+    throw new Error("Failed to delete tubewell");
+  }
+}
+
+const getCachedTubewells = unstable_cache(
+  async () =>
+    db.tubewell.findMany({
+      orderBy: { createdAt: "desc" },
+    }),
+  ["tubewells"],
+  { tags: ["tubewells"] }
+);
+
+export async function getTubewells() {
+  return getCachedTubewells();
+}
+
+export async function getTubewellById(id: string) {
+  return db.tubewell.findUnique({ where: { id } });
+}
+
+// ==========================================
+// DASHBOARD STATS
+// ==========================================
+
+export async function getTubewellDashboardStats() {
+  const [
+    totalTubewells,
+    defectiveTubewells,
+    activeRepairRequests,
+    pendingWorkOrders,
+    totalMaterialTypes,
+    lowStockCount,
+    activeMistris,
+    totalBillsAmount,
+    completedThisMonth,
+  ] = await Promise.all([
+    db.tubewell.count(),
+    db.tubewell.count({ where: { condition: "DEFECTIVE" } }),
+    db.tubewellRepairRequest.count({
+      where: {
+        status: { in: ["PENDING", "APPROVED", "WORK_ORDER_ISSUED"] },
+      },
+    }),
+    db.tubewellWorkOrder.count({
+      where: { status: { in: ["ISSUED", "IN_PROGRESS"] } },
+    }),
+    db.tubewellMaterial.count({ where: { isActive: true } }),
+    db.tubewellMaterial.count({
+      where: { isActive: true, stock: { lte: 10 } },
+    }),
+    db.mistri.count({ where: { isActive: true } }),
+    db.tubewellBill.aggregate({
+      where: { status: "PAID" },
+      _sum: { netAmount: true },
+    }),
+    db.tubewellWorkOrder.count({
+      where: {
+        status: "COMPLETED",
+        completionDate: {
+          gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+        },
+      },
+    }),
+  ]);
+
+  return {
+    totalTubewells,
+    defectiveTubewells,
+    workingTubewells: totalTubewells - defectiveTubewells,
+    activeRepairRequests,
+    pendingWorkOrders,
+    totalMaterialTypes,
+    lowStockCount,
+    activeMistris,
+    totalPaidAmount: totalBillsAmount._sum.netAmount ?? 0,
+    completedThisMonth,
+  };
+}
+
