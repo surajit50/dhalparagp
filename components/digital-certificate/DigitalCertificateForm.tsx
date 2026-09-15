@@ -126,15 +126,15 @@ export default function DigitalCertificateForm({
       relationshipWithPerson: "",
       fatherOrHusbandName: "",
       postalAddress:
-        "Vill- , P.O.- , P.S.- Hili, Dist.- Dakshin Dinajpur, PIN- 733126",
+        "Vill- , P.O.- , P.S.-  , Block:-  Dist.- Dakshin Dinajpur, PIN- 733126",
       mobileNumber: "",
       personName: "",
       fatherName: "",
       motherName: "",
       deceasedFatherOrHusbandName: "",
       dateOfEvent: new Date(),
-      placeOfEvent: "No. 3 Dhalpara Gram Panchayat",
-      registrationYear: new Date().getFullYear().toString(),
+      placeOfEvent: "",
+      registrationYear: "",
       registrationNumber: "",
       purpose: "Official / Educational Verification",
       docProofOfIdentity: true,
@@ -1421,22 +1421,20 @@ export default function DigitalCertificateForm({
               key={step}
               type="button"
               onClick={() => handleStepClick(idx)}
-              className={`flex items-center gap-1.5 transition-all text-left group ${
-                isCompleted
-                  ? "text-primary cursor-pointer hover:opacity-80"
-                  : isCurrent
+              className={`flex items-center gap-1.5 transition-all text-left group ${isCompleted
+                ? "text-primary cursor-pointer hover:opacity-80"
+                : isCurrent
                   ? "text-primary font-bold cursor-default"
                   : "text-muted-foreground/50 cursor-default"
-              }`}
+                }`}
             >
               <span
-                className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-all ${
-                  isCompleted
-                    ? "bg-primary text-white shadow-sm group-hover:scale-110"
-                    : isCurrent
+                className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] transition-all ${isCompleted
+                  ? "bg-primary text-white shadow-sm group-hover:scale-110"
+                  : isCurrent
                     ? "bg-primary/20 text-primary border border-primary/40 font-bold ring-2 ring-primary/20"
                     : "bg-muted text-muted-foreground"
-                }`}
+                  }`}
               >
                 {isCompleted ? <Check className="w-3 h-3" /> : idx + 1}
               </span>
@@ -1466,11 +1464,10 @@ export default function DigitalCertificateForm({
               <RadioGroupItem value="BIRTH" id="type-birth" className="peer sr-only" />
               <Label
                 htmlFor="type-birth"
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  isBirth
-                    ? "border-blue-600 bg-blue-50/70 text-blue-950 shadow-sm"
-                    : "border-border hover:border-gray-300 hover:bg-muted/30"
-                }`}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${isBirth
+                  ? "border-blue-600 bg-blue-50/70 text-blue-950 shadow-sm"
+                  : "border-border hover:border-gray-300 hover:bg-muted/30"
+                  }`}
               >
                 <div className={`p-2.5 rounded-lg ${isBirth ? "bg-blue-600 text-white" : "bg-muted text-muted-foreground"}`}>
                   <Baby className="w-6 h-6" />
@@ -1486,11 +1483,10 @@ export default function DigitalCertificateForm({
               <RadioGroupItem value="DEATH" id="type-death" className="peer sr-only" />
               <Label
                 htmlFor="type-death"
-                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                  isDeath
-                    ? "border-amber-600 bg-amber-50/70 text-amber-950 shadow-sm"
-                    : "border-border hover:border-gray-300 hover:bg-muted/30"
-                }`}
+                className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${isDeath
+                  ? "border-amber-600 bg-amber-50/70 text-amber-950 shadow-sm"
+                  : "border-border hover:border-gray-300 hover:bg-muted/30"
+                  }`}
               >
                 <div className={`p-2.5 rounded-lg ${isDeath ? "bg-amber-600 text-white" : "bg-muted text-muted-foreground"}`}>
                   <HeartCrack className="w-6 h-6" />
