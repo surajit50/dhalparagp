@@ -25,13 +25,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Tubewell } from "@prisma/client";
-import { toTitleCase, formatDate } from "@/lib/utils";
+
+import { toTitleCase } from "@/lib/utils";
 import { deleteTubewell } from "@/action/tubewell";
 import { toast } from "sonner";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/utils/utils";
 
-export type TubewellRow = Tubewell;
+
 
 const ConditionBadge = ({ condition }: { condition: string }) => {
   switch (condition) {
@@ -58,7 +60,7 @@ const ConditionBadge = ({ condition }: { condition: string }) => {
   }
 };
 
-const CellAction = ({ tubewell }: { tubewell: TubewellRow }) => {
+const CellAction = ({ tubewell }: { tubewell: Tubewell }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -162,7 +164,7 @@ const CellAction = ({ tubewell }: { tubewell: TubewellRow }) => {
   );
 };
 
-export const columns: ColumnDef<TubewellRow>[] = [
+export const columns: ColumnDef<Tubewell>[] = [
   {
     accessorKey: "tubewellNo",
     header: "Tubewell No.",
@@ -187,7 +189,7 @@ export const columns: ColumnDef<TubewellRow>[] = [
     accessorKey: "mouza",
     header: "Mouza",
     cell: ({ row }) => {
-      const mouza = row.getValue("mouza");
+      const mouza = row.getValue("mouza") as string;
       const ward = row.original.ward;
       return (
         <div className="flex flex-col">
