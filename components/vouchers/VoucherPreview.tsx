@@ -118,8 +118,8 @@ export const VoucherPreview = ({ voucher }: VoucherPreviewProps) => {
                         </div>
                     </div>
                     <div className="space-y-[2px] text-[13px] italic font-bold">
-                        <div>Voucher Entered by: {voucher.enteredBy?.name || "Arpan Sarkar, Sahayak"} on {voucher.voucherDate ? formatDate(voucher.voucherDate) : "31.08.2026"}</div>
-                        <div>Voucher Verified By: {voucher.verifiedBy?.name}</div>
+                        <div>Voucher Entered by: Arpan Sarkar, Sahayak on {voucher.voucherDate ? formatDate(voucher.voucherDate) : "31.08.2026"}</div>
+                        <div>Voucher Verified By: </div>
                     </div>
                 </div>
             </div>
