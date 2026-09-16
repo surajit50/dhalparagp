@@ -36,12 +36,10 @@ import { MapPin, Save, ArrowLeft, Droplets, Target, Camera, Map } from "lucide-r
 import Link from "next/link";
 import { ImageUploadDropzone } from "@/components/street-lights/ImageUploadDropzone";
 import { createTubewell } from "@/action/tubewell";
-import {
-  TUBEWELL_TYPE_OPTIONS,
-  TUBEWELL_CONDITION_OPTIONS,
-} from "@/lib/utils/tubewell";
-import { useImageUpload } from "@/lib/hooks/use-image-upload";
+
 import { Label } from "@/components/ui/label";
+import { useImageUpload } from "@/lib/hooks/use-image-upload";
+import { TUBEWELL_CONDITION_OPTIONS, TUBEWELL_TYPE_OPTIONS } from "@/lib/utils/tubewell";
 
 const IMAGE_KEY = "tubewell-photo";
 
@@ -71,7 +69,7 @@ export default function AddTubewellPage() {
 
   const handleFile = async (file: File) => {
     try {
-      const data = await upload(file, IMAGE_KEY, (result) => {
+      const data = await upload(file, IMAGE_KEY, (result: { url: any; publicId: any; }) => {
         setRemoteImage({ url: result.url, publicId: result.publicId });
       });
       if (data) {

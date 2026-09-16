@@ -14,9 +14,9 @@ export default async function TubewellRegisterPage() {
   const tubewells = await getTubewells();
 
   const total = tubewells.length;
-  const working = tubewells.filter((t) => t.condition === "WORKING").length;
-  const defective = tubewells.filter((t) => t.condition === "DEFECTIVE").length;
-  const abandoned = tubewells.filter((t) => t.condition === "ABANDONED").length;
+  const working = tubewells.filter((t: { condition: string; }) => t.condition === "WORKING").length;
+  const defective = tubewells.filter((t: { condition: string; }) => t.condition === "DEFECTIVE").length;
+  const abandoned = tubewells.filter((t: { condition: string; }) => t.condition === "ABANDONED").length;
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
