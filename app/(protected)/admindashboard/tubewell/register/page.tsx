@@ -6,7 +6,7 @@ import { DataTable } from "@/components/data-table";
 import { columns } from "./columns";
 import { PageHeader } from "../_components/page-header";
 import { StatsCard } from "../_components/stats-card";
-import { ExportTubewellsButton } from "./export-button";
+
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +27,7 @@ export default async function TubewellRegisterPage() {
           icon="Wrench"
         >
           <div className="flex gap-3 flex-wrap">
-            <ExportTubewellsButton tubewells={tubewells} />
+
             <Button
               asChild
               className="gap-2 rounded-xl px-6 py-6 shadow-md hover:shadow-lg transition-all duration-200"
