@@ -258,12 +258,27 @@
                 "readOnly": true
             },
             {
+                "name": "contractor_name",
+                "type": "text",
+                "content": "{{contractor_name}}",
+                "position": {
+                    "x": 138,
+                    "y": 245
+                },
+                "width": 55,
+                "height": 5,
+                "fontSize": 10,
+                "fontName": "Roboto",
+                "alignment": "center",
+                "fontColor": "#000000"
+            },
+            {
                 "name": "contractor_address",
                 "type": "text",
                 "content": "{{contractor_address}}",
                 "position": {
                     "x": 138,
-                    "y": 250
+                    "y": 252
                 },
                 "width": 55,
                 "height": 10,

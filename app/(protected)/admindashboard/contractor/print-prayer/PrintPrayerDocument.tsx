@@ -86,13 +86,16 @@ export default function PrintPrayerDocument({
       const workOrderDateFormatted = formatDate(workOrderDateObj);
       const currentDateFormatted = formatDate(new Date());
       const emdAmountFormatted = emdAmount ? emdAmount.toFixed(2) : "0.00";
-      // Format NIT details
-      const nitDetails = `${nitNumber}/${nitDateObj.getFullYear()}`;
+      // Format NIT details safely (avoiding duplicated year)
+      const nitDetails = nitNumber.includes("/")
+        ? nitNumber
+        : `${nitNumber}/${nitDateObj.getFullYear()}`;
       const paragraph2 = `in NIT No ${nitDetails} dated ${nitDateFormatted} for Work Order No ${workOrderNumber} dated ${workOrderDateFormatted} (Work Sl. No: ${workSlNo.toString()}) for the work "${workName}".`;
       const paragraph3 = `was deposited for participation in NIT No ${nitDetails} dated ${nitDateFormatted} for Work Order No ${workOrderNumber} dated ${workOrderDateFormatted} (Work Sl. No: ${workSlNo.toString()}). As per the terms and conditions, I am now eligible for the refund of the earnest money deposit amount.`;
 
-      const securityamount = `Security Amount: ${securityDepositAmount ? securityDepositAmount.toFixed(2) : "0.00"
-        }`;
+      const securityamount = `Security Amount: Rs. ${
+        securityDepositAmount ? securityDepositAmount.toFixed(2) : "0.00"
+      }`;
 
       // Get template path based on prayer type
       const templatePath = getTemplatePath(prayerType);
@@ -101,22 +104,34 @@ export default function PrintPrayerDocument({
       let inputs: any[];
 
       if (prayerType === "SECURITY_MONEY_RELEASE") {
-        // For security release prayer, use current date as completion date (or work order date as fallback)
+        const completionDateFormatted = completionDate
+          ? formatDate(new Date(completionDate))
+          : "N/A";
 
         const bodyParagraph1 = `I am writing to kindly request the release of the security deposit for the work of "${workName} - ${activityCode}", vide Work Order No ${workOrderNumber} dated ${workOrderDateFormatted}.`;
-        const bodyParagraph2 = `The work has been completed successfully on ${completionDate ? formatDate(completionDate) : "N/A"
-          } and all required documentation, including the completion report, has been submitted for verification. As per the terms of the agreement, I am now eligible for the refund of the security deposit amount.`;
+        const bodyParagraph2 = `The work has been completed successfully on ${completionDateFormatted} and all required documentation, including the completion report, has been submitted for verification. As per the terms of the agreement, I am now eligible for the refund of the security deposit amount.`;
         const bodyParagraph3 = `I kindly request you to process the refund at the earliest. Your support and prompt action in this regard will be greatly appreciated.`;
 
         inputs = [
           {
             date: currentDateFormatted,
-            gpname: "No 3 Dhalapra Gram Panchayat",
+            gpname: gpname,
+            gp_name: gpname,
             subject_label: `Subject: Request for Release of Security Deposit for the NIT NO ${nitDetails} Work Sl no ${workSlNo}`,
+            paragraph1: bodyParagraph1,
+            paragraph2: bodyParagraph2,
+            paragraph3: bodyParagraph3,
             body_paragraph_1: bodyParagraph1,
             body_paragraph_2: bodyParagraph2,
             body_paragraph_3: bodyParagraph3,
+            work_name: `${workName} - ${activityCode}`,
+            workName: `${workName} - ${activityCode}`,
+            workorder: `Work Order No: ${workOrderNumber} Dated: ${workOrderDateFormatted}`,
+            completion_date: completionDateFormatted,
+            completionDate: completionDateFormatted,
+            contractor_name: contractorName,
             contractorName: contractorName,
+            contractor_address: contractorAddress || "N/A",
             contractorAddress: contractorAddress || "N/A",
             securityamount: securityamount,
           },
@@ -125,16 +140,18 @@ export default function PrintPrayerDocument({
         // For EMD refund prayer
         inputs = [
           {
-            gpname: "No 3 Dhalapra Gram Panchayat",
+            gpname: gpname,
             gp_name: gpname,
-
+            ref_label: `Ref: NIT No: ${nitDetails} | Work Sl No: ${workSlNo}`,
             nit_details_subject: nitDetails,
             work_sl_no: workSlNo.toString(),
             work_name: `${workName} - ${activityCode}`,
             paragraph2_continued: paragraph3,
             emd_amount: `Rs. ${emdAmountFormatted}`,
             contractor_name: contractorName,
+            contractorName: contractorName,
             contractor_address: contractorAddress || "N/A",
+            contractorAddress: contractorAddress || "N/A",
             date: currentDateFormatted,
           },
         ];
@@ -142,7 +159,7 @@ export default function PrintPrayerDocument({
         // For bill prayer and other types
         inputs = [
           {
-            gpname: "No 3 Dhalapra Gram Panchayat",
+            gpname: gpname,
             gp_name: gpname,
             nitDetails: nitDetails,
             nitDate: nitDateFormatted,
