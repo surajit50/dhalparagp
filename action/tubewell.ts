@@ -846,16 +846,22 @@ export async function createTubewell(data: {
 }) {
   try {
     const year = getYear();
-    if (!data.tubewellNo) {
+    let tubewellNo = data.tubewellNo;
+    if (!tubewellNo) {
       const last = await db.tubewell.findFirst({
         where: { tubewellNo: { startsWith: `DGP-TW/${year}/` } },
         orderBy: { tubewellNo: "desc" },
         select: { tubewellNo: true },
       });
-      data.tubewellNo = `DGP-TW/${year}/${String(nextSerial(last?.tubewellNo)).padStart(3, "0")}`;
+      tubewellNo = `DGP-TW/${year}/${String(nextSerial(last?.tubewellNo)).padStart(3, "0")}`;
     }
 
-    const tubewell = await db.tubewell.create({ data });
+    const tubewell = await db.tubewell.create({
+      data: {
+        ...data,
+        tubewellNo,
+      },
+    });
     revalidateTag("tubewells", "max");
     revalidatePath("/admindashboard/tubewell/register");
     return tubewell;
