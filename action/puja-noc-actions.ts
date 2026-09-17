@@ -2,6 +2,7 @@
 
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { currentUser } from "@/lib/auth";
 
 export async function generatePujaNOC(data: {
   pujaName: string;
@@ -9,8 +10,11 @@ export async function generatePujaNOC(data: {
   organizer: string;
   startDate: string;
   endDate: string;
+  fileUrl?: string;
+  fileKey?: string;
 }) {
   try {
+    const user = await currentUser();
     const today = new Date();
     const year = today.getFullYear();
     const shortYear = year.toString().slice(-2);
@@ -47,8 +51,21 @@ export async function generatePujaNOC(data: {
         endDate: new Date(data.endDate),
         refNo,
         refDate: today,
+        createdById: user?.id,
       },
     });
+
+    if (data.fileUrl && data.fileKey) {
+      await db.nocDocument.create({
+        data: {
+          applicationId: noc.id,
+          documentType: "APPLICATION_LETTER",
+          fileUrl: data.fileUrl,
+          fileKey: data.fileKey,
+          uploadedBy: user?.id || noc.id,
+        },
+      });
+    }
 
     revalidatePath("/admindashboard/generate/puja-noc");
 
@@ -56,10 +73,63 @@ export async function generatePujaNOC(data: {
       success: true,
       refNo: noc.refNo,
       date: noc.refDate?.toISOString().split('T')[0], // yyyy-mm-dd
+      id: noc.id,
     };
   } catch (error) {
     console.error("Error generating Puja NOC:", error);
     return { success: false, message: "Failed to generate NOC" };
+  }
+}
+
+export async function updatePujaNOC(
+  id: string,
+  data: {
+    pujaName: string;
+    location: string;
+    organizer: string;
+    startDate: string;
+    endDate: string;
+    fileUrl?: string;
+    fileKey?: string;
+  }
+) {
+  try {
+    const user = await currentUser();
+
+    const noc = await db.nocApplication.update({
+      where: { id },
+      data: {
+        applicantName: data.organizer,
+        organizerName: data.organizer,
+        eventName: data.pujaName,
+        eventLocation: data.location,
+        startDate: new Date(data.startDate),
+        endDate: new Date(data.endDate),
+      },
+    });
+
+    if (data.fileUrl && data.fileKey) {
+      await db.nocDocument.create({
+        data: {
+          applicationId: id,
+          documentType: "APPLICATION_LETTER",
+          fileUrl: data.fileUrl,
+          fileKey: data.fileKey,
+          uploadedBy: user?.id || id,
+        },
+      });
+    }
+
+    revalidatePath("/admindashboard/generate/puja-noc");
+
+    return {
+      success: true,
+      refNo: noc.refNo,
+      date: noc.refDate?.toISOString().split('T')[0],
+    };
+  } catch (error) {
+    console.error("Error updating Puja NOC:", error);
+    return { success: false, message: "Failed to update NOC" };
   }
 }
 
@@ -141,6 +211,9 @@ export async function getUserPujaNOCs(userId: string) {
         createdById: userId,
         eventCategory: "PUJA",
       },
+      include: {
+        documents: true,
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -202,6 +275,9 @@ export async function getPujaNOCs() {
       where: {
         eventCategory: "PUJA",
       },
+      include: {
+        documents: true,
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -213,3 +289,4 @@ export async function getPujaNOCs() {
     return { success: false, message: "Failed to fetch NOCs" };
   }
 }
+

@@ -32,8 +32,14 @@ import {
   CheckCircle2,
   AlertCircle,
   FileText,
+  Upload,
+  X,
+  FileCheck,
+  Pencil,
+  Paperclip,
+  ExternalLink,
 } from "lucide-react";
-import { generatePujaNOC, getPujaNOCs } from "@/action/puja-noc-actions";
+import { generatePujaNOC, updatePujaNOC, getPujaNOCs } from "@/action/puja-noc-actions";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -99,7 +105,7 @@ async function generatePujaNocPdf(values: any) {
   doc.setTextColor(0, 0, 0);
   doc.setFont("times", "normal");
   doc.setFontSize(10);
-  doc.text("Office of the Prodhan", pw / 2, y + 8, { align: "center" });
+  doc.text("Office of the Authorised Signatory", pw / 2, y + 8, { align: "center" });
 
   doc.setFont("times", "bold");
   doc.setFontSize(18);
@@ -196,7 +202,7 @@ async function generatePujaNocPdf(values: any) {
   doc.setFontSize(11);
   const sigLineW = 50;
   doc.line(pw - mr - sigLineW, y + 20, pw - mr, y + 20); // Signature Line
-  doc.text("Prodhan", pw - mr - sigLineW / 2, y + 25, { align: "center" });
+  doc.text("Authorised Signatory", pw - mr - sigLineW / 2, y + 25, { align: "center" });
   doc.setFontSize(10);
   doc.text(`${values.gpName}`, pw - mr - sigLineW / 2, y + 30, {
     align: "center",
@@ -233,9 +239,9 @@ function NocCertificate({
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="w-24">
-            <img 
-              src="/images/logo.png" 
-              alt="GP Logo" 
+            <img
+              src="/images/logo.png"
+              alt="GP Logo"
               className="w-20 h-20 object-contain"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
@@ -243,7 +249,7 @@ function NocCertificate({
             />
           </div>
           <div className="text-center flex-1">
-            <p className="text-lg font-medium">Office of the Prodhan</p>
+            <p className="text-lg font-medium">Office of the Authorised Signatory</p>
             <h1 className="text-3xl font-bold uppercase">{values.gpName}</h1>
             <p className="text-sm mt-1">
               P.O.: {values.postOffice} • P.S.: {values.policeStation} • Dist.:{" "}
@@ -348,7 +354,7 @@ function NocCertificate({
           </div>
           <div className="text-center flex flex-col items-center">
             <div className="w-56 border-t-[1.5px] border-black pt-2 space-y-1">
-              <p className="font-bold text-lg">Prodhan</p>
+              <p className="font-bold text-lg">Authorised Signatory</p>
               <p className="text-base font-semibold max-w-[200px] whitespace-normal leading-tight mx-auto">
                 {values.gpName}
               </p>
@@ -379,8 +385,19 @@ export default function ClientPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // ---------- new state for the Select dropdown ----------
-  const [pujaType, setPujaType] = useState<string>(""); 
+  // Edit NOC state
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingRefNo, setEditingRefNo] = useState<string | null>(null);
+  const [attachedDocuments, setAttachedDocuments] = useState<any[]>([]);
+
+  // Document Upload State
+  const [fileUrl, setFileUrl] = useState<string>("");
+  const [fileKey, setFileKey] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  // ---------- Select dropdown ----------
+  const [pujaType, setPujaType] = useState<string>("");
   const [customPujaName, setCustomPujaName] = useState("");
 
   // derived final puja name: if "Other" is selected, use custom name; otherwise use the selected option
@@ -405,6 +422,30 @@ export default function ClientPage() {
     setValues((prev) => ({ ...prev, pujaName: effectivePujaName }));
   }, [effectivePujaName]);
 
+  const resetForm = useCallback(() => {
+    setEditingId(null);
+    setEditingRefNo(null);
+    setAttachedDocuments([]);
+    setPujaType("");
+    setCustomPujaName("");
+    setFileUrl("");
+    setFileKey("");
+    setFileName("");
+    setValues({
+      gpName: gpname || "[Name of Gram Panchayat]",
+      postOffice: "Trimohini",
+      policeStation: "Hili",
+      district: "Dakshin Dinajpur",
+      refNo: "",
+      date: "",
+      pujaName: "",
+      location: "",
+      organizer: "",
+      startDate: "",
+      endDate: "",
+    });
+  }, []);
+
   const loadHistoryIntoForm = useCallback(
     (item: any) => {
       const presetList = [
@@ -423,17 +464,53 @@ export default function ClientPage() {
       setValues((prev) => ({
         ...prev,
         refNo: item.refNo,
-        date: new Date(item.refDate).toISOString().split("T")[0],
+        date: item.refDate ? new Date(item.refDate).toISOString().split("T")[0] : "",
         location: item.eventLocation,
         organizer: item.organizerName,
-        startDate: new Date(item.startDate).toISOString().split("T")[0],
-        endDate: new Date(item.endDate).toISOString().split("T")[0],
+        startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0] : "",
+        endDate: item.endDate ? new Date(item.endDate).toISOString().split("T")[0] : "",
       }));
-      
+
+      setAttachedDocuments(item.documents || []);
       setActiveTab("preview");
     },
     []
   );
+
+  const handleEditItem = useCallback((item: any) => {
+    setEditingId(item.id);
+    setEditingRefNo(item.refNo);
+    setAttachedDocuments(item.documents || []);
+
+    const presetList = [
+      "Durga Puja", "Kali Puja", "Saraswati Puja", "Jagaddhatri Puja",
+      "Ganesh Puja", "Eid-ul-Fitr", "Muharram", "Christmas"
+    ];
+    const eventName = item.eventName;
+    if (presetList.includes(eventName)) {
+      setPujaType(eventName);
+      setCustomPujaName("");
+    } else {
+      setPujaType("Other");
+      setCustomPujaName(eventName);
+    }
+
+    setValues((prev) => ({
+      ...prev,
+      refNo: item.refNo,
+      date: item.refDate ? new Date(item.refDate).toISOString().split("T")[0] : "",
+      location: item.eventLocation,
+      organizer: item.organizerName,
+      startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0] : "",
+      endDate: item.endDate ? new Date(item.endDate).toISOString().split("T")[0] : "",
+    }));
+
+    setFileUrl("");
+    setFileKey("");
+    setFileName("");
+
+    setActiveTab("form");
+  }, []);
 
   const [isPending, startTransition] = useTransition();
 
@@ -457,7 +534,50 @@ export default function ClientPage() {
     }
   }, [activeTab, fetchHistory]);
 
-  const handleGenerate = useCallback(() => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 20 * 1024 * 1024) {
+      toast.error("File size must not exceed 20 MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "puja-noc");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setFileUrl(data.fileUrl || data.url);
+        setFileKey(data.publicId || file.name);
+        setFileName(file.name);
+        toast.success("Document uploaded successfully!");
+      } else {
+        toast.error(data.error || "Failed to upload document");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Error uploading document");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const clearUploadedFile = () => {
+    setFileUrl("");
+    setFileKey("");
+    setFileName("");
+  };
+
+  const handleGenerateOrUpdate = useCallback(() => {
     if (
       !effectivePujaName ||
       !values.location ||
@@ -470,27 +590,43 @@ export default function ClientPage() {
     }
 
     startTransition(async () => {
-      const res = await generatePujaNOC({
-        pujaName: effectivePujaName,
-        location: values.location,
-        organizer: values.organizer,
-        startDate: values.startDate,
-        endDate: values.endDate,
-      });
+      let res;
+      if (editingId) {
+        res = await updatePujaNOC(editingId, {
+          pujaName: effectivePujaName,
+          location: values.location,
+          organizer: values.organizer,
+          startDate: values.startDate,
+          endDate: values.endDate,
+          fileUrl: fileUrl || undefined,
+          fileKey: fileKey || undefined,
+        });
+      } else {
+        res = await generatePujaNOC({
+          pujaName: effectivePujaName,
+          location: values.location,
+          organizer: values.organizer,
+          startDate: values.startDate,
+          endDate: values.endDate,
+          fileUrl: fileUrl || undefined,
+          fileKey: fileKey || undefined,
+        });
+      }
 
-      if (res.success && res.refNo && res.date) {
+      if (res.success && res.refNo) {
         setValues((prev) => ({
           ...prev,
           refNo: res.refNo!,
-          date: res.date!,
+          date: res.date || prev.date,
         }));
-        toast.success("NOC generated successfully!");
+        toast.success(editingId ? "NOC updated successfully!" : "NOC generated successfully!");
+        fetchHistory();
         setActiveTab("preview");
       } else {
         toast.error(res.message || "Something went wrong");
       }
     });
-  }, [effectivePujaName, values.location, values.organizer, values.startDate, values.endDate]);
+  }, [editingId, effectivePujaName, values.location, values.organizer, values.startDate, values.endDate, fileUrl, fileKey, fetchHistory]);
 
   const filteredHistory = useMemo(() => {
     return history.filter(
@@ -528,15 +664,26 @@ export default function ClientPage() {
         </div>
         <div className="flex items-center gap-2">
           {activeTab === "form" && (
-            <Button onClick={handleGenerate} disabled={isPending}>
-              {isPending ? (
-                "Processing..."
-              ) : (
-                <>
-                  <Save className="mr-2 h-4 w-4" /> Generate & Save
-                </>
+            <div className="flex items-center gap-2">
+              {editingId && (
+                <Button variant="outline" onClick={resetForm}>
+                  Cancel Edit
+                </Button>
               )}
-            </Button>
+              <Button onClick={handleGenerateOrUpdate} disabled={isPending || isUploading}>
+                {isPending ? (
+                  "Processing..."
+                ) : editingId ? (
+                  <>
+                    <Save className="mr-2 h-4 w-4" /> Update NOC
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" /> Generate & Save
+                  </>
+                )}
+              </Button>
+            </div>
           )}
           {activeTab === "preview" && (
             <Button
@@ -547,7 +694,13 @@ export default function ClientPage() {
             </Button>
           )}
           {activeTab !== "form" && (
-            <Button onClick={() => setActiveTab("form")} variant="outline">
+            <Button
+              onClick={() => {
+                resetForm();
+                setActiveTab("form");
+              }}
+              variant="outline"
+            >
               <FilePlus className="mr-2 h-4 w-4" /> New NOC
             </Button>
           )}
@@ -570,7 +723,7 @@ export default function ClientPage() {
               className="justify-start"
               onClick={() => setActiveTab("form")}
             >
-              <FilePlus className="mr-2 h-4 w-4" /> Generate NOC
+              <FilePlus className="mr-2 h-4 w-4" /> {editingId ? "Edit NOC" : "Generate NOC"}
             </Button>
             <Button
               variant={activeTab === "history" ? "default" : "ghost"}
@@ -730,12 +883,32 @@ export default function ClientPage() {
           {activeTab === "form" && (
             <Card className="border-t-4 border-t-orange-600">
               <CardHeader>
+                {editingId && (
+                  <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Pencil className="h-5 w-5 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-semibold text-blue-900">
+                          Modifying NOC Ref: {editingRefNo}
+                        </p>
+                        <p className="text-xs text-blue-700">
+                          Make changes below and click "Update NOC" to save changes.
+                        </p>
+                      </div>
+                    </div>
+                    <Button size="sm" variant="ghost" onClick={resetForm}>
+                      <X className="h-4 w-4 mr-1" /> Cancel Edit
+                    </Button>
+                  </div>
+                )}
                 <CardTitle className="flex items-center gap-2">
                   <ClipboardList className="h-5 w-5 text-orange-600" />
-                  Certificate Details
+                  {editingId ? "Modify NOC Certificate" : "Certificate Details"}
                 </CardTitle>
                 <CardDescription>
-                  Fill in the details accurately to generate the NOC
+                  {editingId
+                    ? "Update the details of the NOC certificate"
+                    : "Fill in the details accurately to generate the NOC"}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-8">
@@ -886,14 +1059,105 @@ export default function ClientPage() {
                   </div>
                 </div>
 
+                <Separator />
+
+                {/* Document Upload Section */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                    <Paperclip className="h-4 w-4" /> Supporting Documents (Optional)
+                  </h3>
+
+                  {attachedDocuments.length > 0 && (
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Attached Documents:</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {attachedDocuments.map((doc, idx) => (
+                          <a
+                            key={doc.id || idx}
+                            href={doc.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border text-xs bg-slate-50 hover:bg-slate-100 text-blue-600 font-medium transition-colors"
+                          >
+                            <Paperclip className="h-3.5 w-3.5" />
+                            Document #{idx + 1}
+                            <ExternalLink className="h-3 w-3 ml-1 text-slate-400" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="docUpload">
+                      Upload Application Letter / Permission Doc (PDF / Image)
+                    </Label>
+                    {fileUrl ? (
+                      <div className="flex items-center justify-between p-3 border border-green-200 bg-green-50 rounded-lg">
+                        <div className="flex items-center gap-2 overflow-hidden">
+                          <FileCheck className="h-5 w-5 text-green-600 shrink-0" />
+                          <span className="text-sm font-medium text-green-900 truncate">
+                            {fileName || "Document attached"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline flex items-center gap-1 font-medium"
+                          >
+                            View <ExternalLink className="h-3 w-3" />
+                          </a>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-700"
+                            onClick={clearUploadedFile}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border-2 border-dashed border-muted-foreground/25 hover:border-muted-foreground/50 rounded-lg p-6 text-center cursor-pointer transition-colors bg-muted/10 hover:bg-muted/20 relative">
+                        <input
+                          type="file"
+                          id="docUpload"
+                          accept=".pdf,image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          onChange={handleFileUpload}
+                          disabled={isUploading}
+                        />
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <Upload className="h-8 w-8 text-muted-foreground" />
+                          {isUploading ? (
+                            <p className="text-sm font-medium text-muted-foreground animate-pulse">
+                              Uploading document...
+                            </p>
+                          ) : (
+                            <>
+                              <p className="text-sm font-medium">
+                                Click or drag file to upload supporting document
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                Supports PDF, PNG, JPG up to 20MB
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
                   <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
                   <div className="text-sm text-amber-800">
-                    <p className="font-semibold">Review Before Generating</p>
+                    <p className="font-semibold">Review Before Saving</p>
                     <p>
-                      Once generated, the NOC will be assigned a unique
-                      reference number and saved in the system history. Please
-                      ensure all dates and spellings are correct.
+                      Please ensure all dates and spellings are correct before saving or generating the certificate.
                     </p>
                   </div>
                 </div>
@@ -931,20 +1195,21 @@ export default function ClientPage() {
                         <TableHead>Event Name</TableHead>
                         <TableHead>Organizer</TableHead>
                         <TableHead>Period</TableHead>
+                        <TableHead>Docs</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {isLoadingHistory ? (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center py-8">
+                          <TableCell colSpan={6} className="text-center py-8">
                             Loading records...
                           </TableCell>
                         </TableRow>
                       ) : filteredHistory.length === 0 ? (
                         <TableRow>
                           <TableCell
-                            colSpan={5}
+                            colSpan={6}
                             className="text-center py-8 text-muted-foreground"
                           >
                             No certificates found matching your search
@@ -964,14 +1229,39 @@ export default function ClientPage() {
                               {new Date(item.startDate).toLocaleDateString()} -{" "}
                               {new Date(item.endDate).toLocaleDateString()}
                             </TableCell>
+                            <TableCell>
+                              {item.documents && item.documents.length > 0 ? (
+                                <a
+                                  href={item.documents[0].fileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline font-medium"
+                                >
+                                  <Paperclip className="h-3 w-3" />
+                                  {item.documents.length} File{item.documents.length > 1 ? "s" : ""}
+                                </a>
+                              ) : (
+                                <span className="text-xs text-muted-foreground italic">None</span>
+                              )}
+                            </TableCell>
                             <TableCell className="text-right">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => loadHistoryIntoForm(item)}
-                              >
-                                <Eye className="h-4 w-4 mr-1" /> View
-                              </Button>
+                              <div className="flex items-center justify-end gap-1">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => loadHistoryIntoForm(item)}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" /> View
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                  onClick={() => handleEditItem(item)}
+                                >
+                                  <Pencil className="h-4 w-4 mr-1" /> Modify
+                                </Button>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))
@@ -997,9 +1287,21 @@ export default function ClientPage() {
                     </p>
                   </div>
                 </div>
-                <Button onClick={handleDownload} size="sm">
-                  <Printer className="h-4 w-4 mr-2" /> Download & Print
-                </Button>
+                <div className="flex items-center gap-2">
+                  {attachedDocuments.length > 0 && (
+                    <a
+                      href={attachedDocuments[0].fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 text-xs border rounded bg-white hover:bg-slate-50 font-medium text-slate-700"
+                    >
+                      <Paperclip className="h-3.5 w-3.5" /> View Attached Doc
+                    </a>
+                  )}
+                  <Button onClick={handleDownload} size="sm">
+                    <Printer className="h-4 w-4 mr-2" /> Download & Print
+                  </Button>
+                </div>
               </div>
 
               <div className="bg-slate-100 p-4 md:p-8 rounded-xl border-2 border-dashed border-slate-300 overflow-x-auto flex justify-center">
@@ -1024,7 +1326,7 @@ export default function ClientPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Signatory Designation</Label>
-                      <Input defaultValue="Prodhan" />
+                      <Input defaultValue="Authorised Signatory" />
                     </div>
                     <div className="space-y-2">
                       <Label>Gram Panchayat Name</Label>
