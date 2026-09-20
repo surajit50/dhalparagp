@@ -36,6 +36,7 @@ const REPORT_TYPES = [
 type ReportType = (typeof REPORT_TYPES)[number]["value"];
 
 type MouzaRow = {
+  slno: number;
   mouzaName: string;
   jlNo?: string;
   gramSansad: string;
@@ -127,6 +128,7 @@ export function StreetLightReports() {
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
+              <TableHead>Sl no</TableHead>
               <TableHead>Mouza</TableHead>
               <TableHead>JL No.</TableHead>
               <TableHead>Gram Sansad</TableHead>
@@ -143,6 +145,7 @@ export function StreetLightReports() {
           <TableBody>
             {mouzaRows.map((r, i) => (
               <TableRow key={i} className="hover:bg-muted/30">
+                <TableCell className="font-medium">{i+1}</TableCell>
                 <TableCell className="font-medium">{r.mouzaName}</TableCell>
                 <TableCell className="text-muted-foreground">{r.jlNo ?? "—"}</TableCell>
                 <TableCell>{r.gramSansad}</TableCell>
