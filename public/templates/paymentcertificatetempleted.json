@@ -584,7 +584,7 @@
             {
                 "name": "field19",
                 "type": "text",
-                "content": "Signature of Executive Assistant/Secretary",
+                "content": "Signature of Secretary",
                 "position": {
                     "x": 153.99,
                     "y": 167.72
@@ -609,7 +609,7 @@
             {
                 "name": "field20",
                 "type": "text",
-                "content": "Signature of Pradhan",
+                "content": "Authorised Signatory",
                 "position": {
                     "x": 228.68,
                     "y": 168.04
