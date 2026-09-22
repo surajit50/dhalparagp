@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export { formatDate, formatDateTime } from "./date";
+export * from "./utils/nrega";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
