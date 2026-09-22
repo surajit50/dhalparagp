@@ -1,7 +1,55 @@
 "use server";
 
 import { db } from "@/lib/db";
-import type { NregaCertificateStatus } from "@prisma/client";
+import type { NregaCertificateStatus, NregaWork } from "@prisma/client";
+
+// ---------------------------------------------------------------------------
+// Reusable helper: Determine certificate applicability (single source of truth)
+// ---------------------------------------------------------------------------
+
+export function getCertificateApplicabilityStatus(
+  certificateNumber: number,
+  work: Pick<NregaWork, "beneficiaryType" | "convergingDepartment">
+): NregaCertificateStatus {
+  // Certificate 5 (IBS) — not applicable for community works
+  if (certificateNumber === 5 && work.beneficiaryType === "Community") {
+    return "NOT_APPLICABLE";
+  }
+
+  // Certificate 7 (Convergence) — not applicable if no convergence department
+  if (
+    certificateNumber === 7 &&
+    (!work.convergingDepartment || work.convergingDepartment === "")
+  ) {
+    return "NOT_APPLICABLE";
+  }
+
+  return "DRAFT";
+}
+
+// ---------------------------------------------------------------------------
+// Fetch active template count / range info (to avoid hardcoded 1-8 checks)
+// ---------------------------------------------------------------------------
+
+export async function fetchCertificateTemplateRange() {
+  try {
+    const templates = await db.nregaCertificateTemplate.findMany({
+      where: { active: true },
+      select: { certificateNumber: true },
+      orderBy: { certificateNumber: "asc" },
+    });
+    const nums = templates.map((t) => t.certificateNumber);
+    return {
+      total: nums.length,
+      min: nums.length > 0 ? Math.min(...nums) : 1,
+      max: nums.length > 0 ? Math.max(...nums) : 8,
+      numbers: nums,
+    };
+  } catch (error) {
+    console.error("Error fetching template range:", error);
+    return { total: 8, min: 1, max: 8, numbers: [1, 2, 3, 4, 5, 6, 7, 8] };
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Initialize Certificates for a Work
@@ -19,74 +67,66 @@ export async function initializeCertificates(workId: string) {
       return { success: false, message: "No certificate templates found. Please seed templates first." };
     }
 
-    // Check which certificates already exist
-    const existing = await db.nregaCertificate.findMany({
-      where: { workId },
-      select: { certificateNumber: true },
-    });
-    const existingNums = new Set(existing.map((c) => c.certificateNumber));
+    // Check which certificates already exist and get work in parallel
+    const [existing, work] = await Promise.all([
+      db.nregaCertificate.findMany({
+        where: { workId },
+        select: { certificateNumber: true },
+      }),
+      db.nregaWork.findUnique({ where: { id: workId } }),
+    ]);
 
-    // Get work for context
-    const work = await db.nregaWork.findUnique({ where: { id: workId } });
     if (!work) return { success: false, message: "Work not found" };
 
+    const existingNums = new Set(existing.map((c) => c.certificateNumber));
     const toCreate = templates.filter((t) => !existingNums.has(t.certificateNumber));
 
     if (toCreate.length === 0) {
       return { success: true, message: "All certificates already initialized" };
     }
 
-    // Create certificates and verification records
-    for (const template of toCreate) {
-      // Determine if certificate is applicable
-      let status: NregaCertificateStatus = "DRAFT";
+    // Use a transaction so all-or-nothing creation
+    await db.$transaction(async (tx) => {
+      for (const template of toCreate) {
+        const status = getCertificateApplicabilityStatus(
+          template.certificateNumber,
+          work
+        );
 
-      // Certificate 5 (IBS) — not applicable for community works
-      if (template.certificateNumber === 5 && work.beneficiaryType === "Community") {
-        status = "NOT_APPLICABLE";
-      }
-
-      // Certificate 7 (Convergence) — not applicable if no convergence
-      if (
-        template.certificateNumber === 7 &&
-        (!work.convergingDepartment || work.convergingDepartment === "")
-      ) {
-        status = "NOT_APPLICABLE";
-      }
-
-      // Create the certificate record
-      await db.nregaCertificate.create({
-        data: {
-          workId,
-          certificateNumber: template.certificateNumber,
-          certificateName: template.certificateName,
-          status,
-          certificationText: template.certificationText,
-          signatureDesignation: template.signatureDesignation,
-        },
-      });
-
-      // Create verification records from template
-      const verificationFields = template.verificationFields as Array<{
-        key: string;
-        label: string;
-        defaultStatus?: string;
-      }>;
-
-      if (Array.isArray(verificationFields) && verificationFields.length > 0) {
-        await db.nregaCertificateVerification.createMany({
-          data: verificationFields.map((field) => ({
+        // Create the certificate record
+        await tx.nregaCertificate.create({
+          data: {
             workId,
             certificateNumber: template.certificateNumber,
-            parameter: field.label,
-            parameterKey: field.key,
-            status: "PENDING",
-          })),
+            certificateName: template.certificateName,
+            status,
+            certificationText: template.certificationText,
+            signatureDesignation: template.signatureDesignation,
+          },
         });
-      }
-    }
 
-    return { success: true, message: "Certificates initialized successfully" };
+        // Create verification records from template
+        const verificationFields = template.verificationFields as Array<{
+          key: string;
+          label: string;
+          defaultStatus?: string;
+        }>;
+
+        if (Array.isArray(verificationFields) && verificationFields.length > 0) {
+          await tx.nregaCertificateVerification.createMany({
+            data: verificationFields.map((field) => ({
+              workId,
+              certificateNumber: template.certificateNumber,
+              parameter: field.label,
+              parameterKey: field.key,
+              status: "PENDING",
+            })),
+          });
+        }
+      }
+    });
+
+    return { success: true, message: `Created ${toCreate.length} certificate(s) successfully` };
   } catch (error) {
     console.error("Error initializing certificates:", error);
     return { success: false, message: "Failed to initialize certificates" };
@@ -150,6 +190,7 @@ export async function updateCertificateStatus(
   signatureBlock?: string,
 ) {
   try {
+    const now = new Date();
     const updateData: Record<string, unknown> = { status };
 
     if (certificationText !== undefined) updateData.certificationText = certificationText;
@@ -157,25 +198,29 @@ export async function updateCertificateStatus(
     if (signatureBlock !== undefined) updateData.signatureBlock = signatureBlock;
 
     if (status === "COMPLETED") {
-      updateData.generatedAt = new Date();
+      updateData.generatedAt = now;
+      updateData.signatureDate = now;
     }
     if (status === "PRINTED") {
-      updateData.printedAt = new Date();
+      updateData.printedAt = now;
+      // Ensure signature date exists when printing
+      updateData.signatureDate = now;
     }
 
-    await db.nregaCertificate.update({
-      where: { workId_certificateNumber: { workId, certificateNumber } },
-      data: updateData,
-    });
-
-    await db.nregaAuditLog.create({
-      data: {
-        action: status === "PRINTED" ? "CERT_PRINTED" : "CERT_GENERATED",
-        workId,
-        certificateNumber,
-        details: `Certificate-${certificateNumber} marked as ${status}`,
-      },
-    });
+    await db.$transaction([
+      db.nregaCertificate.update({
+        where: { workId_certificateNumber: { workId, certificateNumber } },
+        data: updateData,
+      }),
+      db.nregaAuditLog.create({
+        data: {
+          action: status === "PRINTED" ? "CERT_PRINTED" : "CERT_GENERATED",
+          workId,
+          certificateNumber,
+          details: `Certificate-${certificateNumber} marked as ${status}`,
+        },
+      }),
+    ]);
 
     return { success: true, message: `Certificate-${certificateNumber} updated` };
   } catch (error) {

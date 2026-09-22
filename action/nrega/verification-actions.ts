@@ -18,61 +18,57 @@ export async function saveVerifications(
   }>
 ): Promise<{ success: boolean; message: string }> {
   try {
-    for (const v of verifications) {
-      const existing = await db.nregaCertificateVerification.findFirst({
-        where: {
+    const now = new Date();
+
+    // Use transaction for atomicity — batch all upserts + audit into one commit
+    await db.$transaction(async (tx) => {
+      // Pre-fetch all existing verifications in a single query
+      const existingRecords = await tx.nregaCertificateVerification.findMany({
+        where: { workId, certificateNumber },
+      });
+      const existingByKey = new Map(
+        existingRecords.map((r) => [r.parameterKey, r])
+      );
+
+      // Upsert each verification (no more N+1 findFirst per row)
+      for (const v of verifications) {
+        const existing = existingByKey.get(v.parameterKey);
+        const isResolved = v.status !== "PENDING";
+        const resolvedDate = isResolved ? now : null;
+
+        if (existing) {
+          await tx.nregaCertificateVerification.update({
+            where: { id: existing.id },
+            data: {
+              status: v.status as VerificationStatus,
+              remarks: v.remarks ?? existing.remarks ?? undefined,
+              verifiedDate: resolvedDate,
+            },
+          });
+        } else {
+          await tx.nregaCertificateVerification.create({
+            data: {
+              workId,
+              certificateNumber,
+              parameter: v.parameter,
+              parameterKey: v.parameterKey,
+              status: v.status as VerificationStatus,
+              remarks: v.remarks ?? undefined,
+              verifiedDate: resolvedDate,
+            },
+          });
+        }
+      }
+
+      // Audit log inside the same transaction
+      await tx.nregaAuditLog.create({
+        data: {
+          action: "VERIFICATION_UPDATED",
           workId,
           certificateNumber,
-          parameterKey: v.parameterKey,
+          details: `Verification data updated for Certificate-${certificateNumber}`,
         },
       });
-
-      if (existing) {
-        await db.nregaCertificateVerification.update({
-          where: { id: existing.id },
-          data: {
-            status: v.status as VerificationStatus,
-            remarks: v.remarks || existing.remarks,
-            verifiedDate: v.status !== "PENDING" ? new Date() : null,
-          },
-        });
-      } else {
-        await db.nregaCertificateVerification.create({
-          data: {
-            workId,
-            certificateNumber,
-            parameter: v.parameter,
-            parameterKey: v.parameterKey,
-            status: v.status as VerificationStatus,
-            remarks: v.remarks,
-            verifiedDate: v.status !== "PENDING" ? new Date() : null,
-          },
-        });
-      }
-    }
-
-    // Check if all verifications are complete (not PENDING)
-    const allVerifications = await db.nregaCertificateVerification.findMany({
-      where: { workId, certificateNumber },
-    });
-
-    const allDone = allVerifications.every((v) => v.status !== "PENDING");
-
-    // If all verifications complete, auto-update cert status to COMPLETED
-    if (allDone && allVerifications.length > 0) {
-      await db.nregaCertificate.update({
-        where: { workId_certificateNumber: { workId, certificateNumber } },
-        data: { status: "COMPLETED", generatedAt: new Date() },
-      });
-    }
-
-    await db.nregaAuditLog.create({
-      data: {
-        action: "VERIFICATION_UPDATED",
-        workId,
-        certificateNumber,
-        details: `Verification data updated for Certificate-${certificateNumber}`,
-      },
     });
 
     return { success: true, message: "Verification data saved successfully" };

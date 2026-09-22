@@ -72,17 +72,17 @@ export async function createNregaWork(
       nocDate: validated.nocDate || undefined,
     };
 
-    const work = await db.nregaWork.create({
-      data: cleanData,
-    });
-
-    // Create audit log
-    await db.nregaAuditLog.create({
-      data: {
-        action: "WORK_CREATED",
-        workId: work.id,
-        details: `Work ${workId} - ${validated.workName} created`,
-      },
+    // Atomic: create work + audit log in one transaction
+    const work = await db.$transaction(async (tx) => {
+      const created = await tx.nregaWork.create({ data: cleanData });
+      await tx.nregaAuditLog.create({
+        data: {
+          action: "WORK_CREATED",
+          workId: created.id,
+          details: `Work ${workId} - ${validated.workName} created`,
+        },
+      });
+      return created;
     });
 
     return { success: true, message: "Work created successfully", workId: work.id };
@@ -112,18 +112,17 @@ export async function updateNregaWork(
       nocDate: validated.nocDate || undefined,
     };
 
-    await db.nregaWork.update({
-      where: { id },
-      data: cleanData,
-    });
-
-    await db.nregaAuditLog.create({
-      data: {
-        action: "WORK_EDITED",
-        workId: id,
-        details: `Work updated: ${validated.workName}`,
-      },
-    });
+    // Atomic: update work + audit log in one transaction
+    await db.$transaction([
+      db.nregaWork.update({ where: { id }, data: cleanData }),
+      db.nregaAuditLog.create({
+        data: {
+          action: "WORK_EDITED",
+          workId: id,
+          details: `Work updated: ${validated.workName}`,
+        },
+      }),
+    ]);
 
     return { success: true, message: "Work updated successfully" };
   } catch (error) {
@@ -310,21 +309,24 @@ export async function duplicateNregaWork(
       ...workData
     } = original;
 
-    const newWork = await db.nregaWork.create({
-      data: {
-        ...workData,
-        workId: newWorkId,
-        workStatus: "DRAFT",
-        remarks: `Duplicated from ${original.workId}`,
-      },
-    });
-
-    await db.nregaAuditLog.create({
-      data: {
-        action: "WORK_DUPLICATED",
-        workId: newWork.id,
-        details: `Duplicated from ${original.workId}`,
-      },
+    // Atomic: create duplicated work + audit log in one transaction
+    const newWork = await db.$transaction(async (tx) => {
+      const created = await tx.nregaWork.create({
+        data: {
+          ...workData,
+          workId: newWorkId,
+          workStatus: "DRAFT",
+          remarks: `Duplicated from ${original.workId}`,
+        },
+      });
+      await tx.nregaAuditLog.create({
+        data: {
+          action: "WORK_DUPLICATED",
+          workId: created.id,
+          details: `Duplicated from ${original.workId}`,
+        },
+      });
+      return created;
     });
 
     return {
@@ -349,9 +351,28 @@ export async function fetchNregaFinancialYears(): Promise<string[]> {
       distinct: ["financialYear"],
       orderBy: { financialYear: "desc" },
     });
-    return result.map((r) => r.financialYear);
+    return result.map((r) => r.financialYear).filter(Boolean);
   } catch (error) {
     console.error("Error fetching financial years:", error);
+    return [];
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Fetch Gram Sansads (distinct non-null values for filter dropdown)
+// ---------------------------------------------------------------------------
+
+export async function fetchNregaGramSansads(): Promise<string[]> {
+  try {
+    const result = await db.nregaWork.findMany({
+      select: { gramSansadName: true },
+      distinct: ["gramSansadName"],
+      where: { gramSansadName: { not: null, notIn: [""] } },
+      orderBy: { gramSansadName: "asc" },
+    });
+    return result.map((r) => r.gramSansadName!).filter(Boolean);
+  } catch (error) {
+    console.error("Error fetching gram sansads:", error);
     return [];
   }
 }
