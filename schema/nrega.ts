@@ -76,7 +76,7 @@ export type NregaWorkFormValues = z.infer<typeof nregaWorkSchema>;
 
 export const nregaVerificationSchema = z.object({
   workId: z.string(),
-  certificateNumber: z.coerce.number().int().min(2).max(8),
+  certificateNumber: z.coerce.number().int().min(1).max(8),
   verifications: z.array(
     z.object({
       parameterKey: z.string(),
@@ -95,7 +95,7 @@ export type NregaVerificationFormValues = z.infer<typeof nregaVerificationSchema
 
 export const nregaCertificateSchema = z.object({
   workId: z.string(),
-  certificateNumber: z.coerce.number().int().min(2).max(8),
+  certificateNumber: z.coerce.number().int().min(1).max(8),
   certificationText: z.string().optional(),
   signatureDesignation: z.string().optional(),
   signatureBlock: z.string().optional(),
