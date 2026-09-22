@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 import CertificateHeader from "./CertificateHeader";
 import CertificateSignature from "./CertificateSignature";
 import WorkDetailsTable from "./WorkDetailsTable";
 import VerificationTable, { type VerificationRow } from "./VerificationTable";
 import type { NregaWork, NregaCertificate, NregaCertificateVerification } from "@prisma/client";
+import { formatDate } from "@/lib/date";
+import { getCertificateApplicabilityStatus } from "@/action/nrega/certificate-actions";
 
 interface CertificatePreviewProps {
   work: NregaWork;
@@ -33,6 +35,20 @@ export default function CertificatePreview({
   // Determine which extra sections to show based on cert type
   const showBeneficiary = certNum === 5;
   const showConvergence = certNum === 7;
+
+  // Use centralized applicability helper — reuses the same logic as initializeCertificates
+  const isCertificateApplicable = useMemo(() => {
+    return getCertificateApplicabilityStatus(certNum, work) !== "NOT_APPLICABLE";
+  }, [certNum, work]);
+
+  // Reusable N/A banner
+  const renderNotApplicableBanner = (reason: string) => (
+    <div className="mb-6 p-4 border border-gray-300 bg-gray-50 text-center">
+      <p className="text-sm font-semibold text-gray-600 print:text-black">
+        Not Applicable — {reason}
+      </p>
+    </div>
+  );
 
   // Certificate-specific additional content
   const renderCertificateSpecific = () => {
@@ -81,14 +97,8 @@ export default function CertificatePreview({
         );
 
       case 5:
-        if (work.beneficiaryType === "Community") {
-          return (
-            <div className="mb-6 p-4 border border-gray-300 bg-gray-50 text-center">
-              <p className="text-sm font-semibold text-gray-600 print:text-black">
-                Not Applicable — Community Work
-              </p>
-            </div>
-          );
+        if (!isCertificateApplicable) {
+          return renderNotApplicableBanner("Community Work");
         }
         return null;
 
@@ -113,9 +123,7 @@ export default function CertificatePreview({
                     DPR Date
                   </td>
                   <td className="border border-gray-800 px-3 py-1.5">
-                    {work.dprDate
-                      ? new Date(work.dprDate).toLocaleDateString("en-IN")
-                      : "N/A"}
+                    {work.dprDate ? formatDate(work.dprDate) : "N/A"}
                   </td>
                 </tr>
               </tbody>
@@ -124,14 +132,8 @@ export default function CertificatePreview({
         );
 
       case 7:
-        if (!work.convergingDepartment) {
-          return (
-            <div className="mb-6 p-4 border border-gray-300 bg-gray-50 text-center">
-              <p className="text-sm font-semibold text-gray-600 print:text-black">
-                Not Applicable — Non-Convergence Work
-              </p>
-            </div>
-          );
+        if (!isCertificateApplicable) {
+          return renderNotApplicableBanner("Non-Convergence Work");
         }
         return null;
 
@@ -187,11 +189,7 @@ export default function CertificatePreview({
       <CertificateSignature
         designation={certificate.signatureDesignation || "Block Development Officer"}
         block={certificate.signatureBlock || work.block}
-        date={
-          certificate.signatureDate
-            ? new Date(certificate.signatureDate).toLocaleDateString("en-IN")
-            : undefined
-        }
+        date={certificate.signatureDate ? formatDate(certificate.signatureDate) : undefined}
       />
     </div>
   );

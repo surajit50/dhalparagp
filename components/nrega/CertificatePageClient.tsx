@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useTransition } from "react";
+import React, { useState, useRef, useTransition, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +14,7 @@ import { updateCertificateStatus } from "@/action/nrega/certificate-actions";
 import CertificatePreview from "./certificates/CertificatePreview";
 import VerificationTable, { type VerificationRow } from "./certificates/VerificationTable";
 import type { NregaWork, NregaCertificate, NregaCertificateVerification, NregaCertificateTemplate } from "@prisma/client";
+import { formatDate } from "@/lib/date";
 import {
   Printer,
   Save,
@@ -22,6 +23,7 @@ import {
   Loader2,
   ArrowLeft,
   CheckCircle,
+  Download,
 } from "lucide-react";
 
 interface CertificatePageProps {
@@ -60,10 +62,20 @@ export default function CertificatePageClient({
   const [isPending, startTransition] = useTransition();
   const printRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const documentTitle = `Certificate-${certificate.certificateNumber}_${work.workId}`;
 
   const handlePrint = useReactToPrint({
     contentRef: printRef as any,
-    documentTitle: `Certificate-${certificate.certificateNumber}_${work.workId}`,
+    documentTitle,
+    onAfterPrint: () => {},
+  });
+
+  // Download as PDF — uses react-to-print which opens the print dialog;
+  // browsers let users choose "Save as PDF" from the destination menu.
+  const handleDownloadPdf = useReactToPrint({
+    contentRef: printRef as any,
+    documentTitle,
+    onAfterPrint: () => toast.success("PDF print dialog opened. Choose 'Save as PDF' to download."),
   });
 
   const handleSave = () => {
@@ -140,6 +152,28 @@ export default function CertificatePageClient({
 
   const certTitle = template?.title?.replace(/^CERTIFICATE-\d+:\s*/, "") || certificate.certificateName;
 
+  // Build a lookup for *edited* verifications by parameterKey so preview stays in sync
+  // even if the server-returned array order differs from client state order.
+  const editedVerificationsByKey = useMemo(() => {
+    const map = new Map<string, { status: string; remarks: string }>();
+    for (const v of verifications) {
+      map.set(v.parameterKey, { status: v.status, remarks: v.remarks });
+    }
+    return map;
+  }, [verifications]);
+
+  // Merged preview verifications: match by parameterKey (NOT array index)
+  const previewVerifications = useMemo(() => {
+    return initialVerifications.map((v) => {
+      const edited = editedVerificationsByKey.get(v.parameterKey);
+      return {
+        ...v,
+        status: (edited?.status as NregaCertificateVerification["status"]) ?? v.status,
+        remarks: edited?.remarks ?? v.remarks ?? undefined,
+      };
+    });
+  }, [initialVerifications, editedVerificationsByKey]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -159,7 +193,7 @@ export default function CertificatePageClient({
             {certificate.certificateName} — {work.workId}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {mode === "edit" ? (
             <>
               <Button variant="outline" onClick={() => setMode("preview")} className="gap-2" size="sm">
@@ -180,6 +214,10 @@ export default function CertificatePageClient({
               <Button variant="outline" onClick={() => setMode("edit")} className="gap-2" size="sm">
                 <Edit className="h-4 w-4" />
                 Edit
+              </Button>
+              <Button variant="outline" onClick={() => handleDownloadPdf()} disabled={isPending} className="gap-2" size="sm">
+                <Download className="h-4 w-4" />
+                Download PDF
               </Button>
               <Button onClick={handleMarkPrinted} disabled={isPending} className="gap-2" size="sm">
                 {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Printer className="h-4 w-4" />}
@@ -255,11 +293,7 @@ export default function CertificatePageClient({
             signatureDesignation,
             signatureBlock,
           }}
-          verifications={initialVerifications.map((v, i) => ({
-            ...v,
-            status: (verifications[i]?.status as NregaCertificateVerification["status"]) || v.status,
-            remarks: verifications[i]?.remarks || v.remarks,
-          }))}
+          verifications={previewVerifications.map(v => ({ ...v, remarks: v.remarks ?? null }))}
           templateTitle={certTitle}
         />
       </div>

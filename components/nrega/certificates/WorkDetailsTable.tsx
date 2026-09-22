@@ -2,6 +2,8 @@
 
 import React from "react";
 import type { NregaWork } from "@prisma/client";
+import { formatCurrency } from "@/lib/utils";
+import { formatDate } from "@/lib/date";
 
 interface WorkDetailsTableProps {
   work: NregaWork;
@@ -32,9 +34,7 @@ export default function WorkDetailsTable({
     { label: "Name of District", value: work.district },
     {
       label: "Proposed Cost of Work",
-      value: work.estimatedCost
-        ? `₹ ${work.estimatedCost.toLocaleString("en-IN")}`
-        : "N/A",
+      value: work.estimatedCost ? `₹ ${formatCurrency(work.estimatedCost)}` : "N/A",
     },
     { label: "Wage-Material Ratio", value: work.wageMaterialRatio },
   ];
@@ -52,32 +52,21 @@ export default function WorkDetailsTable({
       { label: "Converging Department & Scheme", value: work.convergingDepartment ? `${work.convergingDepartment} - ${work.convergingScheme || ""}` : "N/A" },
       {
         label: "Estimated Scheme Share",
-        value: work.vbGramgShare
-          ? `₹ ${work.vbGramgShare.toLocaleString("en-IN")}`
-          : "N/A",
+        value: work.vbGramgShare ? `₹ ${formatCurrency(work.vbGramgShare)}` : "N/A",
       },
       { label: "Convergence Category", value: work.convergenceCategory },
       { label: "Technical Knowledge Provided", value: work.technicalKnowledgeProvided },
       {
         label: "Estimated Departmental Share",
-        value: work.convergenceDeptShare
-          ? `₹ ${work.convergenceDeptShare.toLocaleString("en-IN")}`
-          : "N/A",
+        value: work.convergenceDeptShare ? `₹ ${formatCurrency(work.convergenceDeptShare)}` : "N/A",
       },
       {
         label: "Total Estimated Cost",
-        value: work.totalEstimatedCost
-          ? `₹ ${work.totalEstimatedCost.toLocaleString("en-IN")}`
-          : "N/A",
+        value: work.totalEstimatedCost ? `₹ ${formatCurrency(work.totalEstimatedCost)}` : "N/A",
       },
       { label: "Whether NOC Received", value: work.nocReceived },
       { label: "NOC/Memo Number", value: work.nocMemoNumber },
-      {
-        label: "NOC Date",
-        value: work.nocDate
-          ? new Date(work.nocDate).toLocaleDateString("en-IN")
-          : "N/A",
-      }
+      { label: "NOC Date", value: work.nocDate ? formatDate(work.nocDate) : "N/A" }
     );
   }
 
