@@ -133,7 +133,7 @@ export default function WorkForm({ initialData, masterData = {}, mode = "create"
   const goNext = async () => {
     // Auto-recalc before step 2 -> step 3 transition
     if (step === 2) recalcFinancials();
-    const fieldsToValidate = WORK_FORM_STEP_FIELDS[step] || [];
+    const fieldsToValidate = (WORK_FORM_STEP_FIELDS[step] || []) as (keyof NregaWorkFormValues)[];
     if (fieldsToValidate.length > 0) {
       const valid = await trigger(fieldsToValidate);
       if (!valid) {
