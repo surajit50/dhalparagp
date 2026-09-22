@@ -14,17 +14,17 @@ import {
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Edit, FileText, MapPin, DollarSign, User } from "lucide-react";
+import { formatDate } from "@/lib/date";
+import { cn, formatCurrency } from "@/lib/utils";
+import {
+  WORK_STATUS_COLORS,
+  WORK_STATUS_ICONS,
+  calculateCertificateProgress,
+} from "@/lib/utils/nrega";
 
 interface PageProps {
   params: Promise<{ workId: string }>;
 }
-
-const statusColors: Record<string, string> = {
-  DRAFT: "bg-gray-100 text-gray-800",
-  APPROVED: "bg-blue-100 text-blue-800",
-  ONGOING: "bg-amber-100 text-amber-800",
-  COMPLETED: "bg-green-100 text-green-800",
-};
 
 export default async function WorkDetailPage({ params }: PageProps) {
   const { workId } = await params;
@@ -33,6 +33,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
   if (!work) return notFound();
 
   const certificateSummary = await getCertificateSummary(workId);
+  const certProgress = calculateCertificateProgress(certificateSummary);
 
   return (
     <div className="space-y-6">
@@ -53,8 +54,14 @@ export default async function WorkDetailPage({ params }: PageProps) {
           <h1 className="text-2xl font-bold tracking-tight">{work.workName}</h1>
           <div className="flex items-center gap-2 mt-1">
             <span className="text-sm text-muted-foreground font-mono">{work.workId}</span>
-            <Badge variant="secondary" className={`text-xs ${statusColors[work.workStatus]}`}>
-              {work.workStatus}
+            <Badge
+              variant="secondary"
+              className={cn("text-xs font-medium px-2.5", WORK_STATUS_COLORS[work.workStatus])}
+            >
+              <span className="flex items-center gap-1">
+                {WORK_STATUS_ICONS[work.workStatus]}
+                {work.workStatus.charAt(0) + work.workStatus.slice(1).toLowerCase()}
+              </span>
             </Badge>
           </div>
         </div>
@@ -125,13 +132,13 @@ export default async function WorkDetailPage({ params }: PageProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <InfoRow label="Estimated Cost" value={`₹ ${work.estimatedCost.toLocaleString("en-IN")}`} />
-            <InfoRow label="Wage Component" value={`₹ ${work.wageComponent.toLocaleString("en-IN")}`} />
-            <InfoRow label="Material Component" value={`₹ ${work.materialComponent.toLocaleString("en-IN")}`} />
+            <InfoRow label="Estimated Cost" value={formatCurrency(work.estimatedCost)} />
+            <InfoRow label="Wage Component" value={formatCurrency(work.wageComponent)} />
+            <InfoRow label="Material Component" value={formatCurrency(work.materialComponent)} />
             <InfoRow label="Wage-Material Ratio" value={work.wageMaterialRatio} />
-            <InfoRow label="VB-GRAMG Share" value={work.vbGramgShare ? `₹ ${work.vbGramgShare.toLocaleString("en-IN")}` : null} />
-            <InfoRow label="Convergence Dept. Share" value={work.convergenceDeptShare ? `₹ ${work.convergenceDeptShare.toLocaleString("en-IN")}` : null} />
-            <InfoRow label="Total Estimated Cost" value={`₹ ${work.totalEstimatedCost.toLocaleString("en-IN")}`} highlight />
+            <InfoRow label="VB-GRAMG Share" value={work.vbGramgShare ? formatCurrency(work.vbGramgShare) : null} />
+            <InfoRow label="Convergence Dept. Share" value={work.convergenceDeptShare ? formatCurrency(work.convergenceDeptShare) : null} />
+            <InfoRow label="Total Estimated Cost" value={formatCurrency(work.totalEstimatedCost)} highlight />
           </CardContent>
         </Card>
 
@@ -149,7 +156,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
             <InfoRow label="Job Card Number" value={work.jobCardNumber} />
             <InfoRow label="Beneficiary Category" value={work.beneficiaryCategory} />
             <div className="border-t pt-2 mt-2" />
-            <InfoRow label="Gram Sabha Approval" value={work.gramSabhaApprovalDate ? new Date(work.gramSabhaApprovalDate).toLocaleDateString("en-IN") : null} />
+            <InfoRow label="Gram Sabha Approval" value={work.gramSabhaApprovalDate ? formatDate(work.gramSabhaApprovalDate) : null} />
             <InfoRow label="Admin Approval" value={work.adminApprovalNumber} />
             <InfoRow label="Technical Sanction" value={work.technicalSanctionNumber} />
             <InfoRow label="DPR Number" value={work.dprNumber} />
@@ -160,39 +167,72 @@ export default async function WorkDetailPage({ params }: PageProps) {
       {/* Certificate Summary */}
       {certificateSummary.length > 0 && (
         <Card>
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 flex flex-row items-center justify-between">
             <CardTitle className="text-base">Certificate Status</CardTitle>
+            <Badge
+              variant={certProgress.progress === 100 ? "default" : "secondary"}
+              className={cn(
+                "text-xs font-semibold",
+                certProgress.progress === 100 && "bg-green-600"
+              )}
+            >
+              {certProgress.completed} of {certProgress.applicable} done · {certProgress.progress}%
+            </Badge>
           </CardHeader>
           <CardContent>
+            {/* Progress bar */}
+            <div className="mb-4 w-full bg-muted rounded-full h-2">
+              <div
+                className={cn(
+                  "h-2 rounded-full transition-all",
+                  certProgress.progress === 100
+                    ? "bg-green-500"
+                    : certProgress.progress > 50
+                      ? "bg-blue-500"
+                      : "bg-amber-500"
+                )}
+                style={{ width: `${certProgress.progress}%` }}
+              />
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-              {certificateSummary.map((cert) => (
-                <div
-                  key={cert.certificateNumber}
-                  className={`p-3 rounded-lg border text-center ${
-                    cert.status === "COMPLETED" || cert.status === "PRINTED"
-                      ? "bg-green-50 border-green-200"
-                      : cert.status === "NOT_APPLICABLE"
-                      ? "bg-orange-50 border-orange-200"
-                      : "bg-gray-50 border-gray-200"
-                  }`}
-                >
-                  <p className="text-xs font-bold text-muted-foreground">
-                    Cert-{cert.certificateNumber}
-                  </p>
-                  <p className="text-[10px] mt-0.5 truncate">{cert.certificateName}</p>
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] mt-1 ${
-                      cert.status === "COMPLETED" ? "text-green-700" :
-                      cert.status === "PRINTED" ? "text-blue-700" :
-                      cert.status === "NOT_APPLICABLE" ? "text-orange-600" :
-                      "text-gray-500"
-                    }`}
+              {certificateSummary.map((cert) => {
+                const isDone = cert.status === "COMPLETED" || cert.status === "PRINTED";
+                const isNA = cert.status === "NOT_APPLICABLE";
+                return (
+                  <div
+                    key={cert.certificateNumber}
+                    className={cn(
+                      "p-3 rounded-lg border text-center transition-colors",
+                      isDone
+                        ? "bg-green-50 border-green-200"
+                        : isNA
+                          ? "bg-orange-50 border-orange-200"
+                          : "bg-muted/30 border-muted"
+                    )}
                   >
-                    {cert.status === "NOT_APPLICABLE" ? "N/A" : cert.status}
-                  </Badge>
-                </div>
-              ))}
+                    <p className="text-xs font-bold text-muted-foreground">
+                      Cert-{cert.certificateNumber}
+                    </p>
+                    <p className="text-[10px] mt-0.5 truncate font-medium">
+                      {cert.certificateName}
+                    </p>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "text-[10px] mt-1 font-medium",
+                        isDone ? "text-green-700 border-green-200 bg-green-100" :
+                        cert.status === "PRINTED" ? "text-blue-700 border-blue-200 bg-blue-100" :
+                        isNA ? "text-orange-600 border-orange-200 bg-orange-100" :
+                        "text-gray-500"
+                      )}
+                    >
+                      {isNA ? "N/A" :
+                       cert.status === "PRINTED" ? "Printed" :
+                       isDone ? "Done" : "Pending"}
+                    </Badge>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>

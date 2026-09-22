@@ -8,18 +8,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { transformMasterData } from "@/lib/utils/nrega";
 
 export default async function NewWorkPage() {
-  const masterData = await fetchAllMasterData();
+  const masterDataRaw = await fetchAllMasterData();
 
-  // Convert to the format WorkForm expects
-  const formMasterData: Record<string, Array<{ value: string; label: string }>> = {};
-  for (const [type, items] of Object.entries(masterData)) {
-    formMasterData[type] = items.map((item) => ({
-      value: item.value,
-      label: item.label,
-    }));
-  }
+  // Use shared helper for consistent transformation
+  const formMasterData = transformMasterData(masterDataRaw);
 
   return (
     <div className="space-y-6">
