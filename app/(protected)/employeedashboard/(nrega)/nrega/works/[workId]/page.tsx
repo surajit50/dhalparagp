@@ -59,7 +59,7 @@ export default async function WorkDetailPage({ params }: PageProps) {
               className={cn("text-xs font-medium px-2.5", WORK_STATUS_COLORS[work.workStatus])}
             >
               <span className="flex items-center gap-1">
-                {WORK_STATUS_ICONS[work.workStatus]}
+                {(() => { const Icon = WORK_STATUS_ICONS[work.workStatus]; return Icon ? <Icon className="h-3 w-3" /> : null; })()}
                 {work.workStatus.charAt(0) + work.workStatus.slice(1).toLowerCase()}
               </span>
             </Badge>

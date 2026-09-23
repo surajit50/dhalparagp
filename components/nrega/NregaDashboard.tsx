@@ -95,7 +95,7 @@ export default function NregaDashboard({ stats, recentWorks }: DashboardProps) {
           >
             <CardContent className="p-4">
               <div className="flex items-start justify-between mb-2">
-                <div className={cn("inline-flex items-center justify-center p-2 rounded-lg ring-1", card.bg, card.ring)">
+                <div className={cn("inline-flex items-center justify-center p-2 rounded-lg ring-1", card.bg, card.ring)}>
                   <card.icon className={cn("h-5 w-5", card.color)} />
                 </div>
               </div>

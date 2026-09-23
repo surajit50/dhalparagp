@@ -1,5 +1,10 @@
 import type { LucideIcon } from "lucide-react";
-import { FileText, CheckCircle, Hammer, AlertCircle } from "lucide-react";
+import {
+  FileText,
+  CheckCircle,
+  Hammer,
+  AlertCircle,
+} from "lucide-react";
 
 export const WORK_STATUS_OPTIONS = [
   { value: "DRAFT", label: "Draft" },
@@ -25,9 +30,42 @@ export const WORK_STATUS_ICONS: Record<string, LucideIcon> = {
   REJECTED: AlertCircle,
 };
 
+// ============================================================
+// Certificate Applicability (pure helper — safe for client & server)
+// ============================================================
+
+/**
+ * Determines whether a certificate is applicable for a given work.
+ * Returns "NOT_APPLICABLE" or "DRAFT" (the default applicable status).
+ * Single source of truth used by both server actions and client previews.
+ */
+export function getCertificateApplicabilityStatus(
+  certificateNumber: number,
+  work: { beneficiaryType?: string | null; convergingDepartment?: string | null }
+): "NOT_APPLICABLE" | "DRAFT" {
+  // Certificate 5 (IBS) — not applicable for community works
+  if (certificateNumber === 5 && work.beneficiaryType === "Community") {
+    return "NOT_APPLICABLE";
+  }
+  // Certificate 7 (Convergence) — not applicable if no converging department
+  if (
+    certificateNumber === 7 &&
+    (!work.convergingDepartment || work.convergingDepartment === "")
+  ) {
+    return "NOT_APPLICABLE";
+  }
+  return "DRAFT";
+}
+
+// ============================================================
+// Certificate Progress Calculator
+// ============================================================
+
 export type CertificateProgress = {
   applicable: number;
   completed: number;
+  pending: number;
+  na: number;
   progress: number;
 };
 
@@ -35,14 +73,17 @@ export function calculateCertificateProgress(
   certificates: Array<{ status: string }> | undefined | null
 ): CertificateProgress {
   if (!certificates || certificates.length === 0) {
-    return { applicable: 0, completed: 0, progress: 0 };
+    return { applicable: 0, completed: 0, pending: 0, na: 0, progress: 0 };
   }
-  const applicable = certificates.length;
+  const na = certificates.filter((c) => c.status === "NOT_APPLICABLE").length;
+  const applicable = certificates.length - na;
   const completed = certificates.filter(
-    (c) => c.status === "GENERATED" || c.status === "COMPLETED" || c.status === "ISSUED"
+    (c) => c.status === "COMPLETED" || c.status === "PRINTED"
   ).length;
-  const progress = applicable > 0 ? Math.round((completed / applicable) * 100) : 0;
-  return { applicable, completed, progress };
+  const pending = applicable - completed;
+  const progress =
+    applicable > 0 ? Math.round((completed / applicable) * 100) : 0;
+  return { applicable, completed, pending, na, progress };
 }
 
 // ============================================================
@@ -68,7 +109,9 @@ export const MASTER_DATA_TYPE_TABS = [
   { value: "BENEFICIARY_CATEGORY", label: "Beneficiary Category" },
   { value: "CONVERGENCE_DEPT", label: "Convergence Department" },
   { value: "WORKSITE_TYPE", label: "Worksite Type" },
-] as const;export type NregaWork = {
+] as const;
+
+export type NregaWork = {
   workId: string;
   workName: string;
   workCode: string;
@@ -133,9 +176,15 @@ export const DEFAULT_NATURE_OF_WORK_OPTIONS = [
 
 export const DEFAULT_MASTER_CATEGORY_OPTIONS = [
   { value: "Rural Connectivity", label: "Rural Connectivity" },
-  { value: "Water Conservation & Water Harvesting", label: "Water Conservation & Water Harvesting" },
+  {
+    value: "Water Conservation & Water Harvesting",
+    label: "Water Conservation & Water Harvesting",
+  },
   { value: "Land Development", label: "Land Development" },
-  { value: "IBS - Agriculture & Allied", label: "IBS - Agriculture & Allied" },
+  {
+    value: "IBS - Agriculture & Allied",
+    label: "IBS - Agriculture & Allied",
+  },
 ];
 
 export const DEFAULT_SUB_CATEGORY_OPTIONS = [
@@ -173,13 +222,19 @@ export const NOC_RECEIVED_OPTIONS = [
   { value: "NA", label: "Not Applicable" },
 ];
 
+/**
+ * getMasterOptions: resolves dropdown options from master data or falls back to defaults.
+ * Supports two call signatures:
+ *   1. getMasterOptions(masterData, type, defaultOptions)
+ *   2. getMasterOptions(type) — legacy string call, returns defaults
+ */
 export function getMasterOptions(
   arg1: any,
   type?: string,
   defaultOptions: Array<{ value: string; label: string }> = []
 ): Array<{ value: string; label: string }> {
   if (typeof arg1 === "string") {
-    return []; 
+    return defaultOptions;
   }
   const data = arg1;
   if (!type) return defaultOptions;
@@ -189,3 +244,116 @@ export function getMasterOptions(
   return defaultOptions;
 }
 
+// ============================================================
+// Certificate Descriptions (short text per certificate number)
+// NOTE: CERTIFICATE_STATUS_CONFIG is in nrega-ui.tsx (needs React)
+// ============================================================
+
+export const CERTIFICATE_DESCRIPTIONS: Record<number, string> = {
+  1: "Certificate confirming that the proposed work is included in the Gram Panchayat Development Plan.",
+  2: "Certificate of Gram Sabha approval for the proposed work.",
+  3: "Certificate confirming administrative approval by competent authority.",
+  4: "Certificate confirming the work falls under the permissible work list.",
+  5: "Certificate for Individual Beneficiary Scheme (IBS) works only.",
+  6: "Certificate confirming preparation and approval of Detailed Project Report (DPR).",
+  7: "Certificate of convergence with another government department/scheme.",
+  8: "Certificate confirming technical sanction by the competent engineer.",
+};
+
+// ============================================================
+// Map a DB NregaWork record to WorkForm input values (edit page)
+// ============================================================
+
+export function mapNregaWorkToFormInput(work: Record<string, any>) {
+  return {
+    id: work.id,
+    financialYear: work.financialYear ?? "",
+    scheme: work.scheme ?? "VB-GRAMG",
+    workName: work.workName ?? "",
+    natureOfWork: work.natureOfWork ?? "",
+    masterCategory: work.masterCategory ?? "",
+    subCategory: work.subCategory ?? "",
+    permissibleWorkSlNo: work.permissibleWorkSlNo ?? "",
+    permissibleWorkDesc: work.permissibleWorkDesc ?? "",
+    gramPanchayat: work.gramPanchayat ?? "",
+    gramSansadName: work.gramSansadName ?? "",
+    gramSansadNumber: work.gramSansadNumber ?? "",
+    block: work.block ?? "",
+    district: work.district ?? "",
+    mouza: work.mouza ?? "",
+    jlNumber: work.jlNumber ?? "",
+    plotNumber: work.plotNumber ?? "",
+    latitude: work.latitude ?? undefined,
+    longitude: work.longitude ?? undefined,
+    landArea: work.landArea ?? "",
+    worksiteType: work.worksiteType ?? "",
+    estimatedCost: work.estimatedCost ?? 0,
+    wageComponent: work.wageComponent ?? 0,
+    materialComponent: work.materialComponent ?? 0,
+    wageMaterialRatio: work.wageMaterialRatio ?? "",
+    vbGramgShare: work.vbGramgShare ?? 0,
+    convergenceDeptShare: work.convergenceDeptShare ?? 0,
+    totalEstimatedCost: work.totalEstimatedCost ?? 0,
+    beneficiaryType: work.beneficiaryType ?? "",
+    beneficiaryName: work.beneficiaryName ?? "",
+    jobCardNumber: work.jobCardNumber ?? "",
+    beneficiaryCategory: work.beneficiaryCategory ?? "",
+    gramSabhaApprovalDate: work.gramSabhaApprovalDate
+      ? new Date(work.gramSabhaApprovalDate).toISOString().slice(0, 10)
+      : "",
+    adminApprovalNumber: work.adminApprovalNumber ?? "",
+    adminApprovalDate: work.adminApprovalDate
+      ? new Date(work.adminApprovalDate).toISOString().slice(0, 10)
+      : "",
+    technicalSanctionNumber: work.technicalSanctionNumber ?? "",
+    technicalSanctionDate: work.technicalSanctionDate
+      ? new Date(work.technicalSanctionDate).toISOString().slice(0, 10)
+      : "",
+    dprNumber: work.dprNumber ?? "",
+    dprDate: work.dprDate
+      ? new Date(work.dprDate).toISOString().slice(0, 10)
+      : "",
+    convergingDepartment: work.convergingDepartment ?? "",
+    convergingScheme: work.convergingScheme ?? "",
+    convergenceCategory: work.convergenceCategory ?? "",
+    technicalKnowledgeProvided: work.technicalKnowledgeProvided ?? "",
+    nocReceived: work.nocReceived ?? "",
+    nocMemoNumber: work.nocMemoNumber ?? "",
+    nocDate: work.nocDate
+      ? new Date(work.nocDate).toISOString().slice(0, 10)
+      : "",
+    workStatus: work.workStatus ?? "DRAFT",
+    remarks: work.remarks ?? "",
+  };
+}
+
+// ============================================================
+// CSV row builder for works list export
+// ============================================================
+
+export function nregaWorkToCsvRow(
+  work: Record<string, any>
+): Record<string, string | number> {
+  return {
+    "Work ID": work.workId ?? "",
+    "Work Name": work.workName ?? "",
+    "Financial Year": work.financialYear ?? "",
+    "Gram Panchayat": work.gramPanchayat ?? "",
+    "Gram Sansad": work.gramSansadName ?? "",
+    Block: work.block ?? "",
+    District: work.district ?? "",
+    Scheme: work.scheme ?? "",
+    "Nature of Work": work.natureOfWork ?? "",
+    "Master Category": work.masterCategory ?? "",
+    "Sub Category": work.subCategory ?? "",
+    "Estimated Cost": work.estimatedCost ?? 0,
+    "Wage Component": work.wageComponent ?? 0,
+    "Material Component": work.materialComponent ?? 0,
+    "Total Estimated Cost": work.totalEstimatedCost ?? 0,
+    "Wage-Material Ratio": work.wageMaterialRatio ?? "",
+    "Beneficiary Type": work.beneficiaryType ?? "",
+    "Beneficiary Name": work.beneficiaryName ?? "",
+    "Work Status": work.workStatus ?? "",
+    "Certificates Count": work.certificates?.length ?? 0,
+  };
+}

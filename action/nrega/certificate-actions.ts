@@ -1,31 +1,10 @@
 "use server";
 
 import { db } from "@/lib/db";
-import type { NregaCertificateStatus, NregaWork } from "@prisma/client";
+import type { NregaCertificateStatus } from "@prisma/client";
+import { getCertificateApplicabilityStatus } from "@/lib/utils/nrega";
+export { getCertificateApplicabilityStatus };
 
-// ---------------------------------------------------------------------------
-// Reusable helper: Determine certificate applicability (single source of truth)
-// ---------------------------------------------------------------------------
-
-export function getCertificateApplicabilityStatus(
-  certificateNumber: number,
-  work: Pick<NregaWork, "beneficiaryType" | "convergingDepartment">
-): NregaCertificateStatus {
-  // Certificate 5 (IBS) — not applicable for community works
-  if (certificateNumber === 5 && work.beneficiaryType === "Community") {
-    return "NOT_APPLICABLE";
-  }
-
-  // Certificate 7 (Convergence) — not applicable if no convergence department
-  if (
-    certificateNumber === 7 &&
-    (!work.convergingDepartment || work.convergingDepartment === "")
-  ) {
-    return "NOT_APPLICABLE";
-  }
-
-  return "DRAFT";
-}
 
 // ---------------------------------------------------------------------------
 // Fetch active template count / range info (to avoid hardcoded 1-8 checks)

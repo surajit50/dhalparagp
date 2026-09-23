@@ -13,19 +13,42 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { Search, X, Filter } from "lucide-react";
+import { Search, X, Filter, Download } from "lucide-react";
 import { WORK_STATUS_OPTIONS } from "@/lib/utils/nrega";
 
 interface WorksFilterBarProps {
   financialYears: string[];
   gramSansads?: string[];
+  csvRows?: Record<string, string | number>[];
+  csvFilename?: string;
 }
 
-export function WorksFilterBar({ financialYears, gramSansads = [] }: WorksFilterBarProps) {
+export function WorksFilterBar({ financialYears, gramSansads = [], csvRows, csvFilename = "nrega-works" }: WorksFilterBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const cancelledRef = useRef(false);
+
+  const handleCsvExport = () => {
+    if (!csvRows || csvRows.length === 0) return;
+    const headers = Object.keys(csvRows[0]);
+    const lines = [
+      headers.map((h) => `"${h}"`).join(","),
+      ...csvRows.map((row) =>
+        headers.map((h) => {
+          const val = row[h] ?? "";
+          return `"${String(val).replace(/"/g, '""')}"`;
+        }).join(",")
+      ),
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${csvFilename}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [fy, setFy] = useState(searchParams.get("fy") || "all");
@@ -184,6 +207,18 @@ export function WorksFilterBar({ financialYears, gramSansads = [] }: WorksFilter
           >
             <X className="h-3.5 w-3.5 mr-1" />
             Clear
+          </Button>
+        )}
+
+        {csvRows && csvRows.length > 0 && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCsvExport}
+            className="h-9 px-3 gap-1.5 ml-auto"
+          >
+            <Download className="h-3.5 w-3.5" />
+            Export CSV
           </Button>
         )}
       </div>

@@ -37,8 +37,17 @@ import {
 } from "@/lib/utils/nrega";
 import { formatCurrency } from "@/lib/utils";
 
+type FormDateFields = "gramSabhaApprovalDate" | "adminApprovalDate" | "technicalSanctionDate" | "dprDate" | "nocDate";
+
 interface WorkFormProps {
-  initialData?: NregaWorkFormValues & { id?: string };
+  initialData?: Omit<NregaWorkFormValues, FormDateFields> & {
+    id?: string;
+    gramSabhaApprovalDate?: string | Date | null;
+    adminApprovalDate?: string | Date | null;
+    technicalSanctionDate?: string | Date | null;
+    dprDate?: string | Date | null;
+    nocDate?: string | Date | null;
+  };
   masterData?: Record<string, Array<{ value: string; label: string }>>;
   mode?: "create" | "edit";
 }
@@ -51,7 +60,7 @@ export default function WorkForm({ initialData, masterData = {}, mode = "create"
 
   const form = useForm<NregaWorkFormValues>({
     resolver: zodResolver(nregaWorkSchema),
-    defaultValues: initialData || {
+    defaultValues: (initialData as any) || {
       financialYear: "",
       scheme: "VB-GRAMG",
       workName: "",

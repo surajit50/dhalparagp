@@ -21,10 +21,10 @@ import {
   ListChecks,
 } from "lucide-react";
 import {
-  CERTIFICATE_STATUS_CONFIG,
   CERTIFICATE_DESCRIPTIONS,
   calculateCertificateProgress,
 } from "@/lib/utils/nrega";
+import { CERTIFICATE_STATUS_CONFIG } from "@/lib/utils/nrega-ui";
 
 interface CertificateInfo {
   certificateNumber: number;

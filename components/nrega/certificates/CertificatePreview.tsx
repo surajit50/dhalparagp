@@ -7,7 +7,7 @@ import WorkDetailsTable from "./WorkDetailsTable";
 import VerificationTable, { type VerificationRow } from "./VerificationTable";
 import type { NregaWork, NregaCertificate, NregaCertificateVerification } from "@prisma/client";
 import { formatDate } from "@/lib/date";
-import { getCertificateApplicabilityStatus } from "@/action/nrega/certificate-actions";
+import { getCertificateApplicabilityStatus } from "@/lib/utils/nrega";
 
 interface CertificatePreviewProps {
   work: NregaWork;
