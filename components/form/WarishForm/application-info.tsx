@@ -48,13 +48,13 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg shadow-sm">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 p-5 md:p-6 bg-gradient-to-br from-gray-50 via-white to-slate-50 rounded-2xl border border-gray-200 shadow-inner">
       <FormField
         control={form.control}
         name="reportingDate"
         render={({ field }) => (
           <FormItem className="flex flex-col space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel
                 english="Reporting Date"
                 bengali="রিপোর্টিং তারিখ"
@@ -66,7 +66,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   <Button
                     variant={"outline"}
                     className={cn(
-                      "w-full h-10 px-3 text-left text-sm font-normal bg-white border-gray-300 hover:bg-gray-50",
+                      "w-full h-11 px-4 text-left text-sm font-medium bg-white border-2 border-gray-200 hover:bg-gray-50 hover:border-primary/30 transition-all duration-200 rounded-xl shadow-sm",
                       !field.value && "text-gray-400"
                     )}
                     disabled
@@ -80,7 +80,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   </Button>
                 </FormControl>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 shadow-lg rounded-xl border border-gray-200" align="start">
                 <Calendar
                   mode="single"
                   selected={field.value}
@@ -92,7 +92,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 />
               </PopoverContent>
             </Popover>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -102,7 +102,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="applicantName"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel
                 english="Applicant Name"
                 bengali="আবেদনকারীর নাম"
@@ -113,10 +113,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Applicant Name / আবেদনকারীর নাম"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200"
               />
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -126,17 +126,17 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="applicantMobileNumber"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel english="Mobile Number" bengali="মোবাইল নম্বর" />
             </FormLabel>
             <FormControl>
               <Input
                 placeholder="Enter Mobile Number / মোবাইল নম্বর দিন"
                 {...field}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200"
               />
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -146,7 +146,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="relationwithdeceased"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel
                 english="Relation with Deceased"
                 bengali="মৃত ব্যক্তির সাথে সম্পর্ক"
@@ -159,10 +159,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   field.onChange(value);
                 }}
               >
-                <SelectTrigger className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-                  <SelectValue placeholder="Select Relation with Deceased / মৃত ব্যক্তির সাথে সম্পর্ক নির্বাচন করুন" />
+                <SelectTrigger className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200">
+                  <SelectValue placeholder="Select Relation / সম্পর্ক নির্বাচন করুন" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border border-gray-200 shadow-lg">
                   <SelectItem value="son">Son / পুত্র</SelectItem>
                   <SelectItem value="daughter">Daughter / কন্যা</SelectItem>
                   <SelectItem value="wife">Wife / স্ত্রী</SelectItem>
@@ -179,7 +179,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 </SelectContent>
               </Select>
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -190,7 +190,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
           name="relationwithdeceased"
           render={({ field }) => (
             <FormItem className="space-y-2">
-              <FormLabel className="text-sm font-medium text-gray-700">
+              <FormLabel className="text-sm font-bold text-gray-700">
                 <BilingualLabel
                   english="Specify Other Relation"
                   bengali="অন্যান্য সম্পর্ক উল্লেখ করুন"
@@ -203,10 +203,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   onChange={(e) =>
                     field.onChange(capitalizeWords(e.target.value))
                   }
-                  className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                  className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200"
                 />
               </FormControl>
-              <FormMessage className="text-xs text-red-500" />
+              <FormMessage className="text-xs text-red-500 font-medium" />
             </FormItem>
           )}
         />
@@ -217,7 +217,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="nameOfDeceased"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel
                 english="Name of Deceased"
                 bengali="মৃত ব্যক্তির নাম"
@@ -228,10 +228,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Name of Deceased / মৃত ব্যক্তির নাম"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200"
               />
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -241,7 +241,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
   name="dateOfDeath"
   render={({ field }) => (
     <FormItem className="flex flex-col space-y-2">
-      <FormLabel className="text-sm font-semibold text-gray-700">
+      <FormLabel className="text-sm font-bold text-gray-700">
         <BilingualLabel
           english="Date of Death"
           bengali="মৃত্যুর তারিখ"
@@ -255,7 +255,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               type="button"
               variant="outline"
               className={cn(
-                "w-full h-10 px-3 text-left text-sm font-normal bg-white border border-gray-300 hover:bg-gray-50 justify-between",
+                "w-full h-11 px-4 text-left text-sm font-medium bg-white border-2 border-gray-200 hover:bg-gray-50 hover:border-primary/30 justify-between rounded-xl shadow-sm transition-all duration-200",
                 !field.value && "text-muted-foreground"
               )}
             >
@@ -273,7 +273,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         </PopoverTrigger>
 
         <PopoverContent
-          className="w-auto p-0 shadow-lg border rounded-md"
+          className="w-auto p-0 shadow-lg border border-gray-200 rounded-xl"
           align="start"
         >
           <Calendar
@@ -299,7 +299,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         </PopoverContent>
       </Popover>
 
-      <FormMessage className="text-xs text-red-500" />
+      <FormMessage className="text-xs text-red-500 font-medium" />
     </FormItem>
   )}
 />
@@ -309,48 +309,48 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="gender"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel english="Gender" bengali="লিঙ্গ" />
             </FormLabel>
             <FormControl>
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="flex space-x-4"
+                className="flex space-x-3"
               >
-                <FormItem className="flex items-center space-x-2">
+                <FormItem className="flex items-center space-x-2 flex-1 p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-primary/30 transition-all duration-200 cursor-pointer shadow-sm">
                   <FormControl>
                     <RadioGroupItem
                       value="male"
                       id="gender-male"
-                      className="text-orange-500"
+                      className="text-primary"
                     />
                   </FormControl>
                   <FormLabel
                     htmlFor="gender-male"
-                    className="text-sm font-normal text-gray-700"
+                    className="text-sm font-semibold text-gray-700 cursor-pointer"
                   >
                     Male / পুরুষ
                   </FormLabel>
                 </FormItem>
-                <FormItem className="flex items-center space-x-2">
+                <FormItem className="flex items-center space-x-2 flex-1 p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-primary/30 transition-all duration-200 cursor-pointer shadow-sm">
                   <FormControl>
                     <RadioGroupItem
                       value="female"
                       id="gender-female"
-                      className="text-orange-500"
+                      className="text-primary"
                     />
                   </FormControl>
                   <FormLabel
                     htmlFor="gender-female"
-                    className="text-sm font-normal text-gray-700"
+                    className="text-sm font-semibold text-gray-700 cursor-pointer"
                   >
                     Female / মহিলা
                   </FormLabel>
                 </FormItem>
               </RadioGroup>
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -360,7 +360,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="maritialStatus"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel
                 english="Marital Status"
                 bengali="বৈবাহিক অবস্থা"
@@ -370,41 +370,41 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
               <RadioGroup
                 onValueChange={field.onChange}
                 defaultValue={field.value}
-                className="flex space-x-4"
+                className="flex space-x-3"
               >
-                <FormItem className="flex items-center space-x-2">
+                <FormItem className="flex items-center space-x-2 flex-1 p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-primary/30 transition-all duration-200 cursor-pointer shadow-sm">
                   <FormControl>
                     <RadioGroupItem
                       value="married"
                       id="marital-status-married"
-                      className="text-orange-500"
+                      className="text-primary"
                     />
                   </FormControl>
                   <FormLabel
                     htmlFor="marital-status-married"
-                    className="text-sm font-normal text-gray-700"
+                    className="text-sm font-semibold text-gray-700 cursor-pointer"
                   >
                     Married / বিবাহিত
                   </FormLabel>
                 </FormItem>
-                <FormItem className="flex items-center space-x-2">
+                <FormItem className="flex items-center space-x-2 flex-1 p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-primary/30 transition-all duration-200 cursor-pointer shadow-sm">
                   <FormControl>
                     <RadioGroupItem
                       value="unmarried"
                       id="marital-status-unmarried"
-                      className="text-orange-500"
+                      className="text-primary"
                     />
                   </FormControl>
                   <FormLabel
                     htmlFor="marital-status-unmarried"
-                    className="text-sm font-normal text-gray-700"
+                    className="text-sm font-semibold text-gray-700 cursor-pointer"
                   >
                     Unmarried / অবিবাহিত
                   </FormLabel>
                 </FormItem>
               </RadioGroup>
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -414,7 +414,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         name="fatherName"
         render={({ field }) => (
           <FormItem className="space-y-2">
-            <FormLabel className="text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel english="Fathers Name" bengali="পিতার নাম" />
             </FormLabel>
             <FormControl>
@@ -422,10 +422,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 placeholder="Enter Fathers Name / পিতার নাম লিখুন"
                 {...field}
                 onChange={(e) => field.onChange(capitalizeWords(e.target.value))}
-                className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200"
               />
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -436,7 +436,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
           name="spouseName"
           render={({ field }) => (
             <FormItem className="space-y-2">
-              <FormLabel className="text-sm font-medium text-gray-700">
+              <FormLabel className="text-sm font-bold text-gray-700">
                 <BilingualLabel
                   english="Spouses Name"
                   bengali="স্বামী/স্ত্রীর নাম"
@@ -449,10 +449,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   onChange={(e) =>
                     field.onChange(capitalizeWords(e.target.value))
                   }
-                  className="h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                  className="h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200"
                 />
               </FormControl>
-              <FormMessage className="text-xs text-red-500" />
+              <FormMessage className="text-xs text-red-500 font-medium" />
             </FormItem>
           )}
         />
@@ -462,8 +462,8 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         control={form.control}
         name="villageName"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-sm font-medium text-gray-700">
+          <FormItem className="space-y-2">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel english="Village Name" bengali="গ্রামের নাম" />
             </FormLabel>
             <FormControl>
@@ -471,7 +471,6 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 value={field.value} 
                 onValueChange={(value) => {
                   field.onChange(value);
-                  // Automatically set post office based on village selection
                   if (value === "Purbba Gobindapur") {
                     form.setValue("postOffice", "Fatepur");
                   } else {
@@ -479,10 +478,10 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                   }
                 }}
               >
-                <SelectTrigger className="w-full h-10 text-sm bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-                  <SelectValue placeholder="Enter Village / গ্রামের নাম লিখুন" />
+                <SelectTrigger className="w-full h-11 text-sm bg-white border-2 border-gray-200 rounded-xl px-4 shadow-sm focus:border-primary focus:ring-primary/20 hover:border-gray-300 transition-all duration-200">
+                  <SelectValue placeholder="Select Village / গ্রামের নাম নির্বাচন করুন" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border border-gray-200 shadow-lg">
                   {villagenameOption.map((item) => (
                     <SelectItem value={item.value} key={item.value}>
                       {item.label}
@@ -491,7 +490,7 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 </SelectContent>
               </Select>
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
@@ -500,8 +499,8 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
         control={form.control}
         name="postOffice"
         render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-sm font-medium text-gray-700">
+          <FormItem className="space-y-2">
+            <FormLabel className="text-sm font-bold text-gray-700">
               <BilingualLabel english="Post Office" bengali="ডাকঘর" />
             </FormLabel>
             <FormControl>
@@ -510,16 +509,16 @@ export const ApplicationInfo: React.FC<ApplicationInfoProps> = ({ form }) => {
                 onValueChange={field.onChange}
                 disabled
               >
-                <SelectTrigger className="w-full h-10 text-sm bg-gray-50 border-gray-300 text-gray-600 cursor-not-allowed">
+                <SelectTrigger className="w-full h-11 text-sm bg-gradient-to-r from-gray-50 to-slate-50 border-2 border-gray-200 text-gray-600 cursor-not-allowed rounded-xl px-4 shadow-inner">
                   <SelectValue placeholder="Auto-filled based on village / গ্রাম অনুযায়ী স্বয়ংক্রিয়ভাবে পূরণ করা হবে" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border border-gray-200 shadow-lg">
                   <SelectItem value="Trimohini">Trimohini</SelectItem>
                   <SelectItem value="Fatepur">Fatepur</SelectItem>
                 </SelectContent>
               </Select>
             </FormControl>
-            <FormMessage className="text-xs text-red-500" />
+            <FormMessage className="text-xs text-red-500 font-medium" />
           </FormItem>
         )}
       />
