@@ -41,16 +41,42 @@ type MapComponents = {
 export function StreetLightMapView() {
   const [MapComponents, setMapComponents] = useState<MapComponents | null>(null);
   const [selected, setSelected] = useState<LightMapPoint | null>(null);
+  const [selectedMouza, setSelectedMouza] = useState<string>("ALL");
+  const [selectedSansad, setSelectedSansad] = useState<string>("ALL");
 
   const { data, isLoading } = useSWR<{ lights: LightMapPoint[] }>(
-    "/api/street-lights?limit=500",
+    "/api/street-lights?limit=10000",
     fetcher
   );
 
-  const lights = useMemo(
-    () => (data?.lights ?? []).filter((l) => l.latitude && l.longitude),
-    [data]
-  );
+  const mappedLights = useMemo(() => {
+    return (data?.lights ?? []).filter((l) => l.latitude && l.longitude);
+  }, [data?.lights]);
+
+  const uniqueMouzas = useMemo(() => {
+    const mouzas = new Set(mappedLights.map((l) => l.mouza?.mouzaName).filter(Boolean));
+    return Array.from(mouzas).sort();
+  }, [mappedLights]);
+
+  const uniqueSansads = useMemo(() => {
+    let filteredForSansad = mappedLights;
+    if (selectedMouza !== "ALL") {
+      filteredForSansad = mappedLights.filter((l) => l.mouza?.mouzaName === selectedMouza);
+    }
+    const sansads = new Set(filteredForSansad.map((l) => l.sansad).filter(Boolean));
+    return Array.from(sansads).sort();
+  }, [mappedLights, selectedMouza]);
+
+  const lights = useMemo(() => {
+    let filtered = mappedLights;
+    if (selectedMouza !== "ALL") {
+      filtered = filtered.filter((l) => l.mouza?.mouzaName === selectedMouza);
+    }
+    if (selectedSansad !== "ALL") {
+      filtered = filtered.filter((l) => l.sansad === selectedSansad);
+    }
+    return filtered;
+  }, [mappedLights, selectedMouza, selectedSansad]);
 
   useEffect(() => {
     let cancelled = false;
@@ -140,30 +166,57 @@ export function StreetLightMapView() {
   const { MapContainer, TileLayer, Marker, Popup, L } = MapComponents;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-        {[
-          { color: "#22c55e", label: "Working / Good" },
-          { color: "#f59e0b", label: "Repair Required" },
-          { color: "#f97316", label: "Defective" },
-          { color: "#ef4444", label: "Not Working" },
-        ].map((item) => (
-          <span key={item.label} className="flex items-center gap-1.5">
-            <span
-              className="w-3 h-3 rounded-full border border-white shadow-sm"
-              style={{ backgroundColor: item.color }}
-            />
-            {item.label}
+    <div className="flex flex-col flex-1 gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground flex-none">
+        <div className="flex flex-wrap gap-4">
+          {[
+            { color: "#22c55e", label: "Working / Good" },
+            { color: "#f59e0b", label: "Repair Required" },
+            { color: "#f97316", label: "Defective" },
+            { color: "#ef4444", label: "Not Working" },
+          ].map((item) => (
+            <span key={item.label} className="flex items-center gap-1.5">
+              <span
+                className="w-3 h-3 rounded-full border border-white shadow-sm"
+                style={{ backgroundColor: item.color }}
+              />
+              {item.label}
+            </span>
+          ))}
+        </div>
+        
+        <div className="flex items-center gap-3">
+          <select 
+            className="border border-border/50 rounded-md bg-background text-sm px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-ring"
+            value={selectedMouza}
+            onChange={(e) => {
+              setSelectedMouza(e.target.value);
+              setSelectedSansad("ALL"); // Reset sansad when mouza changes
+            }}
+          >
+            <option value="ALL">All Mouzas</option>
+            {uniqueMouzas.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+          <select 
+            className="border border-border/50 rounded-md bg-background text-sm px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-ring"
+            value={selectedSansad}
+            onChange={(e) => setSelectedSansad(e.target.value)}
+          >
+            <option value="ALL">All Sansads</option>
+            {uniqueSansads.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <span className="font-medium text-foreground whitespace-nowrap">
+            {lights.length} light{lights.length !== 1 ? "s" : ""} on map
           </span>
-        ))}
-        <span className="ml-auto font-medium text-foreground">
-          {lights.length} light{lights.length !== 1 ? "s" : ""} on map
-        </span>
+        </div>
       </div>
 
       <div
-        className="rounded-xl overflow-hidden border border-border/50 shadow-sm"
-        style={{ height: "500px" }}
+        className="flex-1 rounded-xl overflow-hidden border border-border/50 shadow-sm min-h-[400px]"
       >
         <MapContainer center={center} zoom={14} style={{ height: "100%", width: "100%" }}>
           <TileLayer

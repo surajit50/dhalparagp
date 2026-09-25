@@ -21,9 +21,9 @@ const StreetLightMapView = dynamic(
 
 export default function MapPage() {
   return (
-    <div className="space-y-8 p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-background to-muted/30 min-h-screen">
+    <div className="flex flex-col h-[calc(100vh-2rem)] p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-background to-muted/30">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-border/40">
+      <div className="flex-none flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-border/40 mb-6">
         <div className="flex items-center gap-4">
           <Link
             href="/admindashboard/street-lights"
@@ -44,8 +44,8 @@ export default function MapPage() {
       </div>
 
       {/* Map Section */}
-      <div className="bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out fill-mode-both">
-        <div className="p-1">
+      <div className="flex-1 bg-card rounded-2xl border border-border/40 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out fill-mode-both flex flex-col">
+        <div className="p-4 flex-1 flex flex-col">
           <StreetLightMapView />
         </div>
       </div>
