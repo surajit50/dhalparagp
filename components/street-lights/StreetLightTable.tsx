@@ -11,7 +11,9 @@ import {
   getFilteredRowModel,
   ColumnDef,
 } from "@tanstack/react-table";
-import { Eye, Pencil, MapPin, Camera, Filter, X, Search, MoreVertical, Ban, Copy, Trash2, PowerOff, Activity, AlertTriangle, CheckCircle2, Lightbulb, Map as MapIcon } from "lucide-react";
+import { Eye, Pencil, MapPin, Camera, Filter, X, Search, MoreVertical, Ban, Copy, Trash2, PowerOff, Activity, AlertTriangle, CheckCircle2, Lightbulb, Map as MapIcon, Download } from "lucide-react";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import { toast } from "sonner";
 import { fetcher } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -39,8 +41,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
 } from "@/components/ui/dropdown-menu";
 import { DataTable } from "../data-table";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface StreetLightRow {
   id: string;
@@ -64,11 +68,12 @@ interface MouzaOption {
 
 export function StreetLightTable() {
   const router = useRouter();
-  const [mouzaFilter, setMouzaFilter] = useState("ALL");
+  const [mouzaFilters, setMouzaFilters] = useState<string[]>([]);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [conditionFilter, setConditionFilter] = useState("ALL");
   const [search, setSearch] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [separateByMouza, setSeparateByMouza] = useState(false);
 
   // Keys to force re‑render of uncontrolled Selects when cleared
   const [mouzaKey, setMouzaKey] = useState(0);
@@ -78,12 +83,12 @@ export function StreetLightTable() {
   // Build query URL
   const queryUrl = useMemo(() => {
     const params = new URLSearchParams();
-    if (mouzaFilter && mouzaFilter !== "ALL") params.set("mouzaId", mouzaFilter);
+    if (mouzaFilters.length === 1) params.set("mouzaId", mouzaFilters[0]);
     if (statusFilter && statusFilter !== "ALL") params.set("workingStatus", statusFilter);
     if (conditionFilter && conditionFilter !== "ALL") params.set("lightCondition", conditionFilter);
-    params.set("limit", "200");
+    params.set("limit", "5000"); // Increased to 5000 to fetch all 1000+ lights
     return `/api/street-lights?${params.toString()}`;
-  }, [mouzaFilter, statusFilter, conditionFilter]);
+  }, [mouzaFilters, statusFilter, conditionFilter]);
 
   // Fetch data
   const { data, isLoading, mutate } = useSWR<{ lights: StreetLightRow[] }>(queryUrl, fetcher, {
@@ -141,16 +146,89 @@ export function StreetLightTable() {
 
   // Local search filter
   const filtered = useMemo(() => {
-    if (!search) return lights;
+    let result = lights;
+    
+    if (mouzaFilters.length > 0) {
+      const selectedNames = mouzas?.filter(m => mouzaFilters.includes(m.id)).map(m => m.mouzaName) || [];
+      result = result.filter(l => l.mouza && selectedNames.includes(l.mouza.mouzaName));
+    }
+
+    if (!search) return result;
     const q = search.toLowerCase();
-    return lights.filter(
+    return result.filter(
       (l) =>
         l.lightId.toLowerCase().includes(q) ||
         l.mouza?.mouzaName?.toLowerCase().includes(q) ||
         l.landmark?.toLowerCase().includes(q) ||
         l.sansad?.toLowerCase().includes(q)
     );
-  }, [lights, search]);
+  }, [lights, search, mouzaFilters, mouzas]);
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF("p", "pt", "a4");
+    const tableColumn = ["SL No", "Light ID", "Mouza", "Sansad", "Location", "Remark"];
+
+    if (separateByMouza) {
+      const grouped: Record<string, StreetLightRow[]> = {};
+      filtered.forEach((l) => {
+        const mName = l.mouza?.mouzaName || "Unknown Mouza";
+        if (!grouped[mName]) grouped[mName] = [];
+        grouped[mName].push(l);
+      });
+
+      const mouzas = Object.keys(grouped).sort();
+
+      mouzas.forEach((mName, index) => {
+        if (index > 0) {
+          doc.addPage();
+        }
+        
+        doc.setFontSize(14);
+        doc.text(`Street Lights Report - ${mName}`, 40, 40);
+
+        const tableRows = grouped[mName].map((l, i) => [
+          i + 1,
+          l.lightId || "—",
+          l.mouza?.mouzaName || "—",
+          l.sansad || "—",
+          l.landmark || "—",
+          ""
+        ]);
+
+        autoTable(doc, {
+          head: [tableColumn],
+          body: tableRows,
+          startY: 50,
+          theme: "grid",
+          styles: { fontSize: 9 },
+          headStyles: { fillColor: [41, 128, 185] },
+        });
+      });
+    } else {
+      const tableRows = filtered.map((l, index) => [
+        index + 1,
+        l.lightId || "—",
+        l.mouza?.mouzaName || "—",
+        l.sansad || "—",
+        l.landmark || "—",
+        ""
+      ]);
+
+      doc.setFontSize(14);
+      doc.text("Street Lights Report", 40, 40);
+
+      autoTable(doc, {
+        head: [tableColumn],
+        body: tableRows,
+        startY: 50,
+        theme: "grid",
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [41, 128, 185] },
+      });
+    }
+
+    doc.save("street_lights_report.pdf");
+  };
 
   // Table columns (unchanged)
   const columns: ColumnDef<StreetLightRow>[] = [
@@ -410,23 +488,28 @@ export function StreetLightTable() {
 
         {/* Dropdowns */}
         <div className="flex flex-wrap gap-3 items-center flex-1">
-          <Select
-            key={`mouza-${mouzaKey}`}
-            value={mouzaFilter}
-            onValueChange={setMouzaFilter}
-          >
-            <SelectTrigger className="w-[160px] h-10">
-              <SelectValue placeholder="Mouza" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Mouzas</SelectItem>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="w-[160px] justify-start h-10 font-normal">
+                {mouzaFilters.length === 0 ? "All Mouzas" : `${mouzaFilters.length} Selected`}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-[200px]">
               {mouzas?.map((m) => (
-                <SelectItem key={m.id} value={m.id}>
+                <DropdownMenuCheckboxItem
+                  key={m.id}
+                  checked={mouzaFilters.includes(m.id)}
+                  onCheckedChange={(checked) => {
+                    setMouzaFilters(prev => 
+                      checked ? [...prev, m.id] : prev.filter(id => id !== m.id)
+                    )
+                  }}
+                >
                   {m.mouzaName}
-                </SelectItem>
+                </DropdownMenuCheckboxItem>
               ))}
-            </SelectContent>
-          </Select>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Select
             key={`status-${statusKey}`}
@@ -460,11 +543,34 @@ export function StreetLightTable() {
             </SelectContent>
           </Select>
 
-          {(mouzaFilter !== "ALL" || statusFilter !== "ALL" || conditionFilter !== "ALL" || search) && (
+          <div className="flex items-center space-x-2 border rounded-md px-3 h-10">
+            <Checkbox 
+              id="separate-mouza" 
+              checked={separateByMouza} 
+              onCheckedChange={(c) => setSeparateByMouza(!!c)} 
+            />
+            <label
+              htmlFor="separate-mouza"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-muted-foreground"
+            >
+              Separate by Mouza
+            </label>
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={handleExportPDF}
+            className="h-10 px-3"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export PDF
+          </Button>
+
+          {(mouzaFilters.length > 0 || statusFilter !== "ALL" || conditionFilter !== "ALL" || search) && (
             <Button
               variant="ghost"
               onClick={() => {
-                setMouzaFilter("ALL");
+                setMouzaFilters([]);
                 setStatusFilter("ALL");
                 setConditionFilter("ALL");
                 setSearch("");
