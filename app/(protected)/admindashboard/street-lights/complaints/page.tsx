@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { ComplaintTable } from "@/components/street-lights/ComplaintTable";
+import { NewComplaintButton } from "@/components/street-lights/NewComplaintButton";
 
 export const metadata = {
   title: "Complaints | Street Light Register",
@@ -28,6 +29,9 @@ export default function ComplaintsPage() {
               All complaints, repairs, and resolution tracking
             </p>
           </div>
+        </div>
+        <div className="flex-shrink-0 animate-in fade-in slide-in-from-right-8 duration-700 delay-150">
+          <NewComplaintButton />
         </div>
       </div>
 

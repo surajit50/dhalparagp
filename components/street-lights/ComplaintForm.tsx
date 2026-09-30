@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   ChevronRight,
   Info,
+  Printer,
 } from "lucide-react";
 
 import {
@@ -28,6 +29,7 @@ import {
   COMPLAINT_TYPE_OPTIONS,
   PRIORITY_OPTIONS,
 } from "@/lib/utils/street-light";
+import { generateComplaintPDF } from "@/lib/utils/pdf";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -207,6 +209,8 @@ export function ComplaintForm({
   /* -------------------------------------------------------
      Submit
   ------------------------------------------------------- */
+  
+  const [submittedData, setSubmittedData] = useState<any>(null);
 
   const onSubmit = useCallback(
     async (data: StreetLightComplaintInput) => {
@@ -230,15 +234,14 @@ export function ComplaintForm({
 
         toast.success("Complaint filed successfully");
 
-        reset({
-          streetLightId: streetLightId || "",
-          priority: "NORMAL",
+        const selectedLightInfo = lights.find(l => l.id === data.streetLightId);
+
+        setSubmittedData({
+          ...data,
+          lightId: selectedLightInfo?.lightId,
+          mouza: selectedLightInfo?.mouza?.mouzaName,
         });
 
-        setSelectedMouza("");
-        setImagePreview(null);
-
-        onSuccess?.();
       } catch (err: unknown) {
         toast.error(
           err instanceof Error
@@ -249,8 +252,19 @@ export function ComplaintForm({
         setLoading(false);
       }
     },
-    [streetLightId, reset, onSuccess]
+    [lights]
   );
+
+  const handleResetForm = useCallback(() => {
+    setSubmittedData(null);
+    reset({
+      streetLightId: streetLightId || "",
+      priority: "NORMAL",
+    });
+    setSelectedMouza("");
+    setImagePreview(null);
+    onSuccess?.();
+  }, [reset, streetLightId, onSuccess]);
 
   /* -------------------------------------------------------
      Field helper
@@ -270,6 +284,27 @@ export function ComplaintForm({
       </p>
     );
   };
+
+  if (submittedData) {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col items-center justify-center space-y-4 p-8 text-center bg-green-50/50 rounded-2xl border border-green-100 dark:bg-green-950/20 dark:border-green-900/50">
+          <CheckCircle2 className="h-16 w-16 text-green-500" />
+          <h2 className="text-2xl font-bold text-green-700 dark:text-green-400">Complaint Submitted Successfully!</h2>
+          <p className="text-muted-foreground">Your complaint has been registered. Please print the application and submit it with required signatures.</p>
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
+            <Button onClick={() => generateComplaintPDF(submittedData)} className="gap-2">
+              <Printer className="w-4 h-4" />
+              Download Application PDF
+            </Button>
+            <Button variant="outline" onClick={handleResetForm}>
+              File Another Complaint
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <form
