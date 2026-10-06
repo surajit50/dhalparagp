@@ -362,8 +362,8 @@ function DocumentUploadField({
       return;
     }
 
-    if (file.size > 500 * 1024) {
-      const msg = "File size must be less than 500 KB.";
+    if (file.size > 1024 * 1024) {
+      const msg = "File size must be less than 1mb.";
       setErrorMsg(msg);
       toast.error(msg);
       if (fileInputRef.current) fileInputRef.current.value = "";
