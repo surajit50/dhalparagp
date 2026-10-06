@@ -24,7 +24,7 @@
                 "strikethrough": false,
                 "underline": false,
                 "required": false,
-                "readOnly": true
+                "readOnly": true 
             },
             {
                 "name": "field2",
