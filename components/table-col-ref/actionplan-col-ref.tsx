@@ -67,7 +67,7 @@ async function updateActionPlan(id: string, data: Partial<ApprovedActionPlanDeta
 }
 
 // ----------------------------- CONSTANTS ---------------------------------
-const FINANCIAL_YEARS = ["2023-24", "2024-25", "2025-26"];
+const FINANCIAL_YEARS = ["2023-24", "2024-25", "2025-26", "2026-27", "2027-28", "2028-29", "2029-30"];
 const SECTORS = [
   "Education",
   "Health",
@@ -255,7 +255,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         </div>
       ),
     },
-    
+
     {
       accessorKey: "themeName",
       header: "Theme",
@@ -293,7 +293,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
         </div>
       ),
     },
-    
+
     {
       id: "fundShortfall",
       header: "Fund Shortfall (₹)",
@@ -347,10 +347,10 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
       header: "Upasamiti",
       cell: ({ row }) => <div>{row.original.upasamiti?.replace(/_/g, " ") || "-"}</div>,
     },
-    
-    
-    
-    
+
+
+
+
     {
       id: "actions",
       header: "Actions",
@@ -386,7 +386,7 @@ export function InlineEditActionPlanTable({ data }: InlineEditActionPlanTablePro
             <p className="text-sm text-muted-foreground mt-0.5">Select a year to view the filtered data</p>
           </div>
         </div>
-        
+
         <Select value={selectedYear} onValueChange={setSelectedYear}>
           <SelectTrigger className="w-full sm:w-[280px] h-12 bg-white dark:bg-zinc-900 border-indigo-100 dark:border-zinc-700 shadow-sm rounded-xl text-base font-medium focus:ring-indigo-500 transition-all">
             <SelectValue placeholder="Choose financial year..." />
