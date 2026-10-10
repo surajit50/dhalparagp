@@ -7,7 +7,7 @@ import { DataTable } from "@/components/data-table";
 
 export default async function UploadWorkPhotosPage() {
   const whereClause: Prisma.WorksDetailWhereInput = {
-    workStatus: {notIn: ["Approved", "billpaid"] },
+    workStatus: {notIn: ["approved", "billpaid"] },
     tenderStatus: { not: "Cancelled" },
   };
 
