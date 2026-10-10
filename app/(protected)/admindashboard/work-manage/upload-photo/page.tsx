@@ -8,7 +8,7 @@ import { DataTable } from "@/components/data-table";
 export default async function UploadWorkPhotosPage() {
   const whereClause: Prisma.WorksDetailWhereInput = {
     workStatus: { not: "billpaid" },
-    tenderStatus: { notIn: "Cancelled"},
+    tenderStatus: { not: "Cancelled" },
   };
 
   const works = await db.worksDetail.findMany({
@@ -45,11 +45,9 @@ export default async function UploadWorkPhotosPage() {
     ],
   });
 
-  // Convert Prisma records into the table data structure.
   const formattedData: WorkTableData[] = works.map((work) => {
     const photos = work.workPhotos;
 
-    // Count each stage only when at least one photo is verified.
     const onset = photos.some(
       (photo) => photo.status === "onset" && photo.isVerified
     );
@@ -66,7 +64,6 @@ export default async function UploadWorkPhotosPage() {
       Boolean
     ).length;
 
-    // Three stages: 0%, 33%, 67%, or 100%.
     const progress = Math.round((verifiedStages / 3) * 100);
     const allVerified = onset && ongoing && complete;
 
@@ -89,7 +86,6 @@ export default async function UploadWorkPhotosPage() {
 
   return (
     <div className="space-y-6 p-4">
-      {/* Page header */}
       <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
@@ -103,7 +99,6 @@ export default async function UploadWorkPhotosPage() {
         </div>
       </div>
 
-      {/* Work progress table */}
       <div className="space-y-4">
         <DataTable columns={columns} data={formattedData} />
       </div>
