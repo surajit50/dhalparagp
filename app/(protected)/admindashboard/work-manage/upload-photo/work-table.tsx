@@ -14,8 +14,10 @@ import {
 } from "@tanstack/react-table";
 
 import { columns, type WorkTableData } from "./columns";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import {
   Select,
   SelectContent,
@@ -23,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import {
   Table,
   TableBody,
@@ -38,68 +41,94 @@ type WorkTableProps = {
 
 export function WorkTable({ data }: WorkTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] =
+    useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+
   const [selectedFund, setSelectedFund] = useState("all");
   const [selectedNit, setSelectedNit] = useState("all");
   const [selectedAgency, setSelectedAgency] = useState("all");
 
-  const funds = useMemo(
-    () => [...new Set(data.map((item) => item.fundName))].sort(),
-    [data]
-  );
+  // Get unique fund names.
+  const funds = useMemo(() => {
+    return [...new Set(data.map((item) => item.fundName))].sort();
+  }, [data]);
 
+  // Get NIT options according to the selected fund.
   const nits = useMemo(() => {
     const filtered = data.filter(
-      (item) => selectedFund === "all" || item.fundName === selectedFund
+      (item) =>
+        selectedFund === "all" || item.fundName === selectedFund
     );
 
-    return [
-      ...new Map(
-        filtered.map((item) => [
-          item.nitId || item.nitNo,
-          { id: item.nitId || item.nitNo, label: item.nitNo },
-        ])
-      ).values(),
-    ];
+    const uniqueNits = new Map<
+      string,
+      { id: string; label: string }
+    >();
+
+    filtered.forEach((item) => {
+      const id = item.nitId || item.nitNo;
+
+      if (!uniqueNits.has(id)) {
+        uniqueNits.set(id, {
+          id,
+          label: item.nitNo,
+        });
+      }
+    });
+
+    return [...uniqueNits.values()].sort((a, b) =>
+      a.label.localeCompare(b.label)
+    );
   }, [data, selectedFund]);
 
+  // Get agency options according to the selected fund and NIT.
   const agencies = useMemo(() => {
     const filtered = data.filter(
       (item) =>
-        (selectedFund === "all" || item.fundName === selectedFund) &&
+        (selectedFund === "all" ||
+          item.fundName === selectedFund) &&
         (selectedNit === "all" ||
           item.nitId === selectedNit ||
           (!item.nitId && item.nitNo === selectedNit))
     );
 
-    return [...new Set(filtered.flatMap((item) => item.agencyName.split(", "))]
-      .filter((name) => name && name !== "Not assigned")]
-      .sort();
+    return [
+      ...new Set(
+        filtered.flatMap((item) =>
+          item.agencyName.split(", ")
+        ),
+      ),
+    ]
+      .filter(
+        (name) => name && name !== "Not assigned"
+      )
+      .sort((a, b) => a.localeCompare(b));
   }, [data, selectedFund, selectedNit]);
 
-  const filteredData = useMemo(
-    () =>
-      data.filter((item) => {
-        const fundMatches =
-          selectedFund === "all" || item.fundName === selectedFund;
+  // Apply all three cascading filters.
+  const filteredData = useMemo(() => {
+    return data.filter((item) => {
+      const fundMatches =
+        selectedFund === "all" ||
+        item.fundName === selectedFund;
 
-        const nitMatches =
-          selectedNit === "all" ||
-          item.nitId === selectedNit ||
-          (!item.nitId && item.nitNo === selectedNit);
+      const nitMatches =
+        selectedNit === "all" ||
+        item.nitId === selectedNit ||
+        (!item.nitId && item.nitNo === selectedNit);
 
-        const agencyMatches =
-          selectedAgency === "all" ||
-          item.agencyName
-            .split(", ")
-            .some((agency) => agency === selectedAgency);
+      const agencyMatches =
+        selectedAgency === "all" ||
+        item.agencyName
+          .split(", ")
+          .includes(selectedAgency);
 
-        return fundMatches && nitMatches && agencyMatches;
-      }),
-    [data, selectedFund, selectedNit, selectedAgency]
-  );
+      return fundMatches && nitMatches && agencyMatches;
+    });
+  }, [data, selectedFund, selectedNit, selectedAgency]);
 
+  // Configure the data table.
   const table = useReactTable({
     data: filteredData,
     columns,
@@ -123,15 +152,28 @@ export function WorkTable({ data }: WorkTableProps) {
     },
   });
 
+  // Reset dependent filters when a parent filter changes.
   function handleFundChange(value: string) {
     setSelectedFund(value);
     setSelectedNit("all");
     setSelectedAgency("all");
+    table.setPageIndex(0);
   }
 
   function handleNitChange(value: string) {
     setSelectedNit(value);
     setSelectedAgency("all");
+    table.setPageIndex(0);
+  }
+
+  function handleAgencyChange(value: string) {
+    setSelectedAgency(value);
+    table.setPageIndex(0);
+  }
+
+  function handleSearchChange(value: string) {
+    setGlobalFilter(value);
+    table.setPageIndex(0);
   }
 
   function resetFilters() {
@@ -140,17 +182,25 @@ export function WorkTable({ data }: WorkTableProps) {
     setSelectedAgency("all");
     setGlobalFilter("");
     setColumnFilters([]);
+    table.setPageIndex(0);
   }
 
   return (
     <div className="space-y-4">
+      {/* Filters */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Select value={selectedFund} onValueChange={handleFundChange}>
+        {/* Fund filter */}
+        <Select
+          value={selectedFund}
+          onValueChange={handleFundChange}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Filter by fund" />
           </SelectTrigger>
+
           <SelectContent>
             <SelectItem value="all">All Funds</SelectItem>
+
             {funds.map((fund) => (
               <SelectItem key={fund} value={fund}>
                 {fund}
@@ -159,12 +209,18 @@ export function WorkTable({ data }: WorkTableProps) {
           </SelectContent>
         </Select>
 
-        <Select value={selectedNit} onValueChange={handleNitChange}>
+        {/* NIT filter */}
+        <Select
+          value={selectedNit}
+          onValueChange={handleNitChange}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Filter by NIT" />
           </SelectTrigger>
+
           <SelectContent>
             <SelectItem value="all">All NITs</SelectItem>
+
             {nits.map((nit) => (
               <SelectItem key={nit.id} value={nit.id}>
                 {nit.label}
@@ -173,15 +229,18 @@ export function WorkTable({ data }: WorkTableProps) {
           </SelectContent>
         </Select>
 
+        {/* Agency filter */}
         <Select
           value={selectedAgency}
-          onValueChange={setSelectedAgency}
+          onValueChange={handleAgencyChange}
         >
           <SelectTrigger>
             <SelectValue placeholder="Filter by agency" />
           </SelectTrigger>
+
           <SelectContent>
             <SelectItem value="all">All Agencies</SelectItem>
+
             {agencies.map((agency) => (
               <SelectItem key={agency} value={agency}>
                 {agency}
@@ -190,22 +249,32 @@ export function WorkTable({ data }: WorkTableProps) {
           </SelectContent>
         </Select>
 
+        {/* Search */}
         <Input
           placeholder="Search works..."
           value={globalFilter}
-          onChange={(event) => setGlobalFilter(event.target.value)}
+          onChange={(event) =>
+            handleSearchChange(event.target.value)
+          }
         />
       </div>
 
-      <div className="flex items-center justify-between gap-3">
+      {/* Results summary */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Showing {filteredData.length} work(s)
+          Showing {table.getFilteredRowModel().rows.length} work(s)
         </p>
-        <Button variant="outline" onClick={resetFilters}>
+
+        <Button
+          type="button"
+          variant="outline"
+          onClick={resetFilters}
+        >
           Reset Filters
         </Button>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto rounded-md border">
         <Table>
           <TableHeader>
@@ -226,7 +295,7 @@ export function WorkTable({ data }: WorkTableProps) {
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {table.getRowModel().rows.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -253,27 +322,35 @@ export function WorkTable({ data }: WorkTableProps) {
         </Table>
       </div>
 
-      <div className="flex items-center justify-end gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <span className="text-sm">
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
+      {/* Pagination */}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm text-muted-foreground">
+          Page{" "}
+          {table.getState().pagination.pageIndex + 1} of{" "}
           {Math.max(table.getPageCount(), 1)}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+        </p>
+
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
