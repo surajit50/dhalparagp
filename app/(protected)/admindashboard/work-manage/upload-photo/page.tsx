@@ -2,12 +2,11 @@
 import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import { Camera } from "lucide-react";
-import { columns, type WorkTableData } from "./columns";
-import { DataTable } from "@/components/data-table";
+import { WorkTable, type WorkTableData } from "./work-table";
 
 export default async function UploadWorkPhotosPage() {
   const whereClause: Prisma.WorksDetailWhereInput = {
-    workStatus: {notIn: ["approved", "billpaid"] },
+    workStatus: { notIn: ["approved", "billpaid"] },
     tenderStatus: { not: "Cancelled" },
   };
 
@@ -16,6 +15,19 @@ export default async function UploadWorkPhotosPage() {
     include: {
       nitDetails: true,
       ApprovedActionPlanDetails: true,
+      AwardofContract: {
+        include: {
+          workorderdetails: {
+            include: {
+              Bidagency: {
+                include: {
+                  agencydetails: true,
+                },
+              },
+            },
+          },
+        },
+      },
       workPhotos: {
         select: {
           status: true,
@@ -67,42 +79,65 @@ export default async function UploadWorkPhotosPage() {
     const progress = Math.round((verifiedStages / 3) * 100);
     const allVerified = onset && ongoing && complete;
 
+    const agencyNames = [
+      ...new Set(
+        (work.AwardofContract?.workorderdetails ?? [])
+          .map((item) => item.Bidagency?.agencydetails?.name)
+          .filter((name): name is string => Boolean(name?.trim()))
+      ),
+    ];
+
     return {
       id: work.id,
+
+      // schemeName is the fund name
+      fundName:
+        work.ApprovedActionPlanDetails?.schemeName?.trim() ||
+        "Unspecified Fund",
+
       financialYear:
         work.ApprovedActionPlanDetails?.financialYear ?? "N/A",
+
       description:
         work.ApprovedActionPlanDetails?.activityDescription ?? "N/A",
+
+      nitId: work.nitDetailsId,
+
       nitNo: work.nitDetails?.memoNumber?.toString() ?? "N/A",
+
       nitDate: work.nitDetails?.memoDate
         ? new Date(work.nitDetails.memoDate).toLocaleDateString("en-IN")
         : "N/A",
+
       workSlNo: work.workslno,
+
+      agencyName:
+        agencyNames.length > 0
+          ? agencyNames.join(", ")
+          : "Not assigned",
+
       workStatus: work.workStatus,
+
       progress,
       allVerified,
     };
   });
 
   return (
-    <div className="space-y-6 p-4">
-      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
-            <Camera className="h-6 w-6" />
-            Work Progress
-          </h1>
+    <div className="space-y-6 p-4 md:p-6">
+      <div className="flex flex-col gap-3">
+        <h1 className="flex items-center gap-3 text-2xl font-bold tracking-tight md:text-3xl">
+          <Camera className="h-7 w-7" />
+          Work Progress
+        </h1>
 
-          <p className="mt-1 text-sm text-muted-foreground">
-            Upload and track work site photos and their verification status.
-          </p>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          Filter works by fund, NIT and agency. Upload and track
+          work-site photos and their verification status.
+        </p>
       </div>
 
-      <div className="space-y-4">
-        <DataTable columns={columns} data={formattedData} />
-      </div>
+      <WorkTable data={formattedData} />
     </div>
   );
 }
-
