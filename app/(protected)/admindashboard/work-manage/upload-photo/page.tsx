@@ -1,9 +1,8 @@
+
 import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
 import { WorkTable } from "./work-table";
 import type { WorkTableData } from "./columns";
-
-export const dynamic = "force-dynamic";
 
 export default async function UploadWorkPhotosPage() {
   const user = await currentUser();
@@ -59,19 +58,30 @@ export default async function UploadWorkPhotosPage() {
   });
 
   const tableData: WorkTableData[] = works.map((work) => {
-    const agencyNames = [
-      ...new Set(
-        work.AwardofContract?.workorderdetails
-          .map((detail) => detail.Bidagency?.agencydetails?.name?.trim())
-          .filter((name): name is string => Boolean(name))
-      ),
-    ];
-
     const verifiedPhotos = work.workPhotos.filter(
       (photo) => photo.isVerified
     ).length;
 
     const totalPhotos = work.workPhotos.length;
+
+    const progress =
+      totalPhotos > 0
+        ? Math.round((verifiedPhotos / totalPhotos) * 100)
+        : 0;
+
+    const agencyNames = [
+      ...new Set(
+        work.AwardofContract?.workorderdetails
+          .map(
+            (detail) =>
+              detail.Bidagency?.agencydetails?.agencyName
+          )
+          .filter(
+            (name): name is string =>
+              typeof name === "string" && name.trim().length > 0
+          ) ?? []
+      ),
+    ];
 
     return {
       id: work.id,
@@ -80,20 +90,17 @@ export default async function UploadWorkPhotosPage() {
         "Unspecified Fund",
       financialYear:
         work.ApprovedActionPlanDetails?.financialYear ?? "N/A",
-      description:
-        work.ApprovedActionPlanDetails?.activityDescription?.trim() ||
-        "No work description",
-      nitId: work.nitDetailsId,
-      nitNo: work.nitDetails?.memoNumber ?? "N/A",
+      description: work.workDescription ?? "N/A",
+      nitId: work.nitDetails?.id ?? "",
+      // Fix: memoNumber may be a number, but WorkTableData expects a string.
+      nitNo: String(work.nitDetails?.memoNumber ?? "N/A"),
       nitDate: work.nitDetails?.memoDate
         ? new Date(work.nitDetails.memoDate).toLocaleDateString("en-IN")
         : "N/A",
       workSlNo: work.workslno,
-      agencyName: agencyNames.join(", ") || "Agency not assigned",
+      agencyName: agencyNames.join(", ") || "Not assigned",
       workStatus: String(work.workStatus),
-      progress: totalPhotos
-        ? Math.round((verifiedPhotos / totalPhotos) * 100)
-        : 0,
+      progress,
       allVerified: totalPhotos > 0 && verifiedPhotos === totalPhotos,
     };
   });
@@ -102,10 +109,10 @@ export default async function UploadWorkPhotosPage() {
     <div className="space-y-6 p-4 md:p-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
-          Upload Work Photos
+          Work Photo Management
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Select a fund, NIT, and agency to find work and manage its photos.
+        <p className="text-sm text-muted-foreground">
+          Filter works by fund, NIT and agency, and track photo verification.
         </p>
       </div>
 
