@@ -1,6 +1,5 @@
 
 "use client";
-
 import { useMemo, useState } from "react";
 import {
   type ColumnFiltersState,
@@ -285,9 +284,9 @@ export function WorkTable({ data }: WorkTableProps) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

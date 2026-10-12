@@ -18,20 +18,20 @@ export default async function UploadWorkPhotosPage() {
       },
       ...(loginAgencyId
         ? {
-            AwardofContract: {
-              is: {
-                workorderdetails: {
-                  some: {
-                    Bidagency: {
-                      is: {
-                        agencyDetailsId: loginAgencyId,
-                      },
+          AwardofContract: {
+            is: {
+              workorderdetails: {
+                some: {
+                  Bidagency: {
+                    is: {
+                      agencyDetailsId: loginAgencyId,
                     },
                   },
                 },
               },
             },
-          }
+          },
+        }
         : {}),
     },
     include: {
@@ -74,7 +74,7 @@ export default async function UploadWorkPhotosPage() {
         work.AwardofContract?.workorderdetails
           .map(
             (detail) =>
-              detail.Bidagency?.agencydetails?.agencyName
+              detail.Bidagency?.agencydetails?.name
           )
           .filter(
             (name): name is string =>
@@ -90,7 +90,7 @@ export default async function UploadWorkPhotosPage() {
         "Unspecified Fund",
       financialYear:
         work.ApprovedActionPlanDetails?.financialYear ?? "N/A",
-      description: work.workDescription ?? "N/A",
+      description: work.ApprovedActionPlanDetails.activityDescription ?? "N/A",
       nitId: work.nitDetails?.id ?? "",
       // Fix: memoNumber may be a number, but WorkTableData expects a string.
       nitNo: String(work.nitDetails?.memoNumber ?? "N/A"),
