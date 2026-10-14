@@ -134,12 +134,13 @@ export default function CoverPagePrint({ workCoverPageType }: CoverPagePDFProps)
           workmemodate: workCoverPageType.AwardofContract?.workordeermemodate
             ? formatDate(workCoverPageType.AwardofContract.workordeermemodate)
             : "",
-          agrementdetails: `${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.AggrementModel[0].aggrementno} Date: ${
-            workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.AggrementModel[0].aggrementdate
+          agrementdetails: `${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.AggrementModel[0].aggrementno} Date: ${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.AggrementModel[0].aggrementdate
               ? formatDate(workCoverPageType.AwardofContract.workorderdetails[0].Bidagency.AggrementModel[0].aggrementdate)
               : ""
-          }`,
-          agencydetails: `${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.agencydetails.name} Address: ${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.agencydetails.contactDetails} Mobile No ${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.agencydetails.mobileNumber}`,
+            }`,
+
+            c1_l_value_box:workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.agencydetails.name,
+          agencydetails: `Address: ${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.agencydetails.contactDetails} Mobile No ${workCoverPageType.AwardofContract?.workorderdetails[0].Bidagency?.agencydetails.mobileNumber}`,
 
           fundetailstable: [
             [

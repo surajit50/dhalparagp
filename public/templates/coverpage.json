@@ -4,7 +4,10 @@
             {
                 "name": "bg_page",
                 "type": "rectangle",
-                "position": { "x": 0, "y": 0 },
+                "position": {
+                    "x": 0,
+                    "y": 0
+                },
                 "width": 210,
                 "height": 297,
                 "rotate": 0,
@@ -19,7 +22,10 @@
             {
                 "name": "emblem_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 9 },
+                "position": {
+                    "x": 12,
+                    "y": 10
+                },
                 "width": 16,
                 "height": 16,
                 "rotate": 0,
@@ -34,7 +40,10 @@
             {
                 "name": "emblem",
                 "type": "image",
-                "position": { "x": 12, "y": 9 },
+                "position": {
+                    "x": 12,
+                    "y": 10
+                },
                 "width": 16,
                 "height": 16,
                 "content": "",
@@ -43,7 +52,10 @@
             {
                 "name": "gp_logo_box",
                 "type": "rectangle",
-                "position": { "x": 182, "y": 9 },
+                "position": {
+                    "x": 182,
+                    "y": 10
+                },
                 "width": 16,
                 "height": 16,
                 "rotate": 0,
@@ -58,67 +70,29 @@
             {
                 "name": "gp_logo",
                 "type": "image",
-                "position": { "x": 182, "y": 9 },
+                "position": {
+                    "x": 182,
+                    "y": 10
+                },
                 "width": 16,
                 "height": 16,
                 "content": "",
                 "fit": "contain"
             },
             {
-                "name": "gov_line1",
+                "name": "office_line",
                 "type": "text",
-                "content": "GOVERNMENT OF WEST BENGAL",
-                "position": { "x": 32, "y": 8.5 },
-                "width": 146,
-                "height": 4.5,
-                "rotate": 0,
-                "alignment": "center",
-                "verticalAlignment": "middle",
-                "fontSize": 8.5,
-                "lineHeight": 1,
-                "characterSpacing": 1.2,
-                "fontColor": "#1e3a8a",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "gov_line2",
-                "type": "text",
-                "content": "Panchayat & Rural Development Department",
-                "position": { "x": 32, "y": 13.2 },
-                "width": 146,
+                "content": "OFFICE OF THE GRAM PANCHAYAT",
+                "position": {
+                    "x": 34,
+                    "y": 11
+                },
+                "width": 142,
                 "height": 4,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
-                "fontSize": 6.5,
-                "lineHeight": 1,
-                "characterSpacing": 0.2,
-                "fontColor": "#475569",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "office_line",
-                "type": "text",
-                "content": "OFFICE OF THE PRADHAN",
-                "position": { "x": 32, "y": 17.3 },
-                "width": 146,
-                "height": 4.2,
-                "rotate": 0,
-                "alignment": "center",
-                "verticalAlignment": "middle",
-                "fontSize": 7,
+                "fontSize": 6.8,
                 "lineHeight": 1,
                 "characterSpacing": 0.8,
                 "fontColor": "#334155",
@@ -134,15 +108,18 @@
                 "name": "gp_name",
                 "type": "text",
                 "content": "NO 3 DHALPARA GRAM PANCHAYAT",
-                "position": { "x": 32, "y": 21.6 },
-                "width": 146,
-                "height": 6.5,
+                "position": {
+                    "x": 34,
+                    "y": 15.2
+                },
+                "width": 142,
+                "height": 7,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
                 "fontSize": 11,
                 "lineHeight": 1,
-                "characterSpacing": 0.3,
+                "characterSpacing": 0.4,
                 "fontColor": "#0f172a",
                 "backgroundColor": "",
                 "opacity": 1,
@@ -156,13 +133,16 @@
                 "name": "gp_addr",
                 "type": "text",
                 "content": "Hili Block, Dakshin Dinajpur, West Bengal – 733126",
-                "position": { "x": 32, "y": 28.6 },
-                "width": 146,
+                "position": {
+                    "x": 34,
+                    "y": 22.5
+                },
+                "width": 142,
                 "height": 4.5,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
-                "fontSize": 6.8,
+                "fontSize": 6.6,
                 "lineHeight": 1,
                 "characterSpacing": 0.2,
                 "fontColor": "#475569",
@@ -177,9 +157,12 @@
             {
                 "name": "header_rule_1",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 35 },
+                "position": {
+                    "x": 12,
+                    "y": 30
+                },
                 "width": 186,
-                "height": 0.7,
+                "height": 0.8,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0,
@@ -192,7 +175,10 @@
             {
                 "name": "header_rule_2",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 36.6 },
+                "position": {
+                    "x": 12,
+                    "y": 31.8
+                },
                 "width": 186,
                 "height": 0.3,
                 "rotate": 0,
@@ -205,55 +191,14 @@
                 "content": ""
             },
             {
-                "name": "memo_no",
-                "type": "text",
-                "content": "Memo No: 141/${gpcode}/2024",
-                "position": { "x": 12, "y": 39 },
-                "width": 110,
-                "height": 6,
-                "rotate": 0,
-                "alignment": "left",
-                "verticalAlignment": "middle",
-                "fontSize": 8,
-                "lineHeight": 1,
-                "characterSpacing": 0.1,
-                "fontColor": "#0f172a",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": false,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "memo_date",
-                "type": "text",
-                "content": "Date: 24/03/2024",
-                "position": { "x": 122, "y": 39 },
-                "width": 76,
-                "height": 6,
-                "rotate": 0,
-                "alignment": "right",
-                "verticalAlignment": "middle",
-                "fontSize": 8,
-                "lineHeight": 1,
-                "characterSpacing": 0.1,
-                "fontColor": "#0f172a",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": false,
-                "fontName": "Roboto"
-            },
-            {
                 "name": "title_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 47 },
+                "position": {
+                    "x": 12,
+                    "y": 36
+                },
                 "width": 186,
-                "height": 9.5,
+                "height": 11,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.6,
@@ -267,13 +212,16 @@
                 "name": "title_text",
                 "type": "text",
                 "content": "PROJECT COVER SHEET",
-                "position": { "x": 12, "y": 47 },
+                "position": {
+                    "x": 12,
+                    "y": 36
+                },
                 "width": 186,
-                "height": 9.5,
+                "height": 11,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
-                "fontSize": 10.5,
+                "fontSize": 11,
                 "lineHeight": 1,
                 "characterSpacing": 1.5,
                 "fontColor": "#1e3a8a",
@@ -288,7 +236,10 @@
             {
                 "name": "sec_a_bar",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 60 },
+                "position": {
+                    "x": 12,
+                    "y": 52
+                },
                 "width": 186,
                 "height": 7,
                 "rotate": 0,
@@ -304,8 +255,11 @@
                 "name": "sec_a_title",
                 "type": "text",
                 "content": "A.   PROJECT IDENTIFICATION",
-                "position": { "x": 16, "y": 60 },
-                "width": 170,
+                "position": {
+                    "x": 15,
+                    "y": 52
+                },
+                "width": 180,
                 "height": 7,
                 "rotate": 0,
                 "alignment": "left",
@@ -325,9 +279,12 @@
             {
                 "name": "a1_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 67 },
+                "position": {
+                    "x": 12,
+                    "y": 61
+                },
                 "width": 48,
-                "height": 12,
+                "height": 13,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -341,9 +298,12 @@
                 "name": "a1_label",
                 "type": "text",
                 "content": "Name of Work",
-                "position": { "x": 15, "y": 67 },
-                "width": 42,
-                "height": 12,
+                "position": {
+                    "x": 14,
+                    "y": 61
+                },
+                "width": 44,
+                "height": 13,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -362,9 +322,12 @@
             {
                 "name": "a1_value_box",
                 "type": "rectangle",
-                "position": { "x": 60, "y": 67 },
+                "position": {
+                    "x": 60,
+                    "y": 61
+                },
                 "width": 138,
-                "height": 12,
+                "height": 13,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -378,14 +341,17 @@
                 "name": "workname",
                 "type": "text",
                 "content": "Installation of a water vending machine with a solar system at Trimohini Primary Health Sub Centre in Kismatdapat.",
-                "position": { "x": 63, "y": 67 },
-                "width": 132,
-                "height": 12,
+                "position": {
+                    "x": 62.5,
+                    "y": 61
+                },
+                "width": 133,
+                "height": 13,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
                 "fontSize": 8,
-                "lineHeight": 1.3,
+                "lineHeight": 1.35,
                 "characterSpacing": 0,
                 "fontColor": "#0f172a",
                 "backgroundColor": "",
@@ -399,9 +365,12 @@
             {
                 "name": "a2_l_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 79 },
+                "position": {
+                    "x": 12,
+                    "y": 76
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -415,9 +384,12 @@
                 "name": "a2_l_label",
                 "type": "text",
                 "content": "Activity Code",
-                "position": { "x": 14, "y": 79 },
+                "position": {
+                    "x": 14,
+                    "y": 76
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -436,9 +408,12 @@
             {
                 "name": "a2_l_value_box",
                 "type": "rectangle",
-                "position": { "x": 52, "y": 79 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 52,
+                    "y": 76
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -452,9 +427,12 @@
                 "name": "activitycode",
                 "type": "text",
                 "content": "485858524",
-                "position": { "x": 54, "y": 79 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 54,
+                    "y": 76
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -473,9 +451,12 @@
             {
                 "name": "a2_r_label_box",
                 "type": "rectangle",
-                "position": { "x": 105, "y": 79 },
+                "position": {
+                    "x": 107,
+                    "y": 76
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -489,9 +470,12 @@
                 "name": "a2_r_label",
                 "type": "text",
                 "content": "Financial Year",
-                "position": { "x": 107, "y": 79 },
+                "position": {
+                    "x": 109,
+                    "y": 76
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -510,9 +494,12 @@
             {
                 "name": "a2_r_value_box",
                 "type": "rectangle",
-                "position": { "x": 145, "y": 79 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 147,
+                    "y": 76
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -526,9 +513,12 @@
                 "name": "financialyear",
                 "type": "text",
                 "content": "2023-2024",
-                "position": { "x": 147, "y": 79 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 149,
+                    "y": 76
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -547,9 +537,12 @@
             {
                 "name": "a3_l_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 86 },
+                "position": {
+                    "x": 12,
+                    "y": 85.5
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -563,9 +556,12 @@
                 "name": "a3_l_label",
                 "type": "text",
                 "content": "Fund",
-                "position": { "x": 14, "y": 86 },
+                "position": {
+                    "x": 14,
+                    "y": 85.5
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -584,9 +580,12 @@
             {
                 "name": "a3_l_value_box",
                 "type": "rectangle",
-                "position": { "x": 52, "y": 86 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 52,
+                    "y": 85.5
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -600,9 +599,12 @@
                 "name": "fund",
                 "type": "text",
                 "content": "5th SFC",
-                "position": { "x": 54, "y": 86 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 54,
+                    "y": 85.5
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -621,9 +623,12 @@
             {
                 "name": "a3_r_label_box",
                 "type": "rectangle",
-                "position": { "x": 105, "y": 86 },
+                "position": {
+                    "x": 107,
+                    "y": 85.5
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -637,9 +642,12 @@
                 "name": "a3_r_label",
                 "type": "text",
                 "content": "Work Sl No",
-                "position": { "x": 107, "y": 86 },
+                "position": {
+                    "x": 109,
+                    "y": 85.5
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -658,9 +666,12 @@
             {
                 "name": "a3_r_value_box",
                 "type": "rectangle",
-                "position": { "x": 145, "y": 86 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 147,
+                    "y": 85.5
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -674,9 +685,12 @@
                 "name": "workslno",
                 "type": "text",
                 "content": "22 out of 26",
-                "position": { "x": 147, "y": 86 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 149,
+                    "y": 85.5
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -695,7 +709,10 @@
             {
                 "name": "sec_b_bar",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 95 },
+                "position": {
+                    "x": 12,
+                    "y": 98
+                },
                 "width": 186,
                 "height": 7,
                 "rotate": 0,
@@ -711,8 +728,11 @@
                 "name": "sec_b_title",
                 "type": "text",
                 "content": "B.   NIT & WORK ORDER DETAILS",
-                "position": { "x": 16, "y": 95 },
-                "width": 170,
+                "position": {
+                    "x": 15,
+                    "y": 98
+                },
+                "width": 180,
                 "height": 7,
                 "rotate": 0,
                 "alignment": "left",
@@ -732,9 +752,12 @@
             {
                 "name": "b1_l_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 102 },
+                "position": {
+                    "x": 12,
+                    "y": 107
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -748,9 +771,12 @@
                 "name": "b1_l_label",
                 "type": "text",
                 "content": "NIT Memo No",
-                "position": { "x": 14, "y": 102 },
+                "position": {
+                    "x": 14,
+                    "y": 107
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -769,9 +795,12 @@
             {
                 "name": "b1_l_value_box",
                 "type": "rectangle",
-                "position": { "x": 52, "y": 102 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 52,
+                    "y": 107
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -785,9 +814,12 @@
                 "name": "nitmemo",
                 "type": "text",
                 "content": "141/${gpcode}/2024",
-                "position": { "x": 54, "y": 102 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 54,
+                    "y": 107
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -806,9 +838,12 @@
             {
                 "name": "b1_r_label_box",
                 "type": "rectangle",
-                "position": { "x": 105, "y": 102 },
+                "position": {
+                    "x": 107,
+                    "y": 107
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -822,9 +857,12 @@
                 "name": "b1_r_label",
                 "type": "text",
                 "content": "NIT Date",
-                "position": { "x": 107, "y": 102 },
+                "position": {
+                    "x": 109,
+                    "y": 107
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -843,9 +881,12 @@
             {
                 "name": "b1_r_value_box",
                 "type": "rectangle",
-                "position": { "x": 145, "y": 102 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 147,
+                    "y": 107
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -859,9 +900,12 @@
                 "name": "nitdate",
                 "type": "text",
                 "content": "24/03/2024",
-                "position": { "x": 147, "y": 102 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 149,
+                    "y": 107
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -880,9 +924,12 @@
             {
                 "name": "b2_l_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 109 },
+                "position": {
+                    "x": 12,
+                    "y": 116.5
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -896,9 +943,12 @@
                 "name": "b2_l_label",
                 "type": "text",
                 "content": "W.O. Memo No",
-                "position": { "x": 14, "y": 109 },
+                "position": {
+                    "x": 14,
+                    "y": 116.5
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -917,9 +967,12 @@
             {
                 "name": "b2_l_value_box",
                 "type": "rectangle",
-                "position": { "x": 52, "y": 109 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 52,
+                    "y": 116.5
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -933,9 +986,12 @@
                 "name": "workordermemo",
                 "type": "text",
                 "content": "141/${gpcode}/2024",
-                "position": { "x": 54, "y": 109 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 54,
+                    "y": 116.5
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -954,9 +1010,12 @@
             {
                 "name": "b2_r_label_box",
                 "type": "rectangle",
-                "position": { "x": 105, "y": 109 },
+                "position": {
+                    "x": 107,
+                    "y": 116.5
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -970,9 +1029,12 @@
                 "name": "b2_r_label",
                 "type": "text",
                 "content": "W.O. Date",
-                "position": { "x": 107, "y": 109 },
+                "position": {
+                    "x": 109,
+                    "y": 116.5
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -991,9 +1053,12 @@
             {
                 "name": "b2_r_value_box",
                 "type": "rectangle",
-                "position": { "x": 145, "y": 109 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 147,
+                    "y": 116.5
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1007,9 +1072,12 @@
                 "name": "workorderdate",
                 "type": "text",
                 "content": "24/03/2024",
-                "position": { "x": 147, "y": 109 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 149,
+                    "y": 116.5
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1028,9 +1096,12 @@
             {
                 "name": "b3_l_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 116 },
+                "position": {
+                    "x": 12,
+                    "y": 126
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1044,9 +1115,12 @@
                 "name": "b3_l_label",
                 "type": "text",
                 "content": "Agreement No",
-                "position": { "x": 14, "y": 116 },
+                "position": {
+                    "x": 14,
+                    "y": 126
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1065,9 +1139,12 @@
             {
                 "name": "b3_l_value_box",
                 "type": "rectangle",
-                "position": { "x": 52, "y": 116 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 52,
+                    "y": 126
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1081,9 +1158,12 @@
                 "name": "agrementdetails",
                 "type": "text",
                 "content": "141/${gpcode}/2024",
-                "position": { "x": 54, "y": 116 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 54,
+                    "y": 126
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1102,9 +1182,12 @@
             {
                 "name": "b3_r_label_box",
                 "type": "rectangle",
-                "position": { "x": 105, "y": 116 },
+                "position": {
+                    "x": 107,
+                    "y": 126
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1118,9 +1201,12 @@
                 "name": "b3_r_label",
                 "type": "text",
                 "content": "Completion Date",
-                "position": { "x": 107, "y": 116 },
+                "position": {
+                    "x": 109,
+                    "y": 126
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1139,9 +1225,12 @@
             {
                 "name": "b3_r_value_box",
                 "type": "rectangle",
-                "position": { "x": 145, "y": 116 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 147,
+                    "y": 126
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1155,9 +1244,12 @@
                 "name": "workcompletation",
                 "type": "text",
                 "content": "14/05/2025",
-                "position": { "x": 147, "y": 116 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 149,
+                    "y": 126
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1176,7 +1268,10 @@
             {
                 "name": "sec_c_bar",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 125 },
+                "position": {
+                    "x": 12,
+                    "y": 138
+                },
                 "width": 186,
                 "height": 7,
                 "rotate": 0,
@@ -1192,8 +1287,11 @@
                 "name": "sec_c_title",
                 "type": "text",
                 "content": "C.   AGENCY DETAILS",
-                "position": { "x": 16, "y": 125 },
-                "width": 170,
+                "position": {
+                    "x": 15,
+                    "y": 138
+                },
+                "width": 180,
                 "height": 7,
                 "rotate": 0,
                 "alignment": "left",
@@ -1213,9 +1311,12 @@
             {
                 "name": "c1_l_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 132 },
+                "position": {
+                    "x": 12,
+                    "y": 147
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1229,9 +1330,12 @@
                 "name": "c1_l_label",
                 "type": "text",
                 "content": "Name of Agency",
-                "position": { "x": 14, "y": 132 },
+                "position": {
+                    "x": 14,
+                    "y": 147
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1250,15 +1354,18 @@
             {
                 "name": "c1_l_value_box",
                 "type": "rectangle",
-                "position": { "x": 52, "y": 132 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 52,
+                    "y": 147
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
                 "borderColor": "#94a3b8",
                 "color": "#ffffff",
-                "readOnly": true,
+                "readOnly": false,
                 "required": false,
                 "content": ""
             },
@@ -1266,9 +1373,12 @@
                 "name": "agencyname",
                 "type": "text",
                 "content": "Sujay Mondal",
-                "position": { "x": 54, "y": 132 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 54,
+                    "y": 147
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1287,9 +1397,12 @@
             {
                 "name": "c1_r_label_box",
                 "type": "rectangle",
-                "position": { "x": 105, "y": 132 },
+                "position": {
+                    "x": 107,
+                    "y": 147
+                },
                 "width": 40,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1303,9 +1416,12 @@
                 "name": "c1_r_label",
                 "type": "text",
                 "content": "Mobile No",
-                "position": { "x": 107, "y": 132 },
+                "position": {
+                    "x": 109,
+                    "y": 147
+                },
                 "width": 36,
-                "height": 7,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1324,9 +1440,12 @@
             {
                 "name": "c1_r_value_box",
                 "type": "rectangle",
-                "position": { "x": 145, "y": 132 },
-                "width": 53,
-                "height": 7,
+                "position": {
+                    "x": 147,
+                    "y": 147
+                },
+                "width": 51,
+                "height": 7.5,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.4,
@@ -1340,9 +1459,12 @@
                 "name": "agencymobile",
                 "type": "text",
                 "content": "8942805098",
-                "position": { "x": 147, "y": 132 },
-                "width": 49,
-                "height": 7,
+                "position": {
+                    "x": 149,
+                    "y": 147
+                },
+                "width": 47,
+                "height": 7.5,
                 "rotate": 0,
                 "alignment": "left",
                 "verticalAlignment": "middle",
@@ -1361,7 +1483,10 @@
             {
                 "name": "c2_label_box",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 139 },
+                "position": {
+                    "x": 12,
+                    "y": 156
+                },
                 "width": 48,
                 "height": 9,
                 "rotate": 0,
@@ -1377,8 +1502,11 @@
                 "name": "c2_label",
                 "type": "text",
                 "content": "Address",
-                "position": { "x": 15, "y": 139 },
-                "width": 42,
+                "position": {
+                    "x": 14,
+                    "y": 156
+                },
+                "width": 44,
                 "height": 9,
                 "rotate": 0,
                 "alignment": "left",
@@ -1398,7 +1526,10 @@
             {
                 "name": "c2_value_box",
                 "type": "rectangle",
-                "position": { "x": 60, "y": 139 },
+                "position": {
+                    "x": 60,
+                    "y": 156
+                },
                 "width": 138,
                 "height": 9,
                 "rotate": 0,
@@ -1414,8 +1545,11 @@
                 "name": "agencydetails",
                 "type": "text",
                 "content": "Chakdapat, Trimohini, Hili, Dakshin Dinajpur, West Bengal",
-                "position": { "x": 63, "y": 139 },
-                "width": 132,
+                "position": {
+                    "x": 62.5,
+                    "y": 156
+                },
+                "width": 133,
                 "height": 9,
                 "rotate": 0,
                 "alignment": "left",
@@ -1435,7 +1569,10 @@
             {
                 "name": "sec_d_bar",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 150 },
+                "position": {
+                    "x": 12,
+                    "y": 169
+                },
                 "width": 186,
                 "height": 7,
                 "rotate": 0,
@@ -1451,8 +1588,11 @@
                 "name": "sec_d_title",
                 "type": "text",
                 "content": "D.   FUND DETAILS",
-                "position": { "x": 16, "y": 150 },
-                "width": 170,
+                "position": {
+                    "x": 15,
+                    "y": 169
+                },
+                "width": 180,
                 "height": 7,
                 "rotate": 0,
                 "alignment": "left",
@@ -1472,9 +1612,12 @@
             {
                 "name": "fundetailstable",
                 "type": "table",
-                "position": { "x": 12, "y": 157 },
+                "position": {
+                    "x": 12,
+                    "y": 178
+                },
                 "width": 186,
-                "height": 13.5,
+                "height": 14,
                 "content": "[[\"₹123,564.00\",\"₹123,564.00\",\"₹123,564.00\"]]",
                 "showHead": true,
                 "head": [
@@ -1508,9 +1651,9 @@
                         "left": 0.1
                     },
                     "padding": {
-                        "top": 2,
+                        "top": 2.5,
                         "right": 2,
-                        "bottom": 2,
+                        "bottom": 2.5,
                         "left": 2
                     }
                 },
@@ -1532,9 +1675,9 @@
                         "left": 0.1
                     },
                     "padding": {
-                        "top": 2,
+                        "top": 2.5,
                         "right": 2,
-                        "bottom": 2,
+                        "bottom": 2.5,
                         "left": 2
                     }
                 },
@@ -1550,7 +1693,10 @@
             {
                 "name": "sec_e_bar",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 173 },
+                "position": {
+                    "x": 12,
+                    "y": 196
+                },
                 "width": 186,
                 "height": 7,
                 "rotate": 0,
@@ -1566,8 +1712,11 @@
                 "name": "sec_e_title",
                 "type": "text",
                 "content": "E.   PAYMENT DETAILS",
-                "position": { "x": 16, "y": 173 },
-                "width": 170,
+                "position": {
+                    "x": 15,
+                    "y": 196
+                },
+                "width": 180,
                 "height": 7,
                 "rotate": 0,
                 "alignment": "left",
@@ -1587,7 +1736,10 @@
             {
                 "name": "paymentdetails",
                 "type": "table",
-                "position": { "x": 12, "y": 180 },
+                "position": {
+                    "x": 12,
+                    "y": 205
+                },
                 "width": 186,
                 "height": 13,
                 "content": "[[\"123456.00\",\"1234.00\",\"1113.00\",\"3634.00\",\"4567.00\",\"13214.00\",\"123456.00\",\"1st and Final Bill\"]]",
@@ -1622,7 +1774,7 @@
                     "characterSpacing": 0,
                     "alignment": "center",
                     "verticalAlignment": "middle",
-                    "lineHeight": 1,
+                    "lineHeight": 1.1,
                     "fontColor": "#ffffff",
                     "borderColor": "#1e3a8a",
                     "backgroundColor": "#1e3a8a",
@@ -1633,9 +1785,9 @@
                         "left": 0.1
                     },
                     "padding": {
-                        "top": 2,
+                        "top": 2.5,
                         "right": 1,
-                        "bottom": 2,
+                        "bottom": 2.5,
                         "left": 1
                     }
                 },
@@ -1657,9 +1809,9 @@
                         "left": 0.1
                     },
                     "padding": {
-                        "top": 2,
+                        "top": 2.5,
                         "right": 1,
-                        "bottom": 2,
+                        "bottom": 2.5,
                         "left": 1
                     }
                 },
@@ -1680,7 +1832,10 @@
             {
                 "name": "sec_f_bar",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 195 },
+                "position": {
+                    "x": 12,
+                    "y": 223
+                },
                 "width": 186,
                 "height": 7,
                 "rotate": 0,
@@ -1696,8 +1851,11 @@
                 "name": "sec_f_title",
                 "type": "text",
                 "content": "F.   SITE PHOTOGRAPHS",
-                "position": { "x": 16, "y": 195 },
-                "width": 170,
+                "position": {
+                    "x": 15,
+                    "y": 223
+                },
+                "width": 180,
                 "height": 7,
                 "rotate": 0,
                 "alignment": "left",
@@ -1718,9 +1876,12 @@
                 "name": "static_onset",
                 "type": "text",
                 "content": "Onset Photograph",
-                "position": { "x": 12, "y": 203 },
+                "position": {
+                    "x": 12,
+                    "y": 233
+                },
                 "width": 58,
-                "height": 5,
+                "height": 4.5,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
@@ -1739,9 +1900,12 @@
             {
                 "name": "box_onset",
                 "type": "rectangle",
-                "position": { "x": 12, "y": 208 },
+                "position": {
+                    "x": 12,
+                    "y": 239
+                },
                 "width": 58,
-                "height": 34,
+                "height": 38,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.6,
@@ -1754,9 +1918,12 @@
             {
                 "name": "photo_onset",
                 "type": "image",
-                "position": { "x": 12, "y": 208 },
+                "position": {
+                    "x": 12,
+                    "y": 239
+                },
                 "width": 58,
-                "height": 34,
+                "height": 38,
                 "content": "",
                 "fit": "cover"
             },
@@ -1764,7 +1931,10 @@
                 "name": "onset_label",
                 "type": "text",
                 "content": "",
-                "position": { "x": 12, "y": 242.5 },
+                "position": {
+                    "x": 12,
+                    "y": 278
+                },
                 "width": 58,
                 "height": 4.5,
                 "rotate": 0,
@@ -1786,9 +1956,12 @@
                 "name": "static_ongoing",
                 "type": "text",
                 "content": "Ongoing Photograph",
-                "position": { "x": 76, "y": 203 },
+                "position": {
+                    "x": 76,
+                    "y": 233
+                },
                 "width": 58,
-                "height": 5,
+                "height": 4.5,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
@@ -1807,9 +1980,12 @@
             {
                 "name": "box_ongoing",
                 "type": "rectangle",
-                "position": { "x": 76, "y": 208 },
+                "position": {
+                    "x": 76,
+                    "y": 239
+                },
                 "width": 58,
-                "height": 34,
+                "height": 38,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.6,
@@ -1822,9 +1998,12 @@
             {
                 "name": "photo_ongoing",
                 "type": "image",
-                "position": { "x": 76, "y": 208 },
+                "position": {
+                    "x": 76,
+                    "y": 239
+                },
                 "width": 58,
-                "height": 34,
+                "height": 38,
                 "content": "",
                 "fit": "cover"
             },
@@ -1832,7 +2011,10 @@
                 "name": "ongoing_label",
                 "type": "text",
                 "content": "",
-                "position": { "x": 76, "y": 242.5 },
+                "position": {
+                    "x": 76,
+                    "y": 278
+                },
                 "width": 58,
                 "height": 4.5,
                 "rotate": 0,
@@ -1854,9 +2036,12 @@
                 "name": "static_complete",
                 "type": "text",
                 "content": "Completed Photograph",
-                "position": { "x": 140, "y": 203 },
+                "position": {
+                    "x": 140,
+                    "y": 233
+                },
                 "width": 58,
-                "height": 5,
+                "height": 4.5,
                 "rotate": 0,
                 "alignment": "center",
                 "verticalAlignment": "middle",
@@ -1875,9 +2060,12 @@
             {
                 "name": "box_complete",
                 "type": "rectangle",
-                "position": { "x": 140, "y": 208 },
+                "position": {
+                    "x": 140,
+                    "y": 239
+                },
                 "width": 58,
-                "height": 34,
+                "height": 38,
                 "rotate": 0,
                 "opacity": 1,
                 "borderWidth": 0.6,
@@ -1890,9 +2078,12 @@
             {
                 "name": "photo_complete",
                 "type": "image",
-                "position": { "x": 140, "y": 208 },
+                "position": {
+                    "x": 140,
+                    "y": 239
+                },
                 "width": 58,
-                "height": 34,
+                "height": 38,
                 "content": "",
                 "fit": "cover"
             },
@@ -1900,7 +2091,10 @@
                 "name": "complete_label",
                 "type": "text",
                 "content": "",
-                "position": { "x": 140, "y": 242.5 },
+                "position": {
+                    "x": 140,
+                    "y": 278
+                },
                 "width": 58,
                 "height": 4.5,
                 "rotate": 0,
@@ -1919,196 +2113,13 @@
                 "fontName": "Roboto"
             },
             {
-                "name": "sig_line_1",
-                "type": "rectangle",
-                "position": { "x": 16, "y": 261 },
-                "width": 48,
-                "height": 0.4,
-                "rotate": 0,
-                "opacity": 1,
-                "borderWidth": 0,
-                "borderColor": "#334155",
-                "color": "#334155",
-                "readOnly": true,
-                "required": false,
-                "content": ""
-            },
-            {
-                "name": "sig_text_1",
-                "type": "text",
-                "content": "Prepared by\nSecretary, No 3 Dhalpara GP",
-                "position": { "x": 12, "y": 262 },
-                "width": 56,
-                "height": 8,
-                "rotate": 0,
-                "alignment": "center",
-                "verticalAlignment": "top",
-                "fontSize": 6.5,
-                "lineHeight": 1.35,
-                "characterSpacing": 0,
-                "fontColor": "#334155",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "sig_line_2",
-                "type": "rectangle",
-                "position": { "x": 81, "y": 261 },
-                "width": 48,
-                "height": 0.4,
-                "rotate": 0,
-                "opacity": 1,
-                "borderWidth": 0,
-                "borderColor": "#334155",
-                "color": "#334155",
-                "readOnly": true,
-                "required": false,
-                "content": ""
-            },
-            {
-                "name": "sig_text_2",
-                "type": "text",
-                "content": "Verified by\nPradhan, No 3 Dhalpara GP",
-                "position": { "x": 77, "y": 262 },
-                "width": 56,
-                "height": 8,
-                "rotate": 0,
-                "alignment": "center",
-                "verticalAlignment": "top",
-                "fontSize": 6.5,
-                "lineHeight": 1.35,
-                "characterSpacing": 0,
-                "fontColor": "#334155",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "sig_line_3",
-                "type": "rectangle",
-                "position": { "x": 146, "y": 261 },
-                "width": 48,
-                "height": 0.4,
-                "rotate": 0,
-                "opacity": 1,
-                "borderWidth": 0,
-                "borderColor": "#334155",
-                "color": "#334155",
-                "readOnly": true,
-                "required": false,
-                "content": ""
-            },
-            {
-                "name": "sig_text_3",
-                "type": "text",
-                "content": "Countersigned\nBDO, Hili Block",
-                "position": { "x": 142, "y": 262 },
-                "width": 56,
-                "height": 8,
-                "rotate": 0,
-                "alignment": "center",
-                "verticalAlignment": "top",
-                "fontSize": 6.5,
-                "lineHeight": 1.35,
-                "characterSpacing": 0,
-                "fontColor": "#334155",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "footer_rule",
-                "type": "rectangle",
-                "position": { "x": 12, "y": 276 },
-                "width": 186,
-                "height": 0.4,
-                "rotate": 0,
-                "opacity": 1,
-                "borderWidth": 0,
-                "borderColor": "#94a3b8",
-                "color": "#94a3b8",
-                "readOnly": true,
-                "required": false,
-                "content": ""
-            },
-            {
-                "name": "footer_text",
-                "type": "text",
-                "content": "No 3 Dhalpara Gram Panchayat  •  Hili Block, Dakshin Dinajpur  •  Computer generated document",
-                "position": { "x": 12, "y": 277.5 },
-                "width": 186,
-                "height": 5,
-                "rotate": 0,
-                "alignment": "center",
-                "verticalAlignment": "middle",
-                "fontSize": 6,
-                "lineHeight": 1,
-                "characterSpacing": 0.3,
-                "fontColor": "#64748b",
-                "backgroundColor": "",
-                "opacity": 1,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
-                "name": "watermark_rounded_bg",
-                "type": "rectangle",
-                "position": { "x": 50, "y": 128.5 },
-                "width": 110,
-                "height": 40,
-                "rotate": 45,
-                "opacity": 0.07,
-                "borderWidth": 0.8,
-                "borderColor": "#1e3a8a",
-                "color": "",
-                "borderRadius": 8,
-                "readOnly": true,
-                "required": false,
-                "content": ""
-            },
-            {
-                "name": "watermark_rounded_text",
-                "type": "text",
-                "content": "NIT SL NO: 22",
-                "position": { "x": 50, "y": 128.5 },
-                "width": 110,
-                "height": 40,
-                "rotate": 45,
-                "alignment": "center",
-                "verticalAlignment": "middle",
-                "fontSize": 22,
-                "lineHeight": 1,
-                "characterSpacing": 4,
-                "fontColor": "#1e3a8a",
-                "backgroundColor": "",
-                "opacity": 0.07,
-                "strikethrough": false,
-                "underline": false,
-                "required": false,
-                "readOnly": true,
-                "fontName": "Roboto"
-            },
-            {
                 "name": "field20",
                 "type": "text",
                 "content": "",
-                "position": { "x": 200, "y": 200 },
+                "position": {
+                    "x": 200,
+                    "y": 200
+                },
                 "width": 0,
                 "height": 0,
                 "rotate": 0,
@@ -2138,5 +2149,5 @@
             0
         ]
     },
-    "pdfmeVersion": "6.0.6"
+    "pdfmeVersion": "6.2.5"
 }
