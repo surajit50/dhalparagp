@@ -310,7 +310,7 @@ export const NITCopy = ({
         ["Financial Bid Opening Date", "To be Notified later on"],
         [
           "Place of Opening Bids",
-          "Office of The Pradhan, DHALPARA Gram Panchayat.",
+          "Office of The  Gram Panchayat.",
         ],
         ["Validity of Bids", DEFAULT_VALIDITY_DAYS],
       ],

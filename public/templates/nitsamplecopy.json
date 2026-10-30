@@ -24,7 +24,7 @@
                 "strikethrough": false,
                 "underline": false,
                 "required": false,
-                "readOnly": true 
+                "readOnly": true
             },
             {
                 "name": "field2",
@@ -104,7 +104,7 @@
             {
                 "name": "field5",
                 "type": "text",
-                "content": "(website http://wbtenders.gov.in)",
+                "content": "(website https://tenders.wb.gov.in/)",
                 "position": {
                     "x": 10,
                     "y": 34.34
@@ -179,7 +179,7 @@
             {
                 "name": "field8",
                 "type": "text",
-                "content": "For and on behalf of the Dhalpara Gram Panchayat, the Pradhan, Dhalpara Gram Panchayat invites online percentage rate basis tenders for the following works by two cover system. Pre-qualification documents in a separate cover and Bid documents with schedule rate in another cover are to be submitted online by the contractors who satisfy the terms and conditions set out in pre-qualification documents.",
+                "content": "For and on behalf of the Dhalpara Gram Panchayat, the Executive Assitant, Dhalpara Gram Panchayat invites online percentage rate basis tenders for the following works by two cover system. Pre-qualification documents in a separate cover and Bid documents with schedule rate in another cover are to be submitted online by the contractors who satisfy the terms and conditions set out in pre-qualification documents.",
                 "position": {
                     "x": 10,
                     "y": 47.47
