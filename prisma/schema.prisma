@@ -3488,22 +3488,26 @@ model Mistri {
 }
 
 model Tubewell {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  tubewellNo    String   @unique
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  tubewellNo    String       @unique
   tubewellType  String
   condition     String
   landmark      String
   latitude      Float
   longitude     Float
   mouza         String
+  mouzaId       String?      @db.ObjectId
+  mouzaMaster   MouzaMaster? @relation(fields: [mouzaId], references: [id])
   sansad        String?
   ward          String?
   installYear   Int?
   remarks       String?
   imageUrl      String?
   imagePublicId String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  repairRequests TubewellRepairRequest[]
 }
 
 model TubewellMaterial {
@@ -3553,6 +3557,8 @@ model TubewellRepairRequest {
   mobileNumber   String?
   address        String
   mouza          String
+  tubewellId     String?             @db.ObjectId
+  tubewell       Tubewell?           @relation(fields: [tubewellId], references: [id])
   problemDetails String?
   status         RepairRequestStatus @default(PENDING)
   createdAt      DateTime            @default(now())
@@ -4616,6 +4622,7 @@ model MouzaMaster {
   mouzaCode    String        @unique // e.g. "DHP" — used in Light ID generation
   sansadCode   String? // e.g. "LAL" — used in Light ID generation
   streetLights StreetLight[]
+  tubewells    Tubewell[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 
