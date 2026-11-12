@@ -95,13 +95,13 @@ export async function createTubewellMaterial(data: {
         ...data,
         stockLogs: data.stock
           ? {
-            create: {
-              transactionType: "IN",
-              quantity: data.stock,
-              rate: data.rate,
-              remarks: "Initial Stock",
-            },
-          }
+              create: {
+                transactionType: "IN",
+                quantity: data.stock,
+                rate: data.rate,
+                remarks: "Initial Stock",
+              },
+            }
           : undefined,
       },
     });
@@ -170,6 +170,53 @@ export async function getStockLogs(materialId?: string) {
 }
 
 // ==========================================
+// TUBEWELL SUMMARY ACTIONS
+// ==========================================
+
+export interface MouzaTubewellSummary {
+  mouza: string;
+  total: number;
+  working: number;
+  defective: number;
+  abandoned: number;
+}
+
+export async function getMouzaWiseTubewellSummary(): Promise<MouzaTubewellSummary[]> {
+  const tubewells = await db.tubewell.findMany({
+    select: {
+      mouza: true,
+      condition: true,
+    },
+  });
+
+  const summaryMap = new Map<string, MouzaTubewellSummary>();
+
+  for (const tubewell of tubewells) {
+    const mouza = tubewell.mouza?.trim() || "Unspecified";
+    let entry = summaryMap.get(mouza);
+
+    if (!entry) {
+      entry = {
+        mouza,
+        total: 0,
+        working: 0,
+        defective: 0,
+        abandoned: 0,
+      };
+      summaryMap.set(mouza, entry);
+    }
+
+    entry.total += 1;
+
+    if (tubewell.condition === "WORKING") entry.working += 1;
+    else if (tubewell.condition === "DEFECTIVE") entry.defective += 1;
+    else if (tubewell.condition === "ABANDONED") entry.abandoned += 1;
+  }
+
+  return [...summaryMap.values()].sort((a, b) => a.mouza.localeCompare(b.mouza));
+}
+
+// ==========================================
 // REPAIR REQUEST ACTIONS
 // ==========================================
 
@@ -179,6 +226,7 @@ export async function submitRepairRequest(data: {
   address: string;
   problemDetails?: string;
   mouza: string;
+  tubewellId?: string;
 }) {
   try {
     const request = await db.tubewellRepairRequest.create({ data });
@@ -227,7 +275,6 @@ export async function getApprovedRepairRequests() {
   });
 }
 
-
 // ==========================================
 // WORK ORDER ACTIONS
 // ==========================================
@@ -243,18 +290,16 @@ export async function createWorkOrder(data: {
 
   const year = getYear();
 
-  // Find the highest serial BEFORE the transaction to keep the tx short
   const lastOrder = await db.tubewellWorkOrder.findFirst({
     where: { orderNumber: { startsWith: `DGP-TW/WO/${year}/` } },
     orderBy: { orderNumber: "desc" },
-    select: { orderNumber: true },   // ⚡ only fetch what we need
+    select: { orderNumber: true },
   });
 
   const orderNumber = `DGP-TW/WO/${year}/${String(nextSerial(lastOrder?.orderNumber)).padStart(3, "0")}`;
 
   const order = await db.$transaction(
     async (tx) => {
-      // Check for duplicate work order on same request
       if (data.requestId) {
         const existing = await tx.tubewellWorkOrder.findFirst({
           where: { requestId: data.requestId },
@@ -263,7 +308,6 @@ export async function createWorkOrder(data: {
         if (existing) throw new Error("Work order already exists.");
       }
 
-      // Create work order
       const order = await tx.tubewellWorkOrder.create({
         data: {
           orderNumber,
@@ -272,7 +316,6 @@ export async function createWorkOrder(data: {
         },
       });
 
-      // Bulk-create order materials in one query
       await tx.tubewellOrderMaterial.createMany({
         data: data.materials.map((m) => ({
           workOrderId: order.id,
@@ -282,7 +325,6 @@ export async function createWorkOrder(data: {
         })),
       });
 
-      // Parallel: decrement stock + log for every material simultaneously
       await Promise.all(
         data.materials.map((m) =>
           tx.tubewellMaterial.update({
@@ -315,7 +357,6 @@ export async function createWorkOrder(data: {
     { timeout: 15000, maxWait: 10000 }
   );
 
-  // Revalidate outside transaction
   revalidateTag("materials", "max");
   revalidateTag("repair-requests", "max");
   revalidatePath("/admindashboard/tubewell/work-orders");
@@ -451,9 +492,9 @@ export async function deleteWorkOrder(id: string) {
           tx.tubewellOrderMaterial.deleteMany({ where: { workOrderId: id } }),
           workOrder.requestId
             ? tx.tubewellRepairRequest.update({
-              where: { id: workOrder.requestId },
-              data: { status: "APPROVED" },
-            })
+                where: { id: workOrder.requestId },
+                data: { status: "APPROVED" },
+              })
             : Promise.resolve(),
         ]);
 
@@ -539,11 +580,11 @@ export const getWorkOrders = unstable_cache(
         materials: { include: { material: true } },
         masterRollEntries: { include: { items: true } },
       },
-
     }),
   ["work-orders"],
   { tags: ["work-orders"] }
 );
+
 // ==========================================
 // BILLING (MUSTOR) ACTIONS
 // ==========================================
@@ -552,7 +593,6 @@ export async function generateBill(workOrderIds: string | string[]) {
   const ids = Array.isArray(workOrderIds) ? workOrderIds : [workOrderIds];
   const year = getYear();
 
-  // Run serial lookup + order fetch in parallel before the transaction
   const [lastBill, orders] = await Promise.all([
     db.tubewellBill.findFirst({
       where: { billNumber: { startsWith: `DGP-TW/BILL/${year}/` } },
@@ -570,7 +610,6 @@ export async function generateBill(workOrderIds: string | string[]) {
 
   const billNumber = `DGP-TW/BILL/${year}/${String(nextSerial(lastBill?.billNumber)).padStart(3, "0")}`;
 
-  // Compute totals in JS — no extra DB round-trip inside the transaction
   let totalMaterialCost = 0;
   let totalLaborCost = 0;
   for (const order of orders) {
@@ -694,7 +733,7 @@ export async function getMasterRollEntries(workOrderId: string) {
 export async function adjustWorkOrderStock(
   workOrderId: string,
   adjustments: {
-    orderMaterialId?: string; // existing TubewellOrderMaterial row (for RETURN / partial RETURN)
+    orderMaterialId?: string;
     materialId: string;
     quantity: number;
     type: "ADD" | "RETURN";
@@ -710,7 +749,6 @@ export async function adjustWorkOrderStock(
   if (order.status === "COMPLETED" || order.status === "CANCELLED")
     throw new Error("Cannot adjust stock for a completed or cancelled work order.");
 
-  // Fetch all involved materials in one query
   const materialIds = [...new Set(adjustments.map((a) => a.materialId))];
   const materials = await db.tubewellMaterial.findMany({
     where: { id: { in: materialIds } },
@@ -718,7 +756,6 @@ export async function adjustWorkOrderStock(
   });
   const matMap = Object.fromEntries(materials.map((m) => [m.id, m]));
 
-  // Validate ADD adjustments against available stock
   for (const adj of adjustments) {
     if (adj.type === "ADD") {
       const mat = matMap[adj.materialId];
@@ -737,15 +774,12 @@ export async function adjustWorkOrderStock(
         const rate = mat?.rate ?? 0;
 
         if (adj.type === "ADD") {
-          // Create / increment order material row
           if (adj.orderMaterialId) {
-            // increment existing row
             await tx.tubewellOrderMaterial.update({
               where: { id: adj.orderMaterialId },
               data: { quantity: { increment: adj.quantity } },
             });
           } else {
-            // add new material row to this work order
             await tx.tubewellOrderMaterial.create({
               data: {
                 workOrderId,
@@ -756,7 +790,6 @@ export async function adjustWorkOrderStock(
             });
           }
 
-          // Deduct stock + log
           await tx.tubewellMaterial.update({
             where: { id: adj.materialId },
             data: {
@@ -773,7 +806,6 @@ export async function adjustWorkOrderStock(
             },
           });
         } else {
-          // RETURN — give stock back
           if (adj.orderMaterialId) {
             const om = await tx.tubewellOrderMaterial.findUnique({
               where: { id: adj.orderMaterialId },
@@ -796,7 +828,6 @@ export async function adjustWorkOrderStock(
             }
           }
 
-          // Restore stock + log
           await tx.tubewellMaterial.update({
             where: { id: adj.materialId },
             data: {
@@ -987,4 +1018,3 @@ export async function getTubewellDashboardStats() {
     completedThisMonth,
   };
 }
-
