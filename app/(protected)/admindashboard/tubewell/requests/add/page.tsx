@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Wrench } from "lucide-react";
 import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +27,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { villagenameOption } from "@/constants";
+import { useMouzas, useTubewellOptions } from "@/lib/hooks/use-mouzas";
+import { toTitleCase } from "@/lib/utils";
 
 const commonProblems = [
   "Handle loose / not working",
@@ -47,6 +48,7 @@ const requestSchema = z
     mobileNumber: z.string().optional(),
     address: z.string().min(1, "Required"),
     mouza: z.string().min(1, "Required"),
+    tubewellId: z.string().optional(),
     problemType: z.string().min(1, "Select problem"),
     customProblem: z.string().optional(),
   })
@@ -68,6 +70,8 @@ type RequestFormValues = z.infer<typeof requestSchema>;
 export default function AddRequestPage() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { tubewells, isLoading: tubewellsLoading } = useTubewellOptions();
+  const { mouzas, isLoading: mouzasLoading } = useMouzas();
 
   const form = useForm<RequestFormValues>({
     resolver: zodResolver(requestSchema),
@@ -76,10 +80,19 @@ export default function AddRequestPage() {
       mobileNumber: "",
       address: "",
       mouza: "",
+      tubewellId: "",
       problemType: "",
       customProblem: "",
     },
   });
+
+  const handleTubewellChange = (tubewellId: string) => {
+    const selected = tubewells.find((t) => t.id === tubewellId);
+    form.setValue("tubewellId", tubewellId, { shouldValidate: true });
+    if (selected?.mouza) {
+      form.setValue("mouza", selected.mouza, { shouldValidate: true });
+    }
+  };
 
   const onSubmit = (data: RequestFormValues) => {
     const finalProblem =
@@ -95,6 +108,7 @@ export default function AddRequestPage() {
           address: data.address,
           problemDetails: finalProblem,
           mouza: data.mouza,
+          tubewellId: data.tubewellId || undefined,
         });
 
         toast.success("Complaint Registered Successfully");
@@ -183,6 +197,59 @@ export default function AddRequestPage() {
                     <h2 className="text-lg font-bold text-slate-800 tracking-tight">Tubewell Location</h2>
                   </div>
 
+                  <FormField
+                    control={form.control}
+                    name="tubewellId"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-700 font-bold mb-2">
+                          Select Tubewell *
+                        </FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={handleTubewellChange}
+                          disabled={isPending || tubewellsLoading}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="rounded-xl border-slate-200 h-12 shadow-sm focus:ring-primary">
+                              <SelectValue
+                                placeholder={
+                                  tubewellsLoading
+                                    ? "Loading tubewells..."
+                                    : "Choose the tubewell that needs repair"
+                                }
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="rounded-xl border-slate-200 shadow-xl">
+                            {tubewells.length === 0 ? (
+                              <div className="px-3 py-4 text-sm text-slate-500 text-center">
+                                No tubewells registered yet.
+                              </div>
+                            ) : (
+                              tubewells.map((t) => (
+                                <SelectItem
+                                  key={t.id}
+                                  value={t.id}
+                                  className="focus:bg-slate-50 rounded-lg m-1 py-2 cursor-pointer"
+                                >
+                                  <span className="flex items-center gap-2">
+                                    <Wrench className="h-4 w-4 text-slate-400" />
+                                    {t.tubewellNo} — {t.mouza} ({toTitleCase(t.condition)})
+                                  </span>
+                                </SelectItem>
+                              ))
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <p className="text-xs text-slate-500 mt-1">
+                          Every complaint is linked to a specific tubewell so the GP can track its working status.
+                        </p>
+                        <FormMessage className="text-rose-500 font-medium" />
+                      </FormItem>
+                    )}
+                  />
+
                   <div className="grid md:grid-cols-2 gap-8">
                     <FormField
                       control={form.control}
@@ -194,15 +261,15 @@ export default function AddRequestPage() {
                             <Select
                               value={field.value}
                               onValueChange={field.onChange}
-                              disabled={isPending}
+                              disabled={isPending || mouzasLoading}
                             >
                               <SelectTrigger className="rounded-xl border-slate-200 h-12 shadow-sm focus:ring-primary">
                                 <SelectValue placeholder="Select mouza" />
                               </SelectTrigger>
                               <SelectContent className="rounded-xl border-slate-200 shadow-xl">
-                                {villagenameOption.map((m) => (
-                                  <SelectItem key={m.label} value={m.label} className="focus:bg-slate-50 rounded-lg m-1 py-2 cursor-pointer">
-                                    {m.label}
+                                {mouzas.map((m) => (
+                                  <SelectItem key={m.id} value={m.mouzaName} className="focus:bg-slate-50 rounded-lg m-1 py-2 cursor-pointer">
+                                    {m.mouzaName}
                                   </SelectItem>
                                 ))}
                               </SelectContent>

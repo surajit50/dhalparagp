@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, FileText, Settings2, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { MoreHorizontal, FileText, Settings2, CheckCircle2, XCircle, Loader2, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -24,9 +24,16 @@ export type RepairRequest = {
   citizenName: string;
   mobileNumber: string | null;
   address: string;
+  mouza: string;
   problemDetails: string | null;
   status: "PENDING" | "APPROVED" | "WORK_ORDER_ISSUED" | "COMPLETED" | "REJECTED";
   createdAt: Date;
+  tubewell: {
+    id: string;
+    tubewellNo: string;
+    mouza: string;
+    condition: string;
+  } | null;
 };
 
 const StatusBadge = ({ status }: { status: string }) => {
@@ -146,17 +153,29 @@ export const columns: ColumnDef<RepairRequest>[] = [
   },
   {
     accessorKey: "address",
-    header: "Location & Problem",
-    cell: ({ row }) => (
-      <div className="flex flex-col max-w-[250px]">
-        <span className="text-sm text-slate-700 font-medium truncate" title={row.getValue("address")}>
-          {row.getValue("address")}
-        </span>
-        <span className="text-xs text-slate-500 line-clamp-1 italic">
-          {row.original.problemDetails || "No details provided"}
-        </span>
-      </div>
-    ),
+    header: "Tubewell & Problem",
+    cell: ({ row }) => {
+      const tubewell = row.original.tubewell;
+      return (
+        <div className="flex flex-col max-w-[280px]">
+          {tubewell ? (
+            <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+              <Wrench className="h-3.5 w-3.5 text-orange-500" />
+              {tubewell.tubewellNo}
+              <span className="text-xs font-medium text-slate-500">({tubewell.mouza})</span>
+            </span>
+          ) : (
+            <span className="text-xs font-medium text-rose-500">No tubewell linked</span>
+          )}
+          <span className="text-sm text-slate-700 font-medium truncate" title={row.getValue("address")}>
+            {row.getValue("address")}
+          </span>
+          <span className="text-xs text-slate-500 line-clamp-1 italic">
+            {row.original.problemDetails || "No details provided"}
+          </span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",

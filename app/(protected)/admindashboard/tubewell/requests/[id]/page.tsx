@@ -67,6 +67,15 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
   const request = await db.tubewellRepairRequest.findUnique({
     where: { id },
     include: {
+      tubewell: {
+        select: {
+          id: true,
+          tubewellNo: true,
+          mouza: true,
+          condition: true,
+          landmark: true,
+        },
+      },
       workOrders: {
         include: {
           mistri: true,
@@ -146,6 +155,15 @@ export default async function RequestDetailsPage({ params }: RequestDetailsPageP
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
                 <InfoRow icon={<User className="h-4 w-4 text-slate-400" />} label="Citizen Name" value={request.citizenName} />
                 <InfoRow icon={<Phone className="h-4 w-4 text-slate-400" />} label="Contact Number" value={request.mobileNumber || "N/A"} />
+                <InfoRow
+                  icon={<Wrench className="h-4 w-4 text-slate-400" />}
+                  label="Tubewell"
+                  value={
+                    request.tubewell
+                      ? `${request.tubewell.tubewellNo} — ${request.tubewell.mouza} (${request.tubewell.condition})`
+                      : "Not linked to a registered tubewell"
+                  }
+                />
                 <InfoRow icon={<MapPin className="h-4 w-4 text-slate-400" />} label="Location / Address" value={request.address} />
                 <InfoRow icon={<MapPin className="h-4 w-4 text-slate-400" />} label="Mouza / Village" value={request.mouza || "N/A"} />
                 <InfoRow icon={<Calendar className="h-4 w-4 text-slate-400" />} label="Date Reported" value={format(new Date(request.createdAt), "dd MMM yyyy, hh:mm a")} />
