@@ -2,8 +2,8 @@
 
 import { Download, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { downloadCsv, toTitleCase, formatDate } from "@/lib/utils";
-import { useState, useTransition } from "react";
+import { downloadCsv, toTitleCase, formatDateTime } from "@/lib/utils";
+import { useTransition } from "react";
 
 export type RequestExportRow = {
   id: string;
@@ -25,14 +25,14 @@ export function ExportRequestsButton({ requests }: Props) {
 
   const handleExport = () => {
     startTransition(() => {
-      const rows = requests.map((r) => ({
-        "Citizen Name": r.citizenName,
-        "Mobile Number": r.mobileNumber ?? "",
-        Address: r.address,
-        Mouza: r.mouza,
-        "Problem Details": r.problemDetails ?? "",
-        Status: toTitleCase(r.status),
-        "Date Reported": formatDate(r.createdAt, "datetime"),
+      const rows = requests.map((request) => ({
+        "Citizen Name": request.citizenName,
+        "Mobile Number": request.mobileNumber ?? "",
+        Address: request.address,
+        Mouza: request.mouza,
+        "Problem Details": request.problemDetails ?? "",
+        Status: toTitleCase(request.status),
+        "Date Reported": formatDateTime(request.createdAt),
       }));
       const filename = `tubewell-repair-requests-${new Date().toISOString().slice(0, 10)}.csv`;
       downloadCsv(rows, filename);
