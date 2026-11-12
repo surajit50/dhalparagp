@@ -1,4 +1,3 @@
-import { getRepairRequests } from "@/action/tubewell";
 import { db } from "@/lib/db";
 import { Plus, Wrench } from "lucide-react";
 import Link from "next/link";
@@ -12,7 +11,19 @@ export const dynamic = "force-dynamic";
 
 export default async function RequestsPage() {
   const [requests, stats] = await Promise.all([
-    getRepairRequests(),
+    db.tubewellRepairRequest.findMany({
+      include: {
+        tubewell: {
+          select: {
+            id: true,
+            tubewellNo: true,
+            mouza: true,
+            condition: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
     db.tubewellRepairRequest.groupBy({
       by: ["status"],
       _count: { id: true },
