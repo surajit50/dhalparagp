@@ -28,6 +28,7 @@ export const TubewellRegisterSchema = z.object({
   tubewellType: z.enum(["MARK_II", "ORDINARY", "SUBMERSIBLE", "MINI_PIPED"]),
   condition: z.enum(["WORKING", "DEFECTIVE", "ABANDONED"]),
   mouza: z.string().min(1, "Mouza is required"),
+  mouzaId: z.string().optional(),
   sansad: z.string().optional(),
   ward: z.string().optional(),
   landmark: z.string().min(1, "Landmark is required"),
