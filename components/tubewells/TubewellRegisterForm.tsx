@@ -185,6 +185,7 @@ export function TubewellRegisterForm({
                   <SelectContent>
                     <SelectItem value="MARK_II">Mark II</SelectItem>
                     <SelectItem value="ORDINARY">Ordinary</SelectItem>
+                    <SelectItem value="Tarakal">Tara Kal </SelectItem>
                     <SelectItem value="SUBMERSIBLE">Submersible</SelectItem>
                     <SelectItem value="MINI_PIPED">Mini Piped</SelectItem>
                   </SelectContent>
