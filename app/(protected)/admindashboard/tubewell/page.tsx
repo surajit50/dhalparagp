@@ -1,4 +1,4 @@
-import { Droplets, Plus, Map, Wrench, FileText, ClipboardList, Package, Users, Receipt, AlertTriangle, CheckCircle2, IndianRupee, TrendingUp } from "lucide-react";
+import { Droplets, Plus, Map, Wrench, FileText, ClipboardList, Package, Users, Receipt, AlertTriangle, CheckCircle2, IndianRupee, TrendingUp, Smartphone } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getTubewellDashboardStats } from "@/action/tubewell";
@@ -25,6 +25,16 @@ export default async function TubewellDashboardPage() {
           icon="Wrench"
         >
           <div className="flex gap-3 flex-wrap">
+            <Button
+              asChild
+              variant="outline"
+              className="gap-2 rounded-xl h-11 px-5 border-blue-200 bg-blue-50/50 hover:bg-blue-100 hover:text-blue-800 transition-colors shadow-2xs"
+            >
+              <Link href="/admindashboard/tubewell/survey">
+                <Smartphone className="w-4 h-4 text-blue-600" />
+                Field Survey
+              </Link>
+            </Button>
             <Button
               asChild
               variant="outline"

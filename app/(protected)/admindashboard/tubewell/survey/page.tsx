@@ -14,8 +14,9 @@ export default function TubewellSurveyPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-border/40">
         <div className="flex items-center gap-4">
           <Link
-            href="/admindashboard"
+            href="/admindashboard/tubewell"
             className="w-10 h-10 bg-card rounded-xl flex items-center justify-center border border-border/40 shadow-sm hover:bg-muted transition-colors group"
+            title="Back to Tubewell Management"
           >
             <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
           </Link>

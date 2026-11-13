@@ -868,6 +868,7 @@ export async function createTubewell(data: {
   latitude: number;
   longitude: number;
   mouza: string;
+  mouzaId?: string;
   sansad?: string;
   ward?: string;
   installYear?: number;
@@ -887,14 +888,17 @@ export async function createTubewell(data: {
       tubewellNo = `DGP-TW/${year}/${String(nextSerial(last?.tubewellNo)).padStart(3, "0")}`;
     }
 
+    const { mouzaId, ...rest } = data;
     const tubewell = await db.tubewell.create({
       data: {
-        ...data,
+        ...rest,
+        ...(mouzaId && mouzaId.trim() !== "" ? { mouzaId } : {}),
         tubewellNo,
       },
     });
     revalidateTag("tubewells", "max");
     revalidatePath("/admindashboard/tubewell/register");
+    revalidatePath("/admindashboard/tubewell/survey");
     return tubewell;
   } catch (error) {
     console.error("Error creating tubewell:", error);
@@ -912,6 +916,7 @@ export async function updateTubewell(
     latitude?: number;
     longitude?: number;
     mouza?: string;
+    mouzaId?: string;
     sansad?: string;
     ward?: string;
     installYear?: number;
@@ -921,9 +926,19 @@ export async function updateTubewell(
   }
 ) {
   try {
-    const updated = await db.tubewell.update({ where: { id }, data });
+    const { mouzaId, ...rest } = data;
+    const updated = await db.tubewell.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(mouzaId !== undefined
+          ? { mouzaId: mouzaId && mouzaId.trim() !== "" ? mouzaId : null }
+          : {}),
+      },
+    });
     revalidateTag("tubewells", "max");
     revalidatePath("/admindashboard/tubewell/register");
+    revalidatePath("/admindashboard/tubewell/survey");
     return updated;
   } catch (error) {
     console.error("Error updating tubewell:", error);

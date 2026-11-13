@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { MapPin } from "lucide-react";
 
 import { createTubewell, updateTubewell } from "@/action/tubewell";
 import { ImageUploadDropzone } from "@/components/street-lights/ImageUploadDropzone";
@@ -30,6 +31,8 @@ import {
   TubewellRegisterSchema,
   type TubewellRegisterInput,
 } from "@/schema/tubewell";
+import { MouzaSelector } from "./MouzaSelector";
+import { LandmarkSuggestions } from "./LandmarkSuggestions";
 
 interface TubewellRegisterFormProps {
   mode: "create" | "edit";
@@ -51,6 +54,7 @@ export function TubewellRegisterForm({
     initialImage?.url ?? defaultValues?.imageUrl ?? null
   );
   const isEdit = mode === "edit";
+  const landmarkInputRef = useRef<HTMLInputElement | null>(null);
 
   const form = useForm<TubewellRegisterInput>({
     resolver: zodResolver(TubewellRegisterSchema),
@@ -58,6 +62,7 @@ export function TubewellRegisterForm({
       tubewellType: "MARK_II",
       condition: "WORKING",
       mouza: "",
+      mouzaId: "",
       sansad: "",
       ward: "",
       landmark: "",
@@ -69,6 +74,25 @@ export function TubewellRegisterForm({
       ...defaultValues,
     },
   });
+
+  const handleCaptureGps = () => {
+    if ("geolocation" in navigator) {
+      toast.loading("Capturing GPS coordinates...", { id: "gps-fetch-reg" });
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          form.setValue("latitude", position.coords.latitude, { shouldValidate: true });
+          form.setValue("longitude", position.coords.longitude, { shouldValidate: true });
+          toast.success("📍 GPS location captured successfully!", { id: "gps-fetch-reg" });
+        },
+        (error) => {
+          toast.error("Failed to get GPS location: " + error.message, { id: "gps-fetch-reg" });
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser");
+    }
+  };
 
   const uploadImage = async (file: File) => {
     setIsUploading(true);
@@ -195,9 +219,23 @@ export function TubewellRegisterForm({
             control={form.control}
             name="mouza"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Mouza *</FormLabel>
-                <FormControl><Input {...field} placeholder="Enter Mouza" /></FormControl>
+              <FormItem className="md:col-span-2">
+                <FormLabel>Mouza Name *</FormLabel>
+                <FormControl>
+                  <MouzaSelector
+                    selectedMouza={field.value}
+                    selectedMouzaId={form.watch("mouzaId")}
+                    selectedSansad={form.watch("sansad")}
+                    selectedWard={form.watch("ward")}
+                    onSelect={(m) => {
+                      field.onChange(m.mouzaName);
+                      form.setValue("mouzaId", m.mouzaId || "", { shouldValidate: true });
+                      if (m.sansad) form.setValue("sansad", m.sansad);
+                      if (m.ward) form.setValue("ward", m.ward);
+                    }}
+                    error={form.formState.errors.mouza?.message}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -209,7 +247,7 @@ export function TubewellRegisterForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Gram Sansad</FormLabel>
-                <FormControl><Input {...field} value={field.value ?? ""} /></FormControl>
+                <FormControl><Input {...field} value={field.value ?? ""} placeholder="e.g. Sansad I" /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -221,7 +259,7 @@ export function TubewellRegisterForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Ward</FormLabel>
-                <FormControl><Input {...field} value={field.value ?? ""} /></FormControl>
+                <FormControl><Input {...field} value={field.value ?? ""} placeholder="e.g. Ward 03" /></FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -232,40 +270,89 @@ export function TubewellRegisterForm({
             name="landmark"
             render={({ field }) => (
               <FormItem className="md:col-span-2">
-                <FormLabel>Landmark *</FormLabel>
-                <FormControl><Input {...field} placeholder="Nearby landmark or location details" /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="latitude"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Latitude *</FormLabel>
+                <FormLabel>Landmark / Location Details *</FormLabel>
+                <LandmarkSuggestions
+                  value={field.value || ""}
+                  onChange={(nextVal) => form.setValue("landmark", nextVal, { shouldValidate: true })}
+                  targetInputRef={landmarkInputRef}
+                  className="mb-2 p-3 bg-muted/40 rounded-xl border border-border/50"
+                />
                 <FormControl>
-                  <Input type="number" step="any" value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value === "" ? undefined : Number(event.target.value))} />
+                  <Input
+                    {...field}
+                    ref={(e) => {
+                      field.ref(e);
+                      landmarkInputRef.current = e;
+                    }}
+                    placeholder="e.g. Near house of Ramesh Mondal, Lalpur Primary School Gate"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="longitude"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Longitude *</FormLabel>
-                <FormControl>
-                  <Input type="number" step="any" value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value === "" ? undefined : Number(event.target.value))} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="md:col-span-2 space-y-3 p-4 bg-muted/20 border rounded-xl">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-blue-500" /> GPS Location Coordinates
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleCaptureGps}
+                className="gap-1.5 text-xs border-blue-200 text-blue-700 hover:bg-blue-50"
+              >
+                <MapPin className="w-3.5 h-3.5" /> Capture Current Location
+              </Button>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="latitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Latitude *</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="any"
+                        value={field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
+                        }
+                        className="font-mono"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="longitude"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Longitude *</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="any"
+                        value={field.value ?? ""}
+                        onChange={(event) =>
+                          field.onChange(event.target.value === "" ? undefined : Number(event.target.value))
+                        }
+                        className="font-mono"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
           <FormField
             control={form.control}

@@ -5,6 +5,11 @@ import useSWR from "swr";
 export interface MouzaOption {
   id: string;
   mouzaName: string;
+  jlNo?: string | null;
+  gramSansad?: string | null;
+  ward?: string | null;
+  mouzaCode?: string;
+  sansadCode?: string | null;
 }
 
 export interface TubewellOption {
