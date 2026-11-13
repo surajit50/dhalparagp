@@ -59,7 +59,7 @@ export function TubewellRegisterForm({
   const form = useForm<TubewellRegisterInput>({
     resolver: zodResolver(TubewellRegisterSchema),
     defaultValues: {
-      tubewellType: "MARK_II",
+      tubewellType: "ORDINARY",
       condition: "WORKING",
       mouza: "",
       mouzaId: "",
