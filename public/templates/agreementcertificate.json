@@ -92,7 +92,7 @@
       {
         "name": "details",
         "type": "text",
-        "content": "This Contract made on «WorkormeDate»(Date), between the Pradhan, No.3 Dhalpara  Gram Panchayat, Trimohini,PS-Hili, Dist.-D/Dinajpur. of West Bengal, hereinafter “The First Party” of the one part and  «acptbiderName» (Name of Contractor), «AcceptbitAddress»   (Address of Contractor) hereinafter “The Second Party” or the “Contractor” of the other part:",
+        "content": "This Contract made on «WorkormeDate»(Date), between the EA, No.3 Dhalpara  Gram Panchayat, Trimohini,PS-Hili, Dist.-D/Dinajpur. of West Bengal, hereinafter “The First Party” of the one part and  «acptbiderName» (Name of Contractor), «AcceptbitAddress»   (Address of Contractor) hereinafter “The Second Party” or the “Contractor” of the other part:",
         "position": { "x": 10, "y": 163.1 },
         "width": 189.45,
         "height": 16.6,
@@ -314,7 +314,7 @@
       {
         "name": "field15",
         "type": "text",
-        "content": "6.In the event of any of the provisions of the contract requiring amendment, the amendments shall be made in writing and shall be signed by the Pradhan,Dhalpara Gram Panchayat, and the Contractor and no work as result of any amendment shall proceed without duly signed amendment to that effect. Any verbal contracts / understandings relating to abandoning, modifying, extending, reducing or supplementing any part(s) of the contracted work will not be executed until they are incorporated as a formal duly signed amendment to the contract. ",
+        "content": "6.In the event of any of the provisions of the contract requiring amendment, the amendments shall be made in writing and shall be signed by the EA,Dhalpara Gram Panchayat, and the Contractor and no work as result of any amendment shall proceed without duly signed amendment to that effect. Any verbal contracts / understandings relating to abandoning, modifying, extending, reducing or supplementing any part(s) of the contracted work will not be executed until they are incorporated as a formal duly signed amendment to the contract. ",
         "position": { "x": 10, "y": 10 },
         "width": 189.98,
         "height": 26.12,
