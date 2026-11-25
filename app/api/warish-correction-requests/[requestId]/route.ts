@@ -68,9 +68,18 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ re
         }
 
         if (request.targetType === "detail" && request.warishDetailId) {
-          await db.warishDetail.update({
+          const updatedDetail = await db.warishDetail.update({
             where: { id: request.warishDetailId },
             data: updateData,
+          })
+
+          // Correcting a family member's details makes the existing certificate stale.
+          // Remove the generated certificate so the application becomes available for regeneration.
+          await db.warishDocument.deleteMany({
+            where: {
+              warishId: updatedDetail.warishApplicationId,
+              documentType: "WarishCertificate",
+            },
           })
         } else if (request.targetType === "application" && request.warishApplicationId) {
           const warishdata = await db.warishApplication.update({
