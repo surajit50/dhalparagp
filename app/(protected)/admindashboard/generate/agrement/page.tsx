@@ -1,13 +1,12 @@
 import { Suspense } from "react";
 import { db } from "@/lib/db";
 import { Agreement } from "@/types/agreement";
-import { FileText, ChevronRight, Handshake } from "lucide-react";
-import { DataTable } from "@/components/data-table";
-import { columns } from "./columns";
+import { FileText, ChevronRight, Handshake, Layers, Users } from "lucide-react";
 import { FinancialYearFilter } from "@/components/FinancialYearFilter";
 import { getFinancialYearDateRange } from "@/utils/financialYear";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { AgreementList } from "./AgreementList";
 
 interface AgreementCertificatePageProps {
   searchParams: Promise<{ financialYear?: string; search?: string }>;
@@ -79,6 +78,39 @@ export default async function AgreementCertificateTable({
   const { financialYear } = await searchParams;
   const agreements = await getAgreements(financialYear);
 
+  const nitCount = new Set(
+    agreements.map((agreement) => {
+      const nit = agreement.acceptagency?.WorksDetail?.nitDetails;
+      const memoDate = nit?.memoDate ? new Date(nit.memoDate).getTime() : 0;
+      return `${nit?.memoNumber ?? 0}-${memoDate}`;
+    })
+  ).size;
+
+  const agencyCount = new Set(
+    agreements.map((agreement) => agreement.acceptagency?.agencydetails?.name)
+  ).size;
+
+  const stats = [
+    {
+      label: "Total NITs",
+      value: nitCount,
+      icon: Layers,
+      accent: "text-teal-600 bg-teal-500/10",
+    },
+    {
+      label: "Total Agreements",
+      value: agreements.length,
+      icon: FileText,
+      accent: "text-cyan-600 bg-cyan-500/10",
+    },
+    {
+      label: "Agencies",
+      value: agencyCount,
+      icon: Users,
+      accent: "text-indigo-600 bg-indigo-500/10",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Page Header */}
@@ -105,8 +137,9 @@ export default async function AgreementCertificateTable({
                 </h1>
               </div>
               <p className="text-lg text-slate-400 leading-relaxed">
-                View and generate agreement certificates for contracted works.
-                Filter by financial year to manage records efficiently.
+                View and generate agreement certificates for contracted works,
+                grouped NIT-wise. Filter by financial year to manage records
+                efficiently.
               </p>
             </div>
 
@@ -123,6 +156,28 @@ export default async function AgreementCertificateTable({
               </div>
             </div>
           </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-1 gap-4 pt-2 sm:grid-cols-3">
+            {stats.map((stat) => (
+              <div
+                key={stat.label}
+                className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md"
+              >
+                <div
+                  className={`flex h-11 w-11 items-center justify-center rounded-xl ${stat.accent}`}
+                >
+                  <stat.icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold leading-none text-white">
+                    {stat.value}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-400">{stat.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -132,12 +187,12 @@ export default async function AgreementCertificateTable({
           <CardHeader className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 py-5 px-6">
             <CardTitle className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <Handshake className="w-5 h-5 text-teal-500" />
-              Agreement Records
+              Agreement Records — NIT Wise
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="p-6">
             <Suspense fallback={<TableSkeleton />}>
-              <DataTable data={agreements} columns={columns} />
+              <AgreementList agreements={agreements} />
             </Suspense>
           </CardContent>
         </Card>
@@ -148,25 +203,32 @@ export default async function AgreementCertificateTable({
 
 function TableSkeleton() {
   return (
-    <div className="w-full space-y-4 p-6">
-      <div className="flex gap-4 py-3">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="h-4 flex-1 bg-muted rounded-md animate-pulse" />
-        ))}
-      </div>
-      <div className="space-y-2">
-        {[...Array(5)].map((_, i) => (
-          <div key={i} className="flex gap-4 py-4">
-            {[...Array(6)].map((_, j) => (
-              <div key={j} className="h-4 flex-1 bg-muted rounded-md animate-pulse" />
+    <div className="w-full space-y-4">
+      {[...Array(3)].map((_, i) => (
+        <div
+          key={i}
+          className="rounded-2xl border border-slate-100 p-5 dark:border-slate-800"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-xl bg-muted animate-pulse" />
+              <div className="space-y-2">
+                <div className="h-4 w-40 rounded bg-muted animate-pulse" />
+                <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+              </div>
+            </div>
+            <div className="h-7 w-28 rounded-lg bg-muted animate-pulse" />
+          </div>
+          <div className="mt-4 space-y-3">
+            {[...Array(2)].map((__, j) => (
+              <div
+                key={j}
+                className="h-16 rounded-xl bg-muted/60 animate-pulse"
+              />
             ))}
           </div>
-        ))}
-      </div>
-      <div className="flex justify-end gap-2 pt-4">
-        <div className="h-8 w-24 bg-muted rounded-md animate-pulse" />
-        <div className="h-8 w-24 bg-muted rounded-md animate-pulse" />
-      </div>
+        </div>
+      ))}
     </div>
   );
 }
